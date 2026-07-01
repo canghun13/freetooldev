@@ -157,15 +157,6 @@ document.addEventListener('DOMContentLoaded', function () {
     return rows;
   }
 
-  async function attachSingleDownloads() {
-    document.querySelectorAll('.dl-single').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var r = results[parseInt(btn.dataset.idx)];
-        downloadText(r.name, r.content);
-      });
-    });
-  }
-
   function downloadText(name, content) {
     var blob = new Blob([content], { type: 'application/json' });
     var a = document.createElement('a');
@@ -196,26 +187,71 @@ document.addEventListener('DOMContentLoaded', function () {
         progressText.textContent = 'Converting file ' + (idx + 1) + ' of ' + files.length + ' — ' + f.name + ' (' + done + '/' + total + ' rows)';
       });
 
-      var jsonStr = JSON.stringify(json, null, 2);
+      // Finalizing (stringify + preview) can itself be slow for large results,
+      // so give the browser one more frame before doing it — this is what was
+      // freezing the tab: a multi-MB string dumped into innerHTML in one shot.
+      rows[idx].querySelector('.fstatus').textContent = 'finalizing…';
+      progressText.textContent = 'Finalizing ' + f.name + ' (' + json.length + ' rows)…';
+      await yieldToUI();
+
+      // For large row counts, skip pretty-print indentation — it can multiply
+      // output size several times over for no benefit once a file is downloaded
+      // rather than read by eye.
+      var isLarge = json.length > 1000;
+      var jsonStr = isLarge ? JSON.stringify(json) : JSON.stringify(json, null, 2);
       results[idx] = { name: f.name.replace(/\.csv$/i, '.json'), content: jsonStr };
+
+      await yieldToUI();
+
       rows[idx].classList.add('ready');
       rows[idx].querySelector('.fstatus').classList.remove('busy');
       rows[idx].querySelector('.fstatus').textContent = 'done · ' + json.length + ' rows';
 
+      // Build the preview block with real DOM nodes (not one giant innerHTML
+      // string) — this avoids re-parsing a multi-MB blob as HTML. Large
+      // results only show a preview of the first rows; the download always
+      // contains the full data.
       var block = document.createElement('div');
       block.className = 'panel';
       block.style.marginBottom = '12px';
-      block.innerHTML = '<h3>' + f.name + ' → ' + results[idx].name + '</h3>' +
-        '<textarea readonly style="min-height:140px;">' + jsonStr + '</textarea>' +
-        '<div class="toolbar"><button class="btn btn-outline dl-single" data-idx="' + idx + '">Download</button></div>';
+
+      var heading = document.createElement('h3');
+      heading.textContent = f.name + ' → ' + results[idx].name;
+      block.appendChild(heading);
+
+      if (isLarge) {
+        var note = document.createElement('p');
+        note.className = 'result-empty';
+        note.style.marginBottom = '10px';
+        note.textContent = '// Preview limited to first 50 rows (' + json.length + ' total) — download for the full file';
+        block.appendChild(note);
+      }
+
+      var ta = document.createElement('textarea');
+      ta.readOnly = true;
+      ta.style.minHeight = '140px';
+      ta.value = isLarge ? JSON.stringify(json.slice(0, 50), null, 2) + '\n\n… (' + (json.length - 50) + ' more rows in the downloaded file)' : jsonStr;
+      block.appendChild(ta);
+
+      var tb = document.createElement('div');
+      tb.className = 'toolbar';
+      var dlBtn = document.createElement('button');
+      dlBtn.className = 'btn btn-outline';
+      dlBtn.textContent = 'Download';
+      dlBtn.addEventListener('click', function (name, content) {
+        return function () { downloadText(name, content); };
+      }(results[idx].name, jsonStr));
+      tb.appendChild(dlBtn);
+      block.appendChild(tb);
+
       previewArea.appendChild(block);
+      await yieldToUI();
     }
 
     progressStatus.classList.remove('active');
     progressText.textContent = 'All ' + files.length + ' file(s) converted.';
     convertBtn.disabled = false;
     downloadZipBtn.style.display = 'inline-flex';
-    attachSingleDownloads();
   });
 
   downloadZipBtn.addEventListener('click', function () {
