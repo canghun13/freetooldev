@@ -40,7 +40,7 @@
       <div class="dropzone" id="dropzone">
         <input type="file" id="fileInput" accept=".csv" multiple>
         Drag files here or click to browse<br>
-        <span style="font-size:0.78rem;">.csv files, multiple selection supported</span>
+        <span style="font-size:0.78rem;">.csv files, multiple selection supported · max 8 MB per file</span>
       </div>
       <div class="file-list" id="fileList"></div>
       <div class="toolbar">
@@ -61,6 +61,8 @@
   <div class="wrap" style="max-width:720px;">
     <h2>How it works</h2>
     <p>The first row is treated as the header and each subsequent row becomes a JSON object. Quoted values containing commas are handled correctly. Files are processed locally — nothing is uploaded to a server.</p>
+    <h2>Limits</h2>
+    <p>Each file is capped at 8 MB. This isn't arbitrary — browser-based parsing and rendering genuinely can't scale to unlimited file sizes without risking an unresponsive tab, so files over the limit are rejected up front rather than attempted. For larger datasets, split the file into smaller chunks first.</p>
   </div>
 </section>
 
@@ -88,12 +90,28 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   fileInput.addEventListener('change', function () { addFiles(fileInput.files); });
 
+  // Hard limit: browser-based parsing/rendering genuinely can't scale to
+  // arbitrary file sizes without risking an unresponsive tab. Rather than
+  // keep chasing performance edge cases, reject oversized files up front
+  // with a clear reason instead of attempting and freezing.
+  var MAX_FILE_SIZE = 8 * 1024 * 1024; // 8 MB per file
+  var MAX_ROWS_HINT = 30000; // soft guidance shown to the user
+
   function addFiles(list) {
+    var rejected = [];
     Array.from(list).forEach(function (f) {
       if (!f.name.toLowerCase().endsWith('.csv')) return;
+      if (f.size > MAX_FILE_SIZE) {
+        rejected.push(f.name);
+        return;
+      }
       files.push(f);
     });
     renderFileList();
+    if (rejected.length) {
+      alert('Skipped ' + rejected.length + ' file(s) over the 8 MB limit:\n' + rejected.join('\n') +
+        '\n\nBrowser-based processing can freeze the tab on very large files. Split large files into smaller chunks (under ~' + MAX_ROWS_HINT.toLocaleString() + ' rows) first.');
+    }
   }
 
   function renderFileList() {
