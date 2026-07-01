@@ -82,6 +82,7 @@ cloudflare.com"></textarea>
     <p>Lookups are performed using Google's public DNS-over-HTTPS resolver, queried directly from your browser for each domain in your list. This is the same DNS system that resolves domains to IPs everywhere on the internet — the tool just gives you the raw records instead of silently using them to load a page.</p>
     <h2>SSL expiry check</h2>
     <p>Checking SSL certificate expiry requires an actual TLS handshake, which a browser can't perform against an arbitrary domain due to security restrictions. Selecting "SSL Expiry" as the record type routes the check through a small server-side helper instead, which looks up the domain's most recently issued certificate via Certificate Transparency logs (crt.sh) — no API key, and accurate for any publicly trusted certificate.</p>
+    <p>crt.sh is a free community-run service, and it's occasionally slow or briefly overloaded — you may see a timeout or a "temporarily overloaded" error even for an ordinary domain. This isn't a bug in this tool; simply retrying the lookup a moment later almost always works.</p>
 
     <h2>Understanding record types</h2>
     <h3>A vs AAAA</h3>
@@ -98,6 +99,8 @@ cloudflare.com"></textarea>
     <p>Yes — enter the full subdomain (like <code>mail.example.com</code>) exactly as you would the root domain, one per line, and it resolves independently.</p>
     <h3>Why is DNS propagation sometimes slow after I change a record?</h3>
     <p>DNS records are cached at multiple layers (your router, your ISP, public resolvers) for a duration set by that record's TTL. A change you make at your registrar won't be visible everywhere until every cache holding the old value expires, which is why the same lookup can return different results depending on where it's run from.</p>
+    <h3>Why did my SSL check fail or time out?</h3>
+    <p>The SSL check depends on crt.sh, a free public service that isn't always perfectly reliable — it can time out or briefly return a server error even for an ordinary, unremarkable domain. This is on crt.sh's end, not a sign the domain itself has a problem. Waiting a few seconds and retrying almost always resolves it.</p>
   </div>
 </section>
 
