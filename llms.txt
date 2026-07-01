@@ -1,0 +1,14 @@
+# FreeToolDev
+
+> Free bulk/batch utility tools for developers and designers. All tools run client-side in the browser — no signup, no file uploads to a server.
+
+## Tools
+- [Bulk Image Resize / Convert / Compress](https://freetooldev.com/tools/image-batch.html): Resize, convert, and compress many images at once (PNG, JPG, WebP).
+- [CSV to JSON (Batch)](https://freetooldev.com/tools/csv-to-json.html): Convert multiple CSV files to JSON at once.
+- [Base64 Encode / Decode](https://freetooldev.com/tools/base64.html): Convert text to/from Base64, with batch line processing.
+- [RSS Generator](https://freetooldev.com/tools/rss-generator.html): Generate a valid RSS 2.0 feed from a list of items.
+- [Sitemap Generator](https://freetooldev.com/tools/sitemap-generator.html): Generate a sitemap.xml from a list of URLs.
+- [IP / DNS Bulk Lookup](https://freetooldev.com/tools/ip-dns-ssl.html): Look up DNS records for multiple domains at once.
+
+## Blog
+- [Blog index](https://freetooldev.com/blog/index.html)
