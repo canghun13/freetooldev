@@ -66,9 +66,22 @@ Second Post | https://example.com/second | 2026-06-28"></textarea>
 </section>
 
 <section class="section-navy">
-  <div class="wrap" style="max-width:720px;">
+  <div class="wrap prose" style="max-width:720px;">
     <h2>Format reference</h2>
-    <p>Each line needs three parts separated by a pipe character: the item title, its URL, and a date in YYYY-MM-DD format. Lines that don't match this pattern are skipped.</p>
+    <p>Each line needs three parts separated by a pipe character: the item title, its URL, and a date in YYYY-MM-DD format. Lines that don't match this pattern are skipped, so a typo'd separator won't break the rest of the feed — it just silently drops that one line, which is worth double-checking your item count against your input.</p>
+
+    <h2>Why static sites need this</h2>
+    <p>A hand-built static site or a small documentation set often has no build step that generates a feed automatically the way WordPress or most blogging platforms do by default. Without one, there's no way for a feed reader, or another site's "latest posts" widget, to know when you've published something new — visitors have to check back manually. A generated <code>rss.xml</code> fixes that with no server required.</p>
+
+    <h2>FAQ</h2>
+    <h3>Where do I put the generated rss.xml file?</h3>
+    <p>At your site's root, alongside <code>index.html</code>, so it's reachable at <code>yoursite.com/rss.xml</code>. Then add a <code>&lt;link rel="alternate" type="application/rss+xml"&gt;</code> tag in your page's <code>&lt;head&gt;</code> so feed readers and browsers can auto-discover it.</p>
+    <h3>Do I need to regenerate the whole feed every time I publish?</h3>
+    <p>Yes, with this tool — it's not connected to your site, so each time you add a new post, paste your full updated item list back in and regenerate. For a handful of posts a month, that's a minor step; for high-frequency publishing, a build-time script is worth setting up instead.</p>
+    <h3>Why does my feed reader show the wrong publish time?</h3>
+    <p>Since only a date (not a time) is entered, this tool sets every item's time to midnight UTC. If your feed reader displays times in your local timezone, dates can appear to shift by a few hours — the date itself is still correct, just the implied time isn't meaningful.</p>
+    <h3>Is RSS still relevant in 2026?</h3>
+    <p>For a general audience, RSS usage has declined since its early-2010s peak, but it never went away for developer blogs, documentation sites, and podcasts — feed readers, IDE plugins, and automation tools (like triggering a build when a feed updates) still rely on it directly. It's a low-cost addition with a small but real audience.</p>
   </div>
 </section>
 
