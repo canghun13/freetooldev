@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sitemaps for Static Sites: GitHub Pages, Netlify, and Vercel — FreeToolDev</title>
+<meta name="description" content="Static site generators don't always create a sitemap.xml for you. Here's how to generate and submit one, whichever host you're on.">
+<link rel="canonical" href="https://freetooldev.com/blog/sitemap-static-sites.html">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer data-root="../" src="/assets/js/include.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 1, 2026</div>
+  <h1>Sitemaps for Static Sites: GitHub Pages, Netlify, and Vercel</h1>
+
+  <p>A plain HTML site, or a small static site generator setup, doesn't always come with a sitemap.xml out of the box. If your framework doesn't generate one automatically, search engines are left to discover your pages purely by following links — which works, but slower and less reliably than handing them a map directly.</p>
+
+  <h2>Do you actually need one?</h2>
+  <p>For a five-page site, probably not urgently. For anything with more than a handful of pages, a tool directory, a blog, a documentation set, yes — a sitemap is one of the cheapest SEO wins available, and it costs nothing to add.</p>
+
+  <h2>GitHub Pages</h2>
+  <p>GitHub Pages serves whatever static files sit in your repository, so a <code>sitemap.xml</code> just needs to exist at your site root alongside <code>index.html</code>. There's no build step involved — you generate it once, commit it, and update it whenever you add pages.</p>
+
+  <h2>Netlify and Vercel</h2>
+  <p>Both platforms serve static files the same way GitHub Pages does, so the same approach works: drop <code>sitemap.xml</code> in your publish directory. If you're using a framework with a build step, check whether it has a sitemap plugin — Next.js and most static site generators have one — but a hand-generated file works identically for smaller sites, and it's often simpler than configuring a plugin correctly.</p>
+
+  <h2>After you have the file</h2>
+  <p>Add a line to your <code>robots.txt</code> pointing to it (<code>Sitemap: https://yoursite.com/sitemap.xml</code>), then submit the URL in Google Search Console under Sitemaps. That's the entire process — no crawling delay to wait out on your end, submission is instant even if indexing takes longer.</p>
+
+  <h2>Generate one now</h2>
+  <p>FreeToolDev's <a href="/tools/sitemap-generator.html">sitemap generator</a> turns a pasted list of URLs into a valid sitemap.xml instantly, and the <a href="/tools/rss-generator.html">RSS generator</a> covers the other file most static blogs are missing.</p>
+</article>
+
+<div id="site-footer"></div>
+
+</body>
+</html>
