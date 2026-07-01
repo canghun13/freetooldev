@@ -1,12 +1,144 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FreeToolDev — Bulk utility tools for developers</title>
+<title>FreeToolDev — Free Bulk Utility Tools for Developers</title>
+<meta name="description" content="Base64, CSV to JSON, bulk image resize/convert/compress, RSS & sitemap generators. Process files in batches, not one at a time. No install, no signup, 100% free — runs in your browser.">
+<link rel="canonical" href="https://freetooldev.com/">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer data-root="/" src="/assets/js/include.js"></script>
+<script defer src="/assets/js/analytics.js"></script>
 </head>
 <body>
-<h1>FreeToolDev</h1>
-<p>Coming soon — bulk/batch utility tools for developers &amp; designers.</p>
+
+<div id="site-header"></div>
+
+<section class="hero blueprint-bg">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">BATCH-01 · Bulk utility tools</span>
+      <h1>Stop doing it one<br>file at a time.</h1>
+      <p class="lede">Free utility tools for developers and designers. Most tools handle one file, one string, at a time. FreeToolDev is built from the ground up to process dozens at once — no install, no signup, no upload to a server.</p>
+      <div class="hero-actions">
+        <a href="/tools/index.html" class="btn btn-amber">Browse all tools →</a>
+        <a href="#tools" class="btn btn-outline">Jump to core tools</a>
+      </div>
+    </div>
+    <div class="batch-panel">
+      <div class="panel-head">
+        <span>image-batch.queue</span>
+        <span class="count" id="queueCount">0 / 6</span>
+      </div>
+      <div class="queue" id="queueDemo">
+        <div class="queue-item"><span class="name">banner-01.png</span><span class="status">WAIT</span></div>
+        <div class="queue-item"><span class="name">banner-02.png</span><span class="status">WAIT</span></div>
+        <div class="queue-item"><span class="name">thumbnail-a.jpg</span><span class="status">WAIT</span></div>
+        <div class="queue-item"><span class="name">thumbnail-b.jpg</span><span class="status">WAIT</span></div>
+        <div class="queue-item"><span class="name">og-cover.png</span><span class="status">WAIT</span></div>
+        <div class="queue-item"><span class="name">icon-set.svg</span><span class="status">WAIT</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-paper" id="tools">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow" style="color:#C4852A;">SPEC · Core tools</span>
+      <h2 class="mt-0">Six core tools</h2>
+      <p>Everything runs client-side. Your files never touch a server.</p>
+    </div>
+    <div class="tool-grid">
+      <a class="tool-card" href="/tools/image-batch.html">
+        <span class="tag">Image · Batch</span>
+        <h3>Bulk Image Resize / Convert / Compress</h3>
+        <p>Resize, convert, or compress dozens of images at once. PNG, JPG, and WebP supported.</p>
+      </a>
+      <a class="tool-card" href="/tools/csv-to-json.html">
+        <span class="tag">Data · Batch</span>
+        <h3>CSV to JSON (Batch)</h3>
+        <p>Upload multiple CSV files and convert them all to JSON in one pass.</p>
+      </a>
+      <a class="tool-card" href="/tools/base64.html">
+        <span class="tag">Encode · Decode</span>
+        <h3>Base64 Encode / Decode</h3>
+        <p>Convert between text and Base64. Process multi-line input as a batch.</p>
+      </a>
+      <a class="tool-card" href="/tools/rss-generator.html">
+        <span class="tag">Content</span>
+        <h3>RSS Generator</h3>
+        <p>Enter titles, links, and dates — get a valid RSS 2.0 feed instantly.</p>
+      </a>
+      <a class="tool-card" href="/tools/sitemap-generator.html">
+        <span class="tag">SEO</span>
+        <h3>Sitemap Generator</h3>
+        <p>Paste a list of URLs and generate a ready-to-use sitemap.xml.</p>
+      </a>
+      <a class="tool-card" href="/tools/ip-dns-ssl.html">
+        <span class="tag">Network</span>
+        <h3>IP / DNS / SSL Bulk Lookup</h3>
+        <p>Check IP, DNS records, and SSL expiry for a whole list of domains at once.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy blueprint-bg" id="about">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">WHY</span>
+      <h2 class="mt-0">Why "batch" matters</h2>
+      <p>Converting one file is easy enough to ask an AI to do. The time actually gets lost when you have to repeat that ten times, or a hundred. FreeToolDev exists to remove that repetition.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section-paper">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow" style="color:#C4852A;">Blog</span>
+      <h2 class="mt-0">Latest posts</h2>
+    </div>
+    <div class="post-grid">
+      <a class="post-card" href="/blog/batch-vs-ai-image-convert.html">
+        <div class="post-meta">Guide</div>
+        <h3>Converting 100 Images: AI or a Tool?</h3>
+        <p>For one or two files, AI is faster. Past a dozen, the math changes completely.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var items = document.querySelectorAll('#queueDemo .queue-item');
+    var countEl = document.getElementById('queueCount');
+    var i = 0;
+    function step() {
+      if (i >= items.length) {
+        setTimeout(function () {
+          items.forEach(function (el) { el.classList.remove('done'); el.querySelector('.status').textContent = 'WAIT'; });
+          countEl.textContent = '0 / ' + items.length;
+          i = 0;
+          setTimeout(step, 1200);
+        }, 1600);
+        return;
+      }
+      items[i].classList.add('done');
+      items[i].querySelector('.status').textContent = 'DONE';
+      i++;
+      countEl.textContent = i + ' / ' + items.length;
+      setTimeout(step, 550);
+    }
+    setTimeout(step, 900);
+  });
+</script>
+
 </body>
 </html>
