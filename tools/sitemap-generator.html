@@ -75,9 +75,20 @@ https://example.com/blog/"></textarea>
 </section>
 
 <section class="section-navy">
-  <div class="wrap" style="max-width:720px;">
+  <div class="wrap prose" style="max-width:720px;">
     <h2>After generating</h2>
-    <p>Upload the file to your site root as <code>sitemap.xml</code>, then submit it in Google Search Console under Sitemaps. Invalid or duplicate URLs in your list are skipped automatically.</p>
+    <p>Upload the file to your site root as <code>sitemap.xml</code>, then submit it in Google Search Console under Sitemaps. Invalid or duplicate URLs in your list are skipped automatically, so you don't need to manually de-duplicate a pasted list before generating.</p>
+
+    <h2>What priority and changefreq actually do</h2>
+    <p>Both fields are hints, not instructions — Google has said publicly that it largely ignores <code>priority</code> and treats <code>changefreq</code> as a loose signal at best, deciding crawl frequency mostly from its own observed update patterns. Setting them doesn't force different behavior, but they're still part of the sitemap spec and some other crawlers and tools do read them, so it's worth setting reasonable values rather than leaving defaults everywhere.</p>
+
+    <h2>FAQ</h2>
+    <h3>Does a sitemap guarantee my pages get indexed?</h3>
+    <p>No. A sitemap tells search engines a page exists and gives them an easy way to find it, but indexing still depends on content quality, crawl budget, and whether the page is otherwise deemed worth including. Think of it as removing "we didn't know this page existed" as a possible reason for a page to be missed — it doesn't override other ranking or indexing decisions.</p>
+    <h3>How many URLs can one sitemap file hold?</h3>
+    <p>The sitemap protocol caps a single file at 50,000 URLs or 50 MB uncompressed. Sites larger than that use a sitemap index file that points to multiple smaller sitemaps — most personal and small business sites never come close to needing this.</p>
+    <h3>Do I need to resubmit the sitemap every time I add a page?</h3>
+    <p>Not strictly — once Google Search Console has a sitemap URL, it periodically re-fetches it on its own. But if you've just added several new pages and want faster discovery, generating an updated file and resubmitting it does prompt a fresh crawl rather than waiting for the next scheduled check.</p>
   </div>
 </section>
 
