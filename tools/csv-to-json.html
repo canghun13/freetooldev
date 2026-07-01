@@ -106,12 +106,31 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // Reads a file as text, auto-detecting encoding. Korean CSV files exported
+  // from Excel are very commonly EUC-KR, not UTF-8 — reading them as UTF-8
+  // silently corrupts every non-ASCII character. We try strict UTF-8 first
+  // (fatal: true throws on invalid byte sequences) and fall back to EUC-KR.
   function readFile(file) {
     return new Promise(function (resolve, reject) {
       var reader = new FileReader();
-      reader.onload = function (e) { resolve(e.target.result); };
+      reader.onload = function (e) {
+        var buffer = e.target.result;
+        try {
+          var utf8Decoder = new TextDecoder('utf-8', { fatal: true });
+          resolve(utf8Decoder.decode(buffer));
+        } catch (err) {
+          try {
+            var eucKrDecoder = new TextDecoder('euc-kr');
+            resolve(eucKrDecoder.decode(buffer));
+          } catch (err2) {
+            // Last resort: lenient UTF-8 (may show replacement characters
+            // for truly unsupported encodings, but never crashes).
+            resolve(new TextDecoder('utf-8').decode(buffer));
+          }
+        }
+      };
       reader.onerror = reject;
-      reader.readAsText(file);
+      reader.readAsArrayBuffer(file);
     });
   }
 
