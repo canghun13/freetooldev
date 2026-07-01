@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IP / DNS Bulk Lookup — Free Tool | FreeToolDev</title>
+<meta name="description" content="Look up IP addresses and DNS records (A, AAAA, MX, TXT, NS) for a whole list of domains at once. Free, no signup.">
+<link rel="canonical" href="https://freetooldev.com/tools/ip-dns-ssl.html">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer data-root="../" src="/assets/js/include.js"></script>
+<script defer src="/assets/js/analytics.js"></script>
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Network</span>
+    <h1>IP / DNS Bulk Lookup</h1>
+    <p>Enter multiple domains, one per line, and check their IP addresses and DNS records in one pass.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>Domains (one per line)</h3>
+      <textarea id="domains" placeholder="example.com
+github.com
+cloudflare.com"></textarea>
+      <div class="opt-row" style="margin-top:14px;">
+        <div>
+          <label>Record type</label>
+          <select id="recordType">
+            <option value="A">A (IPv4)</option>
+            <option value="AAAA">AAAA (IPv6)</option>
+            <option value="MX">MX</option>
+            <option value="TXT">TXT</option>
+            <option value="NS">NS</option>
+          </select>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="lookupBtn">Look up all →</button>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>Results</h3>
+      <div id="resultArea"><p class="result-empty">// Results will appear here</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy" style="padding-top:0;">
+  <div class="wrap" style="max-width:720px;">
+    <h2>How it works</h2>
+    <p>Lookups are performed using Google's public DNS-over-HTTPS resolver, queried directly from your browser for each domain in your list.</p>
+    <h2>SSL expiry check</h2>
+    <p>Checking SSL certificate expiry requires an actual TLS handshake, which a browser can't perform against an arbitrary domain due to security restrictions. This needs a small server-side helper — it's on the roadmap for this tool.</p>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var resultArea = document.getElementById('resultArea');
+
+  function formatAnswer(type, answer) {
+    if (!answer || answer.length === 0) return '<span style="color:#b04545;">no records found</span>';
+    return answer.map(function (a) {
+      if (type === 'MX') return esc(a.data);
+      return esc(a.data);
+    }).join('<br>');
+  }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  document.getElementById('lookupBtn').addEventListener('click', function () {
+    var domains = document.getElementById('domains').value.split('\n')
+      .map(function (d) { return d.trim(); }).filter(Boolean);
+    var type = document.getElementById('recordType').value;
+
+    if (domains.length === 0) { alert('Enter at least one domain.'); return; }
+
+    resultArea.innerHTML = '';
+    domains.forEach(function (domain) {
+      var row = document.createElement('div');
+      row.className = 'file-row';
+      row.style.alignItems = 'flex-start';
+      row.innerHTML = '<span class="fname">' + esc(domain) + '</span><span class="fstatus" id="status-' + domain.replace(/[^a-z0-9]/gi, '') + '">querying…</span>';
+      resultArea.appendChild(row);
+
+      fetch('https://dns.google/resolve?name=' + encodeURIComponent(domain) + '&type=' + type)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          var statusEl = row.querySelector('.fstatus');
+          statusEl.innerHTML = formatAnswer(type, data.Answer);
+          statusEl.style.textAlign = 'right';
+        })
+        .catch(function () {
+          row.querySelector('.fstatus').textContent = 'lookup failed';
+        });
+    });
+  });
+});
+</script>
+
+</body>
+</html>

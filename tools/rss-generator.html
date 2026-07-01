@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RSS Feed Generator — Free Tool | FreeToolDev</title>
+<meta name="description" content="Generate a valid RSS 2.0 feed from a simple list of titles, links, and dates. Free, instant, no server needed.">
+<link rel="canonical" href="https://freetooldev.com/tools/rss-generator.html">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer data-root="../" src="/assets/js/include.js"></script>
+<script defer src="/assets/js/analytics.js"></script>
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Content</span>
+    <h1>RSS Feed Generator</h1>
+    <p>Fill in your feed details and add items in bulk — one line per item — to generate a valid RSS 2.0 XML feed.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel" style="margin-bottom:20px;">
+      <h3>Feed info</h3>
+      <div class="opt-row">
+        <div><label>Feed title</label><input type="text" id="feedTitle" value="My Site"></div>
+        <div><label>Feed URL</label><input type="text" id="feedLink" value="https://example.com"></div>
+        <div><label>Description</label><input type="text" id="feedDesc" value="Latest updates"></div>
+      </div>
+    </div>
+
+    <div class="workspace-grid" style="grid-template-columns: 1fr 1fr;">
+      <div class="panel">
+        <h3>Items (batch)</h3>
+        <label>One item per line: Title | URL | YYYY-MM-DD</label>
+        <textarea id="items" placeholder="Hello World | https://example.com/hello | 2026-07-01
+Second Post | https://example.com/second | 2026-06-28"></textarea>
+        <div class="toolbar">
+          <button class="btn btn-amber" id="genBtn">Generate feed →</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>rss.xml</h3>
+        <textarea id="output" readonly placeholder="Generated XML appears here."></textarea>
+        <div class="toolbar">
+          <button class="btn btn-outline" id="copyBtn">Copy XML</button>
+          <button class="btn btn-outline" id="downloadBtn">Download rss.xml</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy" style="padding-top:0;">
+  <div class="wrap" style="max-width:720px;">
+    <h2>Format reference</h2>
+    <p>Each line needs three parts separated by a pipe character: the item title, its URL, and a date in YYYY-MM-DD format. Lines that don't match this pattern are skipped.</p>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  document.getElementById('genBtn').addEventListener('click', function () {
+    var title = document.getElementById('feedTitle').value || 'My Site';
+    var link = document.getElementById('feedLink').value || 'https://example.com';
+    var desc = document.getElementById('feedDesc').value || '';
+    var lines = document.getElementById('items').value.split('\n').filter(function (l) { return l.trim(); });
+
+    var items = lines.map(function (line) {
+      var parts = line.split('|').map(function (p) { return p.trim(); });
+      if (parts.length < 2) return '';
+      var itemTitle = parts[0];
+      var itemLink = parts[1];
+      var dateStr = parts[2] || new Date().toISOString().slice(0, 10);
+      var pubDate = new Date(dateStr).toUTCString();
+      return '  <item>\n' +
+        '    <title>' + esc(itemTitle) + '</title>\n' +
+        '    <link>' + esc(itemLink) + '</link>\n' +
+        '    <guid>' + esc(itemLink) + '</guid>\n' +
+        '    <pubDate>' + pubDate + '</pubDate>\n' +
+        '  </item>';
+    }).filter(Boolean).join('\n');
+
+    var xml = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      '<rss version="2.0">\n' +
+      '<channel>\n' +
+      '  <title>' + esc(title) + '</title>\n' +
+      '  <link>' + esc(link) + '</link>\n' +
+      '  <description>' + esc(desc) + '</description>\n' +
+      items + '\n' +
+      '</channel>\n' +
+      '</rss>';
+
+    document.getElementById('output').value = xml;
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', function () {
+    var v = document.getElementById('output').value;
+    if (!v) return;
+    navigator.clipboard.writeText(v);
+    var btn = document.getElementById('copyBtn');
+    var old = btn.textContent; btn.textContent = 'Copied ✓';
+    setTimeout(function () { btn.textContent = old; }, 1200);
+  });
+
+  document.getElementById('downloadBtn').addEventListener('click', function () {
+    var v = document.getElementById('output').value;
+    if (!v) return;
+    var blob = new Blob([v], { type: 'application/rss+xml' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'rss.xml';
+    a.click();
+  });
+});
+</script>
+
+</body>
+</html>

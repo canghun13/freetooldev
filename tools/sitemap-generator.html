@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sitemap.xml Generator — Free Tool | FreeToolDev</title>
+<meta name="description" content="Paste a list of URLs and generate a valid sitemap.xml instantly. Free, no server needed.">
+<link rel="canonical" href="https://freetooldev.com/tools/sitemap-generator.html">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer data-root="../" src="/assets/js/include.js"></script>
+<script defer src="/assets/js/analytics.js"></script>
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">SEO</span>
+    <h1>Sitemap.xml Generator</h1>
+    <p>Paste one URL per line. Optionally set priority and change frequency for the whole batch, then generate a ready-to-submit sitemap.xml.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel" style="margin-bottom:20px;">
+      <div class="opt-row" style="margin-bottom:0;">
+        <div>
+          <label>Change frequency</label>
+          <select id="freq">
+            <option value="daily">daily</option>
+            <option value="weekly" selected>weekly</option>
+            <option value="monthly">monthly</option>
+            <option value="yearly">yearly</option>
+          </select>
+        </div>
+        <div>
+          <label>Priority (0.0 – 1.0)</label>
+          <input type="text" id="priority" value="0.8">
+        </div>
+      </div>
+    </div>
+
+    <div class="workspace-grid" style="grid-template-columns: 1fr 1fr;">
+      <div class="panel">
+        <h3>URLs (one per line)</h3>
+        <textarea id="urls" placeholder="https://example.com/
+https://example.com/tools/
+https://example.com/blog/"></textarea>
+        <div class="toolbar">
+          <button class="btn btn-amber" id="genBtn">Generate sitemap →</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>sitemap.xml</h3>
+        <textarea id="output" readonly placeholder="Generated XML appears here."></textarea>
+        <div class="toolbar">
+          <button class="btn btn-outline" id="copyBtn">Copy XML</button>
+          <button class="btn btn-outline" id="downloadBtn">Download sitemap.xml</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy" style="padding-top:0;">
+  <div class="wrap" style="max-width:720px;">
+    <h2>After generating</h2>
+    <p>Upload the file to your site root as <code>sitemap.xml</code>, then submit it in Google Search Console under Sitemaps. Invalid or duplicate URLs in your list are skipped automatically.</p>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  document.getElementById('genBtn').addEventListener('click', function () {
+    var freq = document.getElementById('freq').value;
+    var priority = document.getElementById('priority').value || '0.8';
+    var lines = document.getElementById('urls').value.split('\n')
+      .map(function (l) { return l.trim(); })
+      .filter(function (l, idx, arr) { return l && /^https?:\/\//.test(l) && arr.indexOf(l) === idx; });
+
+    var today = new Date().toISOString().slice(0, 10);
+
+    var urlBlocks = lines.map(function (u) {
+      return '  <url>\n' +
+        '    <loc>' + esc(u) + '</loc>\n' +
+        '    <lastmod>' + today + '</lastmod>\n' +
+        '    <changefreq>' + freq + '</changefreq>\n' +
+        '    <priority>' + priority + '</priority>\n' +
+        '  </url>';
+    }).join('\n');
+
+    var xml = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+      urlBlocks + '\n' +
+      '</urlset>';
+
+    document.getElementById('output').value = xml;
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', function () {
+    var v = document.getElementById('output').value;
+    if (!v) return;
+    navigator.clipboard.writeText(v);
+    var btn = document.getElementById('copyBtn');
+    var old = btn.textContent; btn.textContent = 'Copied ✓';
+    setTimeout(function () { btn.textContent = old; }, 1200);
+  });
+
+  document.getElementById('downloadBtn').addEventListener('click', function () {
+    var v = document.getElementById('output').value;
+    if (!v) return;
+    var blob = new Blob([v], { type: 'application/xml' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'sitemap.xml';
+    a.click();
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Image Resize, Convert & Compress — Free Tool | FreeToolDev</title>
+<meta name="description" content="Resize, convert, and compress dozens of images at once. PNG, JPG, WebP. Download individually or as a ZIP. Free, runs in your browser.">
+<link rel="canonical" href="https://freetooldev.com/tools/image-batch.html">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer data-root="../" src="/assets/js/include.js"></script>
+<script defer src="/assets/js/analytics.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Image · Batch</span>
+    <h1>Bulk Image Resize / Convert / Compress</h1>
+    <p>Upload as many images as you need. Set a target size, output format, and quality once — apply it to every image in the batch.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>1. Upload images</h3>
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" multiple>
+        Drag images here or click to browse<br>
+        <span style="font-size:0.78rem;">PNG, JPG, WebP — multiple selection supported</span>
+      </div>
+      <div class="file-list" id="fileList"></div>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>2. Batch settings</h3>
+      <div class="opt-row">
+        <div>
+          <label>Resize mode</label>
+          <select id="resizeMode">
+            <option value="none">Keep original size</option>
+            <option value="width">Fit to width (px)</option>
+            <option value="max">Fit within max width/height (px)</option>
+          </select>
+        </div>
+        <div>
+          <label>Target size (px)</label>
+          <input type="text" id="targetSize" value="1200">
+        </div>
+        <div>
+          <label>Output format</label>
+          <select id="format">
+            <option value="image/jpeg">JPG</option>
+            <option value="image/png">PNG</option>
+            <option value="image/webp">WebP</option>
+          </select>
+        </div>
+        <div>
+          <label>Quality (JPG/WebP only)</label>
+          <input type="text" id="quality" value="0.8">
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="processBtn">Process all →</button>
+        <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download all as ZIP</button>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>3. Results</h3>
+      <div id="resultArea"><p class="result-empty">// Processed images will appear here</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy" style="padding-top:0;">
+  <div class="wrap" style="max-width:720px;">
+    <h2>How it works</h2>
+    <p>Each image is drawn onto an HTML canvas at the target dimensions, then re-encoded in the format and quality you choose. This all happens locally in your browser using the Canvas API — files are never uploaded anywhere.</p>
+    <h2>Limits</h2>
+    <p>Browser-based processing works well for typical batches (tens of images, tens of MB total). Very large batches or very high-resolution source images may slow down depending on your device.</p>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var dropzone = document.getElementById('dropzone');
+  var fileInput = document.getElementById('fileInput');
+  var fileList = document.getElementById('fileList');
+  var resultArea = document.getElementById('resultArea');
+  var downloadZipBtn = document.getElementById('downloadZipBtn');
+  var files = [];
+  var results = [];
+
+  dropzone.addEventListener('click', function () { fileInput.click(); });
+  dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
+  dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('drag'); });
+  dropzone.addEventListener('drop', function (e) {
+    e.preventDefault(); dropzone.classList.remove('drag');
+    addFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', function () { addFiles(fileInput.files); });
+
+  function addFiles(list) {
+    Array.from(list).forEach(function (f) {
+      if (!f.type.startsWith('image/')) return;
+      files.push(f);
+    });
+    renderFileList();
+  }
+
+  function renderFileList() {
+    fileList.innerHTML = '';
+    files.forEach(function (f) {
+      var row = document.createElement('div');
+      row.className = 'file-row';
+      row.innerHTML = '<span class="fname">' + f.name + '</span><span class="fsize">' + (f.size / 1024).toFixed(1) + ' KB</span><span class="fstatus">pending</span>';
+      fileList.appendChild(row);
+    });
+  }
+
+  function extFor(mime) {
+    return mime === 'image/png' ? 'png' : (mime === 'image/webp' ? 'webp' : 'jpg');
+  }
+
+  function processImage(file) {
+    return new Promise(function (resolve) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var img = new Image();
+        img.onload = function () {
+          var mode = document.getElementById('resizeMode').value;
+          var target = parseInt(document.getElementById('targetSize').value) || img.width;
+          var w = img.width, h = img.height;
+
+          if (mode === 'width') {
+            h = Math.round(h * (target / w));
+            w = target;
+          } else if (mode === 'max') {
+            var scale = Math.min(target / w, target / h, 1);
+            w = Math.round(w * scale);
+            h = Math.round(h * scale);
+          }
+
+          var canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          var format = document.getElementById('format').value;
+          var quality = parseFloat(document.getElementById('quality').value) || 0.8;
+
+          canvas.toBlob(function (blob) {
+            var newName = file.name.replace(/\.[^.]+$/, '') + '.' + extFor(format);
+            resolve({ name: newName, blob: blob, size: blob.size, w: w, h: h });
+          }, format, quality);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById('processBtn').addEventListener('click', function () {
+    if (files.length === 0) { alert('Upload at least one image first.'); return; }
+    results = [];
+    resultArea.innerHTML = '';
+    var rows = document.querySelectorAll('.file-row');
+
+    Promise.all(files.map(function (f, idx) {
+      return processImage(f).then(function (r) {
+        results[idx] = r;
+        rows[idx].classList.add('ready');
+        rows[idx].querySelector('.fstatus').textContent = 'done';
+
+        var url = URL.createObjectURL(r.blob);
+        var block = document.createElement('div');
+        block.className = 'file-row ready';
+        block.innerHTML = '<span class="fname">' + r.name + '</span><span class="fsize">' + r.w + '×' + r.h + ' · ' + (r.size / 1024).toFixed(1) + ' KB</span>' +
+          '<a class="btn btn-outline" style="padding:6px 12px; font-size:0.75rem;" href="' + url + '" download="' + r.name + '">Download</a>';
+        resultArea.appendChild(block);
+      });
+    })).then(function () {
+      downloadZipBtn.style.display = 'inline-flex';
+    });
+  });
+
+  downloadZipBtn.addEventListener('click', function () {
+    var zip = new JSZip();
+    results.forEach(function (r) { zip.file(r.name, r.blob); });
+    zip.generateAsync({ type: 'blob' }).then(function (blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'images-batch.zip';
+      a.click();
+    });
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSV to JSON — Batch Converter | FreeToolDev</title>
+<meta name="description" content="Convert multiple CSV files to JSON at once. Drag and drop, download individually or as a ZIP, completely free.">
+<link rel="canonical" href="https://freetooldev.com/tools/csv-to-json.html">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer data-root="../" src="/assets/js/include.js"></script>
+<script defer src="/assets/js/analytics.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Data · Batch</span>
+    <h1>CSV to JSON (Batch)</h1>
+    <p>Upload multiple CSV files at once and convert each one to JSON. Download results individually or grab them all as a ZIP.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>1. Upload CSV files (multi-select supported)</h3>
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept=".csv" multiple>
+        Drag files here or click to browse<br>
+        <span style="font-size:0.78rem;">.csv files, multiple selection supported</span>
+      </div>
+      <div class="file-list" id="fileList"></div>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="convertBtn">Convert all →</button>
+        <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download all as ZIP</button>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>2. Preview results</h3>
+      <div id="previewArea"><p class="result-empty">// Converted results will appear here</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy" style="padding-top:0;">
+  <div class="wrap" style="max-width:720px;">
+    <h2>How it works</h2>
+    <p>The first row is treated as the header and each subsequent row becomes a JSON object. Quoted values containing commas are handled correctly. Files are processed locally — nothing is uploaded to a server.</p>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var dropzone = document.getElementById('dropzone');
+  var fileInput = document.getElementById('fileInput');
+  var fileList = document.getElementById('fileList');
+  var previewArea = document.getElementById('previewArea');
+  var downloadZipBtn = document.getElementById('downloadZipBtn');
+  var files = [];
+  var results = [];
+
+  dropzone.addEventListener('click', function () { fileInput.click(); });
+  dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
+  dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('drag'); });
+  dropzone.addEventListener('drop', function (e) {
+    e.preventDefault(); dropzone.classList.remove('drag');
+    addFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', function () { addFiles(fileInput.files); });
+
+  function addFiles(list) {
+    Array.from(list).forEach(function (f) {
+      if (!f.name.toLowerCase().endsWith('.csv')) return;
+      files.push(f);
+    });
+    renderFileList();
+  }
+
+  function renderFileList() {
+    fileList.innerHTML = '';
+    files.forEach(function (f) {
+      var row = document.createElement('div');
+      row.className = 'file-row';
+      row.innerHTML = '<span class="fname">' + f.name + '</span><span class="fsize">' + (f.size / 1024).toFixed(1) + ' KB</span><span class="fstatus">pending</span>';
+      fileList.appendChild(row);
+    });
+  }
+
+  function parseCSV(text) {
+    var lines = text.split(/\r?\n/).filter(function (l) { return l.trim().length > 0; });
+    if (lines.length === 0) return [];
+    var headers = splitCSVLine(lines[0]);
+    return lines.slice(1).map(function (line) {
+      var cells = splitCSVLine(line);
+      var obj = {};
+      headers.forEach(function (h, i) { obj[h] = cells[i] !== undefined ? cells[i] : ''; });
+      return obj;
+    });
+  }
+
+  function splitCSVLine(line) {
+    var result = [];
+    var cur = '';
+    var inQuotes = false;
+    for (var i = 0; i < line.length; i++) {
+      var c = line[i];
+      if (c === '"') { inQuotes = !inQuotes; }
+      else if (c === ',' && !inQuotes) { result.push(cur.trim()); cur = ''; }
+      else { cur += c; }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+
+  document.getElementById('convertBtn').addEventListener('click', function () {
+    if (files.length === 0) { alert('Upload at least one CSV file first.'); return; }
+    results = [];
+    previewArea.innerHTML = '';
+    var rows = document.querySelectorAll('.file-row');
+
+    var pending = files.length;
+    files.forEach(function (f, idx) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var json = parseCSV(e.target.result);
+        var jsonStr = JSON.stringify(json, null, 2);
+        results[idx] = { name: f.name.replace(/\.csv$/i, '.json'), content: jsonStr };
+        rows[idx].classList.add('ready');
+        rows[idx].querySelector('.fstatus').textContent = 'done';
+
+        var block = document.createElement('div');
+        block.className = 'panel';
+        block.style.marginBottom = '12px';
+        block.innerHTML = '<h3>' + f.name + ' → ' + results[idx].name + '</h3>' +
+          '<textarea readonly style="min-height:140px;">' + jsonStr + '</textarea>' +
+          '<div class="toolbar"><button class="btn btn-outline dl-single" data-idx="' + idx + '">Download</button></div>';
+        previewArea.appendChild(block);
+
+        pending--;
+        if (pending === 0) {
+          downloadZipBtn.style.display = 'inline-flex';
+          attachSingleDownloads();
+        }
+      };
+      reader.readAsText(f);
+    });
+  });
+
+  function attachSingleDownloads() {
+    document.querySelectorAll('.dl-single').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var r = results[parseInt(btn.dataset.idx)];
+        downloadText(r.name, r.content);
+      });
+    });
+  }
+
+  function downloadText(name, content) {
+    var blob = new Blob([content], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+  }
+
+  downloadZipBtn.addEventListener('click', function () {
+    var zip = new JSZip();
+    results.forEach(function (r) { zip.file(r.name, r.content); });
+    zip.generateAsync({ type: 'blob' }).then(function (blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'csv-to-json-results.zip';
+      a.click();
+    });
+  });
+});
+</script>
+
+</body>
+</html>
