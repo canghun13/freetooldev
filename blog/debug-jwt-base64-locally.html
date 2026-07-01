@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Debugging JWTs and Base64 Tokens Without Sending Them to a Server — FreeToolDev</title>
+<meta name="description" content="Pasting a live JWT or API token into a random online decoder is a bad habit. Here's how to decode Base64 and inspect tokens without your data leaving your browser.">
+<link rel="canonical" href="https://freetooldev.com/blog/debug-jwt-base64-locally.html">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer data-root="../" src="/assets/js/include.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 1, 2026</div>
+  <h1>Debugging JWTs and Base64 Tokens Without Sending Them to a Server</h1>
+
+  <p>At some point almost every developer pastes a live access token into an online decoder to check what's inside it. It's a fast habit — and a risky one, because you don't always know where that "decode" button actually sends your data.</p>
+
+  <h2>Why this matters more than it seems</h2>
+  <p>A JWT is not encrypted, just encoded and signed. Anyone who has the raw token string can read its payload — that's by design. The risk isn't that decoding exposes anything new; it's that pasting a valid, unexpired token into a third-party site hands that site a live credential, even for a few seconds. If that token has any real permissions attached, that's not a debugging convenience, it's a leak.</p>
+
+  <h2>What "runs in your browser" actually guarantees</h2>
+  <p>Base64 decoding is native to JavaScript — <code>atob()</code> and <code>btoa()</code> are built into every browser. A tool that decodes locally never needs to make a network request to do its job. You can verify this yourself: open your browser's dev tools, go to the Network tab, paste a token into a local decoder, and watch — there should be zero outgoing requests tied to that action.</p>
+
+  <h2>A quick habit that costs nothing</h2>
+  <p>Before pasting any live token or API key into any tool, check the network tab once. It takes ten seconds and tells you definitively whether the tool is doing what it claims. Bookmark the ones that pass and skip the rest — this is not a case where you need to trust marketing copy.</p>
+
+  <h2>Try it</h2>
+  <p>FreeToolDev's <a href="/tools/base64.html">Base64 encode/decode tool</a> runs entirely client-side and supports batch line-by-line decoding when you need to check several tokens at once.</p>
+</article>
+
+<div id="site-footer"></div>
+
+</body>
+</html>
