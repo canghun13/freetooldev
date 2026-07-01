@@ -58,11 +58,28 @@
 </section>
 
 <section class="section-navy">
-  <div class="wrap" style="max-width:720px;">
+  <div class="wrap prose" style="max-width:720px;">
     <h2>How it works</h2>
-    <p>The first row is treated as the header and each subsequent row becomes a JSON object. Quoted values containing commas are handled correctly. Files are processed locally — nothing is uploaded to a server.</p>
+    <p>The first row is treated as the header and each subsequent row becomes a JSON object, keyed by those headers. Quoted values containing commas are handled correctly, so a field like <code>"Smith, John"</code> won't get split into two columns. Files are processed locally in chunks — nothing is uploaded to a server, and the parser yields control back to the browser periodically so large files don't freeze the tab.</p>
+
     <h2>Limits</h2>
-    <p>Each file is capped at 8 MB. This isn't arbitrary — browser-based parsing and rendering genuinely can't scale to unlimited file sizes without risking an unresponsive tab, so files over the limit are rejected up front rather than attempted. For larger datasets, split the file into smaller chunks first.</p>
+    <p>Each file is capped at 8 MB. This isn't arbitrary — browser-based parsing and rendering genuinely can't scale to unlimited file sizes without risking an unresponsive tab, so files over the limit are rejected up front rather than attempted. For larger datasets, split the file into smaller chunks first (most spreadsheet tools can do this via "save as" with a row range, or a quick script).</p>
+
+    <h2>Common issues</h2>
+    <h3>Korean, Japanese, or other non-English text shows up as garbled characters</h3>
+    <p>CSV files exported from Excel are often saved in a legacy encoding — EUC-KR/CP949 for Korean, Shift-JIS for Japanese — rather than UTF-8, or sometimes as UTF-16 ("Unicode Text" export). This tool checks for a byte-order mark and sniffs for UTF-16 automatically, then falls back through UTF-8 and EUC-KR, so most Excel exports should decode correctly without any manual step on your end.</p>
+    <h3>A column is missing or values are shifted into the wrong field</h3>
+    <p>This almost always means a field contains an unescaped comma or a stray quote that breaks the quoting rules mid-row. Open the source file in a text editor and check the row in question — a single unmatched <code>"</code> can throw off every column after it for the rest of that row.</p>
+    <h3>The output file is much larger than the input CSV</h3>
+    <p>This is expected, not a bug. JSON repeats every field name in every object (CSV only states it once, in the header row), so JSON output is reliably 2–4x the size of the source CSV for typical data. For files over 1,000 rows, this tool skips pretty-printing automatically to keep that overhead from doubling again.</p>
+
+    <h2>FAQ</h2>
+    <h3>Does this handle CSVs with a semicolon delimiter instead of commas?</h3>
+    <p>Not currently — this parser expects standard comma-separated values. Semicolon-delimited files (common in European Excel locales) will parse as a single column per row rather than splitting correctly.</p>
+    <h3>What happens to empty cells?</h3>
+    <p>An empty cell becomes an empty string (<code>""</code>) in the resulting JSON, not <code>null</code> and not an omitted key — every row's object has the same set of keys, even where a value is blank.</p>
+    <h3>Can I convert more than one file at a time?</h3>
+    <p>Yes — select or drag multiple CSV files at once, and they're each converted and listed separately, with an option to download everything together as a single ZIP.</p>
   </div>
 </section>
 
