@@ -12,3 +12,8 @@
 
 ## Blog
 - [Blog index](https://freetooldev.com/blog/index.html)
+- [Why "No-Upload" Image Compression Is Safer for Client Work](https://freetooldev.com/blog/no-upload-image-compression.html)
+- [WebP vs AVIF in 2026: Which Should You Batch-Convert To?](https://freetooldev.com/blog/webp-vs-avif-2026.html)
+- [Debugging JWTs and Base64 Tokens Without Sending Them to a Server](https://freetooldev.com/blog/debug-jwt-base64-locally.html)
+- [Sitemaps for Static Sites: GitHub Pages, Netlify, and Vercel](https://freetooldev.com/blog/sitemap-static-sites.html)
+- [Converting 100 Images: AI or a Tool?](https://freetooldev.com/blog/batch-vs-ai-image-convert.html)
