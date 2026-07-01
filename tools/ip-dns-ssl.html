@@ -156,14 +156,29 @@ document.addEventListener('DOMContentLoaded', function () {
     if (domains.length === 0) { alert('Enter at least one domain.'); return; }
 
     resultArea.innerHTML = '';
+    var rows = {};
     domains.forEach(function (domain) {
       var row = document.createElement('div');
       row.className = 'file-row';
       row.style.alignItems = 'flex-start';
-      row.innerHTML = '<span class="fname">' + esc(domain) + '</span><span class="fstatus" id="status-' + domain.replace(/[^a-z0-9]/gi, '') + '">querying…</span>';
+      var waitNote = type === 'SSL' ? 'querying… (can take up to 30s)' : 'querying…';
+      row.innerHTML = '<span class="fname">' + esc(domain) + '</span><span class="fstatus">' + waitNote + '</span>';
       resultArea.appendChild(row);
+      rows[domain] = row;
+    });
 
-      if (type === 'SSL') {
+    if (type === 'SSL') {
+      // crt.sh can be slow, and hammering it with every domain at once
+      // (like the DNS lookups below do) risks it slowing down further or
+      // rate-limiting us. Run SSL checks through a small queue instead —
+      // at most 2 in flight at a time.
+      var queue = domains.slice();
+      var CONCURRENCY = 2;
+
+      function runNext() {
+        var domain = queue.shift();
+        if (!domain) return;
+        var row = rows[domain];
         fetch(SSL_WORKER_URL + '?domain=' + encodeURIComponent(domain))
           .then(function (r) { return r.json(); })
           .then(function (data) {
@@ -173,10 +188,15 @@ document.addEventListener('DOMContentLoaded', function () {
           })
           .catch(function () {
             row.querySelector('.fstatus').textContent = 'SSL check failed';
-          });
-        return;
+          })
+          .finally(function () { runNext(); });
       }
+      for (var i = 0; i < Math.min(CONCURRENCY, queue.length); i++) runNext();
+      return;
+    }
 
+    domains.forEach(function (domain) {
+      var row = rows[domain];
       fetch('https://dns.google/resolve?name=' + encodeURIComponent(domain) + '&type=' + type)
         .then(function (r) { return r.json(); })
         .then(function (data) {
