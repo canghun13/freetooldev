@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/style.css">
-<script defer data-root="../" src="/assets/js/include.js"></script>
+<script defer src="/assets/js/nav-behavior.js"></script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
 <script>
@@ -22,7 +22,17 @@
 </head>
 <body>
 
-<div id="site-header"></div>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/index.html#about">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
 
 <article class="article">
   <div class="post-meta">Guide · Jul 1, 2026</div>
@@ -42,7 +52,31 @@
   <p>If you're processing images in bulk regularly — thumbnails for a CMS, assets for a release, a folder of client photos — a <a href="/tools/image-batch.html">bulk image tool</a> saves real, repeatable time. Try it with a folder you already have on hand.</p>
 </article>
 
-<div id="site-footer"></div>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
 
 </body>
 </html>
