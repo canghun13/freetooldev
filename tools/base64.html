@@ -77,11 +77,28 @@
 </section>
 
 <section class="section-navy">
-  <div class="wrap" style="max-width:720px;">
+  <div class="wrap prose" style="max-width:720px;">
     <h2>What is Base64?</h2>
-    <p>Base64 is an encoding scheme that represents binary data as plain text. It's commonly used for email attachments, embedding images inside JSON, and API auth tokens. Encoding is not encryption — don't use it to hide sensitive data.</p>
+    <p>Base64 is an encoding scheme that represents binary data as plain text, using 64 printable characters (A–Z, a–z, 0–9, +, /) to stand in for raw bytes. It's commonly used for email attachments (MIME), embedding small images inside CSS or JSON, and carrying tokens through HTTP headers and URLs. Encoding is not encryption — anyone can decode it, so don't use it to hide sensitive data. It exists to make binary data safe to pass through systems built for text.</p>
+
     <h2>When to use batch mode</h2>
-    <p>Use "process each line separately" when you need to encode or decode a list of API keys, emails, or config values at once. One item per line in, one result per line out, in the same order.</p>
+    <p>Use "process each line separately" when you need to encode or decode a list of API keys, emails, JWT segments, or config values at once, instead of running the tool once per item. One item per line in, one result per line out, in the same order — useful when you're auditing a batch of tokens or preparing a list of encoded values for a config file.</p>
+
+    <h2>Common errors and what they mean</h2>
+    <h3>"Invalid character" or garbled decode output</h3>
+    <p>Base64 only uses A–Z, a–z, 0–9, +, /, and = for padding. If your input has line breaks, quotes, or a leading "data:image/png;base64," prefix copied in by accident, strip those first — the decoder will otherwise try to interpret them as data and produce garbage or an error.</p>
+    <h3>Output ends with one or two = signs — is that a mistake?</h3>
+    <p>No, that's padding, not an error. Base64 processes data in 3-byte groups; when the input length isn't a multiple of 3, one or two <code>=</code> characters are appended so the output length stays a multiple of 4. It's part of the standard, not a sign something went wrong.</p>
+    <h3>Decoding a JWT and getting broken text</h3>
+    <p>JWTs use Base64URL, a variant that replaces <code>+</code> with <code>-</code> and <code>/</code> with <code>_</code>, and typically drops the padding <code>=</code> entirely. Standard Base64 decoders can choke on this. If a JWT segment won't decode cleanly, that URL-safe variant is almost always why.</p>
+
+    <h2>FAQ</h2>
+    <h3>Is my data sent anywhere when I use this tool?</h3>
+    <p>No. Encoding and decoding both run using your browser's built-in <code>btoa()</code>/<code>atob()</code> functions — there's no network request involved at any point, which you can verify by checking the Network tab in your browser's dev tools while you use it.</p>
+    <h3>Can I encode an image or file, not just text?</h3>
+    <p>This tool is built for text input. For image-to-Base64 conversion, browsers typically produce this automatically via a <code>FileReader</code>'s <code>readAsDataURL</code> — if you need that specific workflow regularly, it's worth scripting directly rather than pasting through a text box.</p>
+    <h3>Why does my decoded text show broken characters for non-English input?</h3>
+    <p>This usually means the original text was encoded using a different character set than UTF-8 before Base64 was applied. This tool assumes UTF-8 on both ends; if the source system used something else (like Latin-1 or EUC-KR), the bytes will decode to the wrong characters even though the Base64 itself is valid.</p>
   </div>
 </section>
 
