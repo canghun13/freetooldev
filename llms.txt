@@ -8,7 +8,7 @@
 - [Base64 Encode / Decode](https://freetooldev.com/tools/base64.html): Convert text to/from Base64, with batch line processing.
 - [RSS Generator](https://freetooldev.com/tools/rss-generator.html): Generate a valid RSS 2.0 feed from a list of items.
 - [Sitemap Generator](https://freetooldev.com/tools/sitemap-generator.html): Generate a sitemap.xml from a list of URLs.
-- [IP / DNS Bulk Lookup](https://freetooldev.com/tools/ip-dns-ssl.html): Look up DNS records for multiple domains at once.
+- [IP / DNS / SSL Bulk Lookup](https://freetooldev.com/tools/ip-dns-ssl.html): Look up IP addresses, DNS records, and SSL certificate expiry for multiple domains at once.
 - [Site Crawler & Audit](https://freetooldev.com/tools/site-crawler.html): Auto-crawl a site to generate sitemap.xml, rss.xml, and llms.txt, and find broken links/missing meta tags.
 
 ## Blog
