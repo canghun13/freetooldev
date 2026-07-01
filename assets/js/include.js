@@ -36,6 +36,7 @@
           <a href="${R}tools/image-batch.html">Bulk Image Tool</a>
           <a href="${R}tools/rss-generator.html">RSS Generator</a>
           <a href="${R}tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="${R}tools/site-crawler.html">Site Crawler &amp; Audit</a>
         </div>
         <div class="col">
           <h4>Site</h4>
