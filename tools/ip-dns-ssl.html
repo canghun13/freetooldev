@@ -64,11 +64,27 @@ cloudflare.com"></textarea>
 </section>
 
 <section class="section-navy">
-  <div class="wrap" style="max-width:720px;">
+  <div class="wrap prose" style="max-width:720px;">
     <h2>How it works</h2>
-    <p>Lookups are performed using Google's public DNS-over-HTTPS resolver, queried directly from your browser for each domain in your list.</p>
+    <p>Lookups are performed using Google's public DNS-over-HTTPS resolver, queried directly from your browser for each domain in your list. This is the same DNS system that resolves domains to IPs everywhere on the internet — the tool just gives you the raw records instead of silently using them to load a page.</p>
     <h2>SSL expiry check</h2>
     <p>Checking SSL certificate expiry requires an actual TLS handshake, which a browser can't perform against an arbitrary domain due to security restrictions. This needs a small server-side helper — it's on the roadmap for this tool.</p>
+
+    <h2>Understanding record types</h2>
+    <h3>A vs AAAA</h3>
+    <p>An A record maps a domain to an IPv4 address (like <code>192.0.2.1</code>); AAAA does the same for IPv6 (like <code>2001:db8::1</code>). A domain can have both, neither, or only one — if AAAA comes back empty, that domain simply isn't configured for IPv6 yet, which is still common.</p>
+    <h3>MX</h3>
+    <p>MX records point to the mail servers responsible for a domain's email, each with a priority number — lower numbers are tried first. An empty MX result usually means the domain isn't set up to receive email at all, which is normal for many app or asset subdomains.</p>
+    <h3>TXT</h3>
+    <p>TXT records hold arbitrary text and are used for domain verification (Google Search Console, for instance), SPF/DKIM email authentication, and various ownership proofs. A domain often has several TXT records at once, each serving a different, unrelated purpose.</p>
+
+    <h2>FAQ</h2>
+    <h3>Why does a lookup return "no records found" for a domain I know is live?</h3>
+    <p>That specific record type may simply not exist for that domain even though the site works fine — a live website only strictly needs an A or AAAA record, not MX, TXT, or NS entries. Try switching the record type dropdown before assuming something's broken.</p>
+    <h3>Can I check subdomains, not just root domains?</h3>
+    <p>Yes — enter the full subdomain (like <code>mail.example.com</code>) exactly as you would the root domain, one per line, and it resolves independently.</p>
+    <h3>Why is DNS propagation sometimes slow after I change a record?</h3>
+    <p>DNS records are cached at multiple layers (your router, your ISP, public resolvers) for a duration set by that record's TTL. A change you make at your registrar won't be visible everywhere until every cache holding the old value expires, which is why the same lookup can return different results depending on where it's run from.</p>
   </div>
 </section>
 
