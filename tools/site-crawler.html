@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site Crawler & Audit — Auto-generate Sitemap, RSS & llms.txt | FreeToolDev</title>
+<meta name="description" content="Enter a URL and automatically crawl the site to generate sitemap.xml, rss.xml, and llms.txt, plus find broken links and missing meta tags — all in one pass.">
+<link rel="canonical" href="https://freetooldev.com/tools/site-crawler.html">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer data-root="../" src="/assets/js/include.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">SEO · Auto-crawl</span>
+    <h1>Site Crawler & Audit</h1>
+    <p>Enter a URL and this crawls the site automatically — no pasting a URL list by hand. Generates sitemap.xml, rss.xml, and llms.txt in one pass, and flags broken links and missing meta tags along the way.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>Site to crawl</h3>
+      <label for="siteUrl">Starting URL</label>
+      <input type="text" id="siteUrl" value="https://" placeholder="https://example.com">
+      <div class="toolbar">
+        <button class="btn btn-amber" id="crawlBtn">Crawl site →</button>
+      </div>
+      <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
+      <p style="margin-top:14px; font-size:0.85rem; color:#8a8578;">Crawls up to 40 pages on the same domain. Larger sites will show a partial result — see "Limits" below.</p>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="summaryLine" style="font-family:var(--font-display); font-size:0.9rem; margin-bottom:18px;"></div>
+
+      <div class="toolbar" style="margin-top:0; margin-bottom:24px;">
+        <button class="btn btn-outline" id="dlSitemap">Download sitemap.xml</button>
+        <button class="btn btn-outline" id="dlRss">Download rss.xml</button>
+        <button class="btn btn-outline" id="dlLlms">Download llms.txt</button>
+      </div>
+
+      <div id="brokenSection" style="display:none;">
+        <h3 style="color:#b04545;">Broken links</h3>
+        <div class="file-list" id="brokenList"></div>
+      </div>
+
+      <div id="metaSection" style="display:none; margin-top:20px;">
+        <h3 style="color:#c4852a;">Missing meta tags</h3>
+        <div class="file-list" id="metaList"></div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <h3>Pages crawled</h3>
+        <div class="file-list" id="pageList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy prose" style="max-width:720px; margin:0 auto; padding:64px 24px;">
+    <h2>How it works</h2>
+    <p>This tool calls a small server-side crawler (a Cloudflare Worker), since fetching another site's pages from directly inside your browser is blocked by CORS. The crawler follows same-origin links breadth-first starting from the URL you give it, reading each page's <code>&lt;title&gt;</code>, <code>&lt;meta name="description"&gt;</code>, and outgoing links.</p>
+
+    <h2>Limits</h2>
+    <p>Each crawl covers up to 40 pages on the same domain, and stops there even if more exist — this keeps each run fast and within the Worker's request budget. If your site is larger, this will show a partial result flagged as such; for full coverage on a large site, a dedicated crawl-time tool integrated into your build process is a better fit than a one-off browser tool.</p>
+
+    <h2>Why some pages might be missing</h2>
+    <p>This crawler reads the HTML a server returns — it does not execute JavaScript. If navigation links on a site are inserted by client-side JS after the page loads (a common pattern for shared headers/footers), this crawler won't see those links and may miss pages that are only reachable through them. Pages linked directly in a page's static HTML are always found.</p>
+
+    <h2>FAQ</h2>
+    <h3>Does this affect my site's real Google indexing?</h3>
+    <p>No — this tool doesn't submit anything anywhere on its own. It generates files for you to review and upload yourself, exactly like the manual sitemap and RSS generators elsewhere on this site.</p>
+    <h3>Will this crawl private or password-protected pages?</h3>
+    <p>No, it can only see what an anonymous visitor would see — no login, no cookies, no authentication is used during the crawl.</p>
+    <h3>Why does a crawl sometimes take several seconds?</h3>
+    <p>Each page requires a real network request to fetch and parse, run sequentially through the crawler. A 40-page crawl means up to 40 real HTTP requests happening server-side before you get a result — that's inherent to crawling, not a performance issue with the tool.</p>
+</section>
+
+<div id="site-footer"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var WORKER_URL = 'https://freetooldev-crawler.canghun13.workers.dev/crawl';
+
+  var siteUrl = document.getElementById('siteUrl');
+  var crawlBtn = document.getElementById('crawlBtn');
+  var progressStatus = document.getElementById('progressStatus');
+  var progressText = document.getElementById('progressText');
+  var resultsPanel = document.getElementById('resultsPanel');
+  var summaryLine = document.getElementById('summaryLine');
+  var lastResult = null;
+
+  function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function download(name, content, type) {
+    var blob = new Blob([content], { type: type || 'text/plain' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+  }
+
+  crawlBtn.addEventListener('click', async function () {
+    var target = siteUrl.value.trim();
+    if (!target || target === 'https://') { alert('Enter a URL to crawl, e.g. https://example.com'); return; }
+
+    crawlBtn.disabled = true;
+    progressStatus.classList.add('active');
+    progressText.textContent = 'Crawling ' + target + ' — this can take several seconds…';
+    resultsPanel.style.display = 'none';
+
+    try {
+      var resp = await fetch(WORKER_URL + '?url=' + encodeURIComponent(target));
+      var data = await resp.json();
+
+      if (data.error) {
+        progressText.textContent = 'Error: ' + data.error;
+        progressStatus.classList.remove('active');
+        crawlBtn.disabled = false;
+        return;
+      }
+
+      lastResult = data;
+      renderResults(data);
+      progressStatus.classList.remove('active');
+      progressText.textContent = 'Done — ' + data.crawled + ' page(s) crawled' + (data.limitReached ? ' (limit reached, partial result)' : '') + '.';
+      crawlBtn.disabled = false;
+    } catch (err) {
+      progressText.textContent = 'Request failed — the crawler may be unreachable. Check the URL and try again.';
+      progressStatus.classList.remove('active');
+      crawlBtn.disabled = false;
+    }
+  });
+
+  function renderResults(data) {
+    resultsPanel.style.display = 'block';
+    summaryLine.textContent = data.crawled + ' pages crawled · ' + data.brokenLinks.length + ' broken link(s) · ' + data.missingMeta.length + ' page(s) missing meta tags' + (data.limitReached ? ' · limit reached (partial crawl)' : '');
+
+    var brokenSection = document.getElementById('brokenSection');
+    var brokenList = document.getElementById('brokenList');
+    brokenList.innerHTML = '';
+    if (data.brokenLinks.length) {
+      brokenSection.style.display = 'block';
+      data.brokenLinks.forEach(function (b) {
+        var row = document.createElement('div');
+        row.className = 'file-row';
+        row.innerHTML = '<span class="fname">' + esc(b.url) + '</span><span class="fstatus" style="color:#b04545;">' + esc(b.status) + '</span>';
+        brokenList.appendChild(row);
+      });
+    } else {
+      brokenSection.style.display = 'none';
+    }
+
+    var metaSection = document.getElementById('metaSection');
+    var metaList = document.getElementById('metaList');
+    metaList.innerHTML = '';
+    if (data.missingMeta.length) {
+      metaSection.style.display = 'block';
+      data.missingMeta.forEach(function (m) {
+        var missing = [];
+        if (m.missingTitle) missing.push('title');
+        if (m.missingDescription) missing.push('description');
+        var row = document.createElement('div');
+        row.className = 'file-row';
+        row.innerHTML = '<span class="fname">' + esc(m.url) + '</span><span class="fstatus" style="color:#c4852a;">missing ' + missing.join(', ') + '</span>';
+        metaList.appendChild(row);
+      });
+    } else {
+      metaSection.style.display = 'none';
+    }
+
+    var pageList = document.getElementById('pageList');
+    pageList.innerHTML = '';
+    data.pages.forEach(function (p) {
+      var row = document.createElement('div');
+      row.className = 'file-row ready';
+      row.innerHTML = '<span class="fname">' + esc(p.title || p.url) + '</span><span class="fstatus">' + esc(p.url) + '</span>';
+      pageList.appendChild(row);
+    });
+  }
+
+  document.getElementById('dlSitemap').addEventListener('click', function () {
+    if (!lastResult) return;
+    download('sitemap.xml', lastResult.sitemapXml, 'application/xml');
+  });
+  document.getElementById('dlRss').addEventListener('click', function () {
+    if (!lastResult) return;
+    download('rss.xml', lastResult.rssXml, 'application/rss+xml');
+  });
+  document.getElementById('dlLlms').addEventListener('click', function () {
+    if (!lastResult) return;
+    download('llms.txt', lastResult.llmsTxt, 'text/plain');
+  });
+});
+</script>
+
+</body>
+</html>
