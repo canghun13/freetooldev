@@ -124,29 +124,56 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Reads a file as text, auto-detecting encoding. Korean CSV files exported
-  // from Excel are very commonly EUC-KR, not UTF-8 — reading them as UTF-8
-  // silently corrupts every non-ASCII character. We try strict UTF-8 first
-  // (fatal: true throws on invalid byte sequences) and fall back to EUC-KR.
+  // Reads a file as text, auto-detecting encoding. Excel exports Korean CSVs
+  // in a few different encodings depending on the save option used:
+  // UTF-8 (with or without BOM), EUC-KR/CP949, or UTF-16 (from "Unicode Text").
+  // We check the byte-order-mark first, then fall back to a heuristic for
+  // unmarked UTF-16 (lots of null bytes), then strict UTF-8, then EUC-KR.
+  function detectAndDecode(buffer) {
+    var bytes = new Uint8Array(buffer);
+
+    // BOM-based detection (most reliable when present)
+    if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
+      return new TextDecoder('utf-8').decode(bytes.subarray(3));
+    }
+    if (bytes.length >= 2 && bytes[0] === 0xFF && bytes[1] === 0xFE) {
+      return new TextDecoder('utf-16le').decode(bytes.subarray(2));
+    }
+    if (bytes.length >= 2 && bytes[0] === 0xFE && bytes[1] === 0xFF) {
+      return new TextDecoder('utf-16be').decode(bytes.subarray(2));
+    }
+
+    // No BOM: sniff for UTF-16 by counting null bytes in a sample.
+    // ASCII text saved as UTF-16 has a null byte next to every character —
+    // real UTF-8/EUC-KR text essentially never does.
+    var sampleLen = Math.min(bytes.length, 2000);
+    var zerosAtOdd = 0, zerosAtEven = 0;
+    for (var i = 0; i < sampleLen; i++) {
+      if (bytes[i] === 0) { if (i % 2 === 0) zerosAtEven++; else zerosAtOdd++; }
+    }
+    if (zerosAtOdd / sampleLen > 0.25) {
+      return new TextDecoder('utf-16le').decode(bytes);
+    }
+    if (zerosAtEven / sampleLen > 0.25) {
+      return new TextDecoder('utf-16be').decode(bytes);
+    }
+
+    // Try strict UTF-8, fall back to EUC-KR/CP949.
+    try {
+      return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    } catch (err) {
+      try {
+        return new TextDecoder('euc-kr').decode(bytes);
+      } catch (err2) {
+        return new TextDecoder('utf-8').decode(bytes); // lenient last resort
+      }
+    }
+  }
+
   function readFile(file) {
     return new Promise(function (resolve, reject) {
       var reader = new FileReader();
-      reader.onload = function (e) {
-        var buffer = e.target.result;
-        try {
-          var utf8Decoder = new TextDecoder('utf-8', { fatal: true });
-          resolve(utf8Decoder.decode(buffer));
-        } catch (err) {
-          try {
-            var eucKrDecoder = new TextDecoder('euc-kr');
-            resolve(eucKrDecoder.decode(buffer));
-          } catch (err2) {
-            // Last resort: lenient UTF-8 (may show replacement characters
-            // for truly unsupported encodings, but never crashes).
-            resolve(new TextDecoder('utf-8').decode(buffer));
-          }
-        }
-      };
+      reader.onload = function (e) { resolve(detectAndDecode(e.target.result)); };
       reader.onerror = reject;
       reader.readAsArrayBuffer(file);
     });
