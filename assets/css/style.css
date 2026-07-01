@@ -163,6 +163,27 @@ p { color: var(--muted); margin: 0 0 16px; }
 .btn-outline { border-color: var(--blue-line); color: var(--white); }
 .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); }
 
+/* Outline buttons placed on light/paper backgrounds (panels, cards) need dark text —
+   the default white text above is only legible on the navy background. */
+.panel .btn-outline,
+.section-paper .btn-outline,
+.on-paper .btn-outline {
+  color: var(--ink-navy);
+  border-color: var(--blue-line);
+}
+.panel .btn-outline:hover,
+.section-paper .btn-outline:hover,
+.on-paper .btn-outline:hover {
+  color: var(--amber-dim);
+  border-color: var(--amber-dim);
+}
+.panel .btn-outline:disabled,
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* ==========================================================================
    Hero
    ========================================================================== */
@@ -301,6 +322,39 @@ p { color: var(--muted); margin: 0 0 16px; }
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
+}
+.workspace-grid-2col { grid-template-columns: 1fr 1fr; }
+@media (max-width: 780px) {
+  .workspace-grid-2col { grid-template-columns: 1fr; }
+}
+
+/* Live progress indicator for batch tools */
+.progress-status {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: #59636d;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.spinner {
+  width: 14px; height: 14px;
+  border: 2px solid #d8d3c2;
+  border-top-color: var(--amber-dim);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+.progress-status.active .spinner { display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.file-row .fstatus.busy { color: var(--amber-dim); }
+
+@media (max-width: 480px) {
+  .wrap { padding: 0 16px; }
+  .panel { padding: 18px; }
+  .hero { padding: 56px 0 40px; }
+  .section-paper, .section-navy { padding: 44px 0; }
 }
 .panel {
   background: var(--white);
