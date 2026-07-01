@@ -88,11 +88,28 @@
 </section>
 
 <section class="section-navy">
-  <div class="wrap" style="max-width:720px;">
+  <div class="wrap prose" style="max-width:720px;">
     <h2>How it works</h2>
-    <p>Each image is drawn onto an HTML canvas at the target dimensions, then re-encoded in the format and quality you choose. This all happens locally in your browser using the Canvas API — files are never uploaded anywhere.</p>
+    <p>Each image is drawn onto an HTML canvas at the target dimensions, then re-encoded in the format and quality you choose. This all happens locally in your browser using the Canvas API — files are never uploaded anywhere, and you can confirm that by checking the Network tab in dev tools while a batch runs.</p>
+
     <h2>Limits</h2>
     <p>Each image is capped at 20 MB and each batch at 60 images — enforced up front, not just a suggestion. This keeps browser-based processing from risking an unresponsive tab on very large jobs. For bigger jobs, run them in multiple batches.</p>
+
+    <h2>Choosing settings</h2>
+    <h3>PNG vs JPG vs WebP — which should I pick?</h3>
+    <p>PNG is lossless and keeps transparency, which makes it the right call for logos, icons, and screenshots with sharp text — but it produces the largest files for photos. JPG is smaller for photographic images but has no transparency support and introduces compression artifacts as quality drops. WebP generally beats both for file size at comparable visual quality and supports transparency, but confirm it's supported everywhere your images will be used before switching entirely.</p>
+    <h3>What quality setting should I use?</h3>
+    <p>0.8 is a reasonable default for JPG and WebP — visually close to the original at meaningfully smaller file size. Going below 0.6 starts to show visible artifacts on photos, especially in skies, gradients, and skin tones. PNG ignores the quality setting entirely since it's lossless.</p>
+    <h3>"Fit to width" vs "Fit within max width/height" — what's the difference?</h3>
+    <p>"Fit to width" forces every image to the exact width you set, scaling height proportionally — useful when every output needs to match a fixed layout slot. "Fit within max" scales images down only if they exceed your limit in either dimension, without upscaling smaller ones or forcing a uniform width — better when your batch has mixed orientations (portrait and landscape together).</p>
+
+    <h2>FAQ</h2>
+    <h3>Will this upscale a small image if I set a larger target size?</h3>
+    <p>With "Fit within max width/height," no — images smaller than your target are left at their original size, since Canvas-based upscaling just stretches pixels and produces blurry results rather than adding real detail. "Fit to width" will scale up if needed, since it targets an exact width.</p>
+    <h3>Does converting to a different format lose EXIF data (camera info, GPS)?</h3>
+    <p>Yes. Re-encoding through canvas strips EXIF metadata by design — this is actually a common reason people convert images before sharing them, since EXIF can carry GPS coordinates and other details you may not want attached to a shared photo.</p>
+    <h3>Can I convert PNGs with transparency to JPG?</h3>
+    <p>You can, but JPG doesn't support transparency, so the transparent areas get filled with a solid color (typically white) during conversion. If you need to keep transparency, use PNG or WebP as the output format instead.</p>
   </div>
 </section>
 
