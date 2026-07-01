@@ -375,7 +375,7 @@ label { display: block; font-size: 0.82rem; font-weight: 600; color: #45505c; ma
 .post-card .post-meta { padding: 18px 20px 0; font-family: var(--font-display); font-size: 0.72rem; color: var(--amber-dim); text-transform: uppercase; }
 .post-card h3 { padding: 6px 20px 0; color: var(--graphite); }
 .post-card p { padding: 0 20px 20px; color: #59636d; font-size: 0.9rem; }
-.article { max-width: 720px; margin: 0 auto; padding: 56px 24px 100px; color: var(--graphite); }
+.article { max-width: 720px; margin: 0 auto; padding: 56px 24px 100px; color: var(--graphite); background: var(--paper); }
 .article h1 { color: var(--graphite); }
 .article p { color: #3a4450; font-size: 1.02rem; }
 .article .post-meta { font-family: var(--font-display); font-size: 0.78rem; color: var(--amber-dim); margin-bottom: 20px; }
