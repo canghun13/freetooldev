@@ -40,7 +40,7 @@
       <div class="dropzone" id="dropzone">
         <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" multiple>
         Drag images here or click to browse<br>
-        <span style="font-size:0.78rem;">PNG, JPG, WebP — multiple selection supported</span>
+        <span style="font-size:0.78rem;">PNG, JPG, WebP — multiple selection supported · max 20 MB/image, 60 images/batch</span>
       </div>
       <div class="file-list" id="fileList"></div>
     </div>
@@ -92,7 +92,7 @@
     <h2>How it works</h2>
     <p>Each image is drawn onto an HTML canvas at the target dimensions, then re-encoded in the format and quality you choose. This all happens locally in your browser using the Canvas API — files are never uploaded anywhere.</p>
     <h2>Limits</h2>
-    <p>Browser-based processing works well for typical batches (tens of images, tens of MB total). Very large batches or very high-resolution source images may slow down depending on your device.</p>
+    <p>Each image is capped at 20 MB and each batch at 60 images — enforced up front, not just a suggestion. This keeps browser-based processing from risking an unresponsive tab on very large jobs. For bigger jobs, run them in multiple batches.</p>
   </div>
 </section>
 
@@ -117,12 +117,24 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   fileInput.addEventListener('change', function () { addFiles(fileInput.files); });
 
+  // Same reasoning as the CSV tool: cap sizes up front instead of letting
+  // the tab risk becoming unresponsive on huge or excessive batches.
+  var MAX_IMAGE_SIZE = 20 * 1024 * 1024; // 20 MB per image
+  var MAX_BATCH_COUNT = 60; // images per run
+
   function addFiles(list) {
+    var rejected = [];
     Array.from(list).forEach(function (f) {
       if (!f.type.startsWith('image/')) return;
+      if (files.length >= MAX_BATCH_COUNT) { rejected.push(f.name + ' (batch limit reached)'); return; }
+      if (f.size > MAX_IMAGE_SIZE) { rejected.push(f.name + ' (over 20 MB)'); return; }
       files.push(f);
     });
     renderFileList();
+    if (rejected.length) {
+      alert('Skipped ' + rejected.length + ' file(s):\n' + rejected.join('\n') +
+        '\n\nLimits: 20 MB per image, ' + MAX_BATCH_COUNT + ' images per batch — this keeps the tab from freezing on very large jobs.');
+    }
   }
 
   function renderFileList() {
