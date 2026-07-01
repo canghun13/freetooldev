@@ -429,10 +429,54 @@ label { display: block; font-size: 0.82rem; font-weight: 600; color: #45505c; ma
 .post-card .post-meta { padding: 18px 20px 0; font-family: var(--font-display); font-size: 0.72rem; color: var(--amber-dim); text-transform: uppercase; }
 .post-card h3 { padding: 6px 20px 0; color: var(--graphite); }
 .post-card p { padding: 0 20px 20px; color: #59636d; font-size: 0.9rem; }
-.article { max-width: 720px; margin: 0 auto; padding: 56px 24px 100px; color: var(--graphite); background: var(--paper); }
+.article { max-width: 700px; margin: 0 auto; padding: 56px 24px 100px; color: var(--graphite); background: var(--paper); }
 .article h1 { color: var(--graphite); }
-.article p { color: #3a4450; font-size: 1.02rem; }
+/* Headings had zero top margin globally, so a new section sat flush against
+   the previous paragraph with barely a paragraph's gap between them — that's
+   what read as "no separation between sections." Give h2 real breathing room
+   and a hairline rule above it as a visual anchor for where a new idea starts. */
+.article h2 {
+  margin-top: 52px;
+  padding-top: 28px;
+  border-top: 1px solid #d8d3c2;
+}
+.article h2:first-of-type { margin-top: 36px; padding-top: 0; border-top: none; }
+.article p { color: #2c3540; font-size: 1.05rem; line-height: 1.75; margin-bottom: 22px; }
+.article > p:first-of-type { font-size: 1.15rem; color: #1c242e; }
+.article ul, .article ol { color: #2c3540; font-size: 1.05rem; line-height: 1.75; margin-bottom: 22px; padding-left: 22px; }
+.article li { margin-bottom: 8px; }
+/* Links need to read as links, not just differently-shaded body text. */
+.article a { color: var(--amber-dim); text-decoration: underline; text-underline-offset: 2px; font-weight: 600; }
+.article a:hover { color: var(--amber); }
+.article code {
+  background: #e4dfcd;
+  color: #6b3f00;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: var(--font-display);
+  font-size: 0.92em;
+}
 .article .post-meta { font-family: var(--font-display); font-size: 0.78rem; color: var(--amber-dim); margin-bottom: 20px; }
+
+/* Shared long-form content rhythm for the FAQ/explanation sections on tool
+   pages (dark navy background) — same spacing fix as .article, applied
+   wherever supporting content sits below a tool. */
+.prose p { line-height: 1.75; margin-bottom: 20px; }
+.prose h2 {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--blue-line-soft);
+}
+.prose h2:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+.prose h3 { margin-top: 28px; font-size: 1rem; color: var(--cyan); }
+.prose h3:first-of-type { margin-top: 20px; }
+.prose code {
+  background: rgba(255,255,255,0.08);
+  color: var(--cyan);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
 
 /* ==========================================================================
    Footer
