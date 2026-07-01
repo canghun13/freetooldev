@@ -47,6 +47,7 @@
         <button class="btn btn-amber" id="convertBtn">Convert all →</button>
         <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download all as ZIP</button>
       </div>
+      <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
     </div>
 
     <div class="panel" style="margin-top:24px;">
@@ -56,7 +57,7 @@
   </div>
 </section>
 
-<section class="section-navy" style="padding-top:0;">
+<section class="section-navy">
   <div class="wrap" style="max-width:720px;">
     <h2>How it works</h2>
     <p>The first row is treated as the header and each subsequent row becomes a JSON object. Quoted values containing commas are handled correctly. Files are processed locally — nothing is uploaded to a server.</p>
@@ -72,6 +73,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var fileList = document.getElementById('fileList');
   var previewArea = document.getElementById('previewArea');
   var downloadZipBtn = document.getElementById('downloadZipBtn');
+  var convertBtn = document.getElementById('convertBtn');
+  var progressStatus = document.getElementById('progressStatus');
+  var progressText = document.getElementById('progressText');
   var files = [];
   var results = [];
 
@@ -102,16 +106,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  function parseCSV(text) {
-    var lines = text.split(/\r?\n/).filter(function (l) { return l.trim().length > 0; });
-    if (lines.length === 0) return [];
-    var headers = splitCSVLine(lines[0]);
-    return lines.slice(1).map(function (line) {
-      var cells = splitCSVLine(line);
-      var obj = {};
-      headers.forEach(function (h, i) { obj[h] = cells[i] !== undefined ? cells[i] : ''; });
-      return obj;
+  function readFile(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function (e) { resolve(e.target.result); };
+      reader.onerror = reject;
+      reader.readAsText(file);
     });
+  }
+
+  function yieldToUI() {
+    return new Promise(function (resolve) { setTimeout(resolve, 0); });
   }
 
   function splitCSVLine(line) {
@@ -128,41 +133,31 @@ document.addEventListener('DOMContentLoaded', function () {
     return result;
   }
 
-  document.getElementById('convertBtn').addEventListener('click', function () {
-    if (files.length === 0) { alert('Upload at least one CSV file first.'); return; }
-    results = [];
-    previewArea.innerHTML = '';
-    var rows = document.querySelectorAll('.file-row');
+  // Parses CSV in chunks, yielding to the browser periodically so the UI
+  // never appears frozen on large files, and reports live progress.
+  async function parseCSVAsync(text, onProgress) {
+    var lines = text.split(/\r?\n/).filter(function (l) { return l.trim().length > 0; });
+    if (lines.length === 0) return [];
+    var headers = splitCSVLine(lines[0]);
+    var rows = [];
+    var CHUNK = 500;
 
-    var pending = files.length;
-    files.forEach(function (f, idx) {
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        var json = parseCSV(e.target.result);
-        var jsonStr = JSON.stringify(json, null, 2);
-        results[idx] = { name: f.name.replace(/\.csv$/i, '.json'), content: jsonStr };
-        rows[idx].classList.add('ready');
-        rows[idx].querySelector('.fstatus').textContent = 'done';
+    for (var i = 1; i < lines.length; i++) {
+      var cells = splitCSVLine(lines[i]);
+      var obj = {};
+      headers.forEach(function (h, hi) { obj[h] = cells[hi] !== undefined ? cells[hi] : ''; });
+      rows.push(obj);
 
-        var block = document.createElement('div');
-        block.className = 'panel';
-        block.style.marginBottom = '12px';
-        block.innerHTML = '<h3>' + f.name + ' → ' + results[idx].name + '</h3>' +
-          '<textarea readonly style="min-height:140px;">' + jsonStr + '</textarea>' +
-          '<div class="toolbar"><button class="btn btn-outline dl-single" data-idx="' + idx + '">Download</button></div>';
-        previewArea.appendChild(block);
+      if (i % CHUNK === 0) {
+        onProgress(i, lines.length - 1);
+        await yieldToUI(); // hand control back to the browser so it can repaint
+      }
+    }
+    onProgress(lines.length - 1, lines.length - 1);
+    return rows;
+  }
 
-        pending--;
-        if (pending === 0) {
-          downloadZipBtn.style.display = 'inline-flex';
-          attachSingleDownloads();
-        }
-      };
-      reader.readAsText(f);
-    });
-  });
-
-  function attachSingleDownloads() {
+  async function attachSingleDownloads() {
     document.querySelectorAll('.dl-single').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var r = results[parseInt(btn.dataset.idx)];
@@ -178,6 +173,50 @@ document.addEventListener('DOMContentLoaded', function () {
     a.download = name;
     a.click();
   }
+
+  convertBtn.addEventListener('click', async function () {
+    if (files.length === 0) { alert('Upload at least one CSV file first.'); return; }
+    results = [];
+    previewArea.innerHTML = '';
+    var rows = document.querySelectorAll('.file-row');
+    downloadZipBtn.style.display = 'none';
+    convertBtn.disabled = true;
+    progressStatus.classList.add('active');
+
+    for (var idx = 0; idx < files.length; idx++) {
+      var f = files[idx];
+      rows[idx].querySelector('.fstatus').textContent = 'reading…';
+      rows[idx].querySelector('.fstatus').classList.add('busy');
+      progressText.textContent = 'Converting file ' + (idx + 1) + ' of ' + files.length + ' — ' + f.name;
+
+      var text = await readFile(f);
+
+      var json = await parseCSVAsync(text, function (done, total) {
+        rows[idx].querySelector('.fstatus').textContent = done + ' / ' + total + ' rows';
+        progressText.textContent = 'Converting file ' + (idx + 1) + ' of ' + files.length + ' — ' + f.name + ' (' + done + '/' + total + ' rows)';
+      });
+
+      var jsonStr = JSON.stringify(json, null, 2);
+      results[idx] = { name: f.name.replace(/\.csv$/i, '.json'), content: jsonStr };
+      rows[idx].classList.add('ready');
+      rows[idx].querySelector('.fstatus').classList.remove('busy');
+      rows[idx].querySelector('.fstatus').textContent = 'done · ' + json.length + ' rows';
+
+      var block = document.createElement('div');
+      block.className = 'panel';
+      block.style.marginBottom = '12px';
+      block.innerHTML = '<h3>' + f.name + ' → ' + results[idx].name + '</h3>' +
+        '<textarea readonly style="min-height:140px;">' + jsonStr + '</textarea>' +
+        '<div class="toolbar"><button class="btn btn-outline dl-single" data-idx="' + idx + '">Download</button></div>';
+      previewArea.appendChild(block);
+    }
+
+    progressStatus.classList.remove('active');
+    progressText.textContent = 'All ' + files.length + ' file(s) converted.';
+    convertBtn.disabled = false;
+    downloadZipBtn.style.display = 'inline-flex';
+    attachSingleDownloads();
+  });
 
   downloadZipBtn.addEventListener('click', function () {
     var zip = new JSZip();
