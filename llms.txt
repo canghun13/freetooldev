@@ -11,6 +11,11 @@
 - [IP / DNS / SSL Bulk Lookup](https://freetooldev.com/tools/ip-dns-ssl.html): Look up IP addresses, DNS records, and SSL certificate expiry for multiple domains at once.
 - [Site Crawler & Audit](https://freetooldev.com/tools/site-crawler.html): Auto-crawl a site to generate sitemap.xml, rss.xml, and llms.txt, and find broken links/missing meta tags.
 
+## Site
+- [About](https://freetooldev.com/about.html)
+- [Privacy Policy](https://freetooldev.com/privacy.html)
+- [Contact](https://freetooldev.com/contact.html)
+
 ## Blog
 - [Blog index](https://freetooldev.com/blog/index.html)
 - [Why "No-Upload" Image Compression Is Safer for Client Work](https://freetooldev.com/blog/no-upload-image-compression.html)

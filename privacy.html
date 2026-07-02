@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — FreeToolDev</title>
+<meta name="description" content="FreeToolDev's privacy policy — what data is (and isn't) collected, how tools process your files, and how analytics and advertising cookies are used.">
+<link rel="canonical" href="https://freetooldev.com/privacy.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Legal</span>
+    <h1>Privacy Policy</h1>
+    <p>Last updated: July 1, 2026</p>
+  </div>
+</section>
+
+<section class="section-paper prose" style="padding:56px 0;">
+  <div class="wrap" style="max-width:720px;">
+
+    <h2 style="margin-top:0; padding-top:0; border-top:none;">The short version</h2>
+    <p>Most tools on this site process your files and text entirely in your browser — nothing is uploaded to us. A couple of tools that genuinely require a server (DNS/SSL/domain lookups, the site crawler) only ever receive the domain or URL you type in, nothing else. We use Google Analytics to understand site traffic, and (where enabled) Google AdSense to show ads, both of which use cookies as described below.</p>
+
+    <h2>What this site does not do</h2>
+    <p>FreeToolDev doesn't require an account, doesn't ask for your email to use any tool, and doesn't store the files or text you process with the browser-based tools (Base64, CSV to JSON, image resize/convert/compress, RSS generator, sitemap generator) — those never leave your device in the first place, so there's nothing for us to store.</p>
+
+    <h2>What the network-dependent tools send, and to whom</h2>
+    <p>Two tools can't work purely in your browser, because browsers are deliberately restricted from querying arbitrary external domains (a security feature called CORS). For these, only the input you explicitly provide is sent onward — never any other browsing activity:</p>
+    <ul style="color:#2c3540; line-height:1.75; padding-left:22px; margin-bottom:22px;">
+      <li><strong>IP / DNS / SSL Bulk Lookup:</strong> the domain names you enter are sent to Google's public DNS-over-HTTPS resolver (for DNS records) and, for SSL checks, to our own server-side helper and crt.sh, a public Certificate Transparency log search service.</li>
+      <li><strong>Site Crawler &amp; Audit:</strong> the URL you enter is sent to our own server-side helper (a Cloudflare Worker), which then fetches pages from that URL's domain on your behalf to build the report.</li>
+    </ul>
+    <p>None of these requests include your name, IP address tracking, or any identifying information beyond what's inherent to making a web request (the same as visiting any website).</p>
+
+    <h2>Analytics</h2>
+    <p>This site uses Google Analytics (GA4) to understand aggregate traffic patterns — which pages get used, roughly where visitors come from, and general device/browser information. This is done via cookies. You can opt out of Google Analytics tracking across all websites using the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics Opt-out Browser Add-on</a>, or review Google's own practices in the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a>.</p>
+
+    <h2>Advertising</h2>
+    <p>This site may display ads served by Google AdSense. Google and its partners use cookies to serve ads based on your prior visits to this and other websites. You can opt out of personalized advertising by visiting <a href="https://adssettings.google.com" target="_blank" rel="noopener">Google Ads Settings</a>, or opt out of third-party vendors' use of cookies for personalized advertising by visiting <a href="https://www.aboutads.info" target="_blank" rel="noopener">www.aboutads.info</a>. Tool functionality on this site is never limited or gated by ads.</p>
+
+    <h2>Cookies, in summary</h2>
+    <p>This site itself does not set cookies for its own purposes (there's no login, no preferences to remember). Cookies you may encounter here come from Google Analytics and Google AdSense, governed by Google's own privacy practices linked above.</p>
+
+    <h2>Children's privacy</h2>
+    <p>This site is not directed at children under 13, and we do not knowingly collect personal information from children.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>If this policy changes, the "Last updated" date at the top of this page will change accordingly. Continued use of the site after an update constitutes acceptance of the revised policy.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about this policy can be sent via the <a href="/contact.html">Contact page</a>.</p>
+
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

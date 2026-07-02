@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — FreeToolDev</title>
+<meta name="description" content="FreeToolDev is a free set of bulk/batch utility tools for developers and designers — no signup, no uploads, everything runs in your browser.">
+<link rel="canonical" href="https://freetooldev.com/about.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">About</span>
+    <h1>Built to remove repetition, not add features.</h1>
+    <p>FreeToolDev is a small set of free, browser-based utility tools for developers and designers — built around one idea: most tasks worth automating come in batches, not single files.</p>
+  </div>
+</section>
+
+<section class="section-paper prose" style="padding:56px 0;">
+  <div class="wrap" style="max-width:720px;">
+    <h2 style="margin-top:0; padding-top:0; border-top:none;">Why this exists</h2>
+    <p>Most free online tools are built for one file, one string, one lookup at a time. That's fine until you have thirty images to resize, or a dozen CSV exports to convert, or a list of domains to check — at that point, doing it "for free" one-by-one costs more time than a paid tool would have saved. FreeToolDev exists for that second case: the same tools, but built from the start to take a batch as input.</p>
+
+    <h2>How it's different</h2>
+    <p>Everything on this site that can run in a browser, does — Base64, CSV conversion, image processing, feed and sitemap generation are all handled entirely client-side using standard web APIs (Canvas, <code>btoa</code>/<code>atob</code>, <code>FileReader</code>). Nothing is uploaded to a server for these tools; you can verify this yourself by checking your browser's Network tab while using them. A couple of tools (DNS/SSL lookups, the site crawler) genuinely need a server component, since browsers are deliberately restricted from making arbitrary cross-origin requests — those are clearly explained on their own pages.</p>
+
+    <h2>Who's behind it</h2>
+    <p>FreeToolDev is an independently run, ad-supported site. It isn't backed by a company or a team — it's built and maintained by one person who got tired of re-uploading the same batch of files into five different single-purpose tools.</p>
+
+    <h2>How it's funded</h2>
+    <p>Through display advertising and, where relevant, affiliate links to developer tools and services. Free tools and free hosting both cost something to run; ads are the tradeoff that keeps everything here free with no account required. Tool functionality is never gated behind ads or a paywall.</p>
+
+    <h2>Get in touch</h2>
+    <p>Questions, bug reports, or a tool idea that fits the "batch" theme — see the <a href="/contact.html">Contact page</a> for the fastest way to reach out.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
