@@ -10,6 +10,8 @@
 - [Sitemap Generator](https://freetooldev.com/tools/sitemap-generator.html): Generate a sitemap.xml from a list of URLs.
 - [IP / DNS / SSL Bulk Lookup](https://freetooldev.com/tools/ip-dns-ssl.html): Look up IP addresses, DNS records, and SSL certificate expiry for multiple domains at once.
 - [Site Crawler & Audit](https://freetooldev.com/tools/site-crawler.html): Auto-crawl a site to generate sitemap.xml, rss.xml, and llms.txt, and find broken links/missing meta tags.
+- [JWT Decoder (Batch)](https://freetooldev.com/tools/jwt-decoder.html): Decode multiple JWTs at once — header, payload, and expiry status for each, entirely client-side.
+- [Bulk QR Code Generator](https://freetooldev.com/tools/qr-batch.html): Generate QR codes for a list of URLs or text at once, no upload required.
 
 ## Site
 - [About](https://freetooldev.com/about.html)
