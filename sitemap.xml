@@ -12,6 +12,8 @@
   <url><loc>https://freetooldev.com/tools/sitemap-generator.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/ip-dns-ssl.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/site-crawler.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/tools/jwt-decoder.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/tools/qr-batch.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/blog/index.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://freetooldev.com/blog/batch-vs-ai-image-convert.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/no-upload-image-compression.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
