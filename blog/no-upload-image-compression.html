@@ -44,18 +44,24 @@
 
   <h2>What actually happens when you "upload to compress"</h2>
   <p>The image leaves your machine, sits on a third party's infrastructure for some amount of time, and comes back. Most reputable services delete files after a short window, but that still means the data existed outside your control, however briefly. If you're under an NDA, working with unreleased designs, or handling images that include identifiable people, that's a real consideration, not a hypothetical one.</p>
+  <p>There's also a metadata dimension people miss. Photos frequently carry EXIF data — camera model, timestamp, and sometimes GPS coordinates of where the photo was taken. Uploading an unprocessed image to a third-party server means that metadata traveled there too, even if the visible photo looks harmless.</p>
 
   <h2>The alternative: process it locally</h2>
   <p>Browser-based tools built on the Canvas API can resize, convert, and compress images entirely on your device. The file is read into memory, drawn onto a canvas, re-encoded, and handed back to you as a download. Nothing crosses the network. This isn't a niche technique — it's the same rendering pipeline browsers already use to display images, just pointed at an output instead of a screen.</p>
+  <p>As a useful side effect, redrawing an image onto canvas and re-encoding it strips EXIF metadata by default — the canvas only knows about pixels, not the original file's metadata fields. If you specifically need to preserve certain metadata (copyright info, for instance), that's worth checking on a per-tool basis, but for most client work, stripping it is the safer default anyway.</p>
 
   <h2>Why this is becoming the norm, not the exception</h2>
-  <p>As more day-to-day creative and development work touches client-confidential material, tool builders have started treating "does this leave my browser" as a real selling point rather than a footnote. It shows up in how tools describe themselves now — "runs locally," "no upload required" — language that wasn't common in this category a few years ago.</p>
+  <p>As more day-to-day creative and development work touches client-confidential material, tool builders have started treating "does this leave my browser" as a real selling point rather than a footnote. It shows up in how tools describe themselves now — "runs locally," "no upload required" — language that wasn't common in this category a few years ago. Part of this is genuine privacy awareness catching up with practice; part of it is that browser APIs (Canvas, the File API, Web Crypto) have matured to the point where doing real work entirely client-side is now practical for far more tasks than it used to be.</p>
+
+  <h2>What this doesn't protect against</h2>
+  <p>It's worth being precise about what "runs locally" does and doesn't cover. It protects the image data itself from being transmitted anywhere during processing. It does not protect you from a malicious browser extension reading page content, from a compromised machine, or from what you do with the file afterward — if you then upload the compressed output somewhere, that upload is its own separate decision with its own separate risk. No-upload processing removes one specific point of exposure; it isn't a complete security posture on its own.</p>
 
   <h2>What to check before you use any compressor</h2>
   <ul style="color:#3a4450; padding-left:20px; margin-bottom:16px;">
-    <li>Does the tool say explicitly that processing happens in your browser, or does it just say your files are "deleted after 15 minutes"? Those are very different guarantees.</li>
+    <li>Does the tool say explicitly that processing happens in your browser, or does it just say your files are "deleted after 15 minutes"? Those are very different guarantees — one is architectural, the other is a policy that requires trust.</li>
     <li>Can you use it with your network connection paused after the page loads? If it still works, it's genuinely local.</li>
     <li>Does it need an account or file history? If your images show up in a "recent uploads" list somewhere, they were never fully local to begin with.</li>
+    <li>Does the interface let you inspect what it's doing, or is it a black box? Tools that are confident about their local-only processing usually don't mind you checking.</li>
   </ul>
 
   <p>FreeToolDev's <a href="/tools/image-batch.html">bulk image resize/convert/compress tool</a> runs entirely in-browser using the Canvas API — you can check this yourself by opening dev tools and watching the network tab while you process a batch. Nothing goes out.</p>
