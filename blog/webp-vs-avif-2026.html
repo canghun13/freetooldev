@@ -45,17 +45,26 @@
   <h2>The short version</h2>
   <p>WebP is the safe default: broad browser support, fast to encode, and a solid 25–35% smaller than an equivalent JPEG at the same visual quality. AVIF compresses harder — often 45-50% smaller than JPEG — but takes noticeably longer to encode, and while support has caught up in modern browsers, it's still the newer of the two.</p>
 
+  <h2>Browser support, honestly</h2>
+  <p>WebP has been safe to use without a fallback for years at this point — every browser still in meaningful use supports it. AVIF's support has caught up substantially across Chrome, Firefox, and Safari, but encoding tools themselves are less consistent: not every image pipeline, screenshot tool, or CMS plugin can produce AVIF the way most can already produce WebP. In practice, WebP is the format you can rely on being able to generate anywhere; AVIF sometimes still requires a specific encoder or library to actually create the file, even though nearly every browser can display one once it exists.</p>
+
   <h2>When WebP is the right call</h2>
-  <p>If you're converting a large batch quickly — hundreds of product photos, a client's full asset folder — WebP's faster encoding time matters. You get most of the file-size win with none of the encoding overhead, and you don't have to think about fallback support for older browsers.</p>
+  <p>If you're converting a large batch quickly — hundreds of product photos, a client's full asset folder — WebP's faster encoding time matters. You get most of the file-size win with none of the encoding overhead, and you don't have to think about fallback support for older browsers. WebP is also the more universally supported format for image editing and encoding tools in general, including browser-based ones — which is part of why it's the format offered here rather than AVIF.</p>
 
   <h2>When AVIF is worth the extra time</h2>
-  <p>For a smaller set of hero images, thumbnails on a high-traffic landing page, or anything where every kilobyte affects your Largest Contentful Paint score, AVIF's better compression is worth the slower conversion. You're doing it once per image, not once per user.</p>
+  <p>For a smaller set of hero images, thumbnails on a high-traffic landing page, or anything where every kilobyte affects your Largest Contentful Paint score, AVIF's better compression is worth the slower conversion. You're doing it once per image, not once per user. Photographic images with lots of subtle gradients (skies, skin tones, shallow depth of field) tend to show AVIF's compression advantage most clearly; flat-color graphics, screenshots, and simple illustrations show a much smaller gap between the two formats, sometimes none at all.</p>
+
+  <h2>What about animated images?</h2>
+  <p>Both formats support animation (replacing animated GIF), and both compress animated sequences dramatically better than GIF's aging palette-based approach. If you're specifically replacing GIFs, either is a major upgrade — WebP remains the safer choice for the same encoding-availability reasons as static images.</p>
 
   <h2>The practical middle ground</h2>
-  <p>Serve AVIF with a WebP fallback and a JPEG fallback beneath that, using a <code>&lt;picture&gt;</code> element — that's the pattern most performance-focused teams have settled on for 2026. You don't have to pick one format forever; you can generate both from the same source batch and let the browser choose.</p>
+  <p>Serve AVIF with a WebP fallback and a JPEG fallback beneath that, using a <code>&lt;picture&gt;</code> element — that's the pattern most performance-focused teams have settled on for 2026. You don't have to pick one format forever; you can generate both from the same source batch and let the browser choose the best one it supports.</p>
+
+  <h2>What this means for a batch job</h2>
+  <p>If you're processing a large batch and need one format that just works everywhere with minimal fuss, WebP remains the pragmatic choice. If you're hand-tuning a small number of critical images (a homepage hero, key product shots) and have a dedicated AVIF encoder available, the extra compression is worth the separate step for just those files — there's no need to apply the slower process to an entire batch when only a handful of images actually sit on the performance-critical path.</p>
 
   <h2>Try it</h2>
-  <p>FreeToolDev's <a href="/tools/image-batch.html">bulk image tool</a> converts to JPG, PNG, or WebP in one batch, entirely in your browser. Run the same folder through twice at different settings if you want both a WebP and a fallback set — it takes seconds either way.</p>
+  <p>FreeToolDev's <a href="/tools/image-batch.html">bulk image tool</a> converts to JPG, PNG, or WebP in one batch, entirely in your browser. Run the same folder through at different settings if you want to compare file sizes before committing to one format — it takes seconds either way.</p>
 </article>
 
   <footer class="site-footer">
