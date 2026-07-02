@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tracking SSL Expiry Across Multiple Domains Without a Paid Service — FreeToolDev</title>
+<meta name="description" content="Running a handful of sites doesn't require a paid SSL monitoring subscription. Here's a free approach to keeping track of certificate expiry across multiple domains.">
+<link rel="canonical" href="https://freetooldev.com/blog/ssl-expiry-monitoring-free.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 2, 2026</div>
+  <h1>Tracking SSL Expiry Across Multiple Domains Without a Paid Service</h1>
+
+  <p>Most SSL certificates today auto-renew — Let's Encrypt and most managed hosting handle this quietly in the background. But "most of the time" isn't "always," and an expired certificate turns into a browser warning page for every visitor until someone notices and fixes it. If you run more than one or two domains, checking each manually is exactly the kind of repetitive task worth automating.</p>
+
+  <h2>Why certificates still expire despite auto-renewal</h2>
+  <p>Auto-renewal fails for reasons that have nothing to do with the certificate itself: a DNS record changed and broke domain validation, a renewal cron job silently stopped running after a server migration, a domain's ownership or nameservers changed and broke the automated challenge. None of these show up until the certificate actually expires — which is exactly why a periodic external check is worth having, separate from trusting that renewal "should" have worked.</p>
+
+  <h2>What a paid monitoring service actually gives you</h2>
+  <p>Dedicated uptime/SSL monitoring services check your certificates on a schedule and alert you — usually by email or Slack — a set number of days before expiry. For someone managing dozens of domains professionally, that automation is worth paying for. For a handful of personal or small business sites, it's often more infrastructure than the problem requires.</p>
+
+  <h2>A free alternative for a small number of domains</h2>
+  <p>If you're tracking anywhere from one to a few dozen domains, a periodic manual check covers the same failure mode without a subscription. The key is making the check itself effortless enough that you'll actually do it — a bulk lookup across all your domains at once, run monthly or whenever you think to, catches an expiring certificate with plenty of runway to fix it (certificates are typically valid for 90 days with Let's Encrypt, so even a monthly check leaves weeks of buffer).</p>
+
+  <h2>What "checking" actually means technically</h2>
+  <p>SSL expiry information comes from the certificate itself, which is public by nature — anyone connecting to your site via HTTPS receives it as part of the connection. There are two practical ways to check it in bulk without a paid tool: performing a live TLS handshake against each domain (what a browser does automatically), or querying Certificate Transparency logs, a public record that every publicly trusted certificate is required to be logged in. The second approach works well for a free, no-signup tool, since it doesn't require opening raw network connections to dozens of domains.</p>
+
+  <h2>Building this into a habit</h2>
+  <p>The realistic failure mode isn't "no tool exists to check this" — it's "nobody thought to check until a visitor reported the warning page." Pick a recurring point to run the check (start of the month, alongside another routine maintenance task) rather than relying on remembering to do it ad hoc.</p>
+
+  <h2>Try it</h2>
+  <p>FreeToolDev's <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Bulk Lookup tool</a> checks certificate expiry for a whole list of domains at once via Certificate Transparency logs — paste your domains, select "SSL Expiry," and see days-remaining for all of them in one pass.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
