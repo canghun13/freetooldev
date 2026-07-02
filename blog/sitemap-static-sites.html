@@ -43,19 +43,25 @@
   <p>A plain HTML site, or a small static site generator setup, doesn't always come with a sitemap.xml out of the box. If your framework doesn't generate one automatically, search engines are left to discover your pages purely by following links — which works, but slower and less reliably than handing them a map directly.</p>
 
   <h2>Do you actually need one?</h2>
-  <p>For a five-page site, probably not urgently. For anything with more than a handful of pages, a tool directory, a blog, a documentation set, yes — a sitemap is one of the cheapest SEO wins available, and it costs nothing to add.</p>
+  <p>For a five-page site, probably not urgently — Google will find five interlinked pages on its own without much trouble. For anything with more than a handful of pages, a tool directory, a blog, a documentation set, yes — a sitemap is one of the cheapest SEO wins available, and it costs nothing to add. The real value shows up as your page count grows: new content gets discovered faster, and pages that are only reachable through deep or unusual link paths (an old blog post, a rarely-linked tool page) don't have to rely on a crawler stumbling onto them.</p>
+
+  <h2>What a sitemap actually does — and doesn't do</h2>
+  <p>A sitemap is a discovery aid, not a ranking mechanism. Listing a URL in your sitemap tells search engines the page exists and gives a rough sense of when it last changed; it does not make that page rank better, and it doesn't guarantee indexing. Think of it as removing "the crawler never found this page" as a possible failure mode — everything else about whether a page gets indexed and ranked still depends on the content itself.</p>
 
   <h2>GitHub Pages</h2>
-  <p>GitHub Pages serves whatever static files sit in your repository, so a <code>sitemap.xml</code> just needs to exist at your site root alongside <code>index.html</code>. There's no build step involved — you generate it once, commit it, and update it whenever you add pages.</p>
+  <p>GitHub Pages serves whatever static files sit in your repository, so a <code>sitemap.xml</code> just needs to exist at your site root alongside <code>index.html</code>. There's no build step involved — you generate it once, commit it, and update it whenever you add pages. This is deliberately the simplest possible setup: no plugin, no configuration file, just a static XML file sitting next to your other static files.</p>
 
   <h2>Netlify and Vercel</h2>
-  <p>Both platforms serve static files the same way GitHub Pages does, so the same approach works: drop <code>sitemap.xml</code> in your publish directory. If you're using a framework with a build step, check whether it has a sitemap plugin — Next.js and most static site generators have one — but a hand-generated file works identically for smaller sites, and it's often simpler than configuring a plugin correctly.</p>
+  <p>Both platforms serve static files the same way GitHub Pages does, so the same approach works: drop <code>sitemap.xml</code> in your publish directory. If you're using a framework with a build step, check whether it has a sitemap plugin — Next.js and most static site generators have one — but a hand-generated file works identically for smaller sites, and it's often simpler than configuring a plugin correctly. The tradeoff: a plugin regenerates automatically on every build, while a hand-generated file needs a manual update when you add pages. For a site that publishes a few times a month, that's a minor chore; for one publishing daily, the plugin route is worth the setup time.</p>
+
+  <h2>Keeping it current without a build step</h2>
+  <p>If you're not using a framework with automatic sitemap generation, the practical habit is to update <code>sitemap.xml</code> at the same time you publish anything new — treat it as part of the "publish a page" checklist rather than a separate task you'll remember to circle back to later. A sitemap that's slightly stale (missing your newest page for a few days) is a minor issue; one that's stale for months starts to undercut the reason you added it in the first place.</p>
 
   <h2>After you have the file</h2>
-  <p>Add a line to your <code>robots.txt</code> pointing to it (<code>Sitemap: https://yoursite.com/sitemap.xml</code>), then submit the URL in Google Search Console under Sitemaps. That's the entire process — no crawling delay to wait out on your end, submission is instant even if indexing takes longer.</p>
+  <p>Add a line to your <code>robots.txt</code> pointing to it (<code>Sitemap: https://yoursite.com/sitemap.xml</code>), then submit the URL in Google Search Console under Sitemaps. That's the entire process — no crawling delay to wait out on your end, submission is instant even if indexing takes longer. Search Console will also flag any URLs in your sitemap that return errors, which doubles as a lightweight way to catch broken links you didn't know about.</p>
 
   <h2>Generate one now</h2>
-  <p>FreeToolDev's <a href="/tools/sitemap-generator.html">sitemap generator</a> turns a pasted list of URLs into a valid sitemap.xml instantly, and the <a href="/tools/rss-generator.html">RSS generator</a> covers the other file most static blogs are missing.</p>
+  <p>FreeToolDev's <a href="/tools/sitemap-generator.html">sitemap generator</a> turns a pasted list of URLs into a valid sitemap.xml instantly, and the <a href="/tools/rss-generator.html">RSS generator</a> covers the other file most static blogs are missing. If you'd rather not compile the URL list by hand, the <a href="/tools/site-crawler.html">Site Crawler & Audit tool</a> can crawl your site automatically and generate the sitemap, RSS feed, and an llms.txt file in one pass.</p>
 </article>
 
   <footer class="site-footer">
