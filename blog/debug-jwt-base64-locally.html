@@ -44,12 +44,20 @@
 
   <h2>Why this matters more than it seems</h2>
   <p>A JWT is not encrypted, just encoded and signed. Anyone who has the raw token string can read its payload — that's by design. The risk isn't that decoding exposes anything new; it's that pasting a valid, unexpired token into a third-party site hands that site a live credential, even for a few seconds. If that token has any real permissions attached, that's not a debugging convenience, it's a leak.</p>
+  <p>This isn't a hypothetical concern. Access tokens routinely carry enough to impersonate a user for the duration of their validity — read their data, act on their behalf, hit rate-limited APIs under their identity. A token pasted into an unfamiliar tool that turns out to log requests, or that has a compromised or malicious backend, has effectively been handed to whoever controls that backend.</p>
 
   <h2>What "runs in your browser" actually guarantees</h2>
   <p>Base64 decoding is native to JavaScript — <code>atob()</code> and <code>btoa()</code> are built into every browser. A tool that decodes locally never needs to make a network request to do its job. You can verify this yourself: open your browser's dev tools, go to the Network tab, paste a token into a local decoder, and watch — there should be zero outgoing requests tied to that action.</p>
+  <p>This matters because "your data is safe with us" is a claim, and a network tab is evidence. A tool can say whatever it wants in its marketing copy; whether it actually makes an outbound request when you paste something in is directly observable, in about ten seconds, without needing to trust anyone's word for it.</p>
+
+  <h2>What decoding actually reveals — and doesn't</h2>
+  <p>Decoding a JWT shows you its header (typically the signing algorithm) and payload (the claims — user ID, roles, expiry, and whatever else the issuer included). It does not verify the signature, which is a separate operation requiring the signing key. A token can decode perfectly cleanly and still be one whose signature you haven't checked — decoding tells you what a token claims, not whether those claims are trustworthy. For genuine security debugging (not just "what's in this token"), you need the actual verification step, done with the real signing key, ideally server-side.</p>
 
   <h2>A quick habit that costs nothing</h2>
-  <p>Before pasting any live token or API key into any tool, check the network tab once. It takes ten seconds and tells you definitively whether the tool is doing what it claims. Bookmark the ones that pass and skip the rest — this is not a case where you need to trust marketing copy.</p>
+  <p>Before pasting any live token or API key into any tool, check the network tab once. It takes ten seconds and tells you definitively whether the tool is doing what it claims. Bookmark the ones that pass and skip the rest — this is not a case where you need to trust marketing copy. A simple variant of this habit: pause your network connection (airplane mode, or disconnect Wi-Fi) after the page has loaded, then try using the tool. If it still works, it's genuinely local; if it breaks, it wasn't.</p>
+
+  <h2>When it's fine to use any online decoder</h2>
+  <p>Not every token is sensitive. An expired token, a token from a local development environment with no real permissions, or a token you generated yourself for testing carries essentially no risk if pasted anywhere. The habit worth building isn't "never use online tools" — it's distinguishing live, permissioned credentials from throwaway ones, and treating only the former with real caution.</p>
 
   <h2>Try it</h2>
   <p>FreeToolDev's <a href="/tools/jwt-decoder.html">JWT Decoder</a> is purpose-built for this — paste multiple tokens at once and see header, payload, and expiry status for each, entirely client-side. For plain Base64 (not JWT-specific) work, the <a href="/tools/base64.html">Base64 encode/decode tool</a> also supports batch line-by-line processing.</p>
