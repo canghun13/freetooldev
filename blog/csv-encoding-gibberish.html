@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Your CSV Turns to Gibberish When Converted to JSON — FreeToolDev</title>
+<meta name="description" content="Korean, Japanese, and other non-English CSV exports often turn to garbled characters when read as UTF-8. Here's what's actually happening and how to fix it.">
+<link rel="canonical" href="https://freetooldev.com/blog/csv-encoding-gibberish.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 2, 2026</div>
+  <h1>Why Your CSV Turns to Gibberish When Converted to JSON</h1>
+
+  <p>A CSV file with perfectly readable Korean, Japanese, or accented text opens up as rows of "□□□" boxes or seemingly random symbols the moment it's converted. The data isn't corrupted — it's being read with the wrong encoding, and the fix is usually simpler than the symptom suggests.</p>
+
+  <h2>What's actually happening</h2>
+  <p>Text files don't carry their encoding as a visible label most of the time — a program has to guess, or be told, how to translate the raw bytes on disk back into characters. If a file was saved as EUC-KR (a legacy Korean encoding, common in Excel exports on Korean-locale Windows machines) or Shift-JIS (Japanese), and a tool reads it assuming UTF-8, every multi-byte character gets misinterpreted. The English text and numbers in the same file usually still look fine, because ASCII characters happen to be encoded identically in most of these systems — which is exactly what makes the bug so confusing. Everything looks broken only in the non-English columns, and it's easy to assume the file itself is the problem rather than the assumption being made about it.</p>
+
+  <h2>Where this actually comes from</h2>
+  <p>The most common source, by far, is Excel. When you "Save As" a CSV on a Korean or Japanese Windows locale, the default encoding is often the legacy one (EUC-KR/CP949, or Shift-JIS) rather than UTF-8, unless you specifically choose "CSV UTF-8" as the save format. A less common but real source: Excel's "Save As → Unicode Text," which produces a UTF-16 encoded file with a <code>.txt</code> extension that people sometimes rename to <code>.csv</code> — this isn't even comma-delimited by default (it's tab-delimited), and it's a completely different byte format from either UTF-8 or EUC-KR.</p>
+
+  <h2>How to actually diagnose it</h2>
+  <p>Three encodings account for the overwhelming majority of real-world cases: UTF-8 (the modern default, and hopefully what you're already dealing with), EUC-KR/CP949 (legacy Korean), and UTF-16 (from certain Excel export paths). A reliable way to tell them apart without guessing:</p>
+  <ul style="color:#2c3540; line-height:1.75; padding-left:22px; margin-bottom:22px;">
+    <li><strong>Check the first few bytes.</strong> A byte-order mark (BOM) at the very start of the file — <code>EF BB BF</code> for UTF-8, <code>FF FE</code> or <code>FE FF</code> for UTF-16 — tells you definitively, when present. Not every file has one, but when it's there, trust it.</li>
+    <li><strong>No BOM, but lots of null bytes?</strong> UTF-16 without a BOM shows a very distinctive pattern: a null byte (<code>0x00</code>) next to almost every ASCII character. If you open the file in a hex viewer and see that pattern, it's UTF-16.</li>
+    <li><strong>No BOM, no null-byte pattern, but garbled non-English text?</strong> It's very likely EUC-KR/CP949 (for Korean) or an equivalent legacy encoding for other languages, being misread as UTF-8.</li>
+  </ul>
+
+  <h2>The fix depends on the tool</h2>
+  <p>Some tools let you pick an input encoding explicitly — use that if it's available, and set it to match what you've diagnosed above. Tools that don't offer this choice and always assume UTF-8 will keep producing garbled output no matter how many times you re-export the same file; the encoding needs to be handled at read time, not worked around after the fact.</p>
+
+  <h2>Try it</h2>
+  <p>FreeToolDev's <a href="/tools/csv-to-json.html">CSV to JSON converter</a> auto-detects encoding on every file — it checks for a BOM first, then sniffs for UTF-16's null-byte pattern, then falls back through UTF-8 and EUC-KR automatically. This came directly out of hitting exactly this bug while testing the tool against a real Korean-language CSV export, which is why it's handled automatically rather than left as a setting you have to know to look for.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
