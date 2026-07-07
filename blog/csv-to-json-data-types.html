@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSV to JSON: Handling Data Types, Nesting, and Arrays Correctly — FreeToolDev</title>
+<meta name="description" content="A CSV is flat text by design. Converting it to JSON forces a bunch of quiet decisions about types, nesting, and arrays that most converters get wrong by default.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/csv-to-json-data-types.html">
+<meta property="og:title" content="CSV to JSON: Handling Data Types, Nesting, and Arrays Correctly — FreeToolDev">
+<meta property="og:description" content="A CSV is flat text by design. Converting it to JSON forces a bunch of quiet decisions about types, nesting, and arrays that most converters get wrong by default.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CSV to JSON: Handling Data Types, Nesting, and Arrays Correctly — FreeToolDev">
+<meta name="twitter:description" content="A CSV is flat text by design. Converting it to JSON forces a bunch of quiet decisions about types, nesting, and arrays that most converters get wrong by default.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/csv-to-json-data-types.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 7, 2026</div>
+  <h1>CSV to JSON: Handling Data Types, Nesting, and Arrays Correctly</h1>
+
+  <p>CSV has no concept of a number, a boolean, or a nested object — every single cell is just text, and it's up to whatever reads the file to decide what that text actually means. Converting to JSON, a format that <em>does</em> distinguish between a string, a number, and a boolean, forces a set of decisions that a naive converter tends to get wrong silently rather than loudly.</p>
+
+  <h2>The type-guessing problem</h2>
+  <p>The cell <code>042</code> is ambiguous on its own: is it the number 42, or a string that happens to look numeric — a zip code, a product code, an ID that legitimately starts with a zero? A converter that blindly casts numeric-looking strings to JSON numbers will silently strip that leading zero, and the same problem hits phone numbers, ISBNs, and any ID system with fixed-width, zero-padded formatting. The safe default is treating every value as a string unless a column is unambiguously numeric across every row — and even then, giving you a way to override that per-column, since the "looks numeric" heuristic will eventually guess wrong on a real dataset.</p>
+  <p>Booleans have the same issue from a different angle: <code>TRUE</code>/<code>FALSE</code>, <code>1</code>/<code>0</code>, <code>yes</code>/<code>no</code>, and <code>Y</code>/<code>N</code> all show up in real-world exports depending on what produced the CSV, and a converter that only recognizes one convention will pass the rest through as plain strings — which usually isn't wrong, exactly, but isn't what most people expect when they see a column that's clearly boolean data.</p>
+
+  <h2>CSV genuinely can't represent nested structure</h2>
+  <p>This is the part that's a limitation of CSV itself, not a converter bug. A relational-style row like <code>name, address.city, address.zip</code> is a common workaround — dot-notation column headers that a converter can reassemble into a nested object — but it only works for a fixed, known shape. It falls apart the moment the nesting is variable-depth or genuinely different per row, which CSV was never designed to hold in the first place. If your data is naturally nested or hierarchical, CSV is the wrong format to be exporting in at all; JSON, or a JSON Lines file, should be the source of truth, with CSV reserved for the flat, tabular parts of the data.</p>
+
+  <h2>Repeated columns as arrays</h2>
+  <p>A common pattern for representing a one-to-many relationship in a flat file: <code>tag1, tag2, tag3</code> as separate columns, or a single <code>tags</code> column with values separated by a semicolon or pipe inside the cell. Neither is standard — both are conventions a specific export process invented — so a general-purpose converter can't safely guess which one you're using. Recognizing a delimiter-separated cell and splitting it into a JSON array on request is useful, but it should be something you explicitly turn on for a specific column, not an automatic behavior applied to every field that happens to contain a semicolon (which will occasionally be genuine punctuation, not a separator).</p>
+
+  <h2>Empty cells: null, empty string, or missing key entirely?</h2>
+  <p>These are three different things in JSON, and CSV can't distinguish between them at all — an empty cell is just an empty cell. <code>null</code> usually reads as "this field is explicitly known to have no value," an empty string as "this field has a value, and that value is blank," and an omitted key as "this field wasn't recorded for this row." Since CSV can't express which one was actually meant, picking a single consistent convention (most APIs expect either <code>null</code> or an omitted key, rarely an empty string, for genuinely missing data) and applying it uniformly avoids a downstream consumer having to guess the same thing your converter already had to guess.</p>
+
+  <h2>Try it</h2>
+  <p>FreeToolDev's <a href="/tools/csv-to-json.html">CSV to JSON converter</a> defaults to treating ambiguous values as strings rather than guessing, and lets you handle a whole batch of files with the same settings in one pass — useful for exactly this kind of "decide the rules once, apply them consistently" problem. It also auto-detects file encoding, which is a related but separate failure mode covered in <a href="/blog/csv-encoding-gibberish.html">this post on CSV encoding issues</a>.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

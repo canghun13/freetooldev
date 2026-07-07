@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Record vs CNAME vs TXT: DNS Records Explained — FreeToolDev</title>
+<meta name="description" content="A plain-language walkthrough of the DNS record types you'll actually run into — what each one does, and why the wrong one causes very specific, confusing failures.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/dns-records-explained.html">
+<meta property="og:title" content="A Record vs CNAME vs TXT: DNS Records Explained — FreeToolDev">
+<meta property="og:description" content="A plain-language walkthrough of the DNS record types you'll actually run into — what each one does, and why the wrong one causes very specific, confusing failures.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A Record vs CNAME vs TXT: DNS Records Explained — FreeToolDev">
+<meta name="twitter:description" content="A plain-language walkthrough of the DNS record types you'll actually run into — what each one does, and why the wrong one causes very specific, confusing failures.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/dns-records-explained.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 7, 2026</div>
+  <h1>A Record vs CNAME vs TXT: DNS Records Explained</h1>
+
+  <p>DNS is one of those systems everyone relies on constantly and almost nobody looks at directly until something breaks — a domain won't point where it should, email silently stops arriving, or a hosting provider's setup instructions casually mention "add a TXT record" with no explanation of what that actually means. The record types themselves are simple once you see what each one is actually for; the confusion is usually just never having had a reason to learn the vocabulary.</p>
+
+  <h2>A and AAAA: where a domain actually points</h2>
+  <p>An A record maps a domain directly to an IPv4 address, like <code>192.0.2.1</code> — this is the most fundamental record type, since it's what ultimately tells a browser which server to connect to. AAAA does the identical job for IPv6 addresses (something like <code>2001:db8::1</code>). A domain can have an A record, an AAAA record, both, or in older setups, just the A record — if AAAA comes back empty on a lookup, that simply means the domain isn't configured for IPv6 yet, which is still common and not inherently a problem.</p>
+
+  <h2>CNAME: an alias, not an address</h2>
+  <p>A CNAME record doesn't point to an IP address at all — it points to another domain name, and tells DNS "to resolve this, go look up that domain instead." This is how <code>www.example.com</code> is commonly set up to follow whatever <code>example.com</code> resolves to, without needing to be kept in sync manually if the underlying IP ever changes. The catch that trips people up: a domain's root (the "apex," like <code>example.com</code> with nothing in front of it) technically can't have a CNAME record per the DNS spec, only subdomains can — which is why apex domain setups sometimes need a different, provider-specific workaround (often called an ALIAS or ANAME record, which behaves like a CNAME but is technically implemented as something else under the hood).</p>
+
+  <h2>MX: where email for the domain actually goes</h2>
+  <p>MX records point to the mail servers responsible for handling email sent to that domain, each with a priority number — lower numbers are tried first, with the others as fallback. A domain with no MX record isn't necessarily broken; it may simply not be set up to receive email at all, which is normal for plenty of subdomains used purely for hosting assets or a web app. Misconfigured MX records are a classic "email quietly stops arriving with no error message" bug, because the sending server just tries the next mail exchange or gives up — nothing on the sender's end announces that your domain's setup is wrong.</p>
+
+  <h2>TXT: the general-purpose catch-all</h2>
+  <p>TXT records hold arbitrary text, and unlike the other types, they don't have one specific job — they're used for domain ownership verification (Google Search Console and similar tools ask you to add one to prove you control a domain), SPF and DKIM email authentication records (which help receiving mail servers verify a message actually came from who it claims to), and various other one-off verification schemes that different services invent. A single domain often has several unrelated TXT records at once, each serving a completely different purpose, which is why it's common to see a handful of them stacked up on any domain that's been through a few service integrations.</p>
+
+  <h2>NS: who's actually authoritative</h2>
+  <p>NS records specify which nameservers are authoritative for a domain — in other words, which servers hold the real, current answer for all of that domain's other records. This is set at the domain registrar level, and it's usually the first thing that has to propagate correctly whenever a domain moves to a new host or DNS provider; get this wrong, and none of the domain's other records matter, because nothing is asking the right server for them in the first place.</p>
+
+  <h2>Why "it hasn't updated yet" is usually true, not an excuse</h2>
+  <p>DNS records are cached at multiple layers — your own device, your router, your ISP's resolver, public resolvers like Google's or Cloudflare's — each for a duration set by that record's TTL (time to live). A change made at the registrar or DNS provider isn't instantly visible everywhere; every cache holding the old value needs to expire first, which is exactly why the same lookup can return different, seemingly contradictory results depending on where and when it's run.</p>
+
+  <h2>Check it yourself</h2>
+  <p>FreeToolDev's <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Bulk Lookup tool</a> checks A, AAAA, MX, TXT, and NS records for a whole list of domains at once, and shows your own current public IP address instantly at the top of the page — no code, no separate "what's my IP" search needed.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
