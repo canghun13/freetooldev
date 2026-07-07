@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RSS Feed Generator — Free Tool | FreeToolDev</title>
-<meta name="description" content="Generate a valid RSS 2.0 feed from a simple list of titles, links, and dates. Free, instant, no server needed.">
+<meta name="description" content="Generate a valid RSS 2.0 feed from a simple list of titles, links, and dates. No account, no scraping — free and instant.">
 <link rel="canonical" href="https://freetooldev.com/tools/rss-generator.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -40,7 +40,7 @@
   <div class="wrap">
     <span class="eyebrow">Content</span>
     <h1>RSS Feed Generator</h1>
-    <p>Fill in your feed details and add items in bulk — one line per item — to generate a valid RSS 2.0 XML feed.</p>
+    <p>Fill in your feed details and add items in bulk — one line per item — to generate a valid RSS 2.0 XML feed. No account, no scraping — this builds a feed from items you already know, for a site you already control.</p>
   </div>
 </section>
 
@@ -85,11 +85,14 @@ Second Post | https://example.com/second | 2026-06-28"></textarea>
     <h2>Why static sites need this</h2>
     <p>A hand-built static site or a small documentation set often has no build step that generates a feed automatically the way WordPress or most blogging platforms do by default. Without one, there's no way for a feed reader, or another site's "latest posts" widget, to know when you've published something new — visitors have to check back manually. A generated <code>rss.xml</code> fixes that with no server required.</p>
 
+    <h2>What this tool is — and isn't</h2>
+    <p>Most "RSS generator" tools online solve a different problem: pointing them at someone else's URL and having them scrape that page to build a feed for a site that doesn't publish one. That's a legitimate use case, but it's not this one. This tool assumes you already know what you want in your feed — you're building it for your own site, from a list you type in yourself, not extracting it automatically from a page. No account, no stored feed URL on our servers, no scraping step. If you specifically want the auto-scrape-a-site behavior, the <a href="/tools/site-crawler.html">Site Crawler & Audit tool</a> can generate a feed by crawling your own site's pages directly, which is the closer equivalent for that use case.</p>
+
     <h2>FAQ</h2>
     <h3>Where do I put the generated rss.xml file?</h3>
     <p>At your site's root, alongside <code>index.html</code>, so it's reachable at <code>yoursite.com/rss.xml</code>. Then add a <code>&lt;link rel="alternate" type="application/rss+xml"&gt;</code> tag in your page's <code>&lt;head&gt;</code> so feed readers and browsers can auto-discover it.</p>
     <h3>Do I need to regenerate the whole feed every time I publish?</h3>
-    <p>Yes, with this tool — it's not connected to your site, so each time you add a new post, paste your full updated item list back in and regenerate. For a handful of posts a month, that's a minor step; for high-frequency publishing, a build-time script is worth setting up instead.</p>
+    <p>Yes, with this tool — it's not connected to your site, so each time you add a new post, paste your full updated item list back in and regenerate. For a handful of posts a month, that's a minor step; for high-frequency publishing, a build-time script is worth setting up instead — or use the Site Crawler tool above to regenerate it from your live pages instead of retyping your list.</p>
     <h3>Why does my feed reader show the wrong publish time?</h3>
     <p>Since only a date (not a time) is entered, this tool sets every item's time to midnight UTC. If your feed reader displays times in your local timezone, dates can appear to shift by a few hours — the date itself is still correct, just the implied time isn't meaningful.</p>
     <h3>Is RSS still relevant in 2026?</h3>

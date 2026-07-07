@@ -60,6 +60,14 @@
     <li>Thousands of pages, heavy client-side rendering, need custom extraction or a deep configurable audit → a dedicated desktop crawler is the right call.</li>
   </ul>
 
+  <h2>FAQ</h2>
+  <h3>Can I use both — Screaming Frog for the deep audit, a browser tool for quick checks?</h3>
+  <p>Yes, and that's a reasonable way to split the work in practice: a lightweight browser-based crawl for a fast "did anything break" check between full audits, saved for the times a deeper, configurable pass with Screaming Frog is actually warranted — a site relaunch, a migration, a quarterly SEO review.</p>
+  <h3>Does a lightweight crawler replace a full technical SEO audit?</h3>
+  <p>No — it covers the essentials (broken links, missing meta tags, a sitemap and feed) but not the deeper technical checks a full audit includes: crawl budget analysis, structured data validation, canonicalization issues, redirect chains, and Core Web Vitals. For a small site, the essentials often are the audit that matters; for anything larger or with existing SEO investment, treat this as a first pass, not the whole process.</p>
+  <h3>What does the free tool actually generate?</h3>
+  <p>Point it at your site's URL and it crawls and produces a sitemap.xml, an rss.xml, and an llms.txt in one pass, alongside the broken-link and missing-meta-tag report — covering both the "find problems" and "generate the files I actually needed anyway" parts of a small audit at once.</p>
+
   <h2>Try it</h2>
   <p>FreeToolDev's <a href="/tools/site-crawler.html">Site Crawler & Audit tool</a> crawls up to 40 pages from a starting URL, entirely from your browser with no install — generating a sitemap.xml, rss.xml, and llms.txt, and flagging broken links and missing meta tags along the way.</p>
 </article>

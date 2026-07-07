@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's Actually Inside a JWT: Understanding Common Claims — FreeToolDev</title>
+<meta name="description" content="A plain-language guide to the standard JWT claims — iss, aud, sub, exp, and the custom ones — and what each one is actually for.">
+<link rel="canonical" href="https://freetooldev.com/blog/jwt-claims-explained.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 7, 2026</div>
+  <h1>What's Actually Inside a JWT: Understanding Common Claims</h1>
+
+  <p>Decode any JWT and you'll get a JSON object full of short, cryptic field names — <code>iss</code>, <code>aud</code>, <code>sub</code>, and whatever custom fields the issuer added. They're standardized enough that once you know what a handful of them mean, most tokens you'll ever encounter become readable at a glance.</p>
+
+  <h2>The registered claims (part of the JWT spec)</h2>
+  <p>These have fixed meanings defined by the JWT standard itself — any library or service that produces JWTs is expected to use them the same way:</p>
+  <ul style="color:#2c3540; line-height:1.75; padding-left:22px; margin-bottom:22px;">
+    <li><strong><code>iss</code> (issuer)</strong> — who created and signed the token. Typically a URL or identifier for the authentication service, e.g. <code>https://auth.example.com</code>.</li>
+    <li><strong><code>sub</code> (subject)</strong> — who the token is about, almost always a user ID. This is the "who is this token for" field.</li>
+    <li><strong><code>aud</code> (audience)</strong> — who the token is intended for, i.e. which API or service should accept it. A service should reject a token whose <code>aud</code> doesn't match itself, even if the signature is otherwise valid — this stops a token issued for one service from being replayed against another.</li>
+    <li><strong><code>exp</code> (expiration)</strong> — a Unix timestamp after which the token should no longer be accepted, regardless of signature validity.</li>
+    <li><strong><code>iat</code> (issued at)</strong> — when the token was created, as a Unix timestamp. Useful for auditing and for calculating a token's actual age.</li>
+    <li><strong><code>nbf</code> (not before)</strong> — a Unix timestamp before which the token isn't valid yet. Less common than <code>exp</code>, used for tokens issued slightly ahead of when they should take effect.</li>
+    <li><strong><code>jti</code> (JWT ID)</strong> — a unique identifier for this specific token, useful for logging or for maintaining a revocation list of individual tokens.</li>
+  </ul>
+
+  <h2>Common custom claims (not part of the spec, but everywhere in practice)</h2>
+  <p>Beyond the registered claims, issuers add whatever additional fields their application needs. These aren't standardized, but a few show up often enough to be worth recognizing:</p>
+  <ul style="color:#2c3540; line-height:1.75; padding-left:22px; margin-bottom:22px;">
+    <li><strong><code>roles</code> / <code>permissions</code> / <code>scope</code></strong> — what the token's holder is allowed to do. Naming and structure vary a lot between systems (a flat array of strings, a space-separated scope string, a nested object).</li>
+    <li><strong><code>email</code> / <code>name</code></strong> — basic profile info included so a service doesn't need a separate lookup just to display who's logged in.</li>
+    <li><strong><code>org_id</code> / <code>tenant_id</code></strong> — common in multi-tenant systems, identifying which organization or workspace the token applies to.</li>
+  </ul>
+
+  <h2>What you can and can't trust from a decoded token</h2>
+  <p>Every claim listed here is only meaningful if the token's signature has actually been verified against the issuer's real signing key. Decoding shows you what a token claims; it says nothing about whether those claims are genuine. A token with a <code>roles: ["admin"]</code> claim and an invalid or unchecked signature proves nothing — anyone can construct a JSON payload that says whatever they want. This is why signature verification, done server-side with the actual key, is the step that makes any of these claims trustworthy.</p>
+
+  <h2>Try it</h2>
+  <p>FreeToolDev's <a href="/tools/jwt-decoder.html">JWT Decoder</a> decodes multiple tokens at once and lays out every claim clearly, with human-readable timestamps for <code>exp</code>/<code>iat</code>/<code>nbf</code> — entirely client-side, so nothing you paste in is sent anywhere.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

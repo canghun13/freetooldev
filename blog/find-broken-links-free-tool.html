@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Find Broken Links on Your Site Without Installing Anything — FreeToolDev</title>
+<meta name="description" content="A practical, step-by-step guide to finding broken links on a small site using a free browser-based crawler — no software install required.">
+<link rel="canonical" href="https://freetooldev.com/blog/find-broken-links-free-tool.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 7, 2026</div>
+  <h1>How to Find Broken Links on Your Site Without Installing Anything</h1>
+
+  <p>A broken link doesn't announce itself. Visitors quietly hit a 404, most don't report it, and it sits there until someone stumbles onto it — often a site owner, well after the fact. Checking for these doesn't require an SEO subscription or desktop software; for a small to mid-sized site, a free browser-based crawl covers it in a couple of minutes.</p>
+
+  <h2>Why links break in the first place</h2>
+  <p>The page you linked to got moved, renamed, or deleted — on your own site (a page reorganization, a slug change) or on someone else's (they redesigned, the resource got taken down, the domain expired). Internal broken links are entirely within your control to fix; external ones aren't, but they're just as worth knowing about, since a visitor doesn't distinguish between "your mistake" and "a link you pointed at that later broke."</p>
+
+  <h2>Step 1: Run a crawl</h2>
+  <p>Point a site crawler at your homepage and let it follow links from there. A crawler starting from your homepage and following internal links will naturally discover most of a small site's page structure without needing a manually compiled list of every URL.</p>
+
+  <h2>Step 2: Read the broken-link report, not just the count</h2>
+  <p>A count alone ("3 broken links found") doesn't tell you what to fix. Look at the actual list: which page contains the broken link, and what status code came back. A 404 means the target is gone; a 500 or timeout on an external link might just mean that site was temporarily down during the crawl, which is worth a manual recheck before you go changing anything on your end.</p>
+
+  <h2>Step 3: Fix internal links first</h2>
+  <p>These are entirely within your control and usually the easiest fix — update the link to the page's new location, or remove it if the target genuinely no longer exists. Internal broken links are also the ones most likely to be hit by real visitors following your own navigation, so they're worth prioritizing over external ones.</p>
+
+  <h2>Step 4: Decide what to do with broken external links</h2>
+  <p>Options, roughly in order of effort: remove the link and keep the surrounding text, replace it with an archive.org snapshot of the original page if one exists, or find a current equivalent resource to link to instead. Leaving it broken is also a legitimate choice for old content where the link was never central to the point being made — not every broken external link needs fixing the same day you find it.</p>
+
+  <h2>Step 5: Make this a recurring check, not a one-time cleanup</h2>
+  <p>Links don't break all at once — they break gradually, as other sites reorganize over time. A quarterly recheck (or whenever you do a significant content update) catches new breakage before it accumulates into a much bigger cleanup job.</p>
+
+  <h2>Try it</h2>
+  <p>FreeToolDev's <a href="/tools/site-crawler.html">Site Crawler & Audit tool</a> does exactly this: point it at your homepage, and it crawls up to 40 pages, reporting broken links (with status codes) and missing meta tags — no install, no account, entirely from your browser.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
