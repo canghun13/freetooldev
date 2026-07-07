@@ -76,11 +76,16 @@
             <option value="none">Keep original size</option>
             <option value="width">Fit to width (px)</option>
             <option value="max">Fit within max width/height (px)</option>
+            <option value="crop">Crop to exact size (center-crop, px)</option>
           </select>
         </div>
         <div>
-          <label>Target size (px)</label>
+          <label id="targetSizeLabel">Target size (px)</label>
           <input type="text" id="targetSize" value="1200">
+        </div>
+        <div id="targetHeightWrap" style="display:none;">
+          <label>Height (px)</label>
+          <input type="text" id="targetHeight" value="1200">
         </div>
         <div>
           <label>Output format</label>
@@ -124,10 +129,12 @@
     <p>0.8 is a reasonable default for JPG and WebP — visually close to the original at meaningfully smaller file size. Going below 0.6 starts to show visible artifacts on photos, especially in skies, gradients, and skin tones. PNG ignores the quality setting entirely since it's lossless.</p>
     <h3>"Fit to width" vs "Fit within max width/height" — what's the difference?</h3>
     <p>"Fit to width" forces every image to the exact width you set, scaling height proportionally — useful when every output needs to match a fixed layout slot. "Fit within max" scales images down only if they exceed your limit in either dimension, without upscaling smaller ones or forcing a uniform width — better when your batch has mixed orientations (portrait and landscape together).</p>
+    <h3>When should I use "Crop to exact size" instead?</h3>
+    <p>The other two modes always preserve the original aspect ratio, so the output dimensions vary from image to image unless every source image already shares the same proportions. "Crop to exact size" is for when you need every output to be exactly the width and height you specify, no exceptions — thumbnails, avatar grids, social banners, or any layout slot that doesn't tolerate a mismatched size. It scales each image so it fully covers your target box, then trims the overflow evenly from the center on whichever axis is too large. This means some of the original image is cropped away at the edges — for a portrait photo forced into a square, that's typically the sides; for a landscape photo, the top and bottom.</p>
 
     <h2>FAQ</h2>
     <h3>Will this upscale a small image if I set a larger target size?</h3>
-    <p>With "Fit within max width/height," no — images smaller than your target are left at their original size, since Canvas-based upscaling just stretches pixels and produces blurry results rather than adding real detail. "Fit to width" will scale up if needed, since it targets an exact width.</p>
+    <p>With "Fit within max width/height," no — images smaller than your target are left at their original size, since Canvas-based upscaling just stretches pixels and produces blurry results rather than adding real detail. "Fit to width" will scale up if needed, since it targets an exact width. "Crop to exact size" will also scale up when necessary — since it has to guarantee the exact output dimensions you set, an image smaller than the target box gets stretched to cover it before cropping, which can look soft if the source was much smaller than the target.</p>
     <h3>Does converting to a different format lose EXIF data (camera info, GPS)?</h3>
     <p>Yes. Re-encoding through canvas strips EXIF metadata by design — this is actually a common reason people convert images before sharing them, since EXIF can carry GPS coordinates and other details you may not want attached to a shared photo.</p>
     <h3>Can I convert PNGs with transparency to JPG?</h3>
@@ -176,6 +183,15 @@ document.addEventListener('DOMContentLoaded', function () {
   var downloadZipBtn = document.getElementById('downloadZipBtn');
   var files = [];
   var results = [];
+
+  var resizeModeSelect = document.getElementById('resizeMode');
+  var targetHeightWrap = document.getElementById('targetHeightWrap');
+  var targetSizeLabel = document.getElementById('targetSizeLabel');
+  resizeModeSelect.addEventListener('change', function () {
+    var isCrop = resizeModeSelect.value === 'crop';
+    targetHeightWrap.style.display = isCrop ? '' : 'none';
+    targetSizeLabel.textContent = isCrop ? 'Width (px)' : 'Target size (px)';
+  });
 
   dropzone.addEventListener('click', function () { fileInput.click(); });
   dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
@@ -237,12 +253,38 @@ document.addEventListener('DOMContentLoaded', function () {
             var scale = Math.min(target / w, target / h, 1);
             w = Math.round(w * scale);
             h = Math.round(h * scale);
+          } else if (mode === 'crop') {
+            var targetH = parseInt(document.getElementById('targetHeight').value) || img.height;
+            w = target;
+            h = targetH;
           }
 
           var canvas = document.createElement('canvas');
           canvas.width = w; canvas.height = h;
           var ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
+
+          if (mode === 'crop') {
+            // Center-crop: scale the source so it fully covers the target
+            // box (like CSS background-size: cover), then crop evenly from
+            // whichever axis overflows, keeping the middle of the image.
+            var targetAspect = w / h;
+            var imgAspect = img.width / img.height;
+            var sx, sy, sWidth, sHeight;
+            if (imgAspect > targetAspect) {
+              sHeight = img.height;
+              sWidth = img.height * targetAspect;
+              sx = (img.width - sWidth) / 2;
+              sy = 0;
+            } else {
+              sWidth = img.width;
+              sHeight = img.width / targetAspect;
+              sx = 0;
+              sy = (img.height - sHeight) / 2;
+            }
+            ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, w, h);
+          } else {
+            ctx.drawImage(img, 0, 0, w, h);
+          }
 
           var format = document.getElementById('format').value;
           var quality = parseFloat(document.getElementById('quality').value) || 0.8;

@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IP / DNS / SSL Bulk Lookup — Free Tool | FreeToolDev</title>
-<meta name="description" content="Look up IP addresses, DNS records (A, AAAA, MX, TXT, NS), and SSL certificate expiry for a whole list of domains at once. Free, no signup.">
+<meta name="description" content="See your own IP instantly, then look up IP addresses, DNS records (A, AAAA, MX, TXT, NS), and SSL certificate expiry for a whole list of domains at once. Free, no signup.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://freetooldev.com/tools/ip-dns-ssl.html">
 <meta property="og:title" content="IP / DNS / SSL Bulk Lookup — Free Tool | FreeToolDev">
-<meta property="og:description" content="Look up IP addresses, DNS records (A, AAAA, MX, TXT, NS), and SSL certificate expiry for a whole list of domains at once. Free, no signup.">
+<meta property="og:description" content="See your own IP instantly, then look up IP addresses, DNS records (A, AAAA, MX, TXT, NS), and SSL certificate expiry for a whole list of domains at once. Free, no signup.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="IP / DNS / SSL Bulk Lookup — Free Tool | FreeToolDev">
-<meta name="twitter:description" content="Look up IP addresses, DNS records (A, AAAA, MX, TXT, NS), and SSL certificate expiry for a whole list of domains at once. Free, no signup.">
+<meta name="twitter:description" content="See your own IP instantly, then look up IP addresses, DNS records (A, AAAA, MX, TXT, NS), and SSL certificate expiry for a whole list of domains at once. Free, no signup.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/tools/ip-dns-ssl.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -50,13 +50,22 @@
   <div class="wrap">
     <span class="eyebrow">Network</span>
     <h1>IP / DNS / SSL Bulk Lookup</h1>
-    <p>Enter multiple domains, one per line, and check their IP addresses, DNS records, or SSL certificate expiry in one pass.</p>
+    <p>See your own current IP address instantly below — no lookup needed. Then enter multiple domains, one per line, and check their IP addresses, DNS records, or SSL certificate expiry in one pass.</p>
   </div>
 </section>
 
 <section class="workspace section-paper">
   <div class="wrap">
-    <div class="panel">
+    <div class="panel" id="myIpPanel">
+      <h3>Your IP address</h3>
+      <div style="display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;">
+        <span id="myIpValue" style="font-family:'JetBrains Mono',monospace; font-size:1.6rem; font-weight:700;">looking up…</span>
+        <button class="btn btn-outline" id="copyMyIp" style="padding:6px 12px; font-size:0.75rem; display:none;">Copy</button>
+      </div>
+      <p style="margin-top:8px; font-size:0.85rem;">This is the public IP address your browser is currently connecting from — no need to check a domain to see it, and no code to write.</p>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
       <h3>Domains (one per line)</h3>
       <textarea id="domains" placeholder="example.com
 github.com
@@ -103,6 +112,8 @@ cloudflare.com"></textarea>
     <p>TXT records hold arbitrary text and are used for domain verification (Google Search Console, for instance), SPF/DKIM email authentication, and various ownership proofs. A domain often has several TXT records at once, each serving a different, unrelated purpose.</p>
 
     <h2>FAQ</h2>
+    <h3>How is "Your IP address" at the top different from the domain lookups below?</h3>
+    <p>The domain lookup panel tells you about a domain you type in — it never reveals your own IP. The box at the top of the page is the reverse: it shows the public IP address your own device is currently browsing from, fetched automatically the moment the page loads via a public IP-echo service (ipify), with no domain to enter and no code to write.</p>
     <h3>Why does a lookup return "no records found" for a domain I know is live?</h3>
     <p>That specific record type may simply not exist for that domain even though the site works fine — a live website only strictly needs an A or AAAA record, not MX, TXT, or NS entries. Try switching the record type dropdown before assuming something's broken.</p>
     <h3>Can I check subdomains, not just root domains?</h3>
@@ -148,6 +159,25 @@ cloudflare.com"></textarea>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+  var myIpValue = document.getElementById('myIpValue');
+  var copyMyIp = document.getElementById('copyMyIp');
+  fetch('https://api.ipify.org?format=json')
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      myIpValue.textContent = data.ip;
+      copyMyIp.style.display = 'inline-flex';
+      copyMyIp.addEventListener('click', function () {
+        navigator.clipboard.writeText(data.ip).then(function () {
+          copyMyIp.textContent = 'Copied!';
+          setTimeout(function () { copyMyIp.textContent = 'Copy'; }, 1500);
+        });
+      });
+    })
+    .catch(function () {
+      myIpValue.textContent = 'unavailable';
+      myIpValue.style.fontSize = '1rem';
+    });
+
   var resultArea = document.getElementById('resultArea');
   var SSL_WORKER_URL = 'https://freetooldev-crawler.canghun13.workers.dev/ssl';
 
