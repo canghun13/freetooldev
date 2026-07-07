@@ -60,6 +60,10 @@
   <h2>Step 5: Make this a recurring check, not a one-time cleanup</h2>
   <p>Links don't break all at once — they break gradually, as other sites reorganize over time. A quarterly recheck (or whenever you do a significant content update) catches new breakage before it accumulates into a much bigger cleanup job.</p>
 
+  <h2>A couple of things people get wrong the first time</h2>
+  <p><strong>Treating a redirect as broken.</strong> A link that 301s or 302s to a new location isn't broken — it's working exactly as intended, just pointing somewhere the target has since moved to. Only 4xx (not found, forbidden) and 5xx (server error) status codes indicate an actual problem; a redirect chain is worth cleaning up for tidiness eventually, but it's not the same failure as a dead link.</p>
+  <p><strong>Assuming a single 5xx means the page is really gone.</strong> A server error during a crawl can be temporary — the target site having a bad moment, a rate limit kicking in, a brief outage. Worth a manual recheck before deciding a link needs fixing, especially for high-traffic external sites that are very unlikely to be permanently down.</p>
+
   <h2>Try it</h2>
   <p>FreeToolDev's <a href="/tools/site-crawler.html">Site Crawler & Audit tool</a> does exactly this: point it at your homepage, and it crawls up to 40 pages, reporting broken links (with status codes) and missing meta tags — no install, no account, entirely from your browser.</p>
 </article>
