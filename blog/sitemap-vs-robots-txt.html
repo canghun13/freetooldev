@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XML Sitemap vs robots.txt: What Each One Actually Controls — FreeToolDev</title>
+<meta name="description" content="They live in the same root folder and get mentioned in the same breath, but a sitemap and robots.txt do almost opposite jobs. Here's what each one actually controls.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/sitemap-vs-robots-txt.html">
+<meta property="og:title" content="XML Sitemap vs robots.txt: What Each One Actually Controls — FreeToolDev">
+<meta property="og:description" content="They live in the same root folder and get mentioned in the same breath, but a sitemap and robots.txt do almost opposite jobs. Here's what each one actually controls.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="XML Sitemap vs robots.txt: What Each One Actually Controls — FreeToolDev">
+<meta name="twitter:description" content="They live in the same root folder and get mentioned in the same breath, but a sitemap and robots.txt do almost opposite jobs. Here's what each one actually controls.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/sitemap-vs-robots-txt.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 7, 2026</div>
+  <h1>XML Sitemap vs robots.txt: What Each One Actually Controls</h1>
+
+  <p>Both files sit at the root of your domain, both get generated early in a project's life, and both get mentioned in the same SEO checklists — so it's easy to end up treating them as two halves of one thing. They're not. A sitemap and a robots.txt file control almost opposite ends of how a search engine interacts with your site, and mixing up what each one does is a quick way to accidentally hide pages you meant to have indexed, or leave crawlers wasting time on ones you didn't.</p>
+
+  <h2>robots.txt: what crawlers are allowed to fetch</h2>
+  <p>robots.txt is a set of instructions about which URLs a crawler is permitted to request in the first place. It's checked before anything else — before the page loads, before its content is read. A <code>Disallow</code> rule tells well-behaved crawlers "don't request this path at all," which is useful for keeping bots out of admin panels, internal search result pages, staging directories, or anything that generates infinite low-value URLs (calendar widgets are a classic offender).</p>
+  <p>What it doesn't do: control whether a page appears in search results. A disallowed page can still show up in Google's index — usually with no description, just the bare URL — if other sites link to it, because Google knows the URL exists even though it was never allowed to crawl the content. robots.txt is also not access control. It's a request that well-behaved bots honor voluntarily; nothing stops a browser, a script, or a less scrupulous crawler from ignoring it, so it should never be the only thing standing between the public and something sensitive.</p>
+
+  <h2>sitemap.xml: what pages exist and roughly how fresh they are</h2>
+  <p>A sitemap does the opposite job: instead of restricting access, it's a direct list handed to search engines saying "here are the URLs on this site, and here's roughly when each one last changed." It doesn't grant or restrict permission to crawl anything — a URL can be blocked by robots.txt and listed in a sitemap at the same time, which is a contradiction worth avoiding (more on that below) but isn't a technical error either file will complain about on its own.</p>
+  <p>Listing a URL in your sitemap doesn't guarantee it gets indexed, and it has no direct effect on ranking. What it does is remove "the crawler never found this page" as a possible reason a page is missing from search — which matters most for pages that aren't well linked internally, like an old blog post several pages deep in pagination, or a tool page that only the footer links to.</p>
+
+  <h2>Where the two are supposed to meet</h2>
+  <p>The one place these files are meant to reference each other: robots.txt should contain a line pointing to your sitemap's location —</p>
+  <p><code>Sitemap: https://yoursite.com/sitemap.xml</code></p>
+  <p>This isn't required for either file to function on its own, but it's a small, free hint that lets any crawler find your sitemap immediately after reading robots.txt, rather than needing to be told the location separately through each search engine's webmaster tools.</p>
+
+  <h2>The contradiction that trips people up</h2>
+  <p>Disallowing a path in robots.txt while also listing pages under that path in your sitemap sends a mixed signal — you're simultaneously telling crawlers "don't fetch this" and "here's this, please index it." Google's usual behavior is to respect the disallow and mostly ignore the sitemap entry for that URL, but it's an easy inconsistency to introduce by accident: someone adds a <code>Disallow: /drafts/</code> rule for a new section, and the sitemap generator — run separately, on a different schedule — keeps quietly including those same URLs because nothing links the two processes together.</p>
+  <p>The practical fix is just to treat sitemap generation and robots.txt rules as connected decisions rather than separate chores owned by different tools or people. If a path is blocked, it shouldn't be in the sitemap; if it's meant to be discovered and indexed, it shouldn't be blocked.</p>
+
+  <h2>FAQ</h2>
+  <h3>If I want a page removed from Google entirely, is Disallow in robots.txt enough?</h3>
+  <p>No — this is the single most common misunderstanding of the two files. Disallow only blocks crawling, not indexing; a blocked page that's linked from elsewhere can still appear in results. To actually keep a page out of the index, use a <code>noindex</code> meta tag or header on the page itself (which requires the page to be crawlable so Google can see the tag), or remove the page and return a real 404/410 status.</p>
+  <h3>Do I need a sitemap if my site only has a dozen pages?</h3>
+  <p>Not urgently — a small, well-linked site gets crawled fine without one. It becomes genuinely useful once you have enough pages, or a deep enough link structure, that some pages are more than a couple of clicks from the homepage. It costs nothing to add either way.</p>
+  <h3>Can I just block crawlers from my whole staging site with robots.txt?</h3>
+  <p>You can, and it's common practice, but remember it's not real access control — pair it with a password, IP allowlist, or a <code>noindex</code> header if the staging environment shouldn't be publicly reachable at all, since robots.txt alone won't stop a direct visit or an unscrupulous crawler.</p>
+
+  <h2>Generate what you need</h2>
+  <p>FreeToolDev's <a href="/tools/sitemap-generator.html">sitemap generator</a> turns a pasted list of URLs into a valid sitemap.xml in one pass. If you'd rather not compile that URL list by hand, the <a href="/tools/site-crawler.html">Site Crawler &amp; Audit tool</a> crawls your site automatically and can generate the sitemap, an RSS feed, and an llms.txt file from the same crawl.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
