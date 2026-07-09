@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>robots.txt Generator — Free Tool, With AI Crawler Blocking | FreeToolDev</title>
+<meta name="description" content="Generate a valid robots.txt in seconds — set disallowed paths, add your sitemap, and optionally block AI crawlers like GPTBot and ClaudeBot. Free, no signup.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/robots-txt-generator.html">
+<meta property="og:title" content="robots.txt Generator — Free Tool, With AI Crawler Blocking | FreeToolDev">
+<meta property="og:description" content="Generate a valid robots.txt in seconds — set disallowed paths, add your sitemap, and optionally block AI crawlers like GPTBot and ClaudeBot. Free, no signup.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="robots.txt Generator — Free Tool, With AI Crawler Blocking | FreeToolDev">
+<meta name="twitter:description" content="Generate a valid robots.txt in seconds — set disallowed paths, add your sitemap, and optionally block AI crawlers like GPTBot and ClaudeBot. Free, no signup.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/robots-txt-generator.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">SEO</span>
+    <h1>robots.txt Generator</h1>
+    <p>Set which paths to block, add your sitemap, and optionally block AI crawlers like GPTBot and ClaudeBot — all in one generated file, ready to copy or download.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="workspace-grid workspace-grid-2col">
+      <div class="panel">
+        <h3>Rules</h3>
+        <div>
+          <label>Disallow these paths (one per line)</label>
+          <textarea id="disallowPaths" placeholder="/admin/
+/private/
+/cart/" style="min-height:110px;"></textarea>
+        </div>
+        <div style="margin-top:14px;">
+          <label>Allow these paths, even inside a disallowed folder (optional, one per line)</label>
+          <textarea id="allowPaths" placeholder="/admin/public-asset.css" style="min-height:70px;"></textarea>
+        </div>
+        <div class="opt-row" style="margin-top:14px;">
+          <div>
+            <label>Sitemap URL (optional)</label>
+            <input type="text" id="sitemapUrl" placeholder="https://example.com/sitemap.xml">
+          </div>
+          <div>
+            <label>Crawl-delay in seconds (optional)</label>
+            <input type="text" id="crawlDelay" placeholder="leave blank for none">
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <label style="margin-bottom:8px; display:block;">Block AI crawlers (each gets its own full-site Disallow)</label>
+          <div style="display:flex; flex-wrap:wrap; gap:10px 18px;">
+            <label style="display:flex; align-items:center; gap:6px; font-weight:400; text-transform:none; letter-spacing:0;"><input type="checkbox" class="ai-bot" value="GPTBot"> GPTBot (OpenAI)</label>
+            <label style="display:flex; align-items:center; gap:6px; font-weight:400; text-transform:none; letter-spacing:0;"><input type="checkbox" class="ai-bot" value="ClaudeBot"> ClaudeBot (Anthropic)</label>
+            <label style="display:flex; align-items:center; gap:6px; font-weight:400; text-transform:none; letter-spacing:0;"><input type="checkbox" class="ai-bot" value="Google-Extended"> Google-Extended (Gemini training)</label>
+            <label style="display:flex; align-items:center; gap:6px; font-weight:400; text-transform:none; letter-spacing:0;"><input type="checkbox" class="ai-bot" value="CCBot"> CCBot (Common Crawl)</label>
+            <label style="display:flex; align-items:center; gap:6px; font-weight:400; text-transform:none; letter-spacing:0;"><input type="checkbox" class="ai-bot" value="PerplexityBot"> PerplexityBot</label>
+            <label style="display:flex; align-items:center; gap:6px; font-weight:400; text-transform:none; letter-spacing:0;"><input type="checkbox" class="ai-bot" value="Bytespider"> Bytespider (ByteDance)</label>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <button class="btn btn-amber" id="genBtn">Generate robots.txt →</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>robots.txt</h3>
+        <textarea id="output" readonly placeholder="Generated file appears here."></textarea>
+        <div class="toolbar">
+          <button class="btn btn-outline" id="copyBtn">Copy</button>
+          <button class="btn btn-outline" id="downloadBtn">Download robots.txt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>After generating</h2>
+    <p>Upload the file to your site root as <code>robots.txt</code> — it needs to be reachable at exactly <code>yoursite.com/robots.txt</code>, not in a subfolder, or crawlers won't find it. Test it afterward in Google Search Console's robots.txt report to confirm it's being read correctly.</p>
+
+    <h2>Why block AI crawlers, specifically</h2>
+    <p>Disallowing GPTBot, ClaudeBot, Google-Extended, and similar user-agents opts your content out of that specific company's AI training crawls — it's separate from, and doesn't affect, whether your site shows up in ordinary search results or in that company's live AI-answer features, which often use a different crawler. This is a preference call, not a fix for a technical problem: leaving them unblocked means your public content may be used to train or ground AI models; blocking them opts out of that specific use, at no cost to your regular SEO.</p>
+
+    <h2>A reminder about what robots.txt can't do</h2>
+    <p>Every rule here is a request that well-behaved crawlers choose to honor — nothing enforces it. A disallowed page can still appear in search results if other sites link to it, and robots.txt is not a substitute for real access control on anything genuinely private (use authentication or a <code>noindex</code> tag instead). See <a href="/blog/sitemap-vs-robots-txt.html">this post</a> for a fuller breakdown of what robots.txt does and doesn't control.</p>
+
+    <h2>FAQ</h2>
+    <h3>Will Disallow remove a page that's already indexed?</h3>
+    <p>No — Disallow only stops future crawling, it doesn't retroactively remove a page from the index. To get an already-indexed page removed, use a <code>noindex</code> meta tag (which requires the page to still be crawlable so Google can see the tag) or return a real 404/410 status.</p>
+    <h3>Should I block CSS and JavaScript files?</h3>
+    <p>No, generally. Search engines need to load your CSS and JS to render the page the way a visitor sees it — blocking asset folders was a common practice years ago, but today it can hurt rendering-dependent ranking signals. Only disallow folders that hold genuinely non-public content: admin panels, internal search results, staging directories.</p>
+    <h3>Does blocking an AI crawler here also stop it from citing my site in chat answers?</h3>
+    <p>Not necessarily — a company's training crawler and its live-answer crawler are sometimes the same user-agent and sometimes different ones, and this varies by provider and changes over time. Blocking the training-specific bot listed here targets training use; check that provider's current documentation if you specifically want to affect live citations.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  document.getElementById('genBtn').addEventListener('click', function () {
+    var disallow = document.getElementById('disallowPaths').value.split('\n')
+      .map(function (l) { return l.trim(); }).filter(Boolean);
+    var allow = document.getElementById('allowPaths').value.split('\n')
+      .map(function (l) { return l.trim(); }).filter(Boolean);
+    var sitemap = document.getElementById('sitemapUrl').value.trim();
+    var crawlDelay = document.getElementById('crawlDelay').value.trim();
+    var bots = Array.prototype.slice.call(document.querySelectorAll('.ai-bot:checked')).map(function (c) { return c.value; });
+
+    var lines = ['User-agent: *'];
+    if (disallow.length === 0) {
+      lines.push('Disallow:');
+    } else {
+      disallow.forEach(function (p) { lines.push('Disallow: ' + p); });
+    }
+    allow.forEach(function (p) { lines.push('Allow: ' + p); });
+    if (crawlDelay) lines.push('Crawl-delay: ' + crawlDelay);
+
+    bots.forEach(function (bot) {
+      lines.push('');
+      lines.push('User-agent: ' + bot);
+      lines.push('Disallow: /');
+    });
+
+    if (sitemap) {
+      lines.push('');
+      lines.push('Sitemap: ' + sitemap);
+    }
+
+    document.getElementById('output').value = lines.join('\n') + '\n';
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', function () {
+    var v = document.getElementById('output').value;
+    if (!v) return;
+    navigator.clipboard.writeText(v);
+    var btn = document.getElementById('copyBtn');
+    var old = btn.textContent; btn.textContent = 'Copied ✓';
+    setTimeout(function () { btn.textContent = old; }, 1200);
+  });
+
+  document.getElementById('downloadBtn').addEventListener('click', function () {
+    var v = document.getElementById('output').value;
+    if (!v) return;
+    var blob = new Blob([v], { type: 'text/plain' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'robots.txt';
+    a.click();
+  });
+});
+</script>
+
+</body>
+</html>

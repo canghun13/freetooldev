@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>llms.txt Generator — Free Tool for AI-Readable Site Index | FreeToolDev</title>
+<meta name="description" content="Turn a pasted list of your site's pages into a valid llms.txt file — a structured index that helps AI models like ChatGPT and Claude understand your site. Free, no signup.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/llms-txt-generator.html">
+<meta property="og:title" content="llms.txt Generator — Free Tool for AI-Readable Site Index | FreeToolDev">
+<meta property="og:description" content="Turn a pasted list of your site's pages into a valid llms.txt file — a structured index that helps AI models like ChatGPT and Claude understand your site. Free, no signup.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="llms.txt Generator — Free Tool for AI-Readable Site Index | FreeToolDev">
+<meta name="twitter:description" content="Turn a pasted list of your site's pages into a valid llms.txt file — a structured index that helps AI models like ChatGPT and Claude understand your site. Free, no signup.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/llms-txt-generator.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">SEO · AI</span>
+    <h1>llms.txt Generator</h1>
+    <p>Group your pages under headings, add a one-line description for each, and generate a valid llms.txt file — a structured index that helps AI models like ChatGPT, Claude, and Perplexity understand what your site is about.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="workspace-grid workspace-grid-2col">
+      <div class="panel">
+        <h3>Site info</h3>
+        <div>
+          <label>Site or project name</label>
+          <input type="text" id="siteName" placeholder="Acme Docs">
+        </div>
+        <div style="margin-top:14px;">
+          <label>One-line summary (shown right under the name)</label>
+          <input type="text" id="siteSummary" placeholder="Documentation and API reference for Acme.">
+        </div>
+        <div style="margin-top:14px;">
+          <label>Optional longer description (a sentence or two)</label>
+          <textarea id="siteDetails" style="min-height:70px;" placeholder="Extra context about what the site covers, who it's for, or anything a model should know before answering questions about it."></textarea>
+        </div>
+
+        <h3 style="margin-top:24px;">Pages</h3>
+        <p style="font-size:0.85rem; margin-bottom:10px;">One page per line: <code>Section | Title | URL | description</code> — description is optional.</p>
+        <textarea id="pagesInput" style="min-height:160px;" placeholder="Docs | Getting Started | https://example.com/docs/start | Setup and first steps
+Docs | API Reference | https://example.com/docs/api | Full endpoint documentation
+Blog | Release Notes | https://example.com/blog/releases"></textarea>
+
+        <div class="toolbar">
+          <button class="btn btn-amber" id="genBtn">Generate llms.txt →</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>llms.txt</h3>
+        <textarea id="output" readonly placeholder="Generated file appears here." style="min-height:340px;"></textarea>
+        <div class="toolbar">
+          <button class="btn btn-outline" id="copyBtn">Copy</button>
+          <button class="btn btn-outline" id="downloadBtn">Download llms.txt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>What llms.txt actually is</h2>
+    <p>llms.txt is a proposed convention — not an official web standard, but one that's been adopted widely enough to matter — for giving AI models a clean, structured summary of a site's content at a predictable location: <code>yoursite.com/llms.txt</code>. Where a normal page is full of navigation, scripts, and layout markup that a model has to wade through, an llms.txt file is plain markdown: a name, a short description, and a categorized list of links, each with its own one-line summary.</p>
+
+    <h2>How it's different from robots.txt and sitemap.xml</h2>
+    <p>robots.txt controls <em>whether</em> a crawler is allowed to fetch a page. sitemap.xml lists <em>which</em> pages exist and roughly when they changed. Neither one describes what a page is actually about — that's the gap llms.txt fills, specifically for AI models trying to understand a site's content well enough to answer questions about it or cite it accurately, rather than for traditional search engine crawling. See <a href="/blog/sitemap-vs-robots-txt.html">this post</a> for more on how the first two differ from each other.</p>
+
+    <h2>After generating</h2>
+    <p>Upload the file to your site root so it's reachable at exactly <code>yoursite.com/llms.txt</code>. There's no submission step the way there is with a sitemap in Search Console — AI crawlers that support the convention check for the file directly when they visit.</p>
+
+    <h2>FAQ</h2>
+    <h3>Does having an llms.txt file guarantee AI models cite my site?</h3>
+    <p>No — it's one input among many, not a ranking mechanism. It makes your content easier for a supporting model to parse accurately if it does decide to reference your site, the same way a sitemap makes a page easier to discover without guaranteeing it gets indexed.</p>
+    <h3>Do all AI companies support this?</h3>
+    <p>Support varies and is still evolving — this is a relatively new, community-driven convention rather than an enforced standard, so treat it as a reasonable-effort addition rather than something every AI crawler is guaranteed to read.</p>
+    <h3>How is this different from just having a good sitemap?</h3>
+    <p>A sitemap is a bare list of URLs with no description of what each page contains — a crawler still has to fetch and parse every page to know what it's about. llms.txt front-loads that summary in plain text at a single, small file, which is a much cheaper way for a model with a limited context window to get an overview before deciding what (if anything) to fetch in more depth.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  document.getElementById('genBtn').addEventListener('click', function () {
+    var name = document.getElementById('siteName').value.trim() || 'Untitled Site';
+    var summary = document.getElementById('siteSummary').value.trim();
+    var details = document.getElementById('siteDetails').value.trim();
+    var rawLines = document.getElementById('pagesInput').value.split('\n')
+      .map(function (l) { return l.trim(); }).filter(Boolean);
+
+    var sections = {};
+    var order = [];
+
+    rawLines.forEach(function (line) {
+      var parts = line.split('|').map(function (p) { return p.trim(); });
+      var section = parts[0] || 'Links';
+      var title = parts[1] || '';
+      var url = parts[2] || '';
+      var desc = parts[3] || '';
+      if (!title || !url) return;
+
+      if (!sections[section]) {
+        sections[section] = [];
+        order.push(section);
+      }
+      sections[section].push({ title: title, url: url, desc: desc });
+    });
+
+    var out = '# ' + name + '\n';
+    if (summary) out += '\n> ' + summary + '\n';
+    if (details) out += '\n' + details + '\n';
+
+    order.forEach(function (section) {
+      out += '\n## ' + section + '\n';
+      sections[section].forEach(function (p) {
+        out += '- [' + p.title + '](' + p.url + ')';
+        if (p.desc) out += ': ' + p.desc;
+        out += '\n';
+      });
+    });
+
+    document.getElementById('output').value = out;
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', function () {
+    var v = document.getElementById('output').value;
+    if (!v) return;
+    navigator.clipboard.writeText(v);
+    var btn = document.getElementById('copyBtn');
+    var old = btn.textContent; btn.textContent = 'Copied ✓';
+    setTimeout(function () { btn.textContent = old; }, 1200);
+  });
+
+  document.getElementById('downloadBtn').addEventListener('click', function () {
+    var v = document.getElementById('output').value;
+    if (!v) return;
+    var blob = new Blob([v], { type: 'text/plain' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'llms.txt';
+    a.click();
+  });
+});
+</script>
+
+</body>
+</html>

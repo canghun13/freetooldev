@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>robots.txt Mistakes That Accidentally De-Index a Whole Site — FreeToolDev</title>
+<meta name="description" content="A handful of small robots.txt mistakes are common enough to have a name in SEO circles. Here's what they look like and how to avoid making them.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/robots-txt-mistakes.html">
+<meta property="og:title" content="robots.txt Mistakes That Accidentally De-Index a Whole Site — FreeToolDev">
+<meta property="og:description" content="A handful of small robots.txt mistakes are common enough to have a name in SEO circles. Here's what they look like and how to avoid making them.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="robots.txt Mistakes That Accidentally De-Index a Whole Site — FreeToolDev">
+<meta name="twitter:description" content="A handful of small robots.txt mistakes are common enough to have a name in SEO circles. Here's what they look like and how to avoid making them.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/robots-txt-mistakes.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 10, 2026</div>
+  <h1>robots.txt Mistakes That Accidentally De-Index a Whole Site</h1>
+
+  <p>robots.txt is a short, plain-text file, and most of what goes wrong with it comes down to a handful of small, specific mistakes rather than any real complexity in the format itself. A few of them are common enough that anyone who's worked in SEO for a while has a story about finding one live on a client's site.</p>
+
+  <h2>The one-character disaster: Disallow: /</h2>
+  <p>A single forward slash after Disallow blocks the entire site — every path starts with <code>/</code>, so this rule matches everything. This usually happens by accident: a staging-site robots.txt (deliberately blocking everything so search engines don't index the test environment) gets copied over to production during a deploy and never gets changed back. It's the single most common way a site quietly vanishes from search results with no warning, since nothing about the site itself looks broken — it just stops getting crawled.</p>
+
+  <h2>Blocking the CSS and JS your pages need to render</h2>
+  <p>Years ago, blocking asset folders like <code>/wp-content/themes/</code> or <code>/assets/</code> was common practice, on the theory that search engines only needed the HTML. That's no longer true — modern search engines render pages the way a browser does, including CSS and JavaScript, to judge layout, mobile-friendliness, and content that only appears after scripts run. Blocking those folders means a crawler sees a broken, unstyled version of your page, which can genuinely hurt how it's understood and ranked.</p>
+
+  <h2>Case-sensitivity nobody expects</h2>
+  <p>Paths in robots.txt are matched case-sensitively. <code>Disallow: /Private/</code> does nothing to protect a folder actually named <code>/private/</code> — to the parser, those are two entirely different paths. This one is sneaky because it produces no error and no warning; the rule is syntactically valid, it just silently doesn't match what you meant it to.</p>
+
+  <h2>Listing a URL as both disallowed and in your sitemap</h2>
+  <p>This isn't invalid syntax, but it's a contradiction: you're telling crawlers "don't fetch this" in one file and "here's this, please index it" in another. It usually happens because sitemap generation and robots.txt rules get maintained separately, by different tools or on different schedules, so a newly-blocked path doesn't automatically get pulled from the sitemap. Google's typical behavior is to respect the block and mostly ignore the sitemap entry — but it's a sign the two files aren't being kept in sync, which is worth fixing even when it isn't causing visible harm yet.</p>
+
+  <h2>Trailing slash confusion</h2>
+  <p><code>Disallow: /blog</code> and <code>Disallow: /blog/</code> aren't the same rule. Without the trailing slash, the rule matches any path starting with those characters — <code>/blog</code>, <code>/blog/</code>, and also <code>/blog-archive</code> or <code>/blogger-outreach</code>, which is almost certainly not intended. Being precise about the trailing slash, and about whether a rule should match a whole folder versus a single file, avoids accidentally blocking (or failing to block) more than intended.</p>
+
+  <h2>Forgetting it's not access control</h2>
+  <p>A Disallow rule is a request that well-behaved crawlers honor voluntarily — nothing stops a browser, a script, or a less scrupulous bot from ignoring it and fetching the page anyway. Treating robots.txt as a security measure for genuinely sensitive content (an internal tool, unpublished data) is a mistake in the other direction: the fix there is authentication or a firewall rule, not a text file that only asks nicely.</p>
+
+  <h2>Generate one correctly</h2>
+  <p>FreeToolDev's <a href="/tools/robots-txt-generator.html">robots.txt generator</a> builds a syntactically correct file from a simple form — paths to block, paths to explicitly allow, your sitemap URL, and optional AI-crawler blocking — so the common mistakes above (a stray slash, wrong case assumptions, forgetting the sitemap line) don't have a chance to creep in from hand-editing the file.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

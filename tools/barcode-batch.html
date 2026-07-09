@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Barcode Generator — UPC, EAN, Code128 | FreeToolDev</title>
+<meta name="description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once. No upload, no account — runs entirely in your browser. Download individually or as a ZIP.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/barcode-batch.html">
+<meta property="og:title" content="Bulk Barcode Generator — UPC, EAN, Code128 | FreeToolDev">
+<meta property="og:description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once. No upload, no account — runs entirely in your browser. Download individually or as a ZIP.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk Barcode Generator — UPC, EAN, Code128 | FreeToolDev">
+<meta name="twitter:description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once. No upload, no account — runs entirely in your browser. Download individually or as a ZIP.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/barcode-batch.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.1/JsBarcode.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Batch · No-upload</span>
+    <h1>Bulk Barcode Generator</h1>
+    <p>Paste a list of codes — one per line — and generate a UPC, EAN-13, or Code128 barcode for each. Everything is drawn locally on canvas; nothing is uploaded to a server, and no account is required.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>Codes (one per line)</h3>
+      <textarea id="items" placeholder="012345678905
+036000291452
+ITEM-00123"></textarea>
+
+      <div class="opt-row" style="margin-top:14px;">
+        <div>
+          <label>Format</label>
+          <select id="format">
+            <option value="EAN13">EAN-13 (13 digits)</option>
+            <option value="UPC">UPC-A (12 digits)</option>
+            <option value="CODE128" selected>Code128 (any text)</option>
+          </select>
+        </div>
+        <div>
+          <label>Show text under barcode</label>
+          <select id="showText">
+            <option value="true" selected>Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button class="btn btn-amber" id="generateBtn">Generate barcodes →</button>
+        <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download all as ZIP</button>
+      </div>
+      <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
+      <p style="margin-top:14px; font-size:0.85rem; color:#8a8578;">Up to 100 codes per batch — this keeps rendering fast and the tab responsive. Invalid codes for the selected format (wrong length, non-numeric for EAN/UPC) are skipped and listed below the results.</p>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="barcodeGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px;"></div>
+      <div id="errorList" style="margin-top:16px; font-size:0.85rem;"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy prose" style="max-width:720px; margin:0 auto; padding:64px 24px;">
+    <h2 style="margin-top:0; padding-top:0; border-top:none;">Choosing a format</h2>
+    <p>UPC-A is the 12-digit format used on retail products in the US and Canada. EAN-13 is the international equivalent (13 digits) used almost everywhere else, and is also what most UPC-A codes are stored as once padded with a leading zero. Code128 is different in kind — it isn't tied to a fixed digit count or a retail product-numbering scheme, and can encode any alphanumeric string, which makes it the right choice for internal codes, asset tags, or anything that isn't a registered retail product number.</p>
+
+    <h2>How it works</h2>
+    <p>Each barcode is rendered locally using canvas-based encoding (via the open-source JsBarcode library) — the same fundamental technique any barcode generator uses, just running entirely on your device instead of a server. You can confirm nothing is uploaded by checking your browser's Network tab while a batch runs.</p>
+
+    <h2>Limits</h2>
+    <p>Up to 100 codes per batch. EAN-13 and UPC-A require the correct digit count and a valid checksum digit at the end — codes that don't validate are skipped and listed separately rather than silently producing a broken barcode, since a barcode that fails to scan at checkout is a worse outcome than an obvious error message.</p>
+
+    <h2>FAQ</h2>
+    <h3>Can I generate a barcode for a product I'm about to sell on Amazon or another marketplace?</h3>
+    <p>Technically yes, this tool will produce a valid UPC/EAN barcode from any correctly-formatted number — but most marketplaces require the underlying number itself to be registered through GS1 (the organization that issues UPC/EAN prefixes) to avoid conflicting with another seller's product. This tool handles the barcode image; it doesn't register or validate ownership of the number itself.</p>
+    <h3>What happens if I enter a 12-digit number and select EAN-13?</h3>
+    <p>EAN-13 expects 13 digits including the checksum. A 12-digit UPC-A number can be converted to EAN-13 by adding a leading zero — if your list is UPC-style 12-digit codes, select UPC-A rather than EAN-13 so they're read correctly without needing to pad them yourself first.</p>
+    <h3>Why did some of my codes get skipped?</h3>
+    <p>For EAN-13 and UPC-A, a code is skipped if it isn't purely numeric, isn't the exact expected length, or fails the format's built-in checksum validation (the last digit is calculated from the others specifically to catch typos and transcription errors). Code128 has no such restriction and accepts any alphanumeric string.</p>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var MAX_ITEMS = 100;
+  var itemsInput = document.getElementById('items');
+  var barcodeGrid = document.getElementById('barcodeGrid');
+  var errorList = document.getElementById('errorList');
+  var resultsPanel = document.getElementById('resultsPanel');
+  var downloadZipBtn = document.getElementById('downloadZipBtn');
+  var progressStatus = document.getElementById('progressStatus');
+  var progressText = document.getElementById('progressText');
+  var generateBtn = document.getElementById('generateBtn');
+  var lastResults = [];
+
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function slugify(s) {
+    return String(s).replace(/[^a-z0-9]+/gi, '-').toLowerCase().slice(0, 40) || 'barcode';
+  }
+
+  function eanChecksumValid(digits) {
+    var sum = 0;
+    for (var i = 0; i < digits.length - 1; i++) {
+      var d = parseInt(digits[i], 10);
+      sum += (i % 2 === 0) ? d * ((digits.length === 13) ? 1 : 3) : d * ((digits.length === 13) ? 3 : 1);
+    }
+    var check = (10 - (sum % 10)) % 10;
+    return check === parseInt(digits[digits.length - 1], 10);
+  }
+
+  function validate(code, format) {
+    if (format === 'CODE128') return true;
+    if (!/^\d+$/.test(code)) return false;
+    if (format === 'EAN13' && code.length !== 13) return false;
+    if (format === 'UPC' && code.length !== 12) return false;
+    return eanChecksumValid(code);
+  }
+
+  generateBtn.addEventListener('click', function () {
+    var lines = itemsInput.value.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+    if (lines.length === 0) { alert('Enter at least one code.'); return; }
+    if (lines.length > MAX_ITEMS) {
+      alert('This batch has ' + lines.length + ' items — the limit is ' + MAX_ITEMS + ' per run. Only the first ' + MAX_ITEMS + ' will be processed.');
+      lines = lines.slice(0, MAX_ITEMS);
+    }
+
+    var format = document.getElementById('format').value;
+    var showText = document.getElementById('showText').value === 'true';
+
+    barcodeGrid.innerHTML = '';
+    errorList.innerHTML = '';
+    resultsPanel.style.display = 'block';
+    downloadZipBtn.style.display = 'none';
+    lastResults = [];
+    var errors = [];
+    var usedNames = {};
+
+    lines.forEach(function (code) {
+      if (!validate(code, format)) {
+        errors.push(code);
+        return;
+      }
+
+      var canvas = document.createElement('canvas');
+      try {
+        JsBarcode(canvas, code, {
+          format: format,
+          displayValue: showText,
+          margin: 10
+        });
+      } catch (e) {
+        errors.push(code);
+        return;
+      }
+
+      var dataUrl = canvas.toDataURL('image/png');
+      var base = slugify(code);
+      var name = base, n = 2;
+      while (usedNames[name]) { name = base + '-' + n; n++; }
+      usedNames[name] = true;
+      var filename = name + '.png';
+      lastResults.push({ name: filename, dataUrl: dataUrl });
+
+      var cell = document.createElement('div');
+      cell.className = 'file-row ready';
+      cell.style.flexDirection = 'column';
+      cell.style.alignItems = 'center';
+      cell.style.textAlign = 'center';
+      cell.innerHTML =
+        '<img src="' + dataUrl + '" style="width:100%; max-width:200px; height:auto; margin-bottom:8px; background:#fff; padding:6px; border:1px solid var(--paper-dim);" alt="Barcode for ' + esc(code) + '">' +
+        '<span class="fname" style="width:100%; margin-bottom:8px;">' + esc(code) + '</span>' +
+        '<a class="btn btn-outline" style="padding:6px 12px; font-size:0.72rem;" href="' + dataUrl + '" download="' + filename + '">Download</a>';
+      barcodeGrid.appendChild(cell);
+    });
+
+    progressText.textContent = lastResults.length + ' barcode(s) generated' + (errors.length ? ', ' + errors.length + ' skipped.' : '.');
+    if (errors.length) {
+      errorList.innerHTML = '<strong>Skipped (invalid for ' + format + '):</strong> ' + errors.map(esc).join(', ');
+    }
+    if (lastResults.length) downloadZipBtn.style.display = 'inline-flex';
+  });
+
+  downloadZipBtn.addEventListener('click', function () {
+    var zip = new JSZip();
+    lastResults.forEach(function (r) {
+      var base64 = r.dataUrl.split(',')[1];
+      zip.file(r.name, base64, { base64: true });
+    });
+    zip.generateAsync({ type: 'blob' }).then(function (blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'barcodes.zip';
+      a.click();
+    });
+  });
+});
+</script>
+
+</body>
+</html>

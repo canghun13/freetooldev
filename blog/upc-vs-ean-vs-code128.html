@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPC vs EAN vs Code128: Which Barcode Format Do You Actually Need? — FreeToolDev</title>
+<meta name="description" content="Three barcode formats cover almost every real-world case. Here's what each one is actually for, and how to tell which one your situation calls for.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/upc-vs-ean-vs-code128.html">
+<meta property="og:title" content="UPC vs EAN vs Code128: Which Barcode Format Do You Actually Need? — FreeToolDev">
+<meta property="og:description" content="Three barcode formats cover almost every real-world case. Here's what each one is actually for, and how to tell which one your situation calls for.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="UPC vs EAN vs Code128: Which Barcode Format Do You Actually Need? — FreeToolDev">
+<meta name="twitter:description" content="Three barcode formats cover almost every real-world case. Here's what each one is actually for, and how to tell which one your situation calls for.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/upc-vs-ean-vs-code128.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 10, 2026</div>
+  <h1>UPC vs EAN vs Code128: Which Barcode Format Do You Actually Need?</h1>
+
+  <p>Dozens of barcode formats exist for specialized industries, but the overwhelming majority of everyday needs — retail products, internal inventory, asset tags, shipping labels — are covered by three: UPC-A, EAN-13, and Code128. They're not interchangeable, and picking the wrong one is a common source of "why won't this scan at checkout" problems.</p>
+
+  <h2>UPC-A: the 12-digit US retail standard</h2>
+  <p>UPC-A is a fixed 12-digit format, and it's what you'll find on the overwhelming majority of retail products sold in the US and Canada. The first several digits identify the manufacturer (assigned by GS1, the organization that administers barcode number ranges), the next few identify the specific product, and the final digit is a checksum calculated from the others — it exists specifically to catch a mistyped or misread digit, not to encode any additional information.</p>
+
+  <h2>EAN-13: the international equivalent</h2>
+  <p>EAN-13 is UPC-A's international counterpart — 13 digits instead of 12, used across most of the world outside North America. The extra digit at the front is typically a country or region prefix. In practice, a UPC-A code can be represented as EAN-13 by adding a leading zero, which is why most point-of-sale systems and barcode scanners handle both formats interchangeably without any special configuration.</p>
+
+  <h2>The part that actually matters: these numbers have to be registered</h2>
+  <p>This is the detail that trips people up most: generating a syntactically valid UPC-A or EAN-13 barcode is trivial — any barcode generator can produce one from 12 or 13 digits. But the <em>number itself</em> is supposed to be assigned to you specifically through GS1, so that it doesn't collide with another company's product using the same digits. If you're planning to sell a physical product through a retailer or major marketplace, you generally need a real, registered GS1 prefix — a barcode generator handles turning that number into a scannable image, but it doesn't grant or verify ownership of the underlying number.</p>
+
+  <h2>Code128: for everything that isn't a retail product number</h2>
+  <p>Code128 works completely differently — instead of a fixed digit count tied to a registration scheme, it can encode any alphanumeric string of essentially any reasonable length. There's no GS1 registration involved, no fixed format, and no assumption that the code represents a retail product at all. This makes it the right default for internal use: warehouse bin locations, asset tags, employee badges, internal SKUs, ticket numbers — anything you're generating and consuming entirely within your own systems, where there's no external registry to coordinate with.</p>
+
+  <h2>A quick way to decide</h2>
+  <p>If the code is a real retail product number assigned through GS1, use UPC-A (US/Canada) or EAN-13 (elsewhere) to match the number's actual format. If you're numbering something internal — inventory, assets, tickets — and there's no registration authority involved, Code128 is almost always the simpler, more flexible choice, since it isn't constrained to digits-only or a fixed length.</p>
+
+  <h2>Generate them</h2>
+  <p>FreeToolDev's <a href="/tools/barcode-batch.html">bulk barcode generator</a> supports all three formats from a pasted list of codes — UPC-A and EAN-13 codes are validated against their checksum before rendering, so a mistyped digit gets flagged rather than silently producing a barcode that fails to scan.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
