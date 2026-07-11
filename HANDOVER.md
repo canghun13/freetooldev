@@ -1,65 +1,232 @@
-# FreeToolDev — HANDOVER.md
+# FreeToolDev — 프로젝트 인수인계 문서
 
-_Last updated: 2026-07-11_
+마지막 업데이트: 2026-07-11 (오늘 세션 반영)
 
-## 사이트 현황
+---
 
-- 도메인: freetooldev.com — 개발자/디자이너용 무료 배치/벌크(bulk) 유틸리티 사이트
-- 포지셔닝: "batch/bulk 특화" (경쟁사 대비 툴 개수가 아니라 이 포지셔닝 자체가 차별점)
-- 전체 페이지: 39개 (툴 12 + 블로그 21 + 정적 페이지 6)
-- 모든 툴은 브라우저에서만 동작, 서버 업로드 없음 — 이 특성이 콘텐츠/마케팅 전반의 핵심 메시지
+## 1. 프로젝트 개요
 
-## 툴 목록 (12개)
+- **사이트명**: FreeToolDev
+- **도메인**: https://freetooldev.com
+- **컨셉**: 개발자/디자이너 대상 무료 "배치/벌크" 유틸리티 툴 모음. 대부분의 무료 툴이 파일 1개씩만 처리하는 데 반해, 이 사이트는 처음부터 "여러 개를 한 번에" 처리하는 걸 차별점으로 잡음.
+- **핵심 포지셔닝**: No-upload / 브라우저에서만 처리 (프라이버시), 계정 불필요, 완전 무료
+- **수익 모델**: AdSense(예정) + 제휴 링크(보류, 트래픽 부족으로 1차 시도 실패) + 디렉토리 백링크
+- **타겟**: 글로벌(영어), 개발자/디자이너
 
-| 툴 | 파일 | 블로그 커버리지 |
+---
+
+## 2. 인프라
+
+| 항목 | 내용 |
+|---|---|
+| 호스팅 | GitHub Pages |
+| GitHub repo | `canghun13/freetooldev` (main 브랜치) |
+| DNS/CDN | Cloudflare (DNS only 모드, 프록시 안 켬) |
+| HTTPS | GitHub Pages Enforce HTTPS 켜짐 |
+| Analytics | GA4, 측정 ID `G-6PV8P7CQ31` |
+| Search Console | 도메인 속성으로 인증 완료, sitemap 제출은 사용자가 직접 관리. 성과 데이터(zip)는 사용자가 그때그때 채팅에 업로드 |
+| 서버리스 백엔드 | Cloudflare Worker (`freetooldev-crawler.canghun13.workers.dev`) — 6번 참고 |
+
+### GitHub 작업 방식 (중요)
+- 사용자가 **그날그날 GitHub Fine-grained PAT(read/write, 이 repo 한정)를 발급**해서 채팅에 붙여넣어줌
+- Claude는 토큰으로 `git clone`(또는 기존 clone에 `git remote set-url`) → 수정 → `commit` → `push`까지 직접 처리
+- 작업 완료 후 사용자가 토큰을 **revoke**함 — Claude는 토큰을 별도로 저장하거나 재사용하지 않음
+- git identity가 컨테이너에 기본 설정 안 되어 있으므로 최초 커밋 전에 `git config user.name/user.email` 필요
+- 세션 사이에 원격에 새 커밋(사용자가 GitHub 웹에서 직접 수정한 것 등)이 있을 수 있으므로, push 전 항상 `git fetch origin main` → `git rebase origin/main` 후 push. **강제 push 금지.**
+- **이 방식 도입 이후로는 zip 파일을 만들어서 드릴 필요 없음.** (혹시 토큰 없이 진행하는 세션이면 예전 zip 방식으로 돌아가면 됨)
+
+---
+
+## 3. 사이트 구조 (전체 파일, 2026-07-11 기준 39개)
+
+```
+/
+├── index.html                  홈
+├── about.html
+├── privacy.html
+├── contact.html
+├── HANDOVER.md                 이 문서
+├── README.md                   GitHub 프로필용 gitanimals 위젯 (프로젝트와 무관, 사용자가 추가함)
+├── CNAME, robots.txt, sitemap.xml, llms.txt
+├── favicon.ico
+├── assets/
+│   ├── css/style.css           디자인 시스템 전부 여기
+│   ├── js/nav-behavior.js      헤더/푸터는 정적 HTML, 이 JS는 모바일메뉴/연도/활성링크만 처리
+│   └── img/                    favicon.svg, apple-touch-icon.png, og-image.png(신규) 등
+├── tools/                      12개, index.html은 검색/필터 포함 목록
+└── blog/                       21개, index.html은 목록
+```
+
+**중요 — 헤더/푸터 구조**: `include.js`는 삭제됨, 전부 **정적 HTML로 하드코딩**. 새 페이지/툴/블로그 추가할 때마다 헤더/푸터를 모든 페이지에 반복 삽입 필요. footer의 "Tools" 링크 목록도 전체 페이지에 일괄 반영 필요 (python find-replace 스크립트로 처리, 누락 없는지 `grep -L`로 재확인). `nav-behavior.js`는 모바일 메뉴 토글, 연도, 활성 링크 하이라이트만 담당.
+
+**⚠️ Footer 배지 관련 매우 중요한 규칙**:
+- footer 우측 하단에 **twelve.tools, Findly.tools, Fazier, Smol Launch** 배지 4개가 사용자 본인이 직접 삽입한 상태로 이미 들어가 있음 (index.html에만 있음, 다른 페이지엔 없어도 정상 — 홈페이지 한 곳만 요구하는 디렉토리가 대부분이라 버그 아님)
+- **이 배지들은 사용자가 직접 넣고 직접 관리한다.** Claude는 앞으로 footer를 수정/편집할 일이 있어도 이 배지들을 **추가하지도, "이상해 보인다"는 이유로 제거하지도 말 것.** 절대 원칙.
+
+---
+
+## 4. 디자인 시스템
+
+- **컨셉**: 엔지니어링 블루프린트(청사진). "배치 처리"라는 주제를 도면/제도 언어로 표현
+- **색상**: 네이비(`#0E2340` 배경) + 앰버(`#E8A33D` 강조) + 크림(`#EDEBE2`, 밝은 섹션용)
+- **폰트**: 헤딩 = JetBrains Mono, 본문 = Inter (Google Fonts CDN)
+- **로고**: "배치 큐" 막대 3개 모티프 (증가하는 바 차트 형태), navy 배경 + amber 막대
+  - `assets/img/favicon.svg`, `favicon.ico`, `apple-touch-icon.png` 등 사이트에 반영됨
+  - 디렉토리 등록용 로고 PNG 4종(정사각형/가로형, 투명/흰배경)은 사이트 파일엔 없고 대화 중 첨부파일로만 전달됨. 필요하면 재생성 가능 (`/home/claude/make_logo.py` 로직 참고, 없으면 새로 만들어야 함)
+  - **(신규, 2026-07-07)** 소셜 공유용 OG 이미지(`assets/img/og-image.png`, 1200×630)를 PIL로 새로 제작함. 로고 모티프 + "FreeToolDev" 워드마크("Dev"는 amber) + 태그라인 + "NO SIGNUP / NO UPLOADS / 100% FREE" 조합. 전체 39페이지에 og:/twitter: 메타태그로 연결됨.
+
+---
+
+## 5. 툴 12개 현황
+
+| 툴 | 파일 | 상태 | 비고 |
+|---|---|---|---|
+| Base64 Encode/Decode | `tools/base64.html` | 검증완료 | 완전 클라이언트, 배치 줄단위 처리 |
+| CSV to JSON | `tools/csv-to-json.html` | 검증완료 | UTF-8/EUC-KR/UTF-16 자동 인코딩 감지, 8MB 제한, 청크 파싱(멈춤 방지) |
+| Bulk Image Resize/Convert/Compress | `tools/image-batch.html` | 검증완료 | Canvas API, 20MB/장·60장 제한, 순차처리+진행률. **(신규)** "Crop to exact size(center-crop)" 모드 추가됨 — width/height 지정 시 cover 방식으로 스케일 후 중앙 기준 크롭 |
+| RSS Generator | `tools/rss-generator.html` | 검증완료 | "계정불필요/스크래핑아님" 차별점 보강. **GSC 신호 있는 페이지 (아래 8번 참고)** |
+| Sitemap Generator | `tools/sitemap-generator.html` | 검증완료 | |
+| **(신규) robots.txt Generator** | `tools/robots-txt-generator.html` | 검증완료 | Disallow/Allow/Sitemap 라인 + GPTBot/ClaudeBot/Google-Extended 등 AI 크롤러 개별 차단 체크박스 |
+| **(신규) llms.txt Generator** | `tools/llms-txt-generator.html` | 검증완료 | `섹션 \| 제목 \| URL \| 설명` 포맷 파싱 → 카테고리별 마크다운 인덱스 생성 |
+| IP/DNS/SSL Bulk Lookup | `tools/ip-dns-ssl.html` | 검증완료 | DNS는 Google DoH, SSL은 Worker→crt.sh 경유. SSL 큐잉 동시 2개 제한. **(신규)** 페이지 최상단에 "내 현재 IP" 카드 추가 — `api.ipify.org` 호출로 즉시 표시, 복사 버튼 포함 |
+| Site Crawler & Audit | `tools/site-crawler.html` | 검증완료 | Worker `/crawl` 호출, 최대 40페이지, sitemap/rss/llms.txt 동시생성+깨진링크+메타태그 체크 |
+| JWT Decoder (Batch) | `tools/jwt-decoder.html` | 검증완료(모바일 포함) | 서명 검증 안 함 명시, 완전 클라이언트 |
+| Bulk QR Code Generator | `tools/qr-batch.html` | 검증완료(실제 스캔까지) | qrcodejs(cdnjs) 라이브러리, 100개 제한 |
+| **(신규) Bulk Barcode Generator** | `tools/barcode-batch.html` | 검증완료 | UPC-A/EAN-13/Code128, JsBarcode(cdnjs 3.12.1) 라이브러리. UPC/EAN은 체크섬 검증 후 불합격 코드는 결과 하단에 별도 표시. 100개 제한 |
+
+**신규 툴 후보 리서치 누적 결과 (총 23개 후보 검증, 전부 포화로 보류)**:
+- 1차: Password Generator, Markdown→HTML, URL 단축기, Hash Generator, Timestamp Converter, Text Case Converter
+- 2차(2026-07-11 세션): Bulk Redirect Checker, Bulk EXIF Remover, Bulk OG/Twitter Card Checker, Bulk Favicon Generator, Bulk UTM Builder, Batch Regex Tester, Bulk Color Contrast Checker(WCAG), Bulk Barcode(→이후 실제 채택), Bulk 텍스트 인코딩 변환, Bulk 파일 이름 변경기, Cron Expression Parser, CORS Preflight Tester, Bulk 색상 포맷 변환, 여러 이미지 팔레트 동시 추출
+- 3차(같은 세션, robots.txt/llms.txt 검토 중): 자체 robots.txt/llms.txt Generator도 "포화" 판정이었으나, **수익화(페이지 수) 관점에서 포화 여부와 무관하게 채택하기로 사용자가 방향 전환** — 아래 "다음에 할 일" 참고
+- **결론: 순수 "경쟁 없는 아이디어" 기준으로는 더 이상 안 나옴.** 이후로는 "포화됐어도 브랜드에 맞고 빠르게 만들 수 있는 것" 기준으로 전환함 (2026-07-11 세션에서 확정).
+
+**대기 중인 신규 툴 후보 3개** (2026-07-11 세션에서 6개 계획 중 3개만 완료, 나머지 대기):
+- Bulk Color Palette Extractor (여러 이미지에서 색상 팔레트 동시 추출)
+- Bulk EXIF Remover (여러 이미지 메타데이터 일괄 제거)
+- Bulk File Renamer (패턴 기반 파일명 일괄 변경)
+
+---
+
+## 6. Cloudflare Worker (`freetooldev-crawler`)
+
+- **주소**: `https://freetooldev-crawler.canghun13.workers.dev`
+- **엔드포인트**:
+  - `GET /crawl?url=https://example.com` — 사이트 크롤링(최대 40페이지, 서브리퀘스트 45개 제한), sitemap.xml/rss.xml/llms.txt/브로큰링크/메타태그 리포트 반환 (JSON)
+  - `GET /ssl?domain=example.com` — crt.sh(Certificate Transparency 로그, API키 불필요) 조회로 SSL 만료일 확인. exact-match 쿼리 문법은 정상 도메인까지 결과없음 처리하는 버그가 있어서 롤백함 — **절대 다시 넣지 말 것.** 30초 타임아웃 + 502/503 시 1회 재시도 구현됨.
+- **배포 방식**: Cloudflare 대시보드에서 수동으로 코드 편집/Deploy (Claude가 API로 직접 배포 못 함). 코드는 대화 중 파일로 전달, repo에는 백업 안 해둠 (필요시 사용자 판단으로 나중에 추가 가능)
+- **HTMLRewriter** API로 title/meta description/링크 추출 (Cloudflare Workers 전용 스트리밍 HTML 파서)
+
+---
+
+## 7. 블로그 현황 (21개)
+
+**툴별 커버리지 (2026-07-11 기준, 12개 툴 전부 최소 2개 이상)**:
+
+| 툴 | 개수 |
+|---|---|
+| image-batch, rss-generator, site-crawler | 3 |
+| base64, jwt-decoder, csv-to-json, ip-dns-ssl, qr-batch, sitemap-generator, barcode-batch | 2 |
+| robots-txt-generator, llms-txt-generator | 1개씩 전용 + "robots.txt vs llms.txt" 비교글 1개 공유 = 사실상 2개씩 |
+
+**2026-07-07 세션 이전 (13개)**: jwt-claims-explained, find-broken-links-free-tool, rss-generator-no-account, free-alternative-screaming-frog, rss-for-automation, bulk-qr-code-use-cases, ssl-expiry-monitoring-free, csv-encoding-gibberish, sitemap-static-sites, debug-jwt-base64-locally, webp-vs-avif-2026, no-upload-image-compression, batch-vs-ai-image-convert
+
+**2026-07-07 세션 추가 (4개, 언더커버 툴 보강)**: sitemap-vs-robots-txt, csv-to-json-data-types, dns-records-explained, static-vs-dynamic-qr-codes
+
+**2026-07-11 세션 추가 (4개, 신규 툴 3개 세트)**: robots-txt-mistakes, robots-txt-vs-llms-txt, upc-vs-ean-vs-code128, bulk-barcode-use-cases
+
+---
+
+## 8. GA4 / Search Console 데이터 추이 (스냅샷 비교)
+
+| 날짜 | 총 클릭 | 총 노출 | 노출 잡힌 페이지 수 |
+|---|---|---|---|
+| 2026-07-06 | 1 | 111 | 소수 |
+| 2026-07-10 | 2 | 305 | 5~6개 |
+| 2026-07-11 | 3 | 421 (+38%) | 16개로 확대 |
+
+**핵심 신호 2개 (계속 유지 중)**:
+1. `tools/rss-generator.html` — 노출 75→108→117로 꾸준히 증가, 클릭도 1→2로 늘어남 (사이트 유일하게 클릭이 계속 나오는 페이지)
+2. `blog/free-alternative-screaming-frog.html` — 노출 28→99→179 (2026-07-10→11 하루 새 +81%). 독일어/북유럽어권("alternativ screaming frog", "alternativer til screaming frog" 등) 다국어 쿼리가 계속 붙음. **순위는 60~67위권으로 여전히 페이지 6~7권, 클릭 0** — 사이트에서 볼륨은 제일 크지만 전환이 전혀 안 되는 상태.
+
+**2026-07-11 분석에서 확인한 것**: screaming-frog 클러스터에 새로 잡힌 "500 URL 무료 한도" 롱테일 쿼리를 신규 콘텐츠 후보로 검토했으나 (1) 기존 free-alternative-screaming-frog.html에 이미 언급되어 있어 중복, (2) 웹 검색 결과 이 롱테일 자체가 Screaming Frog 공식 문서 + 대형 에이전시 블로그가 이미 장악해서 일반 "alternative" 키워드보다 더 뚫기 어려움 → **신규 작성 보류.** "image compressor safe" 같은 마이크로 시그널도 image-batch 툴에 이미 "업로드 안 됨" 문구로 커버되어 있어 추가 조치 없음.
+
+**결론 (계속 유지)**: 이 두 클러스터는 콘텐츠 부족이 아니라 도메인 권위/백링크 문제. 노출은 계속 느는데 클릭이 안 붙으면 이 가설이 맞다는 뜻이고, 반대로 순위가 유의미하게 오르기 시작하면 그때 콘텐츠 심화로 전환 검토할 것.
+
+**작업 사이클**: 사용자가 그때그때(거의 매일) GA/Search Console 데이터를 zip으로 업로드하면, 이전 스냅샷과 비교해서 변화율 중심으로 분석 → 신규/보강 필요 여부를 (1)기존 파일 중복 체크 (2)웹 검색 키워드 경쟁강도 확인 두 단계를 거쳐 판단.
+
+---
+
+## 9. 수익화 진행상황
+
+- **AdSense**: 아직 미신청. Privacy/About/Contact 페이지는 이미 준비됨(요건 충족). **(2026-07-11 세션 확정 방향)** 트래픽/클릭이 붙기 전까지는 "유니크한 툴 아이디어 찾기"보다 "페이지 총량 확보"가 우선순위라고 사용자가 방향을 명확히 함 — 신규 툴 검토 시 포화 여부만으로 기각하지 말고, 브랜드 적합성/제작 난이도/기존 사용자층과의 시너지를 함께 볼 것.
+- **제휴(Vercel/Netlify/DigitalOcean/JetBrains/Cloudflare)**: 1차 시도 → 트래픽 부족으로 거절됨. 트래픽 쌓인 뒤 재신청 예정
+
+---
+
+## 10. 디렉토리 백링크 등록 현황 (2026-07-07 기준, 이후 세션에서 추가 진행 없음)
+
+### 10-1. 이전 세션(6월 말~7/6 이전)에 이미 등록 완료된 곳
+정확한 전체 리스트는 그때그때 기록이 흩어져 있어 100% 완전하지 않지만, 다른 채팅("기획")에서 언급된 것 기준:
+- Dev.to, Medium, Product Hunt(첫 등록), IndieHackers(계정만 존재, 제출 권한은 없음 — 10-3 참고), SaaSHub, F6S, Peerlist(계정만 있고 실제 제품 launch는 안 되어 있었음), submission.directory 등
+- 그 외 TinyLaunch(무료 큐 대기중), Startup Fame(승인완료), Pitchwall(Under Review 대기중), TerminalTrove(카테고리 안 맞아 스킵)
+- **⚠️ 이 리스트는 불완전할 수 있음.** 사용자 본인도 전체를 다 기억 못 하는 상태. 새 채팅에서 "예전에 이미 등록했었나?"를 사용자가 물으면, 넘겨짚지 말고 `conversation_search` 툴로 과거 대화 검색해서 확인할 것. 확인 안 되면 사용자에게 직접 물어볼 것 — 절대 숫자를 뭉뚱그리거나 지어내지 말 것 (이전에 이걸로 사용자가 크게 짜증냈음).
+
+### 10-2. 2026-07-07 세션에서 신규로 등록 완료한 곳 (총 12곳)
+
+| 디렉토리 | 상태 | 비고 |
 |---|---|---|
-| Base64 Encode/Decode | tools/base64.html | 2 |
-| CSV to JSON (Batch) | tools/csv-to-json.html | 2 |
-| Bulk Image Tool (리사이즈/변환/압축/크롭) | tools/image-batch.html | 3 |
-| RSS Generator | tools/rss-generator.html | 3 |
-| Sitemap Generator | tools/sitemap-generator.html | 2 |
-| robots.txt Generator (AI 크롤러 차단 포함) | tools/robots-txt-generator.html | 1 (교차 커버 포함 2) |
-| llms.txt Generator | tools/llms-txt-generator.html | 1 (교차 커버 포함 2) |
-| IP / DNS / SSL Bulk Lookup (내 IP 즉시 표시 포함) | tools/ip-dns-ssl.html | 2 |
-| Site Crawler & Audit | tools/site-crawler.html | 3 |
-| JWT Decoder (Batch) | tools/jwt-decoder.html | 2 |
-| Bulk QR Code Generator | tools/qr-batch.html | 2 |
-| Bulk Barcode Generator (UPC/EAN/Code128) | tools/barcode-batch.html | 2 |
+| 10words.io | 완료 | 무료 큐, 예상 노출까지 2,061일 대기 (사실상 노출 안 됨, 등록 자체만 유지) |
+| twelve.tools | 완료 | footer 배지 삽입 필수 → 사용자가 직접 삽입 완료 |
+| Findly.tools | 완료 | Category: Developer tools. 배지는 자체 게시엔 불필요 |
+| LaunchIgniter | 완료 | 유료 부스트는 스킵, 무료 등록만 |
+| Fazier | 완료 | footer 배지 필수 → 사용자가 직접 삽입, **2026-07-22 런칭 예약** |
+| Product Hunt | 예약 완료 | 신규 등록(직접 폼 입력). **런칭일 2026-07-14(화)** 예약, Maker=본인 |
+| Smol Launch | 예약 완료 | 배지 필요 → 삽입 완료, badge verified. **2026-07-13(월)** 무료 큐 |
+| MicroLaunch | 완료 | Category: Developer tools. 무료 큐 2-3개월+ 대기 |
+| Dev.to | 완료 | 스토리텔링 포스트. Tags: webdev, javascript, showdev, productivity |
+| Uneed | 완료 | 무료 waiting line. **런칭 당일 업보트 10+ 못 채우면 dofollow 백링크 유지 안 되고 큐로 돌아가는 조건부 방식** |
+| SaaSHub | 완료 | Verify 완료, 스크린샷/경쟁사(Squoosh, iLoveIMG 등) 설정 완료 |
+| AlternativeTo | 승인 대기 | Squoosh를 대표 alternative로 연결. 승인 전까지 링크 공유 금지 |
 
-모든 툴 최소 2개 이상 블로그로 커버된 상태 (robots.txt/llms.txt는 전용 글 1개씩 + 둘을 함께 다루는 비교글 1개로 사실상 2개씩).
+### 10-3. 시도했지만 보류/미완료로 남은 것
+- **Peerlist**: 계정은 있으나 실제 launch 미등록. 화면 꼬임으로 중단됨. 재개 시 로그인 후 "Launchpad" → 신규 제품 등록.
+- **IndieHackers**: 신규 계정은 등록 권한 없음. 커뮤니티 활동으로 모더레이터 권한 획득 또는 유료 구독 필요 — 스킵함.
 
-## 검색 신호 (Search Console, 지난 3개월 롤링)
+### 10-4. 백링크 관련 확정된 원칙
+1. **사용자가 명시적으로 "더 하자/진행해라"고 하기 전엔 먼저 새 디렉토리를 제안하거나 진행하지 말 것.** 2026-07-07 세션 끝에서 사용자가 "앞으로 웬만하면 안 할 것"이라고 밝힘 — **디렉토리 백링크 작업은 당분간(별도 지시 없는 한) 종료 상태.** 2026-07-11 세션까지도 재개 지시 없었음.
+2. Fast-track/Premium Spot/Priority+/Guest Post 등 **부가 유료 업셀은 전부 스킵.**
+3. **배지가 필요한 디렉토리는 배지 삽입을 사용자 본인이 직접 처리한다.** Claude는 파일 수정에서 배지를 추가/제거하지 않는다.
+4. **백링크 효과 판단은 뭉뚱그려 말하지 말 것.** 정확한 숫자 근거를 `conversation_search`로 재확인 후 답할 것.
 
-- **2026-07-10 스냅샷**: 총 클릭 2 / 노출 305, 페이지 5~6개에서만 유의미한 노출
-- **2026-07-11 스냅샷**: 총 클릭 3 / 노출 421 (+38%), 노출 잡힌 페이지 16개로 확대
+---
 
-여전히 초기 단계지만 방향은 우상향. 핵심 신호 2개:
+## 11. 작업 방식 / 사용자 선호 (반드시 지킬 것)
 
-1. **rss-generator.html**: 117 노출, 순위 61위, 클릭 2 (사이트에서 유일하게 꾸준히 클릭 나오는 페이지)
-2. **free-alternative-screaming-frog.html**: 179 노출 (하루 새 +81%), 순위 60~67위, 클릭 0. 독일어/북유럽어권("alternativ screaming frog", "alternativer til screaming frog" 등) 다국어 쿼리가 계속 붙는 게 특징. **볼륨은 사이트 전체에서 제일 크지만 순위가 페이지 6~7권이라 클릭 전환이 전혀 안 됨.**
+1. **"진행해라"고 명시적으로 말하기 전엔 먼저 작업 착수하지 말 것.** 계획/분석/리서치까지는 먼저 해도 되지만, 실제 파일 생성/수정은 지시 있을 때만. 단, 사용자가 "이번에 하면 되는거고 오늘 한다 치고" 식으로 명확히 실행 지시를 주면 그 자리에서 순차 진행.
+2. **퀄리티 최우선.** 툴 페이지든 블로그든 대충 채우지 말 것.
+3. **신규 콘텐츠/툴 결정 전 필수 2단계**: (1) repo 내 실제 grep/파일 확인으로 중복 체크 (2) 웹 검색으로 키워드 경쟁강도 확인. 이 순서를 건너뛰고 바로 만들지 말 것.
+4. GitHub 토큰 직접 push 방식이라 zip 요구사항은 해소됨.
+5. 사용자는 8년차 개발자지만 Cloudflare Workers 등 서버리스/엣지 컴퓨팅 개념은 생소해할 수 있음 — 설명 시 비유/배경 설명 필요.
+6. 버그 발견 시 원인을 솔직하고 정확하게 설명할 것 (얼버무리지 말 것).
+7. 큰 작업(콘텐츠 대량 생성 등) 전엔 리스트를 정리해서 사용자 확인/컨펌 받고 진행. **단, 확인 절차 자체를 사용자에게 떠넘기지 말 것** — "혹시 pain point 있으세요?" 식으로 기획을 사용자에게 되묻는 건 지양하고, Claude가 먼저 구체적 안을 제시할 것 (2026-07-11 세션에서 사용자가 직접 지적함: "니가 기획하고 만드는건데 내가 해주고 앉았네").
+8. 사용자는 다른 프로젝트(diycalckit, gpavault, cookingcalcs, ecoenergycalc, autocalchub 등)도 동일한 구조로 운영 중.
+9. **판단은 명확하게, 숫자는 정확하게.** "이 정도면 충분한가?" 같은 질문에는 얼버무리지 말고 검색 가능한 사실에 근거해 답할 것. 모르면 "확인이 필요하다"고 정직하게 말할 것.
+10. **반복 요약/정리 지양.** 같은 결론을 여러 번 다른 말로 반복하지 말 것. 사용자가 "됐다/완료했다"고 하면 그걸로 끝내고 다음 지시를 기다릴 것.
+11. **사용자가 명확한 지시를 반복해서 줄 때는 Claude가 임의로 판단/제안하지 말고 지시받은 대로만 할 것.** ("니가 정하지 마" 라는 표현이 나오면 그 즉시 판단 개입을 멈출 것)
+12. **(신규) "포화 여부"만으로 신규 툴을 기각하는 기준은 절대적이지 않음.** 사이트 규모(페이지 수)가 수익화의 병목일 때는 경쟁이 있어도 브랜드에 맞고 빠르게 만들 수 있으면 채택 가능 — 2026-07-11 세션에서 사용자가 방향을 명확히 전환함.
+13. **(신규) 신규 파일 커밋 전 항상 검증 스크립트 실행**: 내부 링크 전수 스캔(끊긴 링크 없는지 python으로), sitemap.xml URL 개수 = 실제 html 개수 일치, OG/Twitter 태그 신규 페이지 전부 포함, 신규 JS는 `node --check`로 문법 검증. CDN 라이브러리는 버전을 하드코딩하기 전에 web_search/web_fetch로 실제 존재 여부 확인.
+14. **(신규) 대시보드/시각화 요청 시 만들지 말고 텍스트 분석으로만 보고.**
 
-### 2026-07-11 분석 결론 (신규 콘텐츠 보류)
+---
 
-screaming-frog 클러스터에서 "500 URL 무료 한도" 관련 롱테일 쿼리("screaming frog seo spider free up to 500 urls" 등)가 새로 잡혀서 전용 콘텐츠를 검토했으나:
-- 기존 free-alternative-screaming-frog.html에 이미 500 URL 한도 언급이 있어 콘텐츠 중복
-- 웹 검색 결과 이 롱테일 자체가 Screaming Frog 공식 문서(screamingfrog.co.uk) + 대형 에이전시 블로그(Thrive Agency 등)가 이미 장악해서, 일반 "alternative" 키워드보다 오히려 더 뚫기 어려운 것으로 확인
+## 12. 다음에 할 일 (우선순위 순)
 
-→ **결론: 이 클러스터는 콘텐츠 부족이 아니라 도메인 권위/백링크 문제.** 신규 글을 쓰는 것보다 진행 중인 백링크 등록(twelve.tools, Findly.tools, Fazier, Smol Launch 등)이 실제 병목 해소에 더 유효함. 이번 데이터 확인 결과 신규/보강 작업 없음 — 텍스트로만 분석하고 실행은 보류.
-
-## 원칙 (반드시 지킬 것)
-
-- **사용자 명시 지시 전 임의로 신규 작업 착수 금지.** 계획/분석/리서치는 먼저 해도 되지만 실제 파일 생성·커밋은 "진행해" 류의 명확한 지시 후에만.
-- **신규 콘텐츠(툴/블로그) 결정 전 필수 2단계 체크**: (1) 기존 파일과 내용 중복 확인 (2) 웹 검색으로 키워드 경쟁강도 확인. 이 두 체크를 통과 못 하면 신규 작성 보류하고 이유를 텍스트로 보고.
-- **footer 배지(twelve.tools, Findly.tools, Fazier, Smol Launch)는 절대 건드리지 말 것.** index.html에만 있고 사용자가 직접 삽입한 것.
-- **숫자(트래픽/노출/클릭 등)는 뭉뚱그리지 말고 실제 데이터 파일 기준으로 재확인** 후 보고.
-- **커밋 전 항상 검증**: 내부 링크 전수 스캔(끊긴 링크 없는지), sitemap.xml URL 개수 = 실제 html 개수 일치, OG/Twitter 태그 신규 페이지 전부 포함, 신규 JS 문법 체크(`node --check`).
-- **footer는 전체 페이지에 동일하게 반복**되므로 신규 툴 추가 시 전체 페이지 일괄 치환 필요 (누락 없도록 `grep -L`로 재확인).
-- **CDN 라이브러리 버전은 실제 존재 여부를 web_fetch/web_search로 확인 후 사용** (버전 하드코딩 시 404 위험).
-- **대시보드/시각화 자료 요청 시 만들지 말고 텍스트 분석으로만 보고.**
-- git identity 미설정 환경이므로 최초 커밋 시 `git config user.name/user.email` 필요. 원격에 새 커밋이 있으면 `git fetch` + `rebase`로 병합 후 push (강제 push 금지).
-
-## 다음에 이어갈 것
-
-- 계획했던 6개 신규 툴 후보 중 3개(robots.txt, llms.txt, barcode) 완료, 나머지 3개 대기: **Bulk Color Palette Extractor, Bulk EXIF Remover, Bulk File Renamer**
-- Search Console 데이터는 매번 새로 받아서 재확인할 것 (스냅샷 날짜별로 트렌드 비교가 핵심 — 절대량보다 변화율이 더 유용한 신호)
-- screaming-frog/rss-generator 두 클러스터는 콘텐츠보다 백링크/도메인 권위 축적이 우선순위라는 결론을 계속 재검증할 것 (노출은 계속 느는데 클릭이 안 붙으면 이 가설이 맞다는 뜻, 반대로 순위가 유의미하게 오르기 시작하면 콘텐츠 심화로 전환 검토)
+1. **대기 중인 신규 툴 3개 제작**: Bulk Color Palette Extractor, Bulk EXIF Remover, Bulk File Renamer (5번 참고) — 계획했던 6개 중 이미 3개(robots.txt/llms.txt/barcode) 완료.
+2. 매 세션 GA/Search Console 데이터 받으면 이전 스냅샷과 비교 → 변화율 기준으로 신규/보강 여부 재판단 (8번 참고). 신규 결정 전 중복 체크 + 웹 키워드 경쟁강도 확인 필수.
+3. rss-generator / free-alternative-screaming-frog 두 클러스터는 계속 관찰 — 순위가 유의미하게 오르기 시작하면 콘텐츠 심화로 전환 검토, 그렇지 않으면 백링크/권위 축적이 우선.
+4. **디렉토리 백링크는 당분간 중단 상태 유지** (10-4 원칙) — 사용자가 다시 명시적으로 요청할 때만 재개.
+5. Product Hunt(7/14), Smol Launch(7/13), Fazier(7/22) 런칭일 도래 시 결과 확인.
+6. AlternativeTo 승인 여부 확인.
+7. AdSense 신청 여부 판단 (요건은 충족된 상태, 페이지 수 확보 후 재검토).
+8. 트래픽 어느 정도 쌓이면 제휴 재신청.
+9. Worker 코드(`worker.js`) repo 백업 여부는 아직 결정 안 됨 — 필요시 그때 판단.
