@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>encodeURIComponent vs encodeURI: When to Use Which — FreeToolDev</title>
+<meta name="description" content="Two similarly-named functions that do genuinely different jobs. Mixing them up either breaks a URL or leaves a query value unsafe. Here's how to tell them apart.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/encodeuricomponent-vs-encodeuri.html">
+<meta property="og:title" content="encodeURIComponent vs encodeURI: When to Use Which — FreeToolDev">
+<meta property="og:description" content="Two similarly-named functions that do genuinely different jobs. Mixing them up either breaks a URL or leaves a query value unsafe. Here's how to tell them apart.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="encodeURIComponent vs encodeURI: When to Use Which — FreeToolDev">
+<meta name="twitter:description" content="Two similarly-named functions that do genuinely different jobs. Mixing them up either breaks a URL or leaves a query value unsafe. Here's how to tell them apart.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/encodeuricomponent-vs-encodeuri.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 13, 2026</div>
+  <h1>encodeURIComponent vs encodeURI: When to Use Which</h1>
+
+  <p>JavaScript ships with two URL-encoding functions with almost identical names, and the difference between them is exactly the kind of detail that's easy to skip past — until one of them silently breaks a URL, or the other leaves a query value unsafe to insert into one.</p>
+
+  <h2>What each one actually escapes</h2>
+  <p><code>encodeURIComponent()</code> is the aggressive one — it escapes every character that has structural meaning anywhere in a URL: <code>: / ? # & =</code>, plus spaces and non-ASCII characters. It assumes the string you're giving it is a single <em>piece</em> of a URL — a query parameter's value, a path segment — not a complete URL with its own structure to preserve.</p>
+  <p><code>encodeURI()</code> is more conservative — it leaves those structural characters alone (<code>: / ? # & =</code> pass through untouched) and only escapes things that are never valid raw in a URL under any circumstances, like spaces and non-ASCII characters. It assumes you're handing it a complete, already-structured URL that should stay recognizable as a URL after encoding.</p>
+
+  <h2>The mistake that breaks things</h2>
+  <p>Run a full URL like <code>https://example.com/search?q=hello</code> through <code>encodeURIComponent()</code>, and its own <code>://</code> and <code>?</code> get percent-escaped along with everything else — the result is no longer a usable URL at all, just an encoded blob. This is the most common version of the mistake: reaching for the "safer-sounding" component function on something that was never meant to be treated as a single opaque value.</p>
+
+  <h2>The mistake that leaves things unsafe</h2>
+  <p>The opposite error is subtler: encoding a single query value with <code>encodeURI()</code> instead of <code>encodeURIComponent()</code>. Say the value itself legitimately contains an <code>&</code> or <code>=</code> — a search term like <code>"salt & pepper"</code>, for instance. <code>encodeURI()</code> won't touch that <code>&</code>, since it treats it as a structurally valid URL character. Once that value is inserted into a real query string, the unescaped <code>&</code> gets misread as the start of a second parameter, silently corrupting the query rather than raising any error.</p>
+
+  <h2>A simple rule of thumb</h2>
+  <p>If what you're encoding is a complete URL and you want it to stay recognizably a URL, use <code>encodeURI()</code>. If what you're encoding is going to be inserted <em>into</em> a URL — a query parameter value, a value being appended to a path, a redirect target embedded as a parameter in another URL — use <code>encodeURIComponent()</code>. In practice, the component version is what most day-to-day work actually needs, since building a query string parameter-by-parameter is a far more common task than encoding an already-complete URL.</p>
+
+  <h2>A related, older convention: the "+" for space</h2>
+  <p>Standard percent-encoding represents a space as <code>%20</code>. A separate, older convention used specifically in <code>application/x-www-form-urlencoded</code> form submissions represents a space as <code>+</code> instead. These aren't interchangeable — a literal <code>+</code> decoded under the form convention becomes a space, but decoded under standard percent-encoding rules, a literal <code>+</code> just stays a plus sign. Mixing the two conventions up is a common source of stray plus signs or missing spaces showing up after decoding.</p>
+
+  <h2>Try it</h2>
+  <p>FreeToolDev's <a href="/tools/url-encoder.html">bulk URL encoder/decoder</a> supports both modes explicitly labeled — "Component" for query values, "Full URL" for complete URLs — so the choice is made deliberately rather than guessed, and processes a whole list at once.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

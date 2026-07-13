@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Base64 Encode / Decode — Free Online Tool | FreeToolDev</title>
-<meta name="description" content="Encode text to Base64 or decode Base64 back to text. Batch line-by-line processing supported, free, runs entirely in your browser.">
+<title>Bulk URL Encoder / Decoder — Free Online Tool | FreeToolDev</title>
+<meta name="description" content="Percent-encode or decode a whole list of URLs, query strings, or parameters at once. Component and full-URL modes, free, runs entirely in your browser.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://freetooldev.com/tools/base64.html">
-<meta property="og:title" content="Base64 Encode / Decode — Free Online Tool | FreeToolDev">
-<meta property="og:description" content="Encode text to Base64 or decode Base64 back to text. Batch line-by-line processing supported, free, runs entirely in your browser.">
+<meta property="og:url" content="https://freetooldev.com/tools/url-encoder.html">
+<meta property="og:title" content="Bulk URL Encoder / Decoder — Free Online Tool | FreeToolDev">
+<meta property="og:description" content="Percent-encode or decode a whole list of URLs, query strings, or parameters at once. Component and full-URL modes, free, runs entirely in your browser.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Base64 Encode / Decode — Free Online Tool | FreeToolDev">
-<meta name="twitter:description" content="Encode text to Base64 or decode Base64 back to text. Batch line-by-line processing supported, free, runs entirely in your browser.">
+<meta name="twitter:title" content="Bulk URL Encoder / Decoder — Free Online Tool | FreeToolDev">
+<meta name="twitter:description" content="Percent-encode or decode a whole list of URLs, query strings, or parameters at once. Component and full-URL modes, free, runs entirely in your browser.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
-<link rel="canonical" href="https://freetooldev.com/tools/base64.html">
+<link rel="canonical" href="https://freetooldev.com/tools/url-encoder.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
 <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
@@ -49,8 +49,8 @@
 <section class="tool-page-head blueprint-bg">
   <div class="wrap">
     <span class="eyebrow">Encode · Decode</span>
-    <h1>Base64 Encode / Decode</h1>
-    <p>Convert text to Base64, or Base64 back to plain text. Split input by line to process multiple items in one batch.</p>
+    <h1>Bulk URL Encoder / Decoder</h1>
+    <p>Percent-encode or decode a whole list of URLs, query parameters, or strings at once — one per line in, one per line out, same order.</p>
   </div>
 </section>
 
@@ -59,17 +59,17 @@
     <div class="panel" style="margin-bottom:20px;">
       <div class="opt-row" style="margin-bottom:0;">
         <div>
-          <label>Mode</label>
-          <select id="mode">
-            <option value="encode">Text → Base64 (Encode)</option>
-            <option value="decode">Base64 → Text (Decode)</option>
+          <label>Direction</label>
+          <select id="direction">
+            <option value="encode">Encode</option>
+            <option value="decode">Decode</option>
           </select>
         </div>
         <div>
-          <label>Processing</label>
-          <select id="batchMode">
-            <option value="single">Treat as one block</option>
-            <option value="lines">Process each line separately (batch)</option>
+          <label>Mode</label>
+          <select id="encMode">
+            <option value="component">Component (encode every reserved char — for query values)</option>
+            <option value="uri">Full URL (preserve :/?#&= — for whole URLs)</option>
           </select>
         </div>
       </div>
@@ -78,8 +78,10 @@
     <div class="workspace-grid workspace-grid-2col">
       <div class="panel">
         <h3>Input</h3>
-        <label id="inputLabel">Text</label>
-        <textarea id="input" placeholder="Paste text or a Base64 string here. For batch mode, one item per line."></textarea>
+        <label>One item per line</label>
+        <textarea id="input" placeholder="https://example.com/search?q=hello world&lang=en
+café résumé
+another line to encode"></textarea>
         <div class="toolbar">
           <button class="btn btn-amber" id="runBtn">Convert →</button>
           <button class="btn btn-outline" id="clearBtn">Clear</button>
@@ -100,27 +102,21 @@
 
 <section class="section-navy">
   <div class="wrap prose" style="max-width:720px;">
-    <h2>What is Base64?</h2>
-    <p>Base64 is an encoding scheme that represents binary data as plain text, using 64 printable characters (A–Z, a–z, 0–9, +, /) to stand in for raw bytes. It's commonly used for email attachments (MIME), embedding small images inside CSS or JSON, and carrying tokens through HTTP headers and URLs. Encoding is not encryption — anyone can decode it, so don't use it to hide sensitive data. It exists to make binary data safe to pass through systems built for text.</p>
+    <h2>Component vs Full URL — which mode do you want?</h2>
+    <p><strong>Component</strong> mode (JavaScript's <code>encodeURIComponent</code>) escapes every character that has structural meaning in a URL, including <code>: / ? # & =</code>. Use this for a single value that's going inside a URL — a query parameter, a path segment, a redirect target embedded in another URL — since those structural characters need to be escaped or they'll be misread as part of the URL's own structure rather than as data.</p>
+    <p><strong>Full URL</strong> mode (JavaScript's <code>encodeURI</code>) leaves those structural characters alone and only escapes things that are never valid anywhere in a URL, like spaces and non-ASCII characters. Use this when the input is a complete, already-structured URL that you want to make safe without breaking it apart.</p>
+    <p>Getting this backwards is the most common mistake: running a full URL through component-mode encoding turns its own <code>://</code> and <code>?</code> into percent-codes, breaking it entirely. Running a single query value through URL mode often leaves characters like <code>&</code> or <code>=</code> unescaped inside that value, which then gets misread as a second parameter once it's inserted into the real URL.</p>
 
-    <h2>When to use batch mode</h2>
-    <p>Use "process each line separately" when you need to encode or decode a list of API keys, emails, JWT segments, or config values at once, instead of running the tool once per item. One item per line in, one result per line out, in the same order — useful when you're auditing a batch of tokens or preparing a list of encoded values for a config file.</p>
-
-    <h2>Common errors and what they mean</h2>
-    <h3>"Invalid character" or garbled decode output</h3>
-    <p>Base64 only uses A–Z, a–z, 0–9, +, /, and = for padding. If your input has line breaks, quotes, or a leading "data:image/png;base64," prefix copied in by accident, strip those first — the decoder will otherwise try to interpret them as data and produce garbage or an error.</p>
-    <h3>Output ends with one or two = signs — is that a mistake?</h3>
-    <p>No, that's padding, not an error. Base64 processes data in 3-byte groups; when the input length isn't a multiple of 3, one or two <code>=</code> characters are appended so the output length stays a multiple of 4. It's part of the standard, not a sign something went wrong.</p>
-    <h3>Decoding a JWT and getting broken text</h3>
-    <p>JWTs use Base64URL, a variant that replaces <code>+</code> with <code>-</code> and <code>/</code> with <code>_</code>, and typically drops the padding <code>=</code> entirely. Standard Base64 decoders can choke on this. If a JWT segment won't decode cleanly, that URL-safe variant is almost always why.</p>
+    <h2>What actually happens during encoding</h2>
+    <p>Percent-encoding replaces a character with a percent sign followed by its byte value in hexadecimal — a space becomes <code>%20</code>, for example. Multi-byte characters (accented letters, non-Latin scripts, emoji) get encoded as their UTF-8 byte sequence, which is why one visible character can turn into several percent-codes in the output.</p>
 
     <h2>FAQ</h2>
-    <h3>Is my data sent anywhere when I use this tool?</h3>
-    <p>No. Encoding and decoding both run using your browser's built-in <code>btoa()</code>/<code>atob()</code> functions — there's no network request involved at any point, which you can verify by checking the Network tab in your browser's dev tools while you use it.</p>
-    <h3>Can I encode an image or file, not just text?</h3>
-    <p>This tool is built for text input. For image-to-Base64 conversion, browsers typically produce this automatically via a <code>FileReader</code>'s <code>readAsDataURL</code> — if you need that specific workflow regularly, it's worth scripting directly rather than pasting through a text box.</p>
-    <h3>Why does my decoded text show broken characters for non-English input?</h3>
-    <p>This usually means the original text was encoded using a different character set than UTF-8 before Base64 was applied. This tool assumes UTF-8 on both ends; if the source system used something else (like Latin-1 or EUC-KR), the bytes will decode to the wrong characters even though the Base64 itself is valid.</p>
+    <h3>Why does decoding a "+" in a query string give me a space instead of a literal plus?</h3>
+    <p>That's a separate, older convention specific to <code>application/x-www-form-urlencoded</code> form submissions, not standard URI percent-encoding — in that context <code>+</code> means space. This tool follows standard percent-encoding rules (where a literal space becomes <code>%20</code>, not <code>+</code>), so if your input came from a form submission that used the <code>+</code> convention, replace <code>+</code> with a space before decoding, or the result will keep a stray plus sign.</p>
+    <h3>Is my data sent anywhere?</h3>
+    <p>No. Both directions run using your browser's built-in <code>encodeURIComponent()</code>/<code>decodeURIComponent()</code> and <code>encodeURI()</code>/<code>decodeURI()</code> functions — no network request happens, which you can confirm in your browser's dev tools Network tab.</p>
+    <h3>What happens if I try to decode text that isn't actually percent-encoded?</h3>
+    <p>Plain text with no <code>%</code> sequences decodes to itself unchanged, since there's nothing to convert. If the input contains a malformed percent-sequence (like a stray <code>%</code> not followed by two valid hex digits), that specific line is flagged as a decode error rather than silently producing garbled output.</p>
   </div>
 </section>
 
@@ -162,33 +158,27 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  var mode = document.getElementById('mode');
-  var batchMode = document.getElementById('batchMode');
+  var direction = document.getElementById('direction');
+  var encMode = document.getElementById('encMode');
   var input = document.getElementById('input');
   var output = document.getElementById('output');
-  var inputLabel = document.getElementById('inputLabel');
 
-  function toB64(str) {
-    try { return btoa(unescape(encodeURIComponent(str))); }
-    catch (e) { return '[encode error] ' + str; }
+  function process(line) {
+    try {
+      if (direction.value === 'encode') {
+        return encMode.value === 'component' ? encodeURIComponent(line) : encodeURI(line);
+      } else {
+        return encMode.value === 'component' ? decodeURIComponent(line) : decodeURI(line);
+      }
+    } catch (e) {
+      return '[error: malformed input] ' + line;
+    }
   }
-  function fromB64(str) {
-    try { return decodeURIComponent(escape(atob(str.trim()))); }
-    catch (e) { return '[decode error: not valid Base64] ' + str; }
-  }
-
-  mode.addEventListener('change', function () {
-    inputLabel.textContent = mode.value === 'encode' ? 'Text' : 'Base64 string';
-  });
 
   document.getElementById('runBtn').addEventListener('click', function () {
-    var fn = mode.value === 'encode' ? toB64 : fromB64;
-    if (batchMode.value === 'lines') {
-      var lines = input.value.split('\n').filter(function (l) { return l.length > 0; });
-      output.value = lines.map(fn).join('\n');
-    } else {
-      output.value = fn(input.value);
-    }
+    var lines = input.value.split('\n').filter(function (l) { return l.length > 0; });
+    if (lines.length === 0) { alert('Enter at least one line.'); return; }
+    output.value = lines.map(process).join('\n');
   });
 
   document.getElementById('clearBtn').addEventListener('click', function () {
@@ -208,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var blob = new Blob([output.value], { type: 'text/plain' });
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'base64-result.txt';
+    a.download = 'url-encoder-result.txt';
     a.click();
   });
 });
