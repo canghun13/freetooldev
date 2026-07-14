@@ -1,6 +1,6 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-07-13 (같은 날 2차 세션 반영 — 툴 카테고리 확장: 데이터포맷 변환 2개 + 디자인 1개 + 블로그 3개)
+마지막 업데이트: 2026-07-13 (같은 날 3차 세션 반영 — 신규 툴 4개 블로그 보강 완료, 전 툴 최소 2개 이상 커버리지 달성)
 
 ---
 
@@ -37,7 +37,7 @@
 
 ---
 
-## 3. 사이트 구조 (전체 파일, 2026-07-13 2차 세션 기준 47개)
+## 3. 사이트 구조 (전체 파일, 2026-07-13 3차 세션 기준 51개)
 
 ```
 /
@@ -54,7 +54,7 @@
 │   ├── js/nav-behavior.js      헤더/푸터는 정적 HTML, 이 JS는 모바일메뉴/연도/활성링크만 처리
 │   └── img/                    favicon.svg, apple-touch-icon.png, og-image.png(신규) 등
 ├── tools/                      16개, index.html은 검색/필터 포함 목록
-└── blog/                       25개, index.html은 목록
+└── blog/                       29개, index.html은 목록
 ```
 
 **중요 — 헤더/푸터 구조**: `include.js`는 삭제됨, 전부 **정적 HTML로 하드코딩**. 새 페이지/툴/블로그 추가할 때마다 헤더/푸터를 모든 페이지에 반복 삽입 필요. footer의 "Tools" 링크 목록도 전체 페이지에 일괄 반영 필요 (python find-replace 스크립트로 처리, 누락 없는지 `grep -L`로 재확인). `nav-behavior.js`는 모바일 메뉴 토글, 연도, 활성 링크 하이라이트만 담당.
@@ -126,16 +126,15 @@
 
 ---
 
-## 7. 블로그 현황 (25개)
+## 7. 블로그 현황 (29개)
 
-**툴별 커버리지 (2026-07-13 2차 세션 기준, 16개 툴)**:
+**툴별 커버리지 (2026-07-13 3차 세션 기준, 16개 툴 전부 최소 2개 이상)**:
 
 | 툴 | 개수 |
 |---|---|
 | image-batch, rss-generator, site-crawler | 3 |
-| base64, jwt-decoder, csv-to-json, ip-dns-ssl, qr-batch, sitemap-generator, barcode-batch | 2 |
+| base64, jwt-decoder, csv-to-json, ip-dns-ssl, qr-batch, sitemap-generator, barcode-batch, url-encoder, json-yaml-converter, csv-tsv-converter, svg-optimizer | 2 |
 | robots-txt-generator, llms-txt-generator | 1개씩 전용 + "robots.txt vs llms.txt" 비교글 1개 공유 = 사실상 2개씩 |
-| url-encoder, json-yaml-converter, csv-tsv-converter, svg-optimizer | 1개씩 (전부 2026-07-13 신규, 아직 1개뿐 — 다음 보강 후보) |
 
 **2026-07-07 세션 이전 (13개)**: jwt-claims-explained, find-broken-links-free-tool, rss-generator-no-account, free-alternative-screaming-frog, rss-for-automation, bulk-qr-code-use-cases, ssl-expiry-monitoring-free, csv-encoding-gibberish, sitemap-static-sites, debug-jwt-base64-locally, webp-vs-avif-2026, no-upload-image-compression, batch-vs-ai-image-convert
 
@@ -146,6 +145,8 @@
 **2026-07-13 세션 1차 추가 (1개)**: encodeuricomponent-vs-encodeuri
 
 **2026-07-13 세션 2차 추가 (3개, 카테고리 확장 세트)**: svg-export-bloat, json-vs-yaml, csv-vs-tsv
+
+**2026-07-13 세션 3차 추가 (4개, 1개뿐이던 신규 툴 4개 전부 2개로 보강)**: double-url-encoding, yaml-anchors-aliases, excel-csv-number-mangling, inline-svg-vs-img-vs-css-background
 
 ---
 
@@ -239,15 +240,15 @@
 
 ## 12. 다음에 할 일 (우선순위 순)
 
-1. **1개뿐인 블로그 4개 보강**: url-encoder, json-yaml-converter, csv-tsv-converter, svg-optimizer — 전부 2026-07-13 신규라 아직 1개씩뿐. 다른 툴처럼 2개로 맞추는 게 다음 우선순위.
-2. **대기 중인 신규 툴 3개 제작**: Bulk Color Palette Extractor, Bulk EXIF Remover, Bulk File Renamer (5번 참고).
-3. 메타태그(title/description) 길이 체커는 서버사이드 fetch가 필요해서 보류 중 — Worker에 새 엔드포인트(`GET /meta?url=`) 추가할 의향이 있으면 재검토 가능.
-4. 매 세션 GA/Search Console 데이터 받으면 이전 스냅샷과 비교 → 변화율 기준으로 신규/보강 여부 재판단 (8번 참고). 신규 결정 전 중복 체크 + 웹 키워드 경쟁강도 확인 필수. **"신규/보강 없음"이라는 결론이 반복되는 게 사용자를 불편하게 할 수 있으니, 포화된 아이디어라도 브랜드 적합성 기준으로 계속 확장할 것.**
-5. **툴 카테고리 자체를 넓히는 것도 유효한 확장 축.** 지금은 Encode/Decode·SEO·Network·Media(이미지+SVG)·Data(포맷변환) 5개 카테고리. 사용자가 "관련있는 걸로 카테고리 넓히자"고 명시적으로 요청하면, 그 카테고리 안에서 여러 후보를 한번에 검토하고 실제로 채택까지 진행할 것 — 후보 하나 찾고 끝내지 말고 "이 카테고리에 뭘 더 채울 수 있나" 관점으로 접근.
-6. rss-generator / free-alternative-screaming-frog 두 클러스터는 계속 관찰 — 순위가 유의미하게 오르기 시작하면 콘텐츠 심화로 전환 검토, 그렇지 않으면 백링크/권위 축적이 우선.
-7. **디렉토리 백링크는 당분간 중단 상태 유지** (10-4 원칙) — 사용자가 다시 명시적으로 요청할 때만 재개.
-8. Product Hunt(7/14), Smol Launch(7/13), Fazier(7/22) 런칭일 도래 시 결과 확인.
-9. AlternativeTo 승인 여부 확인.
-10. AdSense 신청 여부 판단 (요건은 충족된 상태, 페이지 수 확보 후 재검토 — 지금 47페이지까지 늘어남).
-11. 트래픽 어느 정도 쌓이면 제휴 재신청.
-12. Worker 코드(`worker.js`) repo 백업 여부는 아직 결정 안 됨 — 필요시 그때 판단.
+1. **대기 중인 신규 툴 3개 제작**: Bulk Color Palette Extractor, Bulk EXIF Remover, Bulk File Renamer (5번 참고).
+2. 메타태그(title/description) 길이 체커는 서버사이드 fetch가 필요해서 보류 중 — Worker에 새 엔드포인트(`GET /meta?url=`) 추가할 의향이 있으면 재검토 가능.
+3. 매 세션 GA/Search Console 데이터 받으면 이전 스냅샷과 비교 → 변화율 기준으로 신규/보강 여부 재판단 (8번 참고). 신규 결정 전 중복 체크 + 웹 키워드 경쟁강도 확인 필수. **"신규/보강 없음"이라는 결론이 반복되는 게 사용자를 불편하게 할 수 있으니, 포화된 아이디어라도 브랜드 적합성 기준으로 계속 확장할 것.**
+4. **툴 카테고리 자체를 넓히는 것도 유효한 확장 축.** 지금은 Encode/Decode·SEO·Network·Media(이미지+SVG)·Data(포맷변환) 5개 카테고리. 사용자가 "관련있는 걸로 카테고리 넓히자"고 명시적으로 요청하면, 그 카테고리 안에서 여러 후보를 한번에 검토하고 실제로 채택까지 진행할 것 — 후보 하나 찾고 끝내지 말고 "이 카테고리에 뭘 더 채울 수 있나" 관점으로 접근.
+5. rss-generator / free-alternative-screaming-frog 두 클러스터는 계속 관찰 — 순위가 유의미하게 오르기 시작하면 콘텐츠 심화로 전환 검토, 그렇지 않으면 백링크/권위 축적이 우선.
+6. **디렉토리 백링크는 당분간 중단 상태 유지** (10-4 원칙) — 사용자가 다시 명시적으로 요청할 때만 재개.
+7. Product Hunt(7/14), Smol Launch(7/13), Fazier(7/22) 런칭일 도래 시 결과 확인.
+8. AlternativeTo 승인 여부 확인.
+9. AdSense 신청 여부 판단 (요건은 충족된 상태, 페이지 수 확보 후 재검토 — 지금 51페이지까지 늘어남).
+10. 트래픽 어느 정도 쌓이면 제휴 재신청.
+11. Worker 코드(`worker.js`) repo 백업 여부는 아직 결정 안 됨 — 필요시 그때 판단.
+12. **신규 툴 만들 때는 처음부터 블로그 2개 세트(또는 1개 + 다른 관련 글과 교차 링크)로 같이 계획할 것.** 이번에 4개 툴을 1개씩만 만들고 나중에 따로 보강하느라 세션이 하나 더 필요했음 — 다음부터는 "툴 + 블로그 2개"를 한 세트로 묶어서 진행하면 효율적.
