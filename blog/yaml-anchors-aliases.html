@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YAML Anchors and Aliases: Reusing a Value Without Repeating It — FreeToolDev</title>
+<meta name="description" content="Anchors and aliases let a YAML file define a block once and reuse it elsewhere, instead of copy-pasting the same config repeatedly. Here's how they actually work.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/yaml-anchors-aliases.html">
+<meta property="og:title" content="YAML Anchors and Aliases: Reusing a Value Without Repeating It — FreeToolDev">
+<meta property="og:description" content="Anchors and aliases let a YAML file define a block once and reuse it elsewhere, instead of copy-pasting the same config repeatedly. Here's how they actually work.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="YAML Anchors and Aliases: Reusing a Value Without Repeating It — FreeToolDev">
+<meta name="twitter:description" content="Anchors and aliases let a YAML file define a block once and reuse it elsewhere, instead of copy-pasting the same config repeatedly. Here's how they actually work.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/yaml-anchors-aliases.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 13, 2026</div>
+  <h1>YAML Anchors and Aliases: Reusing a Value Without Repeating It</h1>
+
+  <p>A CI config with ten similar jobs, each needing the same base environment settings. A Docker Compose file where three services share identical resource limits. The naive approach is copy-pasting the same block into every job or service — which works, until the shared settings need to change and now there are ten places to update instead of one. YAML has a built-in answer to exactly this, and it's one of the few things it can express that JSON genuinely can't.</p>
+
+  <h2>The basic mechanic</h2>
+  <p>An anchor, written as <code>&amp;name</code> right after a key, marks a value as reusable and gives it a label. An alias, written as <code>*name</code>, references that labeled value anywhere else in the document — at parse time, the alias is replaced with an exact copy of whatever the anchor pointed to.</p>
+  <pre><code>base: &amp;defaults
+  timeout: 30
+  retries: 3
+
+service_a:
+  &lt;&lt;: *defaults
+  name: a
+
+service_b:
+  &lt;&lt;: *defaults
+  name: b
+  timeout: 60</code></pre>
+  <p>The <code>&lt;&lt;:</code> syntax specifically merges the anchored mapping's keys into the current one, rather than assigning it as a single nested value — which is why <code>service_b</code> ends up with both <code>retries: 3</code> (inherited) and its own <code>timeout: 60</code> (overriding the inherited default), a pattern that's genuinely useful for "shared defaults with per-item overrides" configs.</p>
+
+  <h2>What actually gets shared vs copied</h2>
+  <p>It's worth being precise about what an alias does at parse time: it produces an independent copy of the anchored value in the resulting data structure, not a live link back to the original. Once parsed, editing one instance in code afterward doesn't affect the other — the anchor/alias relationship only exists in the YAML source text, as a way to avoid repeating yourself while writing it, not as a runtime reference that persists after parsing.</p>
+
+  <h2>Why this doesn't survive a trip to JSON</h2>
+  <p>JSON has no concept of an anchor or alias — nothing in its spec lets one part of a document reference another. Converting YAML with anchors to JSON resolves every alias into its fully expanded form, which is why a compact YAML file using anchors heavily can turn into a noticeably larger JSON file: the JSON has to spell out every repeated block in full, since it has no shorthand for "same as that other one." This is expected, not a bug in the conversion — it's just JSON losing a piece of structure it was never designed to represent, similar to how it also can't carry over YAML comments.</p>
+
+  <h2>Where this shows up most in practice</h2>
+  <p>Kubernetes manifests, Docker Compose files, and CI/CD pipeline configs (GitHub Actions, GitLab CI) are the places this pattern gets used most, since those formats commonly have several similar-but-not-identical definitions in one file — several jobs sharing a runner image and environment variables, several services sharing resource limits, several deployments sharing a base container spec. Anywhere a config file has that "same thing, several times, with small variations" shape is a candidate for anchors.</p>
+
+  <h2>See the expanded form</h2>
+  <p>FreeToolDev's <a href="/tools/json-yaml-converter.html">JSON ↔ YAML converter</a> is a quick way to see exactly what an anchor-heavy YAML file expands into — paste it in, convert to JSON, and see every alias resolved into its full, repeated form, which can be a useful sanity check when debugging whether a merge is producing the values you expect.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

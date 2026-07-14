@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Excel Mangles Your CSV Numbers (and How to Stop It) — FreeToolDev</title>
+<meta name="description" content="Leading zeros vanish, long IDs turn into scientific notation, dates rewrite themselves. None of this is a bug in the CSV file — it's Excel guessing, and you can turn the guessing off.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/excel-csv-number-mangling.html">
+<meta property="og:title" content="Why Excel Mangles Your CSV Numbers (and How to Stop It) — FreeToolDev">
+<meta property="og:description" content="Leading zeros vanish, long IDs turn into scientific notation, dates rewrite themselves. None of this is a bug in the CSV file — it's Excel guessing, and you can turn the guessing off.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Why Excel Mangles Your CSV Numbers (and How to Stop It) — FreeToolDev">
+<meta name="twitter:description" content="Leading zeros vanish, long IDs turn into scientific notation, dates rewrite themselves. None of this is a bug in the CSV file — it's Excel guessing, and you can turn the guessing off.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/excel-csv-number-mangling.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 13, 2026</div>
+  <h1>Why Excel Mangles Your CSV Numbers (and How to Stop It)</h1>
+
+  <p>A zip code of <code>00501</code> opens as <code>501</code>. A 16-digit account number turns into <code>1.23457E+15</code>. A product code like <code>2-3</code> silently becomes the date March 2nd. None of these are problems with the CSV file itself — every one of them is Excel guessing at what a plain-text value "really" means the moment you double-click to open it, and getting the guess wrong for data that was never meant to be interpreted that way in the first place.</p>
+
+  <h2>Why this happens: CSV has no type information</h2>
+  <p>A CSV file is just text — every value is a string, with nothing in the format itself to mark a field as "this one's actually a number" or "this one's actually text that happens to look numeric." Excel has to guess based on what a value looks like, and it guesses aggressively: anything that resembles a number gets treated as one, anything that resembles a date gets treated as one, and both transformations are lossy the moment the original value wasn't actually meant that way.</p>
+
+  <h2>Leading zeros disappear</h2>
+  <p>ZIP codes, product codes, and any zero-padded ID get their leading zeros silently stripped, since Excel reads <code>00501</code> as the number 501, and a number has no concept of a "leading" zero to preserve. The data isn't recoverable from the display — once Excel has reinterpreted the cell as numeric, the original text form is gone unless you re-import from the source file.</p>
+
+  <h2>Long numbers turn into scientific notation</h2>
+  <p>Account numbers, tracking numbers, and other long digit strings (typically 12+ digits) get converted to scientific notation like <code>1.23457E+15</code> once they exceed Excel's default numeric display precision — and depending on how the cell is later formatted or saved, the original exact digits can be permanently lost, not just displayed differently.</p>
+
+  <h2>Text that looks like a date gets rewritten</h2>
+  <p>A value like <code>2-3</code>, <code>Mar-2</code>, or a version number like <code>1-2</code> can get silently reinterpreted as a calendar date, since Excel's date-detection heuristics are notoriously eager. This is a well-known enough problem that it's caused real, documented issues in fields like genetics, where gene symbols such as <code>SEPT2</code> or <code>MARCH1</code> get auto-converted to dates in spreadsheet software — significant enough that some naming conventions were eventually revised partly to work around it.</p>
+
+  <h2>The actual fix: don't let Excel guess</h2>
+  <p>Opening a CSV by double-clicking it hands every column over to Excel's automatic type detection with no way to intervene per-column. The fix is importing through <strong>Data → From Text/CSV</strong> instead (technically named "From Text/CSV" or "Get Data" depending on Excel's version), which opens an import wizard that lets you set each column's data type explicitly — critically, setting the type to <strong>Text</strong> for any column that should be preserved exactly as-is, before Excel ever gets the chance to reinterpret it as a number or date.</p>
+
+  <h2>Why this matters more for generated or re-shared files</h2>
+  <p>If you're generating a CSV programmatically and it's likely to be opened in Excel by someone else, this is worth being aware of on both ends: as the generator, there's no way to force Excel's import behavior from inside the file itself, and as the recipient, defaulting to the plain double-click open is exactly what triggers the mangling described above. The safest habit is treating the "From Text/CSV" import path as the default way to open any CSV with IDs, codes, or zero-padded values in it, rather than trusting a double-click.</p>
+
+  <h2>Convert without the risk</h2>
+  <p>FreeToolDev's <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV converter</a> and <a href="/tools/csv-to-json.html">CSV to JSON converter</a> both treat every value as plain text by default rather than guessing at numeric types — the mangling described here is specifically an Excel behavior on open, not something that happens during conversion itself.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Double Encoding: How a URL Gets Encoded Twice by Accident — FreeToolDev</title>
+<meta name="description" content="A %20 that turns into %2520 is a sign a value got encoded twice somewhere in the pipeline. Here's how it happens and how to actually fix it.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/double-url-encoding.html">
+<meta property="og:title" content="Double Encoding: How a URL Gets Encoded Twice by Accident — FreeToolDev">
+<meta property="og:description" content="A %20 that turns into %2520 is a sign a value got encoded twice somewhere in the pipeline. Here's how it happens and how to actually fix it.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Double Encoding: How a URL Gets Encoded Twice by Accident — FreeToolDev">
+<meta name="twitter:description" content="A %20 that turns into %2520 is a sign a value got encoded twice somewhere in the pipeline. Here's how it happens and how to actually fix it.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/double-url-encoding.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 13, 2026</div>
+  <h1>Double Encoding: How a URL Gets Encoded Twice by Accident</h1>
+
+  <p>A space that should become <code>%20</code> shows up as <code>%2520</code> instead. A redirect target with a query string arrives broken, its own <code>?</code> and <code>&amp;</code> mangled into more percent-codes on top of the ones that were already there. Both are the same underlying bug: something got percent-encoded twice, once too many, somewhere between where the value originated and where it's finally used.</p>
+
+  <h2>Why %2520 is the signature of the bug</h2>
+  <p>Percent-encoding a raw space produces <code>%20</code>. Percent-encoding <code>%20</code> a second time treats that literal <code>%</code> character as data needing its own escape — <code>%</code> itself encodes to <code>%25</code> — so <code>%20</code> becomes <code>%2520</code>. Any time you see <code>%25</code> immediately followed by what looks like another valid percent-code, that's close to a guaranteed sign of double encoding, since a value wouldn't naturally contain a literal, un-encoded <code>%</code> character followed by two hex digits under normal circumstances.</p>
+
+  <h2>Where it actually happens</h2>
+  <p>The most common cause is a pipeline with more than one layer that each independently decide "this needs to be safe for a URL" and each apply their own encoding step, unaware the other already did. A frontend form encodes a value before sending it; a backend framework's URL-building helper encodes it again before constructing a redirect; a reverse proxy or CDN rewrites the URL and re-encodes it a third time. Each layer in isolation is doing something reasonable — encoding a value before putting it in a URL is correct — the bug only exists in the combination, when nobody realizes a previous layer already handled it.</p>
+
+  <h2>The related, opposite bug: decoding too many times</h2>
+  <p>The reverse mistake happens too — a value gets decoded more than once, which is more dangerous than it sounds. A value that was legitimately encoded once, safely, can decode into something meaningfully different (and potentially unsafe) if decoded an extra time, since a doubly-decoded string can expose characters that were deliberately escaped to prevent exactly that. This matters most in security-sensitive contexts, like a URL parameter that gets used to build a file path or a database query — decoding it an unexpected extra time can reintroduce characters an earlier layer specifically encoded to neutralize.</p>
+
+  <h2>How to actually track it down</h2>
+  <p>Decode the value once and look at the result. If it's now correct plain text, one layer over-encoded it. If it's still got percent-codes in it, decode again and check — but note how many times it took, since that tells you how many layers in the pipeline are each adding their own encoding step. The fix isn't "add another decode step to compensate" (that just moves the bug around and makes the pipeline fragile to any future change), it's finding which specific layer's encoding is redundant and removing it there, so the value passes through encoded exactly once.</p>
+
+  <h2>A rule that prevents most of this upfront</h2>
+  <p>Encode a value exactly once, as close as possible to the point where it's actually inserted into a URL — not earlier, "just in case," and not by multiple independent layers each making their own defensive assumption. If a value arrives already encoded from an external source (a link a user pasted, a redirect target from another service), decode it first to get back to the true raw value before deciding whether it needs encoding again for your own use.</p>
+
+  <h2>Check your own encoding</h2>
+  <p>FreeToolDev's <a href="/tools/url-encoder.html">bulk URL encoder/decoder</a> makes it easy to decode a suspicious value once, look at the result, and decode again if needed — a quick way to count exactly how many layers of encoding a broken value has accumulated before tracking down where each one is coming from.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
