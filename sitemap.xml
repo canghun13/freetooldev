@@ -8,7 +8,10 @@
   <url><loc>https://freetooldev.com/tools/base64.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/url-encoder.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/csv-to-json.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/tools/json-yaml-converter.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/tools/csv-tsv-converter.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/image-batch.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/tools/svg-optimizer.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/rss-generator.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/sitemap-generator.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/robots-txt-generator.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -28,6 +31,9 @@
   <url><loc>https://freetooldev.com/blog/csv-to-json-data-types.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/bulk-barcode-use-cases.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/encodeuricomponent-vs-encodeuri.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://freetooldev.com/blog/svg-export-bloat.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://freetooldev.com/blog/json-vs-yaml.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://freetooldev.com/blog/csv-vs-tsv.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/robots-txt-mistakes.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/robots-txt-vs-llms-txt.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/upc-vs-ean-vs-code128.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>

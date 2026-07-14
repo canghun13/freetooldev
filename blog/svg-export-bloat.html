@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's Actually Bloating Your SVG Exports — FreeToolDev</title>
+<meta name="description" content="An SVG exported from Illustrator or Figma is often 3-10x larger than it needs to be. Here's exactly what's taking up that extra space, and what's safe to remove.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/svg-export-bloat.html">
+<meta property="og:title" content="What's Actually Bloating Your SVG Exports — FreeToolDev">
+<meta property="og:description" content="An SVG exported from Illustrator or Figma is often 3-10x larger than it needs to be. Here's exactly what's taking up that extra space, and what's safe to remove.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="What's Actually Bloating Your SVG Exports — FreeToolDev">
+<meta name="twitter:description" content="An SVG exported from Illustrator or Figma is often 3-10x larger than it needs to be. Here's exactly what's taking up that extra space, and what's safe to remove.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/svg-export-bloat.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 13, 2026</div>
+  <h1>What's Actually Bloating Your SVG Exports</h1>
+
+  <p>Open an SVG exported straight from Illustrator, Figma, or Inkscape in a text editor, and it's usually a lot bigger than the shape it draws would suggest. None of that extra weight is required for the graphic to render — it's almost entirely artifacts of the export process itself, and it's worth knowing exactly what it is before deciding what's safe to strip.</p>
+
+  <h2>Editor namespaces you'll never use</h2>
+  <p>Inkscape exports commonly include an <code>xmlns:inkscape</code> and <code>xmlns:sodipodi</code> namespace declaration, plus attributes like <code>inkscape:label</code> or <code>sodipodi:nodetypes</code> scattered across elements — all of it metadata the editor uses internally to remember things like layer names and node-editing state for when you reopen the file in Inkscape specifically. A browser rendering the SVG ignores all of it completely; it exists purely so the originating editor can round-trip its own editing state.</p>
+
+  <h2>A whole metadata block describing the file, not the image</h2>
+  <p>Many exports include a <code>&lt;metadata&gt;</code> element containing RDF and Dublin Core data — author, creation date, source application, sometimes licensing info copied from a template. This is genuine data, just not data a browser does anything with when displaying the image. It's the SVG equivalent of a photo's EXIF data: informative in the right context, irrelevant to how the file actually renders.</p>
+
+  <h2>Comments left over from the export process</h2>
+  <p>A line like <code>&lt;!-- Generator: Adobe Illustrator 27.0.0, SVG Export Plug-In --&gt;</code> is common at the top of exported files — harmless, but pure overhead that serves no purpose once the file leaves the export dialog.</p>
+
+  <h2>Coordinate precision far beyond what any screen can show</h2>
+  <p>This is usually the single biggest contributor to file size on anything with curved or complex paths. A design tool's internal math often produces coordinates like <code>142.38571428571427</code>, and that full value gets written straight into the exported <code>d</code> attribute — even though the visual difference between that and <code>142.39</code> is smaller than a single pixel could ever display. Multiply that unnecessary precision across every point in a complex path, and it adds up fast; a detailed icon can easily have hundreds of coordinate pairs, each carrying a dozen extra characters that contribute nothing visible.</p>
+
+  <h2>Empty groups left behind by editing history</h2>
+  <p>It's common for a design file's layer structure to include groups that once held something, got emptied out during editing, and never got cleaned up before export — an empty <code>&lt;g&gt;&lt;/g&gt;</code> costs a few bytes and does nothing.</p>
+
+  <h2>What's worth keeping regardless</h2>
+  <p><code>&lt;title&gt;</code> and <code>&lt;desc&gt;</code> elements, along with <code>aria-*</code> attributes, are a different category entirely — they give the image an accessible name for screen readers, and stripping them trades a few bytes for worse accessibility. Unlike editor metadata, this is content a browser (or assistive technology) actually uses, so it's worth treating separately from the genuinely inert stuff above rather than removing everything indiscriminately in the name of a smaller file.</p>
+
+  <h2>Clean up a batch</h2>
+  <p>FreeToolDev's <a href="/tools/svg-optimizer.html">bulk SVG optimizer</a> strips comments, editor namespaces, the metadata block, and excess coordinate precision from a whole batch of files at once, while keeping accessibility elements intact by default — all processed locally in your browser, with a before/after size shown for each file.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

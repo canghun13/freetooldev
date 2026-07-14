@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON vs YAML: When Each One Actually Makes Sense — FreeToolDev</title>
+<meta name="description" content="Both represent the same underlying data, so the choice usually comes down to who's reading and writing the file, not what the data looks like.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/json-vs-yaml.html">
+<meta property="og:title" content="JSON vs YAML: When Each One Actually Makes Sense — FreeToolDev">
+<meta property="og:description" content="Both represent the same underlying data, so the choice usually comes down to who's reading and writing the file, not what the data looks like.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="JSON vs YAML: When Each One Actually Makes Sense — FreeToolDev">
+<meta name="twitter:description" content="Both represent the same underlying data, so the choice usually comes down to who's reading and writing the file, not what the data looks like.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/json-vs-yaml.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 13, 2026</div>
+  <h1>JSON vs YAML: When Each One Actually Makes Sense</h1>
+
+  <p>Both formats can represent the same data — objects, arrays, strings, numbers, booleans, null — so a debate over "which is better" misses the point a little. They're optimized for different situations, and most real projects end up using both, just for different kinds of files.</p>
+
+  <h2>JSON: unambiguous, and every language already speaks it</h2>
+  <p>JSON's whole design goal is having exactly one way to write anything, with no ambiguity — every parser produces the same result from the same input. It's also universal: every mainstream programming language has JSON support built in or a first-class library, no exceptions. This is why JSON dominates anywhere machines are the primary reader — API responses, data interchange between services, config that's generated programmatically rather than hand-edited. Its downsides only show up when a human has to write or read it directly: no comments (there's no syntax for them at all), and mandatory quoting and bracket-matching that gets genuinely hard to track by eye once nesting gets a few levels deep.</p>
+
+  <h2>YAML: built for a human to write and read it</h2>
+  <p>YAML strips away JSON's punctuation in favor of indentation, drops quotes for most everyday strings, and adds comments — all changes aimed squarely at making the file pleasant for a person to hand-edit. This is why YAML dominates configuration that a human actually writes and revisits: CI/CD pipelines, Kubernetes manifests, Docker Compose files, application config. The tradeoff is real, though: YAML's flexibility creates several ways to write the same value, and its indentation-based nesting is strict about consistency in a way that produces genuinely confusing parse errors when a tab sneaks in among spaces, or an indent level shifts by one column partway through a block.</p>
+
+  <h2>The famous YAML gotchas</h2>
+  <p>YAML's permissive type inference is the source of most of its reputation for surprising behavior. An unquoted <code>yes</code> or <code>no</code> gets parsed as a boolean in YAML 1.1 (the version most tools still implement), not the string "yes" — which has bitten more than one person hardcoding a country code of <code>NO</code> (Norway) into a config file and getting <code>false</code> back instead. Unquoted version-looking values like <code>3.10</code> can get parsed as a number and silently lose the trailing zero, becoming <code>3.1</code> — a real problem for a Python or Node version pin in a CI config. The fix is always the same: quote anything that's meant to stay a literal string but happens to look like a number or boolean to YAML's parser.</p>
+
+  <h2>What YAML can express that JSON can't</h2>
+  <p>Anchors and references (<code>&amp;name</code> to define a reusable block, <code>*name</code> to reference it, <code>&lt;&lt;: *name</code> to merge it into another mapping) let a YAML file define a value once and reuse it in several places without repeating it — genuinely useful in configs with a lot of structural repetition, like several CI jobs sharing the same base environment settings. JSON has no equivalent; converting YAML with anchors to JSON resolves them into their fully expanded form, which is usually fine for the resulting data but does mean the JSON version loses the "single source of truth" structure the YAML had.</p>
+
+  <h2>A practical rule of thumb</h2>
+  <p>If a human is going to open the file in an editor and change values by hand on a regular basis, YAML's comments and lighter syntax are worth the stricter indentation rules. If the file is generated and consumed entirely by code — an API payload, a data export, anything that's never meant to be hand-edited — JSON's lack of ambiguity is worth more than YAML's readability, since there's no human readability need to trade off against it in the first place.</p>
+
+  <h2>Convert between them</h2>
+  <p>FreeToolDev's <a href="/tools/json-yaml-converter.html">JSON ↔ YAML converter</a> handles both directions, including multiple YAML documents separated by <code>---</code> converting to a JSON array in one pass — useful for a bundled Kubernetes manifest or CI config with several documents in a single file.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

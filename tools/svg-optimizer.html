@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk SVG Optimizer — Free Tool, No Upload | FreeToolDev</title>
+<meta name="description" content="Strip editor metadata, comments, and excess coordinate precision from a whole batch of SVG files at once. Free, no signup, runs entirely in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/svg-optimizer.html">
+<meta property="og:title" content="Bulk SVG Optimizer — Free Tool, No Upload | FreeToolDev">
+<meta property="og:description" content="Strip editor metadata, comments, and excess coordinate precision from a whole batch of SVG files at once. Free, no signup, runs entirely in your browser.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk SVG Optimizer — Free Tool, No Upload | FreeToolDev">
+<meta name="twitter:description" content="Strip editor metadata, comments, and excess coordinate precision from a whole batch of SVG files at once. Free, no signup, runs entirely in your browser.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/svg-optimizer.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Batch · No-upload</span>
+    <h1>Bulk SVG Optimizer</h1>
+    <p>Strip editor metadata, comments, and unnecessary coordinate precision from a whole batch of SVG files at once. Everything runs in your browser — files are never uploaded.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>1. Upload SVG files</h3>
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept="image/svg+xml,.svg" multiple>
+        Drag SVG files here or click to browse<br>
+        <span style="font-size:0.78rem;">Multiple selection supported · max 5 MB/file, 50 files/batch</span>
+      </div>
+      <div class="file-list" id="fileList"></div>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>2. Options</h3>
+      <div class="opt-row">
+        <div>
+          <label>Coordinate precision (decimal places)</label>
+          <select id="precision">
+            <option value="1">1</option>
+            <option value="2" selected>2</option>
+            <option value="3">3</option>
+            <option value="none">Don't round (skip this step)</option>
+          </select>
+        </div>
+        <div>
+          <label>Remove XML declaration (&lt;?xml ...?&gt;)</label>
+          <select id="stripXmlDecl">
+            <option value="true" selected>Yes</option>
+            <option value="false">No, keep it</option>
+          </select>
+        </div>
+        <div>
+          <label>Keep &lt;title&gt;/&lt;desc&gt;/aria-* (accessibility)</label>
+          <select id="keepA11y">
+            <option value="true" selected>Yes, keep them</option>
+            <option value="false">No, strip these too</option>
+          </select>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="processBtn">Optimize all →</button>
+        <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download all as ZIP</button>
+      </div>
+      <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="resultsList"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>What actually gets removed</h2>
+    <p>Design tools (Illustrator, Figma, Inkscape, Sketch) embed editor-specific data in every SVG export — XML comments, an <code>xmlns:inkscape</code>/<code>xmlns:sodipodi</code> namespace and its associated attributes, a <code>&lt;metadata&gt;</code> block with RDF/Dublin Core data about the file, and path coordinates carrying far more decimal precision than a screen can render (a value like <code>142.38571429...</code> renders identically to <code>142.39</code> at any realistic display size). None of this affects how the SVG looks — it's purely bytes the browser has to parse and discard. This tool strips comments, editor namespaces and their attributes, the metadata block, and rounds coordinate precision in <code>d</code> and <code>points</code> attributes to the number of decimal places you choose, then removes any <code>&lt;g&gt;</code> or <code>&lt;defs&gt;</code> elements left empty by those removals.</p>
+
+    <h2>Why accessibility elements are kept by default</h2>
+    <p><code>&lt;title&gt;</code> and <code>&lt;desc&gt;</code> elements, along with <code>aria-*</code> and <code>role</code> attributes, give an SVG an accessible name and description for screen readers — they cost a few bytes and provide real value, unlike genuinely inert editor metadata. This tool leaves them alone by default; the option to strip them too exists for cases where the SVG is a purely decorative background image with <code>aria-hidden="true"</code> already set elsewhere, where they add nothing.</p>
+
+    <h2>How much this typically saves</h2>
+    <p>SVGs exported directly from Illustrator or Figma commonly shrink 40–80% after this kind of cleanup — the exact number depends heavily on how complex the original paths are and how much editor metadata the exporting tool included. Simple icons with already-clean markup (hand-written or previously optimized) see much smaller reductions, since there's less bloat left to remove.</p>
+
+    <h2>FAQ</h2>
+    <h3>Will rounding coordinate precision make my SVG look different?</h3>
+    <p>At 2 decimal places (the default), no — sub-hundredth-of-a-pixel differences aren't visible on any current display. Going down to 1 decimal place can occasionally introduce a barely perceptible shift on very large, zoomed-in graphics with fine detail; if you're optimizing something like a detailed illustration meant to be viewed at large sizes, 2 or 3 decimal places is the safer choice.</p>
+    <h3>Is this the same as the SVGO tool other sites use?</h3>
+    <p>No — this is a lighter, custom-built cleanup pass covering the changes that account for most of the size reduction (metadata, comments, precision), not a full port of SVGO's complete plugin set (which also merges paths, converts shapes to paths, and other more invasive transforms). For most exported icons and illustrations, that covers the bulk of the achievable savings without the risk of more aggressive structural changes.</p>
+    <h3>Is my file uploaded anywhere?</h3>
+    <p>No. Every file is read and processed with your browser's <code>FileReader</code> and plain string operations — nothing is sent over the network, which you can confirm by checking the Network tab in your browser's dev tools while a batch runs.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var dropzone = document.getElementById('dropzone');
+  var fileInput = document.getElementById('fileInput');
+  var fileList = document.getElementById('fileList');
+  var resultsPanel = document.getElementById('resultsPanel');
+  var resultsList = document.getElementById('resultsList');
+  var downloadZipBtn = document.getElementById('downloadZipBtn');
+  var progressStatus = document.getElementById('progressStatus');
+  var progressText = document.getElementById('progressText');
+  var processBtn = document.getElementById('processBtn');
+
+  var MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+  var MAX_BATCH_COUNT = 50;
+  var files = [];
+  var lastResults = [];
+
+  function addFiles(list) {
+    var rejected = [];
+    Array.from(list).forEach(function (f) {
+      var isSvg = f.type === 'image/svg+xml' || /\.svg$/i.test(f.name);
+      if (!isSvg) return;
+      if (files.length >= MAX_BATCH_COUNT) { rejected.push(f.name + ' (batch limit reached)'); return; }
+      if (f.size > MAX_FILE_SIZE) { rejected.push(f.name + ' (over 5 MB)'); return; }
+      files.push(f);
+    });
+    renderFileList();
+    if (rejected.length) {
+      alert('Skipped ' + rejected.length + ' file(s):\n' + rejected.join('\n') +
+        '\n\nLimits: 5 MB per file, ' + MAX_BATCH_COUNT + ' files per batch.');
+    }
+  }
+
+  function renderFileList() {
+    fileList.innerHTML = '';
+    files.forEach(function (f) {
+      var row = document.createElement('div');
+      row.className = 'file-row';
+      row.innerHTML = '<span class="fname">' + f.name + '</span><span class="fsize">' + (f.size / 1024).toFixed(1) + ' KB</span><span class="fstatus">pending</span>';
+      fileList.appendChild(row);
+    });
+  }
+
+  dropzone.addEventListener('click', function () { fileInput.click(); });
+  dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
+  dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('drag'); });
+  dropzone.addEventListener('drop', function (e) {
+    e.preventDefault(); dropzone.classList.remove('drag');
+    addFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', function () { addFiles(fileInput.files); });
+
+  function readAsText(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function (e) { resolve(e.target.result); };
+      reader.onerror = reject;
+      reader.readAsText(file);
+    });
+  }
+
+  function roundNumbersInAttr(value, precision) {
+    if (precision === 'none') return value;
+    var p = parseInt(precision, 10);
+    return value.replace(/-?\d+\.\d+/g, function (num) {
+      var rounded = parseFloat(num).toFixed(p);
+      rounded = rounded.replace(/0+$/, '').replace(/\.$/, '');
+      return rounded;
+    });
+  }
+
+  function optimizeSvg(text, opts) {
+    var out = text;
+
+    // Strip comments
+    out = out.replace(/<!--[\s\S]*?-->/g, '');
+
+    // Strip DOCTYPE
+    out = out.replace(/<!DOCTYPE[^>]*>/gi, '');
+
+    // Strip XML declaration if requested
+    if (opts.stripXmlDecl) {
+      out = out.replace(/<\?xml[^>]*\?>/gi, '');
+    }
+
+    // Strip editor metadata block (covers embedded RDF/Dublin Core data)
+    out = out.replace(/<metadata[\s\S]*?<\/metadata>/gi, '');
+
+    // Strip editor-specific elements (Inkscape's sodipodi namedview, etc.)
+    out = out.replace(/<sodipodi:namedview[\s\S]*?<\/sodipodi:namedview>/gi, '');
+    out = out.replace(/<sodipodi:namedview[^>]*\/>/gi, '');
+
+    // Strip editor-specific attributes and namespace declarations
+    out = out.replace(/\s(inkscape|sodipodi):[a-zA-Z-]+="[^"]*"/g, '');
+    out = out.replace(/\sxmlns:(inkscape|sodipodi|dc|cc|rdf)="[^"]*"/g, '');
+
+    // Optionally strip accessibility elements
+    if (!opts.keepA11y) {
+      out = out.replace(/<title>[\s\S]*?<\/title>/gi, '');
+      out = out.replace(/<desc>[\s\S]*?<\/desc>/gi, '');
+      out = out.replace(/\s(aria-[a-zA-Z-]+|role)="[^"]*"/g, '');
+    }
+
+    // Round coordinate precision in the attributes that carry most of the
+    // path/shape data
+    out = out.replace(/(\sd=")([^"]*)(")/g, function (m, pre, val, post) {
+      return pre + roundNumbersInAttr(val, opts.precision) + post;
+    });
+    out = out.replace(/(\spoints=")([^"]*)(")/g, function (m, pre, val, post) {
+      return pre + roundNumbersInAttr(val, opts.precision) + post;
+    });
+
+    // Collapse whitespace between tags, but skip this entirely if the file
+    // uses xml:space="preserve" anywhere, since that means whitespace is
+    // meaningful somewhere in the document and blind collapsing could alter
+    // rendered text spacing.
+    if (out.indexOf('xml:space="preserve"') === -1) {
+      out = out.replace(/>\s+</g, '><');
+    }
+    out = out.replace(/[ \t]{2,}/g, ' ');
+    out = out.trim();
+
+    // Remove now-empty groups/defs, a couple of passes since removing one
+    // can expose a parent that's now empty too
+    for (var i = 0; i < 3; i++) {
+      out = out.replace(/<g[^>]*>\s*<\/g>/g, '');
+      out = out.replace(/<defs[^>]*>\s*<\/defs>/g, '');
+    }
+
+    return out;
+  }
+
+  processBtn.addEventListener('click', async function () {
+    if (files.length === 0) { alert('Upload at least one SVG file first.'); return; }
+
+    var opts = {
+      precision: document.getElementById('precision').value,
+      stripXmlDecl: document.getElementById('stripXmlDecl').value === 'true',
+      keepA11y: document.getElementById('keepA11y').value === 'true'
+    };
+
+    lastResults = [];
+    resultsList.innerHTML = '';
+    resultsPanel.style.display = 'block';
+    downloadZipBtn.style.display = 'none';
+    processBtn.disabled = true;
+    progressStatus.classList.add('active');
+
+    var rows = document.querySelectorAll('.file-row');
+
+    for (var idx = 0; idx < files.length; idx++) {
+      var f = files[idx];
+      rows[idx].querySelector('.fstatus').textContent = 'optimizing…';
+      progressText.textContent = 'Optimizing file ' + (idx + 1) + ' of ' + files.length + ' — ' + f.name;
+
+      var text = await readAsText(f);
+      var originalSize = new Blob([text]).size;
+      var optimized = optimizeSvg(text, opts);
+      var newSize = new Blob([optimized]).size;
+      var pct = originalSize > 0 ? Math.round((1 - newSize / originalSize) * 100) : 0;
+
+      lastResults.push({ name: f.name, content: optimized });
+
+      rows[idx].querySelector('.fstatus').textContent = 'done';
+
+      var row = document.createElement('div');
+      row.className = 'file-row ready';
+      var blob = new Blob([optimized], { type: 'image/svg+xml' });
+      var url = URL.createObjectURL(blob);
+      row.innerHTML =
+        '<span class="fname">' + f.name + '</span>' +
+        '<span class="fsize">' + (originalSize / 1024).toFixed(1) + ' KB → ' + (newSize / 1024).toFixed(1) + ' KB (' + (pct >= 0 ? '-' + pct : '+' + Math.abs(pct)) + '%)</span>' +
+        '<a class="btn btn-outline" style="padding:6px 12px; font-size:0.72rem;" href="' + url + '" download="' + f.name + '">Download</a>';
+      resultsList.appendChild(row);
+    }
+
+    progressStatus.classList.remove('active');
+    processBtn.disabled = false;
+    progressText.textContent = 'Optimized ' + lastResults.length + ' file(s).';
+    if (lastResults.length) downloadZipBtn.style.display = 'inline-flex';
+  });
+
+  downloadZipBtn.addEventListener('click', function () {
+    var zip = new JSZip();
+    lastResults.forEach(function (r) {
+      zip.file(r.name, r.content);
+    });
+    zip.generateAsync({ type: 'blob' }).then(function (blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'optimized-svgs.zip';
+      a.click();
+    });
+  });
+});
+</script>
+
+</body>
+</html>
