@@ -1,6 +1,6 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-07-13 (오늘 세션 반영 — Bulk URL Encoder/Decoder 신규 추가 + GSC/GA 데이터 분석)
+마지막 업데이트: 2026-07-13 (같은 날 2차 세션 반영 — 툴 카테고리 확장: 데이터포맷 변환 2개 + 디자인 1개 + 블로그 3개)
 
 ---
 
@@ -37,7 +37,7 @@
 
 ---
 
-## 3. 사이트 구조 (전체 파일, 2026-07-13 기준 41개)
+## 3. 사이트 구조 (전체 파일, 2026-07-13 2차 세션 기준 47개)
 
 ```
 /
@@ -53,8 +53,8 @@
 │   ├── css/style.css           디자인 시스템 전부 여기
 │   ├── js/nav-behavior.js      헤더/푸터는 정적 HTML, 이 JS는 모바일메뉴/연도/활성링크만 처리
 │   └── img/                    favicon.svg, apple-touch-icon.png, og-image.png(신규) 등
-├── tools/                      13개, index.html은 검색/필터 포함 목록
-└── blog/                       22개, index.html은 목록
+├── tools/                      16개, index.html은 검색/필터 포함 목록
+└── blog/                       25개, index.html은 목록
 ```
 
 **중요 — 헤더/푸터 구조**: `include.js`는 삭제됨, 전부 **정적 HTML로 하드코딩**. 새 페이지/툴/블로그 추가할 때마다 헤더/푸터를 모든 페이지에 반복 삽입 필요. footer의 "Tools" 링크 목록도 전체 페이지에 일괄 반영 필요 (python find-replace 스크립트로 처리, 누락 없는지 `grep -L`로 재확인). `nav-behavior.js`는 모바일 메뉴 토글, 연도, 활성 링크 하이라이트만 담당.
@@ -77,30 +77,36 @@
 
 ---
 
-## 5. 툴 13개 현황
+## 5. 툴 16개 현황
 
 | 툴 | 파일 | 상태 | 비고 |
 |---|---|---|---|
 | Base64 Encode/Decode | `tools/base64.html` | 검증완료 | 완전 클라이언트, 배치 줄단위 처리 |
-| **(신규) Bulk URL Encoder/Decoder** | `tools/url-encoder.html` | 검증완료 | encodeURIComponent(Component)/encodeURI(Full URL) 모드 분리, 줄단위 배치. 외부 라이브러리 없음 |
+| Bulk URL Encoder/Decoder | `tools/url-encoder.html` | 검증완료 | encodeURIComponent(Component)/encodeURI(Full URL) 모드 분리, 줄단위 배치. 외부 라이브러리 없음 |
 | CSV to JSON | `tools/csv-to-json.html` | 검증완료 | UTF-8/EUC-KR/UTF-16 자동 인코딩 감지, 8MB 제한, 청크 파싱(멈춤 방지) |
-| Bulk Image Resize/Convert/Compress | `tools/image-batch.html` | 검증완료 | Canvas API, 20MB/장·60장 제한, 순차처리+진행률. **(신규)** "Crop to exact size(center-crop)" 모드 추가됨 — width/height 지정 시 cover 방식으로 스케일 후 중앙 기준 크롭 |
+| **(신규) JSON ↔ YAML Converter** | `tools/json-yaml-converter.html` | 검증완료(node로 실제 변환 결과까지 확인) | js-yaml(cdnjs 4.1.1) 라이브러리. `---`로 구분된 멀티 YAML 문서 → JSON 배열 변환 지원 |
+| **(신규) CSV ↔ TSV Converter** | `tools/csv-tsv-converter.html` | 검증완료(node로 라운드트립 테스트까지 확인) | 외부 라이브러리 없이 자체 구현한 quote-aware 파서/시리얼라이저 (따옴표 안 콤마/탭/개행, `""` 이스케이프 전부 처리) |
+| Bulk Image Resize/Convert/Compress | `tools/image-batch.html` | 검증완료 | Canvas API, 20MB/장·60장 제한, 순차처리+진행률. Crop to exact size(center-crop) 모드 포함 |
+| **(신규) Bulk SVG Optimizer** | `tools/svg-optimizer.html` | 검증완료(node로 실제 최적화 결과까지 확인, 644B→175B 72.8% 축소 케이스 테스트) | 외부 라이브러리 없이 자체 구현 — 주석/DOCTYPE/XML선언/에디터 네임스페이스(inkscape·sodipodi)/metadata 블록 제거, d·points 속성 좌표 소수점 반올림, 빈 g·defs 제거. title/desc/aria는 기본 보존(체크박스로 해제 가능) |
 | RSS Generator | `tools/rss-generator.html` | 검증완료 | "계정불필요/스크래핑아님" 차별점 보강. **GSC 신호 있는 페이지 (아래 8번 참고)** |
 | Sitemap Generator | `tools/sitemap-generator.html` | 검증완료 | |
-| **(신규) robots.txt Generator** | `tools/robots-txt-generator.html` | 검증완료 | Disallow/Allow/Sitemap 라인 + GPTBot/ClaudeBot/Google-Extended 등 AI 크롤러 개별 차단 체크박스 |
-| **(신규) llms.txt Generator** | `tools/llms-txt-generator.html` | 검증완료 | `섹션 \| 제목 \| URL \| 설명` 포맷 파싱 → 카테고리별 마크다운 인덱스 생성 |
-| IP/DNS/SSL Bulk Lookup | `tools/ip-dns-ssl.html` | 검증완료 | DNS는 Google DoH, SSL은 Worker→crt.sh 경유. SSL 큐잉 동시 2개 제한. **(신규)** 페이지 최상단에 "내 현재 IP" 카드 추가 — `api.ipify.org` 호출로 즉시 표시, 복사 버튼 포함 |
+| robots.txt Generator | `tools/robots-txt-generator.html` | 검증완료 | Disallow/Allow/Sitemap 라인 + GPTBot/ClaudeBot/Google-Extended 등 AI 크롤러 개별 차단 체크박스 |
+| llms.txt Generator | `tools/llms-txt-generator.html` | 검증완료 | `섹션 \| 제목 \| URL \| 설명` 포맷 파싱 → 카테고리별 마크다운 인덱스 생성 |
+| IP/DNS/SSL Bulk Lookup | `tools/ip-dns-ssl.html` | 검증완료 | DNS는 Google DoH, SSL은 Worker→crt.sh 경유. SSL 큐잉 동시 2개 제한. 페이지 최상단 "내 현재 IP" 카드(`api.ipify.org`) 포함 |
 | Site Crawler & Audit | `tools/site-crawler.html` | 검증완료 | Worker `/crawl` 호출, 최대 40페이지, sitemap/rss/llms.txt 동시생성+깨진링크+메타태그 체크 |
 | JWT Decoder (Batch) | `tools/jwt-decoder.html` | 검증완료(모바일 포함) | 서명 검증 안 함 명시, 완전 클라이언트 |
 | Bulk QR Code Generator | `tools/qr-batch.html` | 검증완료(실제 스캔까지) | qrcodejs(cdnjs) 라이브러리, 100개 제한 |
-| **(신규) Bulk Barcode Generator** | `tools/barcode-batch.html` | 검증완료 | UPC-A/EAN-13/Code128, JsBarcode(cdnjs 3.12.1) 라이브러리. UPC/EAN은 체크섬 검증 후 불합격 코드는 결과 하단에 별도 표시. 100개 제한 |
+| Bulk Barcode Generator | `tools/barcode-batch.html` | 검증완료 | UPC-A/EAN-13/Code128, JsBarcode(cdnjs 3.12.1) 라이브러리. UPC/EAN은 체크섬 검증 후 불합격 코드는 결과 하단에 별도 표시. 100개 제한 |
 
-**신규 툴 후보 리서치 누적 결과 (총 27개 후보 검증, 1개 채택)**:
+**카테고리 확장 (2026-07-13 2차 세션)**: 기존엔 Encode/Decode·SEO·Network·Media(이미지) 4개 카테고리뿐이었고, 사이트 태그라인("developers & designers")에도 불구하고 디자이너 전용 툴이 하나도 없었음. 사용자가 직접 카테고리 확장을 지시해서 데이터포맷 변환(JSON↔YAML, CSV↔TSV) + 디자인/미디어(SVG 옵티마이저) 방향으로 3개 추가함.
+
+**신규 툴 후보 리서치 누적 결과 (총 33개 후보 검증, 4개 채택)**:
 - 1차: Password Generator, Markdown→HTML, URL 단축기, Hash Generator, Timestamp Converter, Text Case Converter
 - 2차(2026-07-11 세션): Bulk Redirect Checker, Bulk EXIF Remover, Bulk OG/Twitter Card Checker, Bulk Favicon Generator, Bulk UTM Builder, Batch Regex Tester, Bulk Color Contrast Checker(WCAG), Bulk Barcode(→이후 실제 채택), Bulk 텍스트 인코딩 변환, Bulk 파일 이름 변경기, Cron Expression Parser, CORS Preflight Tester, Bulk 색상 포맷 변환, 여러 이미지 팔레트 동시 추출
 - 3차(같은 세션, robots.txt/llms.txt 검토 중): 자체 robots.txt/llms.txt Generator도 "포화" 판정이었으나, **수익화(페이지 수) 관점에서 포화 여부와 무관하게 채택하기로 사용자가 방향 전환**
-- 4차(2026-07-13 세션): Bulk URL Encoder/Decoder, Bulk 메타태그(title/description) 길이 체커, Bulk Slug Generator — 셋 다 검색해보니 이미 다수 경쟁자 존재(특히 메타태그 체커와 슬러그 생성기는 각 10곳 이상). 그중 **Bulk URL Encoder/Decoder를 "브랜드 적합성(base64/JWT와 같은 encode·decode 카테고리) + 제작 난이도 낮음(외부 라이브러리 불필요) + 기존 사용자층 시너지" 기준으로 채택.** 나머지 둘(메타태그 체커, 슬러그 생성기)은 채택 안 함 — 특히 메타태그 체커는 URL을 실제로 fetch해서 title/description을 읽어와야 하는데 이건 브라우저에서 CORS 문제로 직접 못 하고 Worker 경유가 필요해서, 채택하려면 Worker에 새 엔드포인트 추가부터 필요함(단순 채택 보류이지 "포화라서 탈락"은 아님 — 다음에 Worker 작업 의향 있으면 재검토 가능).
-- **결론: 순수 "경쟁 없는 아이디어" 기준은 더 이상 안 나옴.** "포화됐어도 브랜드에 맞고 빠르게 만들 수 있는 것" 기준으로 계속 운영 중 (2026-07-11 세션에서 확정, 2026-07-13 세션에서 실제 적용해서 1개 채택함).
+- 4차(2026-07-13 세션 1차): Bulk URL Encoder/Decoder(→채택), Bulk 메타태그(title/description) 길이 체커(→Worker 새 엔드포인트 필요해서 보류, 아래 12번 참고), Bulk Slug Generator(→미채택)
+- 5차(2026-07-13 세션 2차, 카테고리 확장 지시): CSS Gradient Generator, Typography/Spacing Scale Generator, Bulk Color Contrast/Palette(재확인) — 전부 매우 포화 + 경쟁 툴들이 기능적으로 훨씬 풍부(Colorffy, TypeScale Pro 등)해서 디자인 카테고리에서는 미채택. 대신 **Bulk SVG Optimizer**를 "image-batch와 바로 짝이 맞는 미디어 배치 처리" 기준으로 채택 (이것도 SVGO 기반 경쟁자 다수 있지만, 자체 구현이 가볍게 가능하고 image-batch 사용자층과 직접 겹침). 데이터포맷 쪽은 JSON↔YAML, CSV↔TSV 둘 다 채택.
+- **결론: 순수 "경쟁 없는 아이디어" 기준은 더 이상 안 나옴.** "포화됐어도 브랜드에 맞고 빠르게 만들 수 있는 것" 기준으로 계속 운영 중이며, 카테고리 자체를 넓히는 것도 유효한 확장 축으로 확인됨.
 
 **대기 중인 신규 툴 후보 3개** (2026-07-11 세션에서 6개 계획 중 3개만 완료, 나머지 대기):
 - Bulk Color Palette Extractor (여러 이미지에서 색상 팔레트 동시 추출)
@@ -120,16 +126,16 @@
 
 ---
 
-## 7. 블로그 현황 (22개)
+## 7. 블로그 현황 (25개)
 
-**툴별 커버리지 (2026-07-13 기준, 13개 툴 전부 최소 2개 이상)**:
+**툴별 커버리지 (2026-07-13 2차 세션 기준, 16개 툴)**:
 
 | 툴 | 개수 |
 |---|---|
 | image-batch, rss-generator, site-crawler | 3 |
 | base64, jwt-decoder, csv-to-json, ip-dns-ssl, qr-batch, sitemap-generator, barcode-batch | 2 |
 | robots-txt-generator, llms-txt-generator | 1개씩 전용 + "robots.txt vs llms.txt" 비교글 1개 공유 = 사실상 2개씩 |
-| url-encoder (신규) | 1 (2026-07-13 세션 추가, 아직 1개뿐 — 다음 보강 후보) |
+| url-encoder, json-yaml-converter, csv-tsv-converter, svg-optimizer | 1개씩 (전부 2026-07-13 신규, 아직 1개뿐 — 다음 보강 후보) |
 
 **2026-07-07 세션 이전 (13개)**: jwt-claims-explained, find-broken-links-free-tool, rss-generator-no-account, free-alternative-screaming-frog, rss-for-automation, bulk-qr-code-use-cases, ssl-expiry-monitoring-free, csv-encoding-gibberish, sitemap-static-sites, debug-jwt-base64-locally, webp-vs-avif-2026, no-upload-image-compression, batch-vs-ai-image-convert
 
@@ -137,7 +143,9 @@
 
 **2026-07-11 세션 추가 (4개, 신규 툴 3개 세트)**: robots-txt-mistakes, robots-txt-vs-llms-txt, upc-vs-ean-vs-code128, bulk-barcode-use-cases
 
-**2026-07-13 세션 추가 (1개, 신규 툴 1개 세트)**: encodeuricomponent-vs-encodeuri
+**2026-07-13 세션 1차 추가 (1개)**: encodeuricomponent-vs-encodeuri
+
+**2026-07-13 세션 2차 추가 (3개, 카테고리 확장 세트)**: svg-export-bloat, json-vs-yaml, csv-vs-tsv
 
 ---
 
@@ -224,19 +232,22 @@
 12. **(신규) "포화 여부"만으로 신규 툴을 기각하는 기준은 절대적이지 않음.** 사이트 규모(페이지 수)가 수익화의 병목일 때는 경쟁이 있어도 브랜드에 맞고 빠르게 만들 수 있으면 채택 가능 — 2026-07-11 세션에서 사용자가 방향을 명확히 전환함.
 13. **(신규) 신규 파일 커밋 전 항상 검증 스크립트 실행**: 내부 링크 전수 스캔(끊긴 링크 없는지 python으로), sitemap.xml URL 개수 = 실제 html 개수 일치, OG/Twitter 태그 신규 페이지 전부 포함, 신규 JS는 `node --check`로 문법 검증. CDN 라이브러리는 버전을 하드코딩하기 전에 web_search/web_fetch로 실제 존재 여부 확인.
 14. **(신규) 대시보드/시각화 요청 시 만들지 말고 텍스트 분석으로만 보고.**
+15. **(신규) 신규 툴에 파싱/변환/알고리즘 로직이 들어가면 JS 문법 체크만으로 끝내지 말고 node로 실제 입출력을 검증할 것** (예: CSV↔TSV 라운드트립 테스트, SVG 최적화 전후 바이트 비교, YAML 멀티문서 파싱 등). 문법은 통과해도 로직이 틀릴 수 있음.
+16. **(신규) "가치없는 콘텐츠"로 안 잡히게 주의할 것.** 이건 "경쟁사가 많다"와는 다른 기준 — 실제 위험 요인은 (a) 겉핥기식 얇은 설명, (b) 자동생성 티 나는 반복 문구, (c) 실제로 안 돌아가는 툴. 경쟁이 있어도 진짜 동작하는 툴 + 원본으로 새로 쓴 실질적 분량의 블로그(500단어 이상, FAQ 포함)면 문제없음. 다만 경쟁사가 기능적으로 훨씬 풍부한 영역(예: 그라디언트 생성기, 타이포 스케일 생성기처럼 대형 플레이어가 8개 export 포맷·라이브 프리뷰까지 갖춘 경우)은 우리가 만들어도 명백히 열등한 카피가 될 위험이 있어 채택을 피할 것.
 
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
 
-1. **url-encoder 블로그 보강** — 신규 툴인데 아직 블로그 1개뿐. 다른 툴처럼 2개로 맞추는 게 다음 우선순위.
+1. **1개뿐인 블로그 4개 보강**: url-encoder, json-yaml-converter, csv-tsv-converter, svg-optimizer — 전부 2026-07-13 신규라 아직 1개씩뿐. 다른 툴처럼 2개로 맞추는 게 다음 우선순위.
 2. **대기 중인 신규 툴 3개 제작**: Bulk Color Palette Extractor, Bulk EXIF Remover, Bulk File Renamer (5번 참고).
-3. 메타태그(title/description) 길이 체커는 서버사이드 fetch가 필요해서 보류 중 — Worker에 새 엔드포인트(`GET /meta?url=`) 추가할 의향이 있으면 재검토 가능 (2026-07-13 세션에서 발견).
-4. 매 세션 GA/Search Console 데이터 받으면 이전 스냅샷과 비교 → 변화율 기준으로 신규/보강 여부 재판단 (8번 참고). 신규 결정 전 중복 체크 + 웹 키워드 경쟁강도 확인 필수. **"신규/보강 없음"이라는 결론이 반복되는 게 사용자를 불편하게 할 수 있으니, 포화된 아이디어라도 브랜드 적합성 기준으로 계속 확장할 것 (2026-07-13 세션에서 확인된 사용자 기대치).**
-5. rss-generator / free-alternative-screaming-frog 두 클러스터는 계속 관찰 — 순위가 유의미하게 오르기 시작하면 콘텐츠 심화로 전환 검토, 그렇지 않으면 백링크/권위 축적이 우선.
-6. **디렉토리 백링크는 당분간 중단 상태 유지** (10-4 원칙) — 사용자가 다시 명시적으로 요청할 때만 재개.
-7. Product Hunt(7/14), Smol Launch(7/13), Fazier(7/22) 런칭일 도래 시 결과 확인.
-8. AlternativeTo 승인 여부 확인.
-9. AdSense 신청 여부 판단 (요건은 충족된 상태, 페이지 수 확보 후 재검토).
-10. 트래픽 어느 정도 쌓이면 제휴 재신청.
-11. Worker 코드(`worker.js`) repo 백업 여부는 아직 결정 안 됨 — 필요시 그때 판단.
+3. 메타태그(title/description) 길이 체커는 서버사이드 fetch가 필요해서 보류 중 — Worker에 새 엔드포인트(`GET /meta?url=`) 추가할 의향이 있으면 재검토 가능.
+4. 매 세션 GA/Search Console 데이터 받으면 이전 스냅샷과 비교 → 변화율 기준으로 신규/보강 여부 재판단 (8번 참고). 신규 결정 전 중복 체크 + 웹 키워드 경쟁강도 확인 필수. **"신규/보강 없음"이라는 결론이 반복되는 게 사용자를 불편하게 할 수 있으니, 포화된 아이디어라도 브랜드 적합성 기준으로 계속 확장할 것.**
+5. **툴 카테고리 자체를 넓히는 것도 유효한 확장 축.** 지금은 Encode/Decode·SEO·Network·Media(이미지+SVG)·Data(포맷변환) 5개 카테고리. 사용자가 "관련있는 걸로 카테고리 넓히자"고 명시적으로 요청하면, 그 카테고리 안에서 여러 후보를 한번에 검토하고 실제로 채택까지 진행할 것 — 후보 하나 찾고 끝내지 말고 "이 카테고리에 뭘 더 채울 수 있나" 관점으로 접근.
+6. rss-generator / free-alternative-screaming-frog 두 클러스터는 계속 관찰 — 순위가 유의미하게 오르기 시작하면 콘텐츠 심화로 전환 검토, 그렇지 않으면 백링크/권위 축적이 우선.
+7. **디렉토리 백링크는 당분간 중단 상태 유지** (10-4 원칙) — 사용자가 다시 명시적으로 요청할 때만 재개.
+8. Product Hunt(7/14), Smol Launch(7/13), Fazier(7/22) 런칭일 도래 시 결과 확인.
+9. AlternativeTo 승인 여부 확인.
+10. AdSense 신청 여부 판단 (요건은 충족된 상태, 페이지 수 확보 후 재검토 — 지금 47페이지까지 늘어남).
+11. 트래픽 어느 정도 쌓이면 제휴 재신청.
+12. Worker 코드(`worker.js`) repo 백업 여부는 아직 결정 안 됨 — 필요시 그때 판단.
