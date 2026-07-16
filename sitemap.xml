@@ -16,6 +16,7 @@
   <url><loc>https://freetooldev.com/tools/sitemap-generator.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/robots-txt-generator.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/llms-txt-generator.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/tools/heading-structure-checker.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/ip-dns-ssl.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/site-crawler.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/jwt-decoder.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -48,6 +49,8 @@
   <url><loc>https://freetooldev.com/blog/bulk-qr-code-use-cases.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/rss-for-automation.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/free-alternative-screaming-frog.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://freetooldev.com/blog/multiple-h1-tags.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://freetooldev.com/blog/skipped-heading-levels.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/jwt-claims-explained.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/find-broken-links-free-tool.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/rss-generator-no-account.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>

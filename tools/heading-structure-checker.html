@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Heading Structure Checker — Check H1-H6 on Many Pages | FreeToolDev</title>
+<meta name="description" content="Paste the HTML of several pages at once and check H1-H6 heading hierarchy for each — missing H1s, skipped levels, duplicates, empty headings. Free, no signup.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/heading-structure-checker.html">
+<meta property="og:title" content="Bulk Heading Structure Checker — Check H1-H6 on Many Pages | FreeToolDev">
+<meta property="og:description" content="Paste the HTML of several pages at once and check H1-H6 heading hierarchy for each — missing H1s, skipped levels, duplicates, empty headings. Free, no signup.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk Heading Structure Checker — Check H1-H6 on Many Pages | FreeToolDev">
+<meta name="twitter:description" content="Paste the HTML of several pages at once and check H1-H6 heading hierarchy for each — missing H1s, skipped levels, duplicates, empty headings. Free, no signup.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/heading-structure-checker.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">SEO · Batch</span>
+    <h1>Bulk Heading Structure Checker</h1>
+    <p>Paste the HTML source of several pages at once — separated by a page-break line — and check H1-H6 hierarchy for every page in one pass: missing H1s, skipped levels, duplicate H1s, and empty headings.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>Pages</h3>
+      <p style="font-size:0.85rem; margin-bottom:10px;">Paste full page HTML (view-source, not the rendered page). Separate multiple pages with a line containing just <code>-----</code>. Optionally start a page's block with <code>### Page name</code> to label it in the results.</p>
+      <textarea id="input" style="min-height:220px;" placeholder="### Home
+&lt;html&gt;&lt;body&gt;&lt;h1&gt;Welcome&lt;/h1&gt;&lt;h2&gt;About us&lt;/h2&gt;&lt;h4&gt;Our history&lt;/h4&gt;&lt;/body&gt;&lt;/html&gt;
+-----
+### Pricing
+&lt;html&gt;&lt;body&gt;&lt;h2&gt;Plans&lt;/h2&gt;&lt;h1&gt;Pricing&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;"></textarea>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="checkBtn">Check headings →</button>
+        <button class="btn btn-outline" id="clearBtn">Clear</button>
+      </div>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="resultsList"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>What this checks, and why each issue matters</h2>
+    <p><strong>Missing H1</strong> — every page should have exactly one, describing what the page is about. Without one, search engines and screen readers both lose the clearest signal of the page's primary topic. <strong>Multiple H1s</strong> — technically valid HTML5, but it dilutes which heading is "the" title of the page, and most SEO guidance (including Google's own John Mueller) still recommends sticking to one. <strong>Skipped levels</strong> — jumping from H2 straight to H4 without an H3 in between breaks the logical outline that screen reader users rely on to navigate by heading, and gives search engines a less coherent structure to parse. Going back up a level (H3 to H2, to start a new section) is normal and not flagged. <strong>Empty headings</strong> — a heading tag with no text content serves no purpose and creates a confusing blank landmark for assistive technology.</p>
+
+    <h2>Why check multiple pages at once instead of one at a time</h2>
+    <p>Heading structure problems are rarely isolated to a single page — a CMS template, a component library, or a copy-paste habit tends to repeat the same mistake across every page that uses it. Checking pages one at a time makes it easy to miss that a "missing H1" issue is actually a template-wide problem affecting fifty pages, not a one-off. Pasting a batch at once surfaces that pattern immediately.</p>
+
+    <h2>How to grab the HTML to paste in</h2>
+    <p>Right-click the page and choose "View Page Source" (or press Ctrl+U / Cmd+Option+U), select all, and copy — this gives you the actual HTML sent by the server, not the possibly-modified DOM after JavaScript runs. For pages where headings are inserted client-side by JavaScript, use your browser's Elements/Inspector panel instead and copy the rendered HTML from there, since view-source won't show anything JavaScript added after the initial load.</p>
+
+    <h2>FAQ</h2>
+    <h3>Is it bad to have more than one H1 on a page?</h3>
+    <p>It's not invalid HTML5, and Google has said its crawlers can handle multiple H1s without penalty. That said, most practical SEO guidance still recommends one H1 per page, since it keeps the "what is this page about" signal unambiguous for both search engines and human readers scanning the outline — treat multiple H1s as a code smell worth reviewing, not an automatic ranking penalty.</p>
+    <h3>Does going from H3 back to H2 count as a skipped level?</h3>
+    <p>No — moving back up to a higher (numerically lower) heading level to start a new section is normal and expected in any multi-section page. Only a downward jump of more than one level (H2 straight to H4, skipping H3) gets flagged.</p>
+    <h3>Can this check a live URL directly instead of pasted HTML?</h3>
+    <p>Not currently — this tool works entirely in your browser with no server-side fetching, so it can only analyze HTML you paste in yourself. This also means nothing about the pages you check is ever sent anywhere.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function analyzePage(html) {
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(html, 'text/html');
+    var headings = Array.from(doc.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+
+    var outline = headings.map(function (h) {
+      return { level: parseInt(h.tagName[1], 10), text: h.textContent.trim() };
+    });
+
+    var issues = [];
+    var h1Count = outline.filter(function (h) { return h.level === 1; }).length;
+    if (h1Count === 0) issues.push('Missing H1');
+    if (h1Count > 1) issues.push('Multiple H1s (' + h1Count + ')');
+
+    var emptyCount = outline.filter(function (h) { return h.text === ''; }).length;
+    if (emptyCount > 0) issues.push(emptyCount + ' empty heading(s)');
+
+    var skips = 0;
+    for (var i = 1; i < outline.length; i++) {
+      if (outline[i].level > outline[i - 1].level + 1) skips++;
+    }
+    if (skips > 0) issues.push(skips + ' skipped level(s)');
+
+    return { outline: outline, issues: issues };
+  }
+
+  document.getElementById('checkBtn').addEventListener('click', function () {
+    var raw = document.getElementById('input').value;
+    if (!raw.trim()) { alert('Paste at least one page of HTML first.'); return; }
+
+    var blocks = raw.split(/\n-{5,}\n/);
+    var resultsList = document.getElementById('resultsList');
+    resultsList.innerHTML = '';
+    document.getElementById('resultsPanel').style.display = 'block';
+
+    blocks.forEach(function (block, idx) {
+      block = block.trim();
+      if (!block) return;
+
+      var name = 'Page ' + (idx + 1);
+      var nameMatch = block.match(/^###\s*(.+)$/m);
+      if (nameMatch) {
+        name = nameMatch[1].trim();
+        block = block.replace(/^###\s*.+$/m, '').trim();
+      }
+
+      var result = analyzePage(block);
+      var panel = document.createElement('div');
+      panel.className = 'file-row ready';
+      panel.style.flexDirection = 'column';
+      panel.style.alignItems = 'flex-start';
+      panel.style.padding = '16px';
+      panel.style.marginBottom = '12px';
+
+      var issuesHtml = result.issues.length
+        ? '<span style="color:#b5451b; font-weight:600;">' + result.issues.map(esc).join(' · ') + '</span>'
+        : '<span style="color:#2e8b57; font-weight:600;">No structural issues found</span>';
+
+      var outlineHtml = result.outline.length
+        ? result.outline.map(function (h) {
+            var indent = (h.level - 1) * 18;
+            var label = h.text || '(empty)';
+            return '<div style="margin-left:' + indent + 'px; font-family:\'JetBrains Mono\',monospace; font-size:0.82rem; padding:2px 0;">' +
+              '<strong>H' + h.level + '</strong> ' + esc(label) + '</div>';
+          }).join('')
+        : '<div style="font-size:0.85rem; color:#8a8578;">No headings found on this page.</div>';
+
+      panel.innerHTML =
+        '<div style="font-weight:700; margin-bottom:6px;">' + esc(name) + '</div>' +
+        '<div style="margin-bottom:10px; font-size:0.85rem;">' + issuesHtml + '</div>' +
+        '<div style="width:100%;">' + outlineHtml + '</div>';
+
+      resultsList.appendChild(panel);
+    });
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    document.getElementById('input').value = '';
+    document.getElementById('resultsPanel').style.display = 'none';
+  });
+});
+</script>
+
+</body>
+</html>
