@@ -29,7 +29,7 @@
 - [When You Actually Need to Generate QR Codes in Bulk](https://freetooldev.com/blog/bulk-qr-code-use-cases.html)
 - [Using RSS to Feed Newsletters and Automation Tools](https://freetooldev.com/blog/rss-for-automation.html)
 - [A Free, Browser-Based Alternative to Screaming Frog for Small Sites](https://freetooldev.com/blog/free-alternative-screaming-frog.html)
-- [What's Actually Inside a JWT: Understanding Common Claims](https://freetooldev.com/blog/jwt-claims-explained.html)
+- [JWT Claims Explained: Registered, Public, and Private](https://freetooldev.com/blog/jwt-claims-explained.html)
 - [How to Find Broken Links on Your Site Without Installing Anything](https://freetooldev.com/blog/find-broken-links-free-tool.html)
 - [RSS Generator Without an Account: Manual Builder vs. Auto-Scraper](https://freetooldev.com/blog/rss-generator-no-account.html)
 - [Converting 100 Images: AI or a Tool?](https://freetooldev.com/blog/batch-vs-ai-image-convert.html)

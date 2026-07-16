@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>What's Actually Inside a JWT: Understanding Common Claims — FreeToolDev</title>
-<meta name="description" content="A plain-language guide to the standard JWT claims — iss, aud, sub, exp, and the custom ones — and what each one is actually for.">
+<title>JWT Claims Explained: Registered, Public, and Private — FreeToolDev</title>
+<meta name="description" content="A plain-language guide to registered, public, and private JWT claims — iss, aud, sub, exp, jti, and the custom ones — and what each one is actually for.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://freetooldev.com/blog/jwt-claims-explained.html">
-<meta property="og:title" content="What's Actually Inside a JWT: Understanding Common Claims — FreeToolDev">
-<meta property="og:description" content="A plain-language guide to the standard JWT claims — iss, aud, sub, exp, and the custom ones — and what each one is actually for.">
+<meta property="og:title" content="JWT Claims Explained: Registered, Public, and Private — FreeToolDev">
+<meta property="og:description" content="A plain-language guide to registered, public, and private JWT claims — iss, aud, sub, exp, jti, and the custom ones — and what each one is actually for.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="What's Actually Inside a JWT: Understanding Common Claims — FreeToolDev">
-<meta name="twitter:description" content="A plain-language guide to the standard JWT claims — iss, aud, sub, exp, and the custom ones — and what each one is actually for.">
+<meta name="twitter:title" content="JWT Claims Explained: Registered, Public, and Private — FreeToolDev">
+<meta name="twitter:description" content="A plain-language guide to registered, public, and private JWT claims — iss, aud, sub, exp, jti, and the custom ones — and what each one is actually for.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/blog/jwt-claims-explained.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -48,9 +48,18 @@
 
 <article class="article">
   <div class="post-meta">Guide · Jul 7, 2026</div>
-  <h1>What's Actually Inside a JWT: Understanding Common Claims</h1>
+  <h1>JWT Claims Explained: Registered, Public, and Private</h1>
 
   <p>Decode any JWT and you'll get a JSON object full of short, cryptic field names — <code>iss</code>, <code>aud</code>, <code>sub</code>, and whatever custom fields the issuer added. They're standardized enough that once you know what a handful of them mean, most tokens you'll ever encounter become readable at a glance.</p>
+
+  <h2>Registered, public, and private claims: the three official categories</h2>
+  <p>The JWT spec (RFC 7519) actually splits every claim into one of three categories, and the terminology trips people up because "public" and "private" don't mean what they'd mean for a key pair — none of this is about encryption or secrecy.</p>
+  <ul style="color:#2c3540; line-height:1.75; padding-left:22px; margin-bottom:22px;">
+    <li><strong>Registered claims</strong> — the seven specific claim names defined directly in the spec itself (<code>iss</code>, <code>sub</code>, <code>aud</code>, <code>exp</code>, <code>nbf</code>, <code>iat</code>, <code>jti</code>, covered claim-by-claim below). Sometimes called "reserved claims" for the same reason — the spec reserves these exact names for these exact meanings.</li>
+    <li><strong>Public claims</strong> — claim names anyone can define and use, as long as they're registered in the IANA JSON Web Token Claims Registry (or namespaced as a collision-resistant URI) so two unrelated systems don't both invent a claim called, say, <code>email</code> with different meanings. Most OpenID Connect claims — <code>email</code>, <code>name</code>, <code>picture</code> — are public claims in this sense.</li>
+    <li><strong>Private claims</strong> — claims agreed on between specific parties with no registry involved at all — an internal <code>org_id</code> or <code>role</code> field your own application invented for its own use. These carry the real risk of collision, since nothing stops another system from using the same name for something else; namespacing a private claim under a URI you control (<code>https://yourapp.com/claims/role</code> instead of just <code>role</code>) is the usual defense.</li>
+  </ul>
+  <p>In practice, most applications don't rigorously separate "public" from "private" — a claim like <code>email</code> gets used the same way whether or not it was formally registered with IANA. The distinction matters most when you're designing a token schema that other, unrelated systems will also need to read correctly.</p>
 
   <h2>The registered claims (part of the JWT spec)</h2>
   <p>These have fixed meanings defined by the JWT standard itself — any library or service that produces JWTs is expected to use them the same way:</p>
@@ -64,12 +73,12 @@
     <li><strong><code>jti</code> (JWT ID)</strong> — a unique identifier for this specific token, useful for logging or for maintaining a revocation list of individual tokens.</li>
   </ul>
 
-  <h2>Common custom claims (not part of the spec, but everywhere in practice)</h2>
-  <p>Beyond the registered claims, issuers add whatever additional fields their application needs. These aren't standardized, but a few show up often enough to be worth recognizing:</p>
+  <h2>Public and private claims in practice</h2>
+  <p>Beyond the seven registered claims, issuers add whatever additional fields their application needs. A few show up often enough, across enough different systems, to be worth recognizing on sight:</p>
   <ul style="color:#2c3540; line-height:1.75; padding-left:22px; margin-bottom:22px;">
-    <li><strong><code>roles</code> / <code>permissions</code> / <code>scope</code></strong> — what the token's holder is allowed to do. Naming and structure vary a lot between systems (a flat array of strings, a space-separated scope string, a nested object).</li>
-    <li><strong><code>email</code> / <code>name</code></strong> — basic profile info included so a service doesn't need a separate lookup just to display who's logged in.</li>
-    <li><strong><code>org_id</code> / <code>tenant_id</code></strong> — common in multi-tenant systems, identifying which organization or workspace the token applies to.</li>
+    <li><strong><code>roles</code> / <code>permissions</code> / <code>scope</code></strong> — what the token's holder is allowed to do. Naming and structure vary a lot between systems (a flat array of strings, a space-separated scope string, a nested object) — this is almost always a private claim, specific to one application.</li>
+    <li><strong><code>email</code> / <code>name</code></strong> — basic profile info included so a service doesn't need a separate lookup just to display who's logged in. These are public claims in the formal sense, defined by the OpenID Connect standard rather than invented per-application.</li>
+    <li><strong><code>org_id</code> / <code>tenant_id</code></strong> — common in multi-tenant systems, identifying which organization or workspace the token applies to. Private, application-specific.</li>
   </ul>
 
   <h2>Reading a real payload, claim by claim</h2>
@@ -87,6 +96,14 @@
 
   <h2>What you can and can't trust from a decoded token</h2>
   <p>Every claim listed here is only meaningful if the token's signature has actually been verified against the issuer's real signing key. Decoding shows you what a token claims; it says nothing about whether those claims are genuine. A token with a <code>roles: ["admin"]</code> claim and an invalid or unchecked signature proves nothing — anyone can construct a JSON payload that says whatever they want. This is why signature verification, done server-side with the actual key, is the step that makes any of these claims trustworthy.</p>
+
+  <h2>FAQ</h2>
+  <h3>Are registered claims required in every JWT?</h3>
+  <p>No — every registered claim is optional per the spec. In practice, most real-world tokens include at least <code>sub</code>, <code>exp</code>, and <code>iat</code>, since almost every JWT library defaults to setting them, but a technically valid JWT can omit all seven and just carry custom claims instead.</p>
+  <h3>What's the difference between a "reserved" claim and a "registered" claim?</h3>
+  <p>Nothing — they're two names for the same seven claims (<code>iss</code>, <code>sub</code>, <code>aud</code>, <code>exp</code>, <code>nbf</code>, <code>iat</code>, <code>jti</code>). "Registered" is the term RFC 7519 itself uses; "reserved" describes the same thing from the other direction — these specific names are reserved for these specific meanings, so using <code>exp</code> for something other than an expiration timestamp would violate the spec.</p>
+  <h3>Can I add my own claim called "sub" with a different meaning?</h3>
+  <p>Technically the JSON format won't stop you, but doing so breaks interoperability with any standard JWT library or middleware, which will read your custom-meaning <code>sub</code> as if it were the standard subject claim. If you need something that isn't one of the seven registered claims, give it a different, namespaced name instead of overloading a reserved one.</p>
 
   <h2>Try it</h2>
   <p>FreeToolDev's <a href="/tools/jwt-decoder.html">JWT Decoder</a> decodes multiple tokens at once and lays out every claim clearly, with human-readable timestamps for <code>exp</code>/<code>iat</code>/<code>nbf</code> — entirely client-side, so nothing you paste in is sent anywhere.</p>
