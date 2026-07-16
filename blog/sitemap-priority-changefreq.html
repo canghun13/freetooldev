@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sitemap Priority and Changefreq: Do They Actually Matter? — FreeToolDev</title>
+<meta name="description" content="Two sitemap tags that developers spend real time tuning, and Google says it mostly ignores both. Here's what's actually true, and what's still worth getting right.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/sitemap-priority-changefreq.html">
+<meta property="og:title" content="Sitemap Priority and Changefreq: Do They Actually Matter? — FreeToolDev">
+<meta property="og:description" content="Two sitemap tags that developers spend real time tuning, and Google says it mostly ignores both. Here's what's actually true, and what's still worth getting right.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sitemap Priority and Changefreq: Do They Actually Matter? — FreeToolDev">
+<meta name="twitter:description" content="Two sitemap tags that developers spend real time tuning, and Google says it mostly ignores both. Here's what's actually true, and what's still worth getting right.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/sitemap-priority-changefreq.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 16, 2026</div>
+  <h1>Sitemap Priority and Changefreq: Do They Actually Matter?</h1>
+
+  <p>Two tags in the Sitemap Protocol spec invite a specific kind of over-engineering: <code>&lt;priority&gt;</code>, a number from 0.0 to 1.0 meant to signal a page's relative importance, and <code>&lt;changefreq&gt;</code>, a hint at how often a page's content changes. Both sound like real levers to pull for better crawling — and both come with a caveat straight from Google that most people setting them have never actually read.</p>
+
+  <h2>What Google has said about both, directly</h2>
+  <p>Google has stated plainly, more than once, that it largely ignores <code>&lt;changefreq&gt;</code> and treats <code>&lt;priority&gt;</code> as a signal so weak it barely factors into crawling decisions — Google relies on its own observed crawl data (how often a page actually changes, based on repeated visits) rather than trusting a value the site owner self-reports. This makes intuitive sense from Google's side: a self-reported "priority: 1.0" on every single page (a common mistake) provides zero useful signal, since it can't distinguish anything.</p>
+
+  <h2>So why do these tags still exist in every sitemap generator?</h2>
+  <p>They're part of the original Sitemap Protocol spec, published in 2005 and jointly adopted by Google, Yahoo, and Microsoft at the time — genuinely intended as real crawling hints when the spec was written. Google's public statements about mostly ignoring them are relatively more recent clarifications, not a spec change; the tags remain valid, generators keep emitting them by convention, and plenty of guides still teach tuning them as if they matter as much as they once may have.</p>
+
+  <h2>Are they worth setting at all, then?</h2>
+  <p>For Google specifically, spending real time hand-tuning priority values across hundreds of pages has little payoff. But two things are still worth doing: setting <code>&lt;lastmod&gt;</code> accurately (a different tag, and one Google does use, since it's a factual, verifiable claim about when the page changed rather than a self-reported importance judgment) and not leaving priority/changefreq wildly wrong in ways that look obviously broken to any tool or person that does read them — other search engines, third-party crawlers, and site auditors may weight these tags more than Google does.</p>
+
+  <h2>The actually damaging pattern: sitemap-wide uniformity</h2>
+  <p>The specific mistake worth avoiding isn't "not tuning priority carefully enough" — it's a generator defaulting to the same <code>priority</code> and <code>changefreq</code> value for literally every URL in a sitemap containing thousands of very different pages (a homepage and a five-year-old blog post with the same priority and changefreq, generated by the same uncustomized template). This doesn't just make the tags useless — it's a specific pattern that human auditors reviewing a sitemap, or a company evaluating your site's technical SEO hygiene, would flag as a sign the sitemap was generated without any real thought behind it.</p>
+
+  <h2>Validate what you generate</h2>
+  <p>FreeToolDev's <a href="/tools/sitemap-validator.html">bulk sitemap validator</a> flags priority values outside the valid 0.0-1.0 range and changefreq values that aren't one of the seven recognized options, across several sitemaps at once — useful for catching a generator bug that's silently producing invalid values sitemap-wide, even though the practical SEO impact of those specific values is minor.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

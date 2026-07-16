@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sitemap Index Files: When One sitemap.xml Isn't Enough — FreeToolDev</title>
+<meta name="description" content="Every sitemap has a 50,000 URL limit. Here's how a sitemap index file works, when you actually need one, and how it's different from just having several sitemaps.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/sitemap-index-files.html">
+<meta property="og:title" content="Sitemap Index Files: When One sitemap.xml Isn't Enough — FreeToolDev">
+<meta property="og:description" content="Every sitemap has a 50,000 URL limit. Here's how a sitemap index file works, when you actually need one, and how it's different from just having several sitemaps.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sitemap Index Files: When One sitemap.xml Isn't Enough — FreeToolDev">
+<meta name="twitter:description" content="Every sitemap has a 50,000 URL limit. Here's how a sitemap index file works, when you actually need one, and how it's different from just having several sitemaps.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/sitemap-index-files.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 16, 2026</div>
+  <h1>Sitemap Index Files: When One sitemap.xml Isn't Enough</h1>
+
+  <p>A single sitemap.xml file is capped at 50,000 URLs and 50MB uncompressed by the Sitemap Protocol spec — limits most sites never come close to, right up until they do, usually as a result of steady growth rather than a deliberate decision. A sitemap index file is the spec's answer to what happens next.</p>
+
+  <h2>What a sitemap index actually is</h2>
+  <p>Structurally, it's a different root element — <code>&lt;sitemapindex&gt;</code> instead of <code>&lt;urlset&gt;</code> — containing a list of <code>&lt;sitemap&gt;</code> entries, each pointing to the location of a real, separate sitemap.xml file with its own <code>&lt;lastmod&gt;</code>. It's a sitemap of sitemaps: instead of one URL going into Search Console, you submit the index, and it tells crawlers where to find each of the actual child sitemaps.</p>
+  <pre style="background:#e4dfcd; color:#1c242e; padding:16px; border-radius:4px; overflow-x:auto; font-family:'JetBrains Mono', monospace; font-size:0.85rem; line-height:1.6;">&lt;sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+  &lt;sitemap&gt;
+    &lt;loc&gt;https://example.com/sitemap-pages.xml&lt;/loc&gt;
+    &lt;lastmod&gt;2026-07-10&lt;/lastmod&gt;
+  &lt;/sitemap&gt;
+  &lt;sitemap&gt;
+    &lt;loc&gt;https://example.com/sitemap-blog.xml&lt;/loc&gt;
+    &lt;lastmod&gt;2026-07-15&lt;/lastmod&gt;
+  &lt;/sitemap&gt;
+&lt;/sitemapindex&gt;</pre>
+
+  <h2>When you actually need one</h2>
+  <p>Strictly, only once a single sitemap would exceed 50,000 URLs or 50MB. In practice, plenty of sites split into multiple sitemaps well before hitting that ceiling anyway — organizing by content type (pages, blog posts, products) makes each individual sitemap more maintainable and easier to debug, even without an index tying them together formally. Whether that split needs a formal <code>&lt;sitemapindex&gt;</code> or can just be several independent sitemaps each submitted separately to Search Console depends mostly on whether you want one submission point or several.</p>
+
+  <h2>Splitting by content type vs. splitting by size</h2>
+  <p>Two different reasons lead to multiple sitemaps, and they call for different structures. Splitting by content type (a sitemap for products, a separate one for blog posts) is an organizational choice, useful regardless of size, since it makes each sitemap's purpose clear and each one independently regenerable when just that content type changes. Splitting purely because of the 50,000-URL ceiling is a mechanical requirement — a single content type (say, a product catalog) that itself exceeds the limit has to be split into several numbered sitemaps (<code>sitemap-products-1.xml</code>, <code>sitemap-products-2.xml</code>) regardless of any organizational preference, since the limit is per-file, not per-content-type.</p>
+
+  <h2>Do you have to use a sitemap index, or can you just submit several sitemaps separately?</h2>
+  <p>Search Console accepts either — you can submit multiple independent sitemap URLs one at a time, or submit a single sitemap index that references all of them. The index is mainly a convenience: one submission instead of several, and one place to see all child sitemaps' last-modified dates at a glance. Neither approach is required by the other; plenty of sites run multiple sitemaps with no index at all, submitting each one separately.</p>
+
+  <h2>Validate the whole set</h2>
+  <p>FreeToolDev's <a href="/tools/sitemap-validator.html">bulk sitemap validator</a> checks both regular sitemaps and sitemap index files for structural validity, and can validate several files — a full split sitemap set — in one pass, which is useful for confirming every child sitemap referenced by an index actually has the required tags before submitting the whole set.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
