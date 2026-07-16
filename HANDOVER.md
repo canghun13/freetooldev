@@ -1,6 +1,6 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-07-16 (같은 날 2차 세션 반영 — 신규 툴 Bulk Heading Structure Checker + 블로그 2개, footer 누락 버그 수정)
+마지막 업데이트: 2026-07-16 (같은 날 3차 세션 반영 — 신규 툴 Bulk Sitemap Validator + 블로그 2개)
 
 ---
 
@@ -37,7 +37,7 @@
 
 ---
 
-## 3. 사이트 구조 (전체 파일, 2026-07-16 2차 세션 기준 54개)
+## 3. 사이트 구조 (전체 파일, 2026-07-16 3차 세션 기준 57개)
 
 ```
 /
@@ -53,8 +53,8 @@
 │   ├── css/style.css           디자인 시스템 전부 여기
 │   ├── js/nav-behavior.js      헤더/푸터는 정적 HTML, 이 JS는 모바일메뉴/연도/활성링크만 처리
 │   └── img/                    favicon.svg, apple-touch-icon.png, og-image.png(신규) 등
-├── tools/                      17개, index.html은 검색/필터 포함 목록
-└── blog/                       31개, index.html은 목록
+├── tools/                      18개, index.html은 검색/필터 포함 목록
+└── blog/                       33개, index.html은 목록
 ```
 
 **중요 — 헤더/푸터 구조**: `include.js`는 삭제됨, 전부 **정적 HTML로 하드코딩**. 새 페이지/툴/블로그 추가할 때마다 헤더/푸터를 모든 페이지에 반복 삽입 필요. footer의 "Tools" 링크 목록도 전체 페이지에 일괄 반영 필요 (python find-replace 스크립트로 처리, 누락 없는지 `grep -L`로 재확인). `nav-behavior.js`는 모바일 메뉴 토글, 연도, 활성 링크 하이라이트만 담당.
@@ -77,7 +77,7 @@
 
 ---
 
-## 5. 툴 17개 현황
+## 5. 툴 18개 현황
 
 | 툴 | 파일 | 상태 | 비고 |
 |---|---|---|---|
@@ -90,6 +90,7 @@
 | **(신규) Bulk SVG Optimizer** | `tools/svg-optimizer.html` | 검증완료(node로 실제 최적화 결과까지 확인, 644B→175B 72.8% 축소 케이스 테스트) | 외부 라이브러리 없이 자체 구현 — 주석/DOCTYPE/XML선언/에디터 네임스페이스(inkscape·sodipodi)/metadata 블록 제거, d·points 속성 좌표 소수점 반올림, 빈 g·defs 제거. title/desc/aria는 기본 보존(체크박스로 해제 가능) |
 | RSS Generator | `tools/rss-generator.html` | 검증완료 | "계정불필요/스크래핑아님" 차별점 보강. **GSC 신호 있는 페이지 (아래 8번 참고)** |
 | Sitemap Generator | `tools/sitemap-generator.html` | 검증완료 | |
+| **(신규) Bulk Sitemap Validator** | `tools/sitemap-validator.html` | 검증완료(jsdom으로 7개 케이스 테스트: 정상/상대경로/우선순위범위초과/changefreq오류/loc누락/중복URL/XML파싱오류/sitemapindex) | 여러 sitemap.xml을 `-----` 구분선으로 붙여넣어 한번에 검증. DOMParser(브라우저 내장)로 XML 파싱, 외부 라이브러리 없음. Sitemap Protocol 스펙 기준 검사(well-formed XML/절대경로/priority 0.0-1.0/changefreq 7개값/lastmod 날짜형식/중복URL/50000개 한도/sitemapindex 구조). **경쟁사는 전부 "URL 1개 입력→서버fetch" 방식인데 우리는 여러 개 붙여넣기 배치 검증으로 차별화, CORS 문제 자체가 없음(URL fetch 안 하니까)** |
 | robots.txt Generator | `tools/robots-txt-generator.html` | 검증완료 | Disallow/Allow/Sitemap 라인 + GPTBot/ClaudeBot/Google-Extended 등 AI 크롤러 개별 차단 체크박스 |
 | llms.txt Generator | `tools/llms-txt-generator.html` | 검증완료 | `섹션 \| 제목 \| URL \| 설명` 포맷 파싱 → 카테고리별 마크다운 인덱스 생성 |
 | **(신규) Bulk Heading Structure Checker** | `tools/heading-structure-checker.html` | 검증완료(jsdom으로 실제 파싱/계층분석 로직 6개 케이스 테스트) | 여러 페이지 HTML을 `-----` 구분선으로 붙여넣어 한번에 H1-H6 계층 체크. DOMParser(브라우저 내장) 사용, 외부 라이브러리 없음. Missing H1/Multiple H1/Skipped level/Empty heading 4종 검사. **경쟁사는 전부 "URL 1개 입력" 방식인데 우리는 여러 페이지 동시 배치 체크로 차별화** |
@@ -108,12 +109,10 @@
 - 4차(2026-07-13 세션 1차): Bulk URL Encoder/Decoder(→채택), Bulk 메타태그(title/description) 길이 체커(→Worker 새 엔드포인트 필요해서 보류, 아래 12번 참고), Bulk Slug Generator(→미채택)
 - 5차(2026-07-13 세션 2차, 카테고리 확장 지시): CSS Gradient Generator, Typography/Spacing Scale Generator, Bulk Color Contrast/Palette(재확인) — 전부 매우 포화 + 경쟁 툴들이 기능적으로 훨씬 풍부(Colorffy, TypeScale Pro 등)해서 디자인 카테고리에서는 미채택. 대신 **Bulk SVG Optimizer**를 "image-batch와 바로 짝이 맞는 미디어 배치 처리" 기준으로 채택 (이것도 SVGO 기반 경쟁자 다수 있지만, 자체 구현이 가볍게 가능하고 image-batch 사용자층과 직접 겹침). 데이터포맷 쪽은 JSON↔YAML, CSV↔TSV 둘 다 채택.
 - 6차(2026-07-16 세션, "신규 계속 해야한다" 지시): CSS px↔rem/em 변환기(→10곳 이상 경쟁, 미채택), CSS 커스텀 프로퍼티(변수) 추출기(→6곳 이상 경쟁, 미채택), Heading 구조 체커(→10곳 이상 경쟁이지만 **전부 "URL 1개" 방식**이라 "여러 페이지 동시 배치 체크"로 차별화 가능해서 채택). "웹디자인" 계열 신규 후보는 이번 세션까지 총 7개 검증했는데 전부 대형 경쟁자가 기능적으로 훨씬 풍부해서 대부분 미채택 — **디자인 카테고리는 SVG Optimizer 이후로 사실상 막힌 상태.** SEO/기술감사 계열("체커" 툴)도 동일 니치를 도는 클론 사이트(webaloha, nuwtonic, go-seo, inspiringclicks 등)가 10곳 이상씩 있어 매우 포화 — 다만 우리 쪽 "batch" 차별화 포인트를 못 쓰는 경쟁사가 대부분이라, "여러 개 한번에" 앵글을 못 쓰는 후보는 계속 피하고 쓸 수 있는 후보만 채택하는 식으로 걸러야 함.
-- **결론: 순수 "경쟁 없는 아이디어" 기준은 더 이상 안 나옴.** "포화됐어도 브랜드에 맞고 빠르게 만들 수 있는 것" 기준으로 계속 운영 중이며, 카테고리 자체를 넓히는 것도 유효한 확장 축으로 확인됨. **다만 최근 세션들에서 확인된 패턴: 경쟁사가 전부 "단일 항목" 처리인데 우리만 "배치/여러개 동시" 처리를 제공할 수 있는 후보가 채택 성공률이 훨씬 높음** (SVG Optimizer, Heading Checker 둘 다 이 패턴). 앞으로 신규 후보 검토 시 이 차별화 포인트를 먼저 확인할 것.
+- 7차(2026-07-16 세션, 같은 세션 계속 확장 지시): 대기 중이던 3개 후보(Color Palette Extractor/EXIF Remover/File Renamer)를 새로 배운 "배치 차별화" 필터로 재검토 → **셋 다 경쟁사가 이미 배치 모드를 갖추고 있어서 필터 탈락, 만들지 않기로 결정.** 대신 새로 검색해서 **Bulk Sitemap Validator** 채택 — 경쟁사 10곳 이상 있지만 전부 "URL 1개 입력→서버에서 fetch" 방식인 반면 우리는 "여러 sitemap.xml 붙여넣기 배치 검증"이라 명확히 차별화됨. 게다가 URL을 직접 fetch 안 하므로 CORS 문제도 원천적으로 없어서(다른 후보였던 메타태그 체커와 달리) Worker 확장 없이 바로 구현 가능했음. sitemap-generator 사용자층과도 직접 겹침.
+- **결론: 순수 "경쟁 없는 아이디어" 기준은 더 이상 안 나옴.** "포화됐어도 브랜드에 맞고 빠르게 만들 수 있는 것" 기준으로 계속 운영 중이며, 카테고리 자체를 넓히는 것도 유효한 확장 축으로 확인됨. **다만 최근 세션들에서 확인된 패턴: 경쟁사가 전부 "단일 항목" 처리인데 우리만 "배치/여러개 동시" 처리를 제공할 수 있는 후보가 채택 성공률이 훨씬 높음** (SVG Optimizer, Heading Checker, Sitemap Validator 전부 이 패턴). 앞으로 신규 후보 검토 시 이 차별화 포인트를 먼저 확인할 것 — **"이미 만든 대기 후보"라도 이 필터로 재검토해서 탈락시킬 수 있음**(2026-07-16 세션에서 실제로 3개 탈락시킴), 오래됐다고 자동으로 만들지 말 것.
 
-**대기 중인 신규 툴 후보 3개** (2026-07-11 세션에서 6개 계획 중 3개만 완료, 나머지 대기):
-- Bulk Color Palette Extractor (여러 이미지에서 색상 팔레트 동시 추출)
-- Bulk EXIF Remover (여러 이미지 메타데이터 일괄 제거)
-- Bulk File Renamer (패턴 기반 파일명 일괄 변경)
+**대기 중인 신규 툴 후보**: 없음 (2026-07-16 세션에서 기존 대기 3개 — Bulk Color Palette Extractor, Bulk EXIF Remover, Bulk File Renamer — 전부 "배치 차별화 필터" 재검토 결과 탈락시킴, 7차 항목 참고). 다음 신규 후보는 이 필터를 통과하는 것부터 새로 찾을 것.
 
 ---
 
@@ -128,14 +127,14 @@
 
 ---
 
-## 7. 블로그 현황 (31개)
+## 7. 블로그 현황 (33개)
 
-**툴별 커버리지 (2026-07-16 2차 세션 기준, 17개 툴 전부 최소 2개 이상)**:
+**툴별 커버리지 (2026-07-16 3차 세션 기준, 18개 툴 전부 최소 2개 이상)**:
 
 | 툴 | 개수 |
 |---|---|
 | image-batch, rss-generator, site-crawler | 3 |
-| base64, jwt-decoder, csv-to-json, ip-dns-ssl, qr-batch, sitemap-generator, barcode-batch, url-encoder, json-yaml-converter, csv-tsv-converter, svg-optimizer, heading-structure-checker | 2 |
+| base64, jwt-decoder, csv-to-json, ip-dns-ssl, qr-batch, sitemap-generator, barcode-batch, url-encoder, json-yaml-converter, csv-tsv-converter, svg-optimizer, heading-structure-checker, sitemap-validator | 2 |
 | robots-txt-generator, llms-txt-generator | 1개씩 전용 + "robots.txt vs llms.txt" 비교글 1개 공유 = 사실상 2개씩 |
 
 **2026-07-07 세션 이전 (13개)**: jwt-claims-explained, find-broken-links-free-tool, rss-generator-no-account, free-alternative-screaming-frog, rss-for-automation, bulk-qr-code-use-cases, ssl-expiry-monitoring-free, csv-encoding-gibberish, sitemap-static-sites, debug-jwt-base64-locally, webp-vs-avif-2026, no-upload-image-compression, batch-vs-ai-image-convert
@@ -151,6 +150,8 @@
 **2026-07-13 세션 3차 추가 (4개, 1개뿐이던 신규 툴 4개 전부 2개로 보강)**: double-url-encoding, yaml-anchors-aliases, excel-csv-number-mangling, inline-svg-vs-img-vs-css-background
 
 **2026-07-16 세션 2차 추가 (2개, 신규 툴 1개 세트)**: skipped-heading-levels, multiple-h1-tags
+
+**2026-07-16 세션 3차 추가 (2개, 신규 툴 1개 세트)**: sitemap-priority-changefreq, sitemap-index-files
 
 **참고**: jwt-claims-explained는 신규 작성이 아니라 2026-07-16 1차 세션에서 대폭 보강됨(RFC 7519 registered/public/private 용어 섹션 추가, 500→1157단어) — 8번 참고.
 
@@ -249,13 +250,14 @@
 15. **(신규) 신규 툴에 파싱/변환/알고리즘 로직이 들어가면 JS 문법 체크만으로 끝내지 말고 node로 실제 입출력을 검증할 것** (예: CSV↔TSV 라운드트립 테스트, SVG 최적화 전후 바이트 비교, YAML 멀티문서 파싱 등). 문법은 통과해도 로직이 틀릴 수 있음.
 16. **(신규) "가치없는 콘텐츠"로 안 잡히게 주의할 것.** 이건 "경쟁사가 많다"와는 다른 기준 — 실제 위험 요인은 (a) 겉핥기식 얇은 설명, (b) 자동생성 티 나는 반복 문구, (c) 실제로 안 돌아가는 툴. 경쟁이 있어도 진짜 동작하는 툴 + 원본으로 새로 쓴 실질적 분량의 블로그(500단어 이상, FAQ 포함)면 문제없음. 다만 경쟁사가 기능적으로 훨씬 풍부한 영역(예: 그라디언트 생성기, 타이포 스케일 생성기처럼 대형 플레이어가 8개 export 포맷·라이브 프리뷰까지 갖춘 경우)은 우리가 만들어도 명백히 열등한 카피가 될 위험이 있어 채택을 피할 것.
 17. **(신규) footer 일괄 치환 스크립트는 "패턴이 일치하는 파일만" 갱신하고 나머지는 조용히 넘어가므로, 오래된 파일이 과거 세션에서 누락된 항목을 가진 채로 계속 방치될 수 있음** (2026-07-16 세션에서 실제 발견 — robots-txt-mistakes.html과 robots-txt-generator.html 2개 파일이 llms.txt Generator 링크 자체가 빠진 채로 5일간 방치돼 있었음). 일괄 치환 스크립트 실행 후 `updated + skipped` 합계가 전체 파일 수와 맞는지 확인하고, `skipped` 목록에 뜨는 파일은 반드시 직접 열어서 왜 패턴이 안 맞는지 확인할 것 — "이미 최신이라 skip"과 "구조가 달라서 skip"을 구분해야 함.
-18. **(신규) 신규 툴 후보를 검토할 때 "경쟁사가 전부 단일 항목 처리인데 우리만 배치 처리를 제공할 수 있는가"를 최우선 필터로 쓸 것.** 2026-07-16 세션에서 확인된 패턴 — SVG Optimizer, Heading Structure Checker 둘 다 "포화된 니치에서 채택 성공한" 사례인데, 공통점이 경쟁사가 전부 "1개만 처리"이고 우리만 "여러 개 동시 처리"를 내세울 수 있었다는 것. 이 차별화가 안 되는 후보(px-rem 변환기, CSS 변수 추출기 등, 경쟁사도 이미 배치모드 지원)는 계속 미채택으로 걸러지고 있음.
+18. **(신규) 신규 툴 후보를 검토할 때 "경쟁사가 전부 단일 항목 처리인데 우리만 배치 처리를 제공할 수 있는가"를 최우선 필터로 쓸 것.** 2026-07-16 세션에서 확인된 패턴 — SVG Optimizer, Heading Structure Checker, Sitemap Validator 셋 다 "포화된 니치에서 채택 성공한" 사례인데, 공통점이 경쟁사가 전부 "1개만 처리"이고 우리만 "여러 개 동시 처리"를 내세울 수 있었다는 것. 이 차별화가 안 되는 후보(px-rem 변환기, CSS 변수 추출기, Color Palette Extractor, EXIF Remover, File Renamer 등, 경쟁사도 이미 배치모드 지원)는 계속 미채택으로 걸러지고 있음.
+19. **(참고) 2026-07-16 세션에서 사용자가 "Bing에서 이기면 된다"는 대안 전략을 언급했다가 바로 "그냥 이대로 해"로 철회함.** 별도의 Bing 특화 전략은 채택 안 함 — 지금 하던 방식(Google 기준 SEO + 롱테일 키워드 + AI검색 대응 콘텐츠) 그대로 유지.
 
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
 
-1. **대기 중인 신규 툴 3개 제작**: Bulk Color Palette Extractor, Bulk EXIF Remover, Bulk File Renamer (5번 참고).
+1. **대기 중인 신규 툴 후보 없음** — 다음 후보는 "배치 차별화 필터"(11번 18항)를 먼저 통과하는 것으로 새로 찾을 것.
 2. 메타태그(title/description) 길이 체커는 서버사이드 fetch가 필요해서 보류 중 — Worker에 새 엔드포인트(`GET /meta?url=`) 추가할 의향이 있으면 재검토 가능.
 3. 매 세션 GA/Search Console 데이터 받으면 이전 스냅샷과 비교 → 변화율 기준으로 신규/보강 여부 재판단 (8번 참고). 신규 결정 전 중복 체크 + 웹 키워드 경쟁강도 확인 필수. 신호가 확실히 잡힌 기존 페이지가 있으면 신규 글보다 그 페이지 보강을 먼저 검토할 것(2026-07-16 jwt-claims-explained 사례 참고).
 4. **툴 카테고리 자체를 넓히는 것도 유효한 확장 축.** 지금은 Encode/Decode·SEO·Network·Media(이미지+SVG)·Data(포맷변환) 5개 카테고리. 신규 후보 검토 시 "경쟁사가 단일 항목 처리인데 우리만 배치 처리 가능한가"를 최우선 필터로 쓸 것 (11번 18항 참고).
@@ -266,6 +268,6 @@
 9. **AdSense 신청 타이밍은 Claude가 매 세션 GSC/GA 데이터 볼 때마다 능동적으로 판단할 것.** 2026-07-16 기준 클릭 여전히 3건 정체(노출만 늘어남) — 아직 미달. 신청해도 되겠다 싶은 신호(일일 클릭 두 자릿수대, 순위 30위권 진입) 보이면 먼저 제안할 것.
 10. 트래픽 어느 정도 쌓이면 제휴 재신청.
 11. Worker 코드(`worker.js`) repo 백업 여부는 아직 결정 안 됨 — 필요시 그때 판단.
-12. **신규 툴 만들 때는 처음부터 블로그 2개 세트로 같이 계획할 것.** 2026-07-16 세션에서 이 원칙 지켜서 헤딩체커+블로그2개를 한 번에 진행함 — 효과 확인됨, 계속 유지.
-13. **Coverage 리포트의 "발견됨-미색인" 페이지 수를 계속 추적할 것** — 2026-07-16 기준 17페이지. 페이지를 계속 늘리는 중이라 이 숫자도 같이 늘어날 가능성 있음. 너무 급격히 늘면(예: 30개 이상) 신규 페이지 추가 속도를 늦추고 기존 페이지 색인/순위 회복을 기다리는 것도 고려할 것.
+12. **신규 툴 만들 때는 처음부터 블로그 2개 세트로 같이 계획할 것.** 2026-07-16 세션에서 3번 연속(Heading Checker, Sitemap Validator) 이 패턴으로 잘 진행됨 — 계속 유지.
+13. **Coverage 리포트의 "발견됨-미색인" 페이지 수를 계속 추적할 것** — 2026-07-16 기준 17페이지, 이후로도 페이지를 계속 늘리고 있어서 이 숫자도 같이 늘어날 가능성 있음. 너무 급격히 늘면(예: 30개 이상) 신규 페이지 추가 속도를 늦추고 기존 페이지 색인/순위 회복을 기다리는 것도 고려할 것.
 14. **footer 일괄 치환 후 skip된 파일은 반드시 원인 확인할 것** (11번 17항 참고) — 오래된 파일에 누락된 링크가 방치될 수 있음.
