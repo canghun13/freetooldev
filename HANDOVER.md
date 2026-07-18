@@ -276,15 +276,15 @@
 0. **(2026-07-18 세션에서 사용자가 확정) 다국어 페이지는 진행 안 함.** 노르웨이/독일/네덜란드는 영어 구사력이 높은 국가라 번역 없이 지금처럼 영어로 계속 가는 것으로 사용자가 직접 결정함 — 이 항목은 종결, 재검토 불필요.
 1. **대기 중인 신규 툴 후보 없음** — 다음 후보는 "배치 차별화 필터", 막히면 "no-upload 차별화 필터"(5번 8차 세션 참고)로 새로 찾을 것.
 1-1. **(신규, 2026-07-18) `tools/json-validator.html` 클릭/노출 추적 시작할 것** — 신규 툴이라 아직 GSC 데이터 없음, 다음 스냅샷부터 확인.
-1-2. **(신규, 2026-07-18 세션에서 발견) `llms.txt`(루트 파일)와 홈페이지(`index.html`)의 "featured" 툴 카드 9개가 오래전부터 갱신이 안 되고 있었음.** llms.txt는 이번 세션에서 새 툴/블로그 2건만 추가했지 전체를 재작성하진 않음 — 최신 19개 툴 중 다수(json-yaml-converter, csv-tsv-converter, svg-optimizer, sitemap-validator, robots-txt-generator, llms-txt-generator, heading-structure-checker, url-encoder, barcode-batch, json-validator)가 여전히 안 실려있음. 홈페이지 featured 섹션도 초기 9개 툴(image-batch/csv-to-json/base64/rss-generator/sitemap-generator/ip-dns-ssl/site-crawler/jwt-decoder/qr-batch)만 있고 이후 추가된 10개 툴은 하나도 없음. 둘 다 이번 세션 범위 밖이라 손 안 댔지만, 다음 세션에서 llms.txt 전체 재작성 또는 홈페이지 featured 섹션 큐레이션 방식 결정이 필요.
+1-2. **(2026-07-18 세션 3차에서 해결 완료)** `llms.txt`와 홈페이지 featured 그리드가 오래전부터 갱신 누락되고 있던 문제를 같은 세션에서 마저 처리함. llms.txt는 각 페이지의 실제 title/description을 스크립트로 추출해서 19개 툴+35개 블로그 전체 재생성(순서는 tools/index.html·blog/index.html 노출 순서 따름). 홈페이지 "Every tool, built for batches" 섹션도 9개→19개 전체로 확장(카피가 "모든 툴"이라고 써놓고 실제론 절반만 보여주고 있던 상태였음). 둘 다 내부링크 스캔/HTML 밸런스 검증 통과 후 push 완료. **앞으로 새 툴 추가 시 체크리스트에 "llms.txt·홈페이지 featured 그리드"도 포함할 것** — footer 링크는 스크립트로 일괄 처리하는 습관이 있었지만 이 두 곳은 누락되기 쉬움.
 2. 메타태그(title/description) 길이 체커는 서버사이드 fetch가 필요해서 보류 중 — Worker에 새 엔드포인트(`GET /meta?url=`) 추가할 의향이 있으면 재검토 가능.
 3. 매 세션 GA/Search Console 데이터 받으면 이전 스냅샷과 비교 → 변화율 기준으로 신규/보강 여부 재판단 (8번 참고). 신규 결정 전 중복 체크 + 웹 키워드 경쟁강도 확인 필수. 신호가 확실히 잡힌 기존 페이지가 있으면 신규 글보다 그 페이지 보강을 먼저 검토할 것(2026-07-16 jwt-claims-explained, 2026-07-18 rss-generator/ip-dns-ssl/llms-txt-generator 사례 참고).
 3-1. **(신규, 2026-07-18) 다음 스냅샷에서 이번 세션 보강 효과 추적할 것**: `tools/rss-generator.html`(generator/creator/builder/maker 비교 섹션), `tools/ip-dns-ssl.html`(NS 레코드 섹션 + bulk FAQ), `tools/llms-txt-generator.html`(llm.txt vs llms.txt FAQ) 3개 페이지 클릭/순위 변화 확인.
 4. **툴 카테고리 자체를 넓히는 것도 유효한 확장 축.** 지금은 Encode/Decode·SEO·Network·Media(이미지+SVG)·Data(포맷변환) 5개 카테고리. 신규 후보 검토 시 "경쟁사가 단일 항목 처리인데 우리만 배치 처리 가능한가"를 최우선 필터로 쓸 것 (11번 18항 참고).
 5. rss-generator / free-alternative-screaming-frog 두 클러스터는 계속 관찰 — 순위가 유의미하게 오르기 시작하면 콘텐츠 심화로 전환 검토, 그렇지 않으면 백링크/권위 축적이 우선.
 6. **디렉토리 백링크는 당분간 중단 상태 유지** (10-4 원칙) — 사용자가 다시 명시적으로 요청할 때만 재개.
-7. Product Hunt(7/14), Smol Launch(7/13), Fazier(7/22) 런칭일 도래 시 결과 확인.
-8. AlternativeTo 승인 여부 확인.
+7. Product Hunt(7/14), Smol Launch(7/13), Fazier(7/22) 런칭일 도래 시 결과 확인. **(2026-07-18 세션에서 시도했으나 실패)** 웹 검색과 과거 대화 검색으로 확인 시도했지만 정확한 리스팅 URL을 못 찾아서 결과 확인 불가 — 웹 검색만으로는 Product Hunt/Smol Launch 개별 제품 페이지가 잘 안 잡힘. **다음 세션에서 사용자가 실제 리스팅 URL을 알려주면 바로 확인 가능.**
+8. AlternativeTo 승인 여부 확인. (위와 동일한 이유로 이번 세션엔 확인 못 함 — URL 필요)
 9. **AdSense 신청 타이밍은 Claude가 매 세션 GSC/GA 데이터 볼 때마다 능동적으로 판단할 것.** 2026-07-16 기준 클릭 여전히 3건 정체(노출만 늘어남) — 아직 미달. 신청해도 되겠다 싶은 신호(일일 클릭 두 자릿수대, 순위 30위권 진입) 보이면 먼저 제안할 것.
 10. 트래픽 어느 정도 쌓이면 제휴 재신청.
 11. Worker 코드(`worker.js`) repo 백업 여부는 아직 결정 안 됨 — 필요시 그때 판단.
