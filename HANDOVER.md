@@ -1,6 +1,6 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-07-18 (신규 툴/블로그 없음 — 기존 페이지 3개 보강 세션. 8번 참고)
+마지막 업데이트: 2026-07-18 (같은 날 2차 세션 — 신규 툴 Bulk JSON Validator & Formatter + 블로그 2개 추가. 다국어 확장은 사용자가 보류 확정)
 
 ---
 
@@ -37,7 +37,7 @@
 
 ---
 
-## 3. 사이트 구조 (전체 파일, 2026-07-16 3차 세션 기준 57개)
+## 3. 사이트 구조 (전체 파일, 2026-07-18 2차 세션 기준 60개)
 
 ```
 /
@@ -53,8 +53,8 @@
 │   ├── css/style.css           디자인 시스템 전부 여기
 │   ├── js/nav-behavior.js      헤더/푸터는 정적 HTML, 이 JS는 모바일메뉴/연도/활성링크만 처리
 │   └── img/                    favicon.svg, apple-touch-icon.png, og-image.png(신규) 등
-├── tools/                      18개, index.html은 검색/필터 포함 목록
-└── blog/                       33개, index.html은 목록
+├── tools/                      19개, index.html은 검색/필터 포함 목록
+└── blog/                       35개, index.html은 목록
 ```
 
 **중요 — 헤더/푸터 구조**: `include.js`는 삭제됨, 전부 **정적 HTML로 하드코딩**. 새 페이지/툴/블로그 추가할 때마다 헤더/푸터를 모든 페이지에 반복 삽입 필요. footer의 "Tools" 링크 목록도 전체 페이지에 일괄 반영 필요 (python find-replace 스크립트로 처리, 누락 없는지 `grep -L`로 재확인). `nav-behavior.js`는 모바일 메뉴 토글, 연도, 활성 링크 하이라이트만 담당.
@@ -99,6 +99,7 @@
 | JWT Decoder (Batch) | `tools/jwt-decoder.html` | 검증완료(모바일 포함) | 서명 검증 안 함 명시, 완전 클라이언트 |
 | Bulk QR Code Generator | `tools/qr-batch.html` | 검증완료(실제 스캔까지) | qrcodejs(cdnjs) 라이브러리, 100개 제한 |
 | Bulk Barcode Generator | `tools/barcode-batch.html` | 검증완료 | UPC-A/EAN-13/Code128, JsBarcode(cdnjs 3.12.1) 라이브러리. UPC/EAN은 체크섬 검증 후 불합격 코드는 결과 하단에 별도 표시. 100개 제한 |
+| **(신규, 2026-07-18) Bulk JSON Validator & Formatter** | `tools/json-validator.html` | 검증완료(node로 12개 케이스 테스트: 정상/트레일링콤마/작은따옴표/따옴표없는키/콤마누락/빈입력/문자열미종료 등, line/column 에러 위치 추출 로직 포함) | 여러 JSON 스니펫을 `-----` 구분선으로 붙여넣어 한번에 검증+포맷팅. 브라우저 내장 `JSON.parse`만 사용, 외부 라이브러리 없음. **경쟁사는 전부 파일 업로드 기반 배치 처리인데 우리는 파일 업로드 없이 텍스트 붙여넣기만으로 배치 처리 — "배치 자체"가 아니라 "업로드 없는 배치"가 차별화 지점** (12번 참고, 기존 "경쟁사는 단일처리" 필터와는 다른 신규 패턴) |
 
 **카테고리 확장 (2026-07-13 2차 세션)**: 기존엔 Encode/Decode·SEO·Network·Media(이미지) 4개 카테고리뿐이었고, 사이트 태그라인("developers & designers")에도 불구하고 디자이너 전용 툴이 하나도 없었음. 사용자가 직접 카테고리 확장을 지시해서 데이터포맷 변환(JSON↔YAML, CSV↔TSV) + 디자인/미디어(SVG 옵티마이저) 방향으로 3개 추가함.
 
@@ -111,8 +112,9 @@
 - 6차(2026-07-16 세션, "신규 계속 해야한다" 지시): CSS px↔rem/em 변환기(→10곳 이상 경쟁, 미채택), CSS 커스텀 프로퍼티(변수) 추출기(→6곳 이상 경쟁, 미채택), Heading 구조 체커(→10곳 이상 경쟁이지만 **전부 "URL 1개" 방식**이라 "여러 페이지 동시 배치 체크"로 차별화 가능해서 채택). "웹디자인" 계열 신규 후보는 이번 세션까지 총 7개 검증했는데 전부 대형 경쟁자가 기능적으로 훨씬 풍부해서 대부분 미채택 — **디자인 카테고리는 SVG Optimizer 이후로 사실상 막힌 상태.** SEO/기술감사 계열("체커" 툴)도 동일 니치를 도는 클론 사이트(webaloha, nuwtonic, go-seo, inspiringclicks 등)가 10곳 이상씩 있어 매우 포화 — 다만 우리 쪽 "batch" 차별화 포인트를 못 쓰는 경쟁사가 대부분이라, "여러 개 한번에" 앵글을 못 쓰는 후보는 계속 피하고 쓸 수 있는 후보만 채택하는 식으로 걸러야 함.
 - 7차(2026-07-16 세션, 같은 세션 계속 확장 지시): 대기 중이던 3개 후보(Color Palette Extractor/EXIF Remover/File Renamer)를 새로 배운 "배치 차별화" 필터로 재검토 → **셋 다 경쟁사가 이미 배치 모드를 갖추고 있어서 필터 탈락, 만들지 않기로 결정.** 대신 새로 검색해서 **Bulk Sitemap Validator** 채택 — 경쟁사 10곳 이상 있지만 전부 "URL 1개 입력→서버에서 fetch" 방식인 반면 우리는 "여러 sitemap.xml 붙여넣기 배치 검증"이라 명확히 차별화됨. 게다가 URL을 직접 fetch 안 하므로 CORS 문제도 원천적으로 없어서(다른 후보였던 메타태그 체커와 달리) Worker 확장 없이 바로 구현 가능했음. sitemap-generator 사용자층과도 직접 겹침.
 - **결론: 순수 "경쟁 없는 아이디어" 기준은 더 이상 안 나옴.** "포화됐어도 브랜드에 맞고 빠르게 만들 수 있는 것" 기준으로 계속 운영 중이며, 카테고리 자체를 넓히는 것도 유효한 확장 축으로 확인됨. **다만 최근 세션들에서 확인된 패턴: 경쟁사가 전부 "단일 항목" 처리인데 우리만 "배치/여러개 동시" 처리를 제공할 수 있는 후보가 채택 성공률이 훨씬 높음** (SVG Optimizer, Heading Checker, Sitemap Validator 전부 이 패턴). 앞으로 신규 후보 검토 시 이 차별화 포인트를 먼저 확인할 것 — **"이미 만든 대기 후보"라도 이 필터로 재검토해서 탈락시킬 수 있음**(2026-07-16 세션에서 실제로 3개 탈락시킴), 오래됐다고 자동으로 만들지 말 것.
+- 8차(2026-07-18 세션, "공격적으로 확장" 지시 — 사용자가 경쟁 있어도 롱테일로 피해서 진행하라고 명확히 지시함): Hash Generator, Timestamp Converter, robots.txt Tester(다중 URL), Cron Expression Parser(crontab 배치), JSON Validator 5개 후보를 웹 검색으로 검토. **5개 전부 "경쟁사가 이미 배치/다중 처리를 지원"하는 상태라 기존 "경쟁사는 단일 처리" 필터로는 하나도 통과 못 함** — 이 필터가 사실상 소진됐음을 재확인. 사용자 지시대로 "경쟁 존재를 인정하고 롱테일 포지셔닝으로 승부" 방침으로 전환해서 **Bulk JSON Validator & Formatter**를 채택함 — 근거는 "배치 자체"가 아니라 "파일 업로드 없이 텍스트 붙여넣기만으로 배치 처리"라는 포지셔닝(경쟁사 다수가 파일 업로드 방식이라 우리 브랜드의 "no-upload" 정체성과 자연스럽게 결합되는 지점). 기존 CSV-to-JSON·JSON-YAML Converter와 동일 사용자층 공유. **패턴 갱신: "경쟁사는 단일처리, 우리는 배치" 필터가 막히면 "경쟁사는 파일업로드 필요, 우리는 텍스트 붙여넣기만으로 가능(no-upload 브랜드 정체성)" 필터를 2차 대안으로 쓸 것.**
 
-**대기 중인 신규 툴 후보**: 없음 (2026-07-16 세션에서 기존 대기 3개 — Bulk Color Palette Extractor, Bulk EXIF Remover, Bulk File Renamer — 전부 "배치 차별화 필터" 재검토 결과 탈락시킴, 7차 항목 참고). 다음 신규 후보는 이 필터를 통과하는 것부터 새로 찾을 것.
+**대기 중인 신규 툴 후보**: 없음 (8차 세션 결과 JSON Validator 채택 후 소진). 다음 신규 후보는 "배치 차별화 필터" 우선, 막히면 "no-upload 차별화 필터"(위 8차 참고)로 새로 찾을 것.
 
 ---
 
@@ -127,14 +129,14 @@
 
 ---
 
-## 7. 블로그 현황 (33개)
+## 7. 블로그 현황 (35개)
 
-**툴별 커버리지 (2026-07-16 3차 세션 기준, 18개 툴 전부 최소 2개 이상)**:
+**툴별 커버리지 (2026-07-18 2차 세션 기준, 19개 툴 전부 최소 2개 이상)**:
 
 | 툴 | 개수 |
 |---|---|
 | image-batch, rss-generator, site-crawler | 3 |
-| base64, jwt-decoder, csv-to-json, ip-dns-ssl, qr-batch, sitemap-generator, barcode-batch, url-encoder, json-yaml-converter, csv-tsv-converter, svg-optimizer, heading-structure-checker, sitemap-validator | 2 |
+| base64, jwt-decoder, csv-to-json, ip-dns-ssl, qr-batch, sitemap-generator, barcode-batch, url-encoder, json-yaml-converter, csv-tsv-converter, svg-optimizer, heading-structure-checker, sitemap-validator, json-validator | 2 |
 | robots-txt-generator, llms-txt-generator | 1개씩 전용 + "robots.txt vs llms.txt" 비교글 1개 공유 = 사실상 2개씩 |
 
 **2026-07-07 세션 이전 (13개)**: jwt-claims-explained, find-broken-links-free-tool, rss-generator-no-account, free-alternative-screaming-frog, rss-for-automation, bulk-qr-code-use-cases, ssl-expiry-monitoring-free, csv-encoding-gibberish, sitemap-static-sites, debug-jwt-base64-locally, webp-vs-avif-2026, no-upload-image-compression, batch-vs-ai-image-convert
@@ -152,6 +154,8 @@
 **2026-07-16 세션 2차 추가 (2개, 신규 툴 1개 세트)**: skipped-heading-levels, multiple-h1-tags
 
 **2026-07-16 세션 3차 추가 (2개, 신규 툴 1개 세트)**: sitemap-priority-changefreq, sitemap-index-files
+
+**2026-07-18 세션 2차 추가 (2개, 신규 툴 1개 세트)**: json-syntax-errors-explained(문제해결형 — JSON이 JS 문법을 거부하는 이유 6가지), json-validator-no-upload(비교분석형 — 파일업로드 vs 브라우저전용 JSON 툴, 민감데이터 다룰 때 실질적 차이)
 
 **참고**: jwt-claims-explained는 신규 작성이 아니라 2026-07-16 1차 세션에서 대폭 보강됨(RFC 7519 registered/public/private 용어 섹션 추가, 500→1157단어) — 8번 참고.
 
@@ -269,8 +273,10 @@
 
 ## 12. 다음에 할 일 (우선순위 순)
 
-0. **(신규, 2026-07-18) 다국어(비영어권) 수요 발견 — 사용자 결정 대기.** "screaming frog alternative" 주제에 노르웨이어/덴마크어/독일어 검색어가 80회+ 노출로 상당한 규모(국가별로도 노르웨이·독일·네덜란드가 미국 다음 순위). 지금은 영어 전용 글이라 전환이 안 됨. 다국어 페이지(번역+hreflang) 신설 여부는 콘텐츠 유지보수 부담이 커지는 구조적 결정이라 사용자 확인 먼저 필요 — 8번 2026-07-18 세션 기록 참고.
-1. **대기 중인 신규 툴 후보 없음** — 다음 후보는 "배치 차별화 필터"(11번 18항)를 먼저 통과하는 것으로 새로 찾을 것.
+0. **(2026-07-18 세션에서 사용자가 확정) 다국어 페이지는 진행 안 함.** 노르웨이/독일/네덜란드는 영어 구사력이 높은 국가라 번역 없이 지금처럼 영어로 계속 가는 것으로 사용자가 직접 결정함 — 이 항목은 종결, 재검토 불필요.
+1. **대기 중인 신규 툴 후보 없음** — 다음 후보는 "배치 차별화 필터", 막히면 "no-upload 차별화 필터"(5번 8차 세션 참고)로 새로 찾을 것.
+1-1. **(신규, 2026-07-18) `tools/json-validator.html` 클릭/노출 추적 시작할 것** — 신규 툴이라 아직 GSC 데이터 없음, 다음 스냅샷부터 확인.
+1-2. **(신규, 2026-07-18 세션에서 발견) `llms.txt`(루트 파일)와 홈페이지(`index.html`)의 "featured" 툴 카드 9개가 오래전부터 갱신이 안 되고 있었음.** llms.txt는 이번 세션에서 새 툴/블로그 2건만 추가했지 전체를 재작성하진 않음 — 최신 19개 툴 중 다수(json-yaml-converter, csv-tsv-converter, svg-optimizer, sitemap-validator, robots-txt-generator, llms-txt-generator, heading-structure-checker, url-encoder, barcode-batch, json-validator)가 여전히 안 실려있음. 홈페이지 featured 섹션도 초기 9개 툴(image-batch/csv-to-json/base64/rss-generator/sitemap-generator/ip-dns-ssl/site-crawler/jwt-decoder/qr-batch)만 있고 이후 추가된 10개 툴은 하나도 없음. 둘 다 이번 세션 범위 밖이라 손 안 댔지만, 다음 세션에서 llms.txt 전체 재작성 또는 홈페이지 featured 섹션 큐레이션 방식 결정이 필요.
 2. 메타태그(title/description) 길이 체커는 서버사이드 fetch가 필요해서 보류 중 — Worker에 새 엔드포인트(`GET /meta?url=`) 추가할 의향이 있으면 재검토 가능.
 3. 매 세션 GA/Search Console 데이터 받으면 이전 스냅샷과 비교 → 변화율 기준으로 신규/보강 여부 재판단 (8번 참고). 신규 결정 전 중복 체크 + 웹 키워드 경쟁강도 확인 필수. 신호가 확실히 잡힌 기존 페이지가 있으면 신규 글보다 그 페이지 보강을 먼저 검토할 것(2026-07-16 jwt-claims-explained, 2026-07-18 rss-generator/ip-dns-ssl/llms-txt-generator 사례 참고).
 3-1. **(신규, 2026-07-18) 다음 스냅샷에서 이번 세션 보강 효과 추적할 것**: `tools/rss-generator.html`(generator/creator/builder/maker 비교 섹션), `tools/ip-dns-ssl.html`(NS 레코드 섹션 + bulk FAQ), `tools/llms-txt-generator.html`(llm.txt vs llms.txt FAQ) 3개 페이지 클릭/순위 변화 확인.
