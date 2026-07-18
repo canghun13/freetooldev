@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function () {
         bodyHtml =
           '<div style="margin-bottom:8px; font-size:0.85rem; color:#2e8b57; font-weight:600;">Valid JSON</div>' +
           '<div style="margin-bottom:10px; font-size:0.8rem; color:#8a8578;">' + esc(meta) + '</div>' +
-          '<pre id="' + resultId + '" style="width:100%; max-height:300px; overflow:auto; font-family:\'JetBrains Mono\',monospace; font-size:0.8rem; background:rgba(0,0,0,0.2); padding:12px; border-radius:6px; white-space:pre-wrap; word-break:break-word;">' + esc(result.formatted) + '</pre>' +
+          '<pre id="' + resultId + '" style="width:100%; max-height:300px; overflow:auto; font-family:\'JetBrains Mono\',monospace; font-size:0.8rem; background:#081729; color:#EDEBE2; padding:12px; border-radius:6px; white-space:pre-wrap; word-break:break-word;">' + esc(result.formatted) + '</pre>' +
           '<button class="btn btn-outline copy-result-btn" data-target="' + resultId + '" style="margin-top:8px;">Copy formatted JSON</button>';
       } else {
         var locLine = (result.line !== null) ? ('Line ' + result.line + ', column ' + result.col) : 'Location not reported by this browser';
@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
           '<div style="margin-bottom:8px; font-size:0.85rem; color:#b5451b; font-weight:600;">Invalid JSON</div>' +
           '<div style="margin-bottom:6px; font-size:0.85rem;">' + esc(result.message) + '</div>' +
           '<div style="margin-bottom:8px; font-size:0.8rem; color:#8a8578;">' + esc(locLine) + '</div>' +
-          (result.excerpt ? '<pre style="width:100%; font-family:\'JetBrains Mono\',monospace; font-size:0.8rem; background:rgba(0,0,0,0.2); padding:12px; border-radius:6px; white-space:pre-wrap; word-break:break-word; color:#e8a33d;">' + esc(result.excerpt) + '</pre>' : '');
+          (result.excerpt ? '<pre style="width:100%; font-family:\'JetBrains Mono\',monospace; font-size:0.8rem; background:#081729; padding:12px; border-radius:6px; white-space:pre-wrap; word-break:break-word; color:#F2B84D;">' + esc(result.excerpt) + '</pre>' : '');
       }
 
       panel.innerHTML = '<div style="font-weight:700; margin-bottom:6px; width:100%;">' + esc(name) + '</div>' + bodyHtml;
