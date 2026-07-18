@@ -98,6 +98,12 @@ Second Post | https://example.com/second | 2026-06-28"></textarea>
     <h2>What this tool is — and isn't</h2>
     <p>Most "RSS generator" tools online solve a different problem: pointing them at someone else's URL and having them scrape that page to build a feed for a site that doesn't publish one. That's a legitimate use case, but it's not this one. This tool assumes you already know what you want in your feed — you're building it for your own site, from a list you type in yourself, not extracting it automatically from a page. No account, no stored feed URL on our servers, no scraping step. If you specifically want the auto-scrape-a-site behavior, the <a href="/tools/site-crawler.html">Site Crawler & Audit tool</a> can generate a feed by crawling your own site's pages directly, which is the closer equivalent for that use case.</p>
 
+    <h2>Generator, creator, builder, maker — picking the right kind of tool</h2>
+    <p>These terms all get used for the same category of tool, but the tools behind them split into two different mechanics, and picking the wrong one wastes time:</p>
+    <p><strong>URL-to-feed tools</strong> (most services that call themselves an RSS feed creator, builder, or maker) take a link to a page you don't control, scrape its content, and turn it into a feed automatically. That's the right choice if you're following a site that has no feed of its own.</p>
+    <p><strong>List-to-feed tools</strong> — this one included — take a plain list of items you already have (your own posts, releases, or updates) and turn it into a spec-valid <code>rss.xml</code> with no scraping and no account. That's the right choice if you're the one publishing the content and just need a standards-compliant feed file for your own static site, changelog, or documentation set.</p>
+    <p>If you're not sure which you need: do you own the content, or are you following someone else's? Own it → a list-based generator like this one. Following someone else's page → a URL-based scraper is the better fit.</p>
+
     <h2>FAQ</h2>
     <h3>Where do I put the generated rss.xml file?</h3>
     <p>At your site's root, alongside <code>index.html</code>, so it's reachable at <code>yoursite.com/rss.xml</code>. Then add a <code>&lt;link rel="alternate" type="application/rss+xml"&gt;</code> tag in your page's <code>&lt;head&gt;</code> so feed readers and browsers can auto-discover it.</p>

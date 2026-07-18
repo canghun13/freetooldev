@@ -110,6 +110,8 @@ cloudflare.com"></textarea>
     <p>MX records point to the mail servers responsible for a domain's email, each with a priority number — lower numbers are tried first. An empty MX result usually means the domain isn't set up to receive email at all, which is normal for many app or asset subdomains.</p>
     <h3>TXT</h3>
     <p>TXT records hold arbitrary text and are used for domain verification (Google Search Console, for instance), SPF/DKIM email authentication, and various ownership proofs. A domain often has several TXT records at once, each serving a different, unrelated purpose.</p>
+    <h3>NS</h3>
+    <p>NS (nameserver) records list which DNS servers are authoritative for a domain — they're what your registrar points at when you change hosting or DNS providers, and they're set at the registrar level, not inside your existing DNS zone. Checking NS across a whole domain list is the fastest way to confirm a bulk migration actually finished: if a domain still shows its old provider's nameservers days after a switch, that's the domain to chase down, not the ones that already show the new provider.</p>
 
     <h2>FAQ</h2>
     <h3>How is "Your IP address" at the top different from the domain lookups below?</h3>
@@ -122,6 +124,8 @@ cloudflare.com"></textarea>
     <p>DNS records are cached at multiple layers (your router, your ISP, public resolvers) for a duration set by that record's TTL. A change you make at your registrar won't be visible everywhere until every cache holding the old value expires, which is why the same lookup can return different results depending on where it's run from.</p>
     <h3>Why did my SSL check fail or time out?</h3>
     <p>The SSL check depends on crt.sh, a free public service that isn't always perfectly reliable — it can time out or briefly return a server error even for an ordinary, unremarkable domain. This is on crt.sh's end, not a sign the domain itself has a problem. Waiting a few seconds and retrying almost always resolves it.</p>
+    <h3>Is there a limit on how many domains I can run through this bulk DNS lookup at once?</h3>
+    <p>There's no hard cap enforced by this tool for A/AAAA/MX/TXT/NS lookups — paste as many domains as you need, one per line. SSL Expiry checks are queued two at a time to stay polite to crt.sh's free service, so a large batch of SSL checks takes proportionally longer than the same batch of DNS record lookups.</p>
   </div>
 </section>
 

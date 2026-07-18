@@ -112,6 +112,8 @@ Blog | Release Notes | https://example.com/blog/releases"></textarea>
     <p>Support varies and is still evolving — this is a relatively new, community-driven convention rather than an enforced standard, so treat it as a reasonable-effort addition rather than something every AI crawler is guaranteed to read.</p>
     <h3>How is this different from just having a good sitemap?</h3>
     <p>A sitemap is a bare list of URLs with no description of what each page contains — a crawler still has to fetch and parse every page to know what it's about. llms.txt front-loads that summary in plain text at a single, small file, which is a much cheaper way for a model with a limited context window to get an overview before deciding what (if anything) to fetch in more depth.</p>
+    <h3>Is it "llm.txt" or "llms.txt"?</h3>
+    <p>The convention's file name is <code>llms.txt</code> (plural — the file describes content for large language models in general, not one specific model), served at your site's root just like <code>robots.txt</code>. "llm.txt" without the s is a common typo of the same idea, not a separate file — this generator outputs the correct <code>llms.txt</code> name and format.</p>
   </div>
 </section>
 
