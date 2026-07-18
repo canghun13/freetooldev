@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Your JSON Won't Parse: Every Common Syntax Error, Explained — FreeToolDev</title>
+<meta name="description" content="Trailing commas, single quotes, unquoted keys, comments — JSON rejects things JavaScript object literals allow. Here's why, with the exact fix for each.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/json-syntax-errors-explained.html">
+<meta property="og:title" content="Why Your JSON Won't Parse: Every Common Syntax Error, Explained — FreeToolDev">
+<meta property="og:description" content="Trailing commas, single quotes, unquoted keys, comments — JSON rejects things JavaScript object literals allow. Here's why, with the exact fix for each.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Why Your JSON Won't Parse: Every Common Syntax Error, Explained — FreeToolDev">
+<meta name="twitter:description" content="Trailing commas, single quotes, unquoted keys, comments — JSON rejects things JavaScript object literals allow. Here's why, with the exact fix for each.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/json-syntax-errors-explained.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 18, 2026</div>
+  <h1>Why Your JSON Won't Parse: Every Common Syntax Error, Explained</h1>
+
+  <p>JSON looks close enough to a JavaScript object literal that it's easy to assume anything valid in one is valid in the other. It isn't. JSON is a much stricter subset, on purpose — the spec was designed to be dead simple to parse in any language, not just JavaScript, which means it deliberately leaves out several things JS allows. Here's the specific list of what trips people up, in the order they actually show up in practice.</p>
+
+  <h2>Trailing commas</h2>
+  <p>This is the single most common one. <code>{"a": 1, "b": 2,}</code> is a completely normal JavaScript object literal — the trailing comma after the last property is explicitly allowed and often left in on purpose so future diffs stay clean. In JSON, that same trailing comma is a hard syntax error. The fix is just deleting it, but the trap is that it's invisible when you're eyeballing a large object — it's almost always caught by a parser, not a human proofreading.</p>
+
+  <h2>Single-quoted strings</h2>
+  <p><code>{'name': 'Ada'}</code> is valid JavaScript, and invalid JSON. The JSON spec only recognizes double quotes for strings and keys — single quotes aren't a stylistic alternative, they're simply not part of the format at all. This one shows up most often when someone hand-writes a "JSON" example from memory, or copies a JS object literal without converting it.</p>
+
+  <h2>Unquoted object keys</h2>
+  <p><code>{name: "Ada"}</code> — no quotes around <code>name</code> — is valid JavaScript shorthand. JSON requires every key to be a double-quoted string, no exceptions. This usually travels together with the single-quote mistake above, since both come from the same source: treating a JS object literal as if it were already JSON.</p>
+
+  <h2>Missing commas between properties or array items</h2>
+  <p><code>{"a": 1 "b": 2}</code> — no comma between the two properties — is invalid in both JSON and JavaScript, but it's worth calling out separately because the resulting error message is often the least helpful of the bunch. Depending on the parser, you might see something like "Unexpected string" or "Expected ',' or '}'" pointing at the second key, which makes it look like the second property is the problem when the actual fix is adding a comma right before it.</p>
+
+  <h2>Comments</h2>
+  <p>JSON has no comment syntax at all — not <code>//</code>, not <code>/* */</code>. This is a deliberate spec decision, not an oversight: comments would need a defined behavior for how tools re-serialize data (do they preserve comments on write? discard them? where do they go if a key moves?), and the spec's author decided that ambiguity wasn't worth it. If you need comments in a config file, you're looking for a JSON superset like JSON5 or JSONC (which VS Code's own config files use) — or you strip the comments out before feeding the file to a strict JSON parser.</p>
+
+  <h2>Duplicate keys — not an error, but still a bug</h2>
+  <p>Unlike everything above, <code>{"a": 1, "a": 2}</code> is technically valid JSON — most parsers accept it and simply keep the last value (<code>a</code> ends up as <code>2</code>), silently discarding the first. This is worth knowing specifically because it won't show up as a syntax error at all; if you're wondering why a value seems to have "disappeared" from a hand-edited JSON file, a duplicate key further down is a common, silent cause.</p>
+
+  <h2>Catching these without guessing which one it is</h2>
+  <p>The fastest way to find out which of the above is actually happening in a specific broken snippet is to let a real JSON parser tell you — the exact wording and, in most browsers, the line and column it points to are more reliable than scanning by eye, especially in a large nested object. FreeToolDev's <a href="/tools/json-validator.html">bulk JSON validator</a> runs each pasted snippet through the browser's own parser and shows the error location directly, and it accepts several snippets pasted at once if you're chasing more than one broken payload at a time.</p>
+
+  <h2>FAQ</h2>
+  <h3>Why does JavaScript accept trailing commas and unquoted keys, but JSON doesn't?</h3>
+  <p>JSON was deliberately specified as a minimal, language-independent data format — its grammar is intentionally smaller than a JavaScript object literal's, so that it stays trivially easy to implement a compliant parser in any language, not just JS. JavaScript's own object literal syntax was never constrained by that goal, so it kept the more permissive, human-friendly conveniences JSON left out.</p>
+  <h3>Is JSON5 the same thing as JSON?</h3>
+  <p>No — JSON5 is a separate, related format that intentionally adds back some of what JSON leaves out (comments, trailing commas, unquoted keys) for config-file use cases where those conveniences matter more than strict interoperability. A JSON5 file is not valid JSON, and a standard <code>JSON.parse</code> will reject it the same way it rejects any of the mistakes above.</p>
+  <h3>Why don't duplicate keys throw an error?</h3>
+  <p>The JSON spec doesn't actually forbid duplicate keys — it says behavior in that case is left to the implementation, and in practice essentially every parser (including <code>JSON.parse</code>) resolves it by keeping the last occurrence and silently ignoring earlier ones, rather than raising an error. That's a spec gap, not a bug in any particular parser.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

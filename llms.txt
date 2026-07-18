@@ -12,6 +12,7 @@
 - [Site Crawler & Audit](https://freetooldev.com/tools/site-crawler.html): Auto-crawl a site to generate sitemap.xml, rss.xml, and llms.txt, and find broken links/missing meta tags.
 - [JWT Decoder (Batch)](https://freetooldev.com/tools/jwt-decoder.html): Decode multiple JWTs at once — header, payload, and expiry status for each, entirely client-side.
 - [Bulk QR Code Generator](https://freetooldev.com/tools/qr-batch.html): Generate QR codes for a list of URLs or text at once, no upload required.
+- [Bulk JSON Validator & Formatter](https://freetooldev.com/tools/json-validator.html): Validate and pretty-print multiple JSON snippets at once, pasted as text with no file upload.
 
 ## Site
 - [About](https://freetooldev.com/about.html)
@@ -33,3 +34,5 @@
 - [How to Find Broken Links on Your Site Without Installing Anything](https://freetooldev.com/blog/find-broken-links-free-tool.html)
 - [RSS Generator Without an Account: Manual Builder vs. Auto-Scraper](https://freetooldev.com/blog/rss-generator-no-account.html)
 - [Converting 100 Images: AI or a Tool?](https://freetooldev.com/blog/batch-vs-ai-image-convert.html)
+- [Why Your JSON Won't Parse: Every Common Syntax Error, Explained](https://freetooldev.com/blog/json-syntax-errors-explained.html)
+- [Validating JSON Without Uploading It Anywhere](https://freetooldev.com/blog/json-validator-no-upload.html)

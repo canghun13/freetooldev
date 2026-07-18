@@ -10,6 +10,7 @@
   <url><loc>https://freetooldev.com/tools/csv-to-json.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/json-yaml-converter.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/csv-tsv-converter.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/tools/json-validator.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/image-batch.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/svg-optimizer.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/rss-generator.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -52,6 +53,8 @@
   <url><loc>https://freetooldev.com/blog/free-alternative-screaming-frog.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/sitemap-index-files.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/sitemap-priority-changefreq.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://freetooldev.com/blog/json-syntax-errors-explained.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://freetooldev.com/blog/json-validator-no-upload.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/multiple-h1-tags.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/skipped-heading-levels.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/jwt-claims-explained.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>

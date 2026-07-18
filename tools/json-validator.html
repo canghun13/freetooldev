@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk JSON Validator & Formatter — Check Many Snippets at Once | FreeToolDev</title>
+<meta name="description" content="Paste several JSON snippets at once — separated by a divider, no file upload — and validate and pretty-print every one in a single pass, with the exact line and column of any syntax error.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/json-validator.html">
+<meta property="og:title" content="Bulk JSON Validator & Formatter — Check Many Snippets at Once | FreeToolDev">
+<meta property="og:description" content="Paste several JSON snippets at once — separated by a divider, no file upload — and validate and pretty-print every one in a single pass, with the exact line and column of any syntax error.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk JSON Validator & Formatter — Check Many Snippets at Once | FreeToolDev">
+<meta name="twitter:description" content="Paste several JSON snippets at once — separated by a divider, no file upload — and validate and pretty-print every one in a single pass, with the exact line and column of any syntax error.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/json-validator.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Data · Batch</span>
+    <h1>Bulk JSON Validator & Formatter</h1>
+    <p>Paste several JSON snippets at once — separated by a divider line — and validate and pretty-print every one in a single pass. No file upload: just paste text copied from an API response, a config block, a log line, or a Slack message.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel" style="margin-bottom:20px;">
+      <div class="opt-row" style="margin-bottom:0;">
+        <div>
+          <label>Indent</label>
+          <select id="indent">
+            <option value="2" selected>2 spaces</option>
+            <option value="4">4 spaces</option>
+            <option value="tab">Tab</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>JSON snippets</h3>
+      <p style="font-size:0.85rem; margin-bottom:10px;">Paste one or more JSON snippets. Separate multiple snippets with a line containing just <code>-----</code>. Optionally start a snippet's block with <code>### name</code> to label it in the results.</p>
+      <textarea id="input" style="min-height:220px;" placeholder="### user response
+{&quot;id&quot;: 1, &quot;name&quot;: &quot;Ada&quot;, &quot;active&quot;: true}
+-----
+### config (has a typo)
+{&quot;retries&quot;: 3, &quot;timeout&quot;: 30,}"></textarea>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="checkBtn">Validate & format →</button>
+        <button class="btn btn-outline" id="clearBtn">Clear</button>
+      </div>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="resultsList"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>What this checks</h2>
+    <p>Each snippet is run through the browser's own <code>JSON.parse</code> — the same parser your JavaScript code, your build tooling, and most API clients rely on. A snippet either parses cleanly (in which case it's re-serialized with your chosen indent so you get a pretty-printed copy) or it doesn't, in which case you get the parser's own error message plus the line and column it points to, when the browser's error message includes one. This is a well-formedness check, not JSON Schema validation — it confirms the syntax is valid JSON, not that specific fields or types match a schema you have in mind.</p>
+
+    <h2>Why validate multiple snippets at once instead of one at a time</h2>
+    <p>API responses, config blocks, and log lines rarely arrive as a single tidy object — a debugging session usually means several snippets copied from different places (a request body here, a response there, a Slack thread with three broken payloads someone's asking about). Checking each one separately means re-opening the tool and re-pasting every time. Pasting a batch at once, with each one labeled, keeps the whole set in view together and makes it obvious at a glance which specific one is broken.</p>
+
+    <h2>No file upload, unlike most batch JSON tools</h2>
+    <p>Most "batch JSON" tools online are built around uploading files — pick or drag several <code>.json</code> files, then process them. That's the right fit when you actually have files on disk. It's the wrong fit when what you have is a block of text you just copied from a browser's network tab, an API playground, or a chat message — you'd have to save it as a file first just to use the tool. This one skips that step entirely: paste text directly, separated by a divider, and nothing is written to disk or uploaded anywhere to do it.</p>
+
+    <h2>Common JSON mistakes this catches</h2>
+    <p>The most frequent ones by far: a <strong>trailing comma</strong> after the last item in an object or array (valid in JavaScript object literals, never valid in JSON), <strong>single-quoted strings</strong> instead of double quotes, <strong>unquoted object keys</strong> (also fine in JS, not in JSON), and a <strong>missing comma</strong> between two properties or array items. All four are easy to introduce when copying a JavaScript object literal and assuming it's already valid JSON — it usually isn't. See <a href="/blog/json-syntax-errors-explained.html">this post</a> for the full list, including two cases (comments and duplicate keys) that don't always throw the error you'd expect.</p>
+
+    <h2>FAQ</h2>
+    <h3>Does this validate against a JSON Schema?</h3>
+    <p>No — this checks that each snippet is well-formed JSON (the syntax parses correctly), not that it matches a particular schema of required fields and types. If you need schema validation, this tool isn't the right fit; it's aimed at the much more common everyday problem of "why won't this parse."</p>
+    <h3>Why doesn't every error show a line and column?</h3>
+    <p>The exact wording of a <code>JSON.parse</code> error — and whether it includes a position at all — is decided by your browser's JavaScript engine, not by this tool, and it varies between browsers. When the error message includes a position, this tool shows the exact line, column, and a short excerpt with a caret pointing at the problem. When it doesn't, you still get the parser's own error text, just without the extra location detail.</p>
+    <h3>Is there a limit on how many snippets I can check at once?</h3>
+    <p>No hard limit is enforced — paste as many divider-separated snippets as you need. Since everything runs in your browser with no server round-trip, the practical ceiling is your device's memory for very large batches, not anything this tool restricts.</p>
+    <h3>Is my JSON data sent anywhere?</h3>
+    <p>No — parsing, formatting, and error detection all happen locally in your browser using the built-in <code>JSON.parse</code> and <code>JSON.stringify</code>. Nothing you paste here is uploaded or stored on a server. See <a href="/blog/json-validator-no-upload.html">this post</a> for the fuller difference between browser-only and upload-based JSON tools.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator & Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function byteLength(s) {
+    return new TextEncoder().encode(s).length;
+  }
+
+  function posToLineCol(text, pos) {
+    var sub = text.slice(0, pos);
+    var lines = sub.split('\n');
+    return { line: lines.length, col: lines[lines.length - 1].length + 1 };
+  }
+
+  function lineColToPos(text, line, col) {
+    var lines = text.split('\n');
+    var pos = 0;
+    for (var i = 0; i < line - 1 && i < lines.length; i++) pos += lines[i].length + 1;
+    pos += (col - 1);
+    return pos;
+  }
+
+  function extractLocation(message, text) {
+    var lc = /line (\d+) column (\d+)/i.exec(message);
+    if (lc) {
+      var line = parseInt(lc[1], 10), col = parseInt(lc[2], 10);
+      return { line: line, col: col, pos: lineColToPos(text, line, col) };
+    }
+    var m = /position (\d+)/i.exec(message);
+    if (m) {
+      var pos = parseInt(m[1], 10);
+      var lineCol = posToLineCol(text, pos);
+      return { line: lineCol.line, col: lineCol.col, pos: pos };
+    }
+    return null;
+  }
+
+  function makeExcerpt(text, pos) {
+    var start = Math.max(0, pos - 20);
+    var end = Math.min(text.length, pos + 20);
+    var excerpt = text.slice(start, end);
+    var caretPos = pos - start;
+    return excerpt.replace(/\n/g, '\u23ce') + '\n' + ' '.repeat(Math.max(0, caretPos)) + '^';
+  }
+
+  function validateAndFormat(text, indent) {
+    try {
+      var parsed = JSON.parse(text);
+      var formatted = JSON.stringify(parsed, null, indent === 'tab' ? '\t' : parseInt(indent, 10));
+      var type = Array.isArray(parsed) ? 'array' : (parsed === null ? 'null' : typeof parsed);
+      var count = null;
+      if (Array.isArray(parsed)) count = parsed.length;
+      else if (type === 'object') count = Object.keys(parsed).length;
+      return {
+        valid: true, formatted: formatted, type: type, count: count,
+        originalBytes: byteLength(text), formattedBytes: byteLength(formatted)
+      };
+    } catch (e) {
+      var loc = extractLocation(e.message, text);
+      var excerpt = loc ? makeExcerpt(text, loc.pos) : null;
+      return {
+        valid: false, message: e.message,
+        line: loc ? loc.line : null, col: loc ? loc.col : null,
+        excerpt: excerpt
+      };
+    }
+  }
+
+  document.getElementById('checkBtn').addEventListener('click', function () {
+    var raw = document.getElementById('input').value;
+    if (!raw.trim()) { alert('Paste at least one JSON snippet first.'); return; }
+    var indent = document.getElementById('indent').value;
+
+    var blocks = raw.split(/\n-{5,}\n/);
+    var resultsList = document.getElementById('resultsList');
+    resultsList.innerHTML = '';
+    document.getElementById('resultsPanel').style.display = 'block';
+
+    blocks.forEach(function (block, idx) {
+      block = block.trim();
+      if (!block) return;
+
+      var name = 'Snippet ' + (idx + 1);
+      var nameMatch = block.match(/^###\s*(.+)$/m);
+      if (nameMatch) {
+        name = nameMatch[1].trim();
+        block = block.replace(/^###\s*.+$/m, '').trim();
+      }
+
+      var result = validateAndFormat(block, indent);
+      var panel = document.createElement('div');
+      panel.className = 'file-row ready';
+      panel.style.flexDirection = 'column';
+      panel.style.alignItems = 'flex-start';
+      panel.style.padding = '16px';
+      panel.style.marginBottom = '12px';
+      panel.style.width = '100%';
+
+      var bodyHtml;
+      if (result.valid) {
+        var meta = result.type + (result.count !== null ? ' · ' + result.count + (result.type === 'array' ? ' items' : ' keys') : '') +
+          ' · ' + result.originalBytes + ' → ' + result.formattedBytes + ' bytes formatted';
+        var resultId = 'res-' + idx + '-' + Date.now();
+        bodyHtml =
+          '<div style="margin-bottom:8px; font-size:0.85rem; color:#2e8b57; font-weight:600;">Valid JSON</div>' +
+          '<div style="margin-bottom:10px; font-size:0.8rem; color:#8a8578;">' + esc(meta) + '</div>' +
+          '<pre id="' + resultId + '" style="width:100%; max-height:300px; overflow:auto; font-family:\'JetBrains Mono\',monospace; font-size:0.8rem; background:rgba(0,0,0,0.2); padding:12px; border-radius:6px; white-space:pre-wrap; word-break:break-word;">' + esc(result.formatted) + '</pre>' +
+          '<button class="btn btn-outline copy-result-btn" data-target="' + resultId + '" style="margin-top:8px;">Copy formatted JSON</button>';
+      } else {
+        var locLine = (result.line !== null) ? ('Line ' + result.line + ', column ' + result.col) : 'Location not reported by this browser';
+        bodyHtml =
+          '<div style="margin-bottom:8px; font-size:0.85rem; color:#b5451b; font-weight:600;">Invalid JSON</div>' +
+          '<div style="margin-bottom:6px; font-size:0.85rem;">' + esc(result.message) + '</div>' +
+          '<div style="margin-bottom:8px; font-size:0.8rem; color:#8a8578;">' + esc(locLine) + '</div>' +
+          (result.excerpt ? '<pre style="width:100%; font-family:\'JetBrains Mono\',monospace; font-size:0.8rem; background:rgba(0,0,0,0.2); padding:12px; border-radius:6px; white-space:pre-wrap; word-break:break-word; color:#e8a33d;">' + esc(result.excerpt) + '</pre>' : '');
+      }
+
+      panel.innerHTML = '<div style="font-weight:700; margin-bottom:6px; width:100%;">' + esc(name) + '</div>' + bodyHtml;
+      resultsList.appendChild(panel);
+    });
+
+    resultsList.addEventListener('click', function (e) {
+      if (e.target.classList.contains('copy-result-btn')) {
+        var target = document.getElementById(e.target.getAttribute('data-target'));
+        if (target) {
+          navigator.clipboard.writeText(target.textContent).then(function () {
+            var original = e.target.textContent;
+            e.target.textContent = 'Copied!';
+            setTimeout(function () { e.target.textContent = original; }, 1500);
+          });
+        }
+      }
+    });
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    document.getElementById('input').value = '';
+    document.getElementById('resultsPanel').style.display = 'none';
+  });
+});
+</script>
+
+</body>
+</html>
