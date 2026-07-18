@@ -104,6 +104,7 @@ cloudflare.com"></textarea>
     <p>crt.sh is a free community-run service, and it's occasionally slow or briefly overloaded — you may see a timeout or a "temporarily overloaded" error even for an ordinary domain. This isn't a bug in this tool; simply retrying the lookup a moment later almost always works.</p>
 
     <h2>Understanding record types</h2>
+    <p>Quick summaries below; for a fuller walkthrough of what each record type actually does and the specific failures caused by picking the wrong one, see <a href="/blog/dns-records-explained.html">this guide to A, CNAME, and TXT records</a>.</p>
     <h3>A vs AAAA</h3>
     <p>An A record maps a domain to an IPv4 address (like <code>192.0.2.1</code>); AAAA does the same for IPv6 (like <code>2001:db8::1</code>). A domain can have both, neither, or only one — if AAAA comes back empty, that domain simply isn't configured for IPv6 yet, which is still common.</p>
     <h3>MX</h3>
