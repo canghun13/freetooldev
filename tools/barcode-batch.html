@@ -103,14 +103,14 @@ ITEM-00123"></textarea>
     <p>UPC-A is the 12-digit format used on retail products in the US and Canada. EAN-13 is the international equivalent (13 digits) used almost everywhere else, and is also what most UPC-A codes are stored as once padded with a leading zero. Code128 is different in kind — it isn't tied to a fixed digit count or a retail product-numbering scheme, and can encode any alphanumeric string, which makes it the right choice for internal codes, asset tags, or anything that isn't a registered retail product number.</p>
 
     <h2>How it works</h2>
-    <p>Each barcode is rendered locally using canvas-based encoding (via the open-source JsBarcode library) — the same fundamental technique any barcode generator uses, just running entirely on your device instead of a server. You can confirm nothing is uploaded by checking your browser's Network tab while a batch runs.</p>
+    <p>Each barcode is rendered locally using canvas-based encoding (via the open-source JsBarcode library) — the same fundamental technique any barcode generator uses, just running entirely on your device instead of a server. You can confirm nothing is uploaded by checking your browser's Network tab while a batch runs. See <a href="/blog/bulk-barcode-use-cases.html">this post</a> for when generating dozens or hundreds at once actually comes up in practice, beyond one-off product labels.</p>
 
     <h2>Limits</h2>
     <p>Up to 100 codes per batch. EAN-13 and UPC-A require the correct digit count and a valid checksum digit at the end — codes that don't validate are skipped and listed separately rather than silently producing a broken barcode, since a barcode that fails to scan at checkout is a worse outcome than an obvious error message.</p>
 
     <h2>FAQ</h2>
     <h3>Can I generate a barcode for a product I'm about to sell on Amazon or another marketplace?</h3>
-    <p>Technically yes, this tool will produce a valid UPC/EAN barcode from any correctly-formatted number — but most marketplaces require the underlying number itself to be registered through GS1 (the organization that issues UPC/EAN prefixes) to avoid conflicting with another seller's product. This tool handles the barcode image; it doesn't register or validate ownership of the number itself.</p>
+    <p>Technically yes, this tool will produce a valid UPC/EAN barcode from any correctly-formatted number — but most marketplaces require the underlying number itself to be registered through GS1 (the organization that issues UPC/EAN prefixes) to avoid conflicting with another seller's product. This tool handles the barcode image; it doesn't register or validate ownership of the number itself. If you're not sure which format your marketplace actually expects, <a href="/blog/upc-vs-ean-vs-code128.html">this comparison</a> breaks down where UPC-A, EAN-13, and Code128 are each used.</p>
     <h3>What happens if I enter a 12-digit number and select EAN-13?</h3>
     <p>EAN-13 expects 13 digits including the checksum. A 12-digit UPC-A number can be converted to EAN-13 by adding a leading zero — if your list is UPC-style 12-digit codes, select UPC-A rather than EAN-13 so they're read correctly without needing to pad them yourself first.</p>
     <h3>Why did some of my codes get skipped?</h3>
@@ -135,6 +135,7 @@ ITEM-00123"></textarea>
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
           <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
           <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>

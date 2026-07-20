@@ -16,6 +16,7 @@
 - [Bulk Sitemap Validator — Check Multiple sitemap.xml at Once](https://freetooldev.com/tools/sitemap-validator.html): Paste several sitemap.xml files at once and validate each against the Sitemap Protocol — malformed XML, invalid priority/changefreq/lastmod, duplicate URLs. Free, no signup.
 - [robots.txt Generator](https://freetooldev.com/tools/robots-txt-generator.html): Generate a valid robots.txt in seconds — set disallowed paths, add your sitemap, and optionally block AI crawlers like GPTBot and ClaudeBot. Free, no signup.
 - [llms.txt Generator](https://freetooldev.com/tools/llms-txt-generator.html): Turn a pasted list of your site's pages into a valid llms.txt file — a structured index that helps AI models like ChatGPT and Claude understand your site. Free, no signup.
+- [Humans.txt Generator](https://freetooldev.com/tools/humans-txt-generator.html): List your team, tech stack, and a short note to generate a valid humans.txt credits file. No email or signup required, runs entirely in your browser.
 - [Bulk Heading Structure Checker — Check H1-H6 on Many Pages](https://freetooldev.com/tools/heading-structure-checker.html): Paste the HTML of several pages at once and check H1-H6 heading hierarchy for each — missing H1s, skipped levels, duplicates, empty headings. Free, no signup.
 - [IP / DNS / SSL Bulk Lookup](https://freetooldev.com/tools/ip-dns-ssl.html): See your own IP instantly, then look up IP addresses, DNS records (A, AAAA, MX, TXT, NS), and SSL certificate expiry for a whole list of domains at once. Free, no signup.
 - [Site Crawler & Audit — Auto-generate Sitemap, RSS & llms.txt](https://freetooldev.com/tools/site-crawler.html): Enter a URL and automatically crawl the site to generate sitemap.xml, rss.xml, and llms.txt, plus find broken links and missing meta tags — all in one pass.
@@ -30,6 +31,8 @@
 
 ## Blog
 - [Blog index](https://freetooldev.com/blog/index.html)
+- [robots.txt vs llms.txt vs humans.txt: Three Files, Three Audiences](https://freetooldev.com/blog/robots-llms-humans-txt-compared.html): Same location, same plain-text format, three completely different readers — a crawler, an AI model, and a curious human. Here's what each file actually controls.
+- [What Is humans.txt? The File That's Not for Search Engines at All](https://freetooldev.com/blog/humans-txt-explained.html): No crawler reads it, no AI model parses it. Here's the format, the history, and whether it's worth adding anyway.
 - [Why Your JSON Won't Parse: Every Common Syntax Error, Explained](https://freetooldev.com/blog/json-syntax-errors-explained.html): Trailing commas, single quotes, unquoted keys, comments — JSON rejects things JavaScript object literals allow. Here's why, with the exact fix for each.
 - [Validating JSON Without Uploading It Anywhere](https://freetooldev.com/blog/json-validator-no-upload.html): Most online JSON tools are built around uploading files. When the JSON contains API tokens or real user data, that's a habit worth breaking — here's the actual difference.
 - [Sitemap Index Files: When One sitemap.xml Isn't Enough](https://freetooldev.com/blog/sitemap-index-files.html): Every sitemap has a 50,000 URL limit. Here's how a sitemap index file works, when you actually need one, and how it's different from just having several sitemaps.

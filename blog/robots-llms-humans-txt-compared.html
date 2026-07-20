@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>robots.txt vs llms.txt vs humans.txt: Three Files, Three Audiences — FreeToolDev</title>
+<meta name="description" content="Three plain-text files, three site roots, three completely different readers: a crawler, an AI model, and a curious human. Here's what each one actually controls.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/robots-llms-humans-txt-compared.html">
+<meta property="og:title" content="robots.txt vs llms.txt vs humans.txt: Three Files, Three Audiences — FreeToolDev">
+<meta property="og:description" content="Three plain-text files, three site roots, three completely different readers: a crawler, an AI model, and a curious human. Here's what each one actually controls.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="robots.txt vs llms.txt vs humans.txt: Three Files, Three Audiences — FreeToolDev">
+<meta name="twitter:description" content="Three plain-text files, three site roots, three completely different readers: a crawler, an AI model, and a curious human. Here's what each one actually controls.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/robots-llms-humans-txt-compared.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 20, 2026</div>
+  <h1>robots.txt vs llms.txt vs humans.txt: Three Files, Three Audiences</h1>
+
+  <p>All three sit at the same kind of location — a site's root, a plain-text file, no build step required. That surface similarity is where the resemblance ends. Each one answers a completely different question, for a completely different reader, and none of the three can substitute for either of the others.</p>
+
+  <h2>robots.txt — can an automated visitor request this page at all</h2>
+  <p>robots.txt is a decades-old, widely-honored convention that answers a permission question: is this specific crawler allowed to fetch this specific path? Search engine crawlers, AI training crawlers (GPTBot, ClaudeBot, and others can be named individually), and other bots all read the same file and get a yes-or-no per path based on their user-agent. It says nothing about what a page contains — only whether a well-behaved automated visitor is allowed to look.</p>
+
+  <h2>llms.txt — what is this site actually about, for an AI model</h2>
+  <p>llms.txt is a much newer, community-driven convention aimed specifically at AI models trying to understand a site well enough to answer questions about it or cite it accurately. Instead of a permission list, it's a structured markdown summary — a name, a short description, and a categorized index of key pages, each with a one-line description. It doesn't grant or restrict access to anything; a page can be fully crawlable and still absent from an llms.txt index, or vice versa. It exists purely to make comprehension cheaper for a model with a limited context window.</p>
+
+  <h2>humans.txt — who actually built this, for a person who checks</h2>
+  <p>humans.txt is the odd one out: no automated system reads it. It's a plain-text credits file — team members, technologies used, a short note — for the rare visitor who knows the convention exists and goes looking on purpose. It has zero effect on crawling, indexing, rankings, or AI answers. Where the other two exist because some machine reads them, humans.txt exists specifically because no machine does.</p>
+
+  <h2>Side by side</h2>
+  <ul>
+    <li><strong>Reader:</strong> robots.txt → crawlers and bots. llms.txt → AI models. humans.txt → people, occasionally.</li>
+    <li><strong>Question answered:</strong> robots.txt → "can you fetch this?" llms.txt → "what is this site, quickly?" humans.txt → "who made this?"</li>
+    <li><strong>Effect on SEO or AI visibility:</strong> robots.txt → direct (controls crawl access). llms.txt → indirect (helps comprehension, not ranking). humans.txt → none.</li>
+    <li><strong>How enforced:</strong> robots.txt → honored voluntarily by well-behaved crawlers. llms.txt → read voluntarily by supporting AI systems. humans.txt → not read by any system at all.</li>
+  </ul>
+
+  <h2>Do you need all three?</h2>
+  <p>robots.txt is worth having on essentially every site regardless of size or purpose, since it governs basic crawl access. llms.txt is worth adding once AI comprehension of your content specifically matters — documentation, knowledge bases, API references. humans.txt is optional in a different sense entirely: it's not solving a technical problem for anyone, it's a small courtesy for a category of reader that may never show up. Having all three isn't redundant — they simply don't overlap.</p>
+
+  <h2>Generate all three</h2>
+  <p>FreeToolDev has a free, no-signup generator for each: <a href="/tools/robots-txt-generator.html">robots.txt</a> (with one-click AI crawler blocking), <a href="/tools/llms-txt-generator.html">llms.txt</a> (turns a pasted page list into a structured index), and <a href="/tools/humans-txt-generator.html">humans.txt</a> (team credits and tech stack, no email required) — all generated entirely in your browser.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

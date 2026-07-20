@@ -105,7 +105,7 @@ another line to encode"></textarea>
     <h2>Component vs Full URL — which mode do you want?</h2>
     <p><strong>Component</strong> mode (JavaScript's <code>encodeURIComponent</code>) escapes every character that has structural meaning in a URL, including <code>: / ? # & =</code>. Use this for a single value that's going inside a URL — a query parameter, a path segment, a redirect target embedded in another URL — since those structural characters need to be escaped or they'll be misread as part of the URL's own structure rather than as data.</p>
     <p><strong>Full URL</strong> mode (JavaScript's <code>encodeURI</code>) leaves those structural characters alone and only escapes things that are never valid anywhere in a URL, like spaces and non-ASCII characters. Use this when the input is a complete, already-structured URL that you want to make safe without breaking it apart.</p>
-    <p>Getting this backwards is the most common mistake: running a full URL through component-mode encoding turns its own <code>://</code> and <code>?</code> into percent-codes, breaking it entirely. Running a single query value through URL mode often leaves characters like <code>&</code> or <code>=</code> unescaped inside that value, which then gets misread as a second parameter once it's inserted into the real URL.</p>
+    <p>Getting this backwards is the most common mistake: running a full URL through component-mode encoding turns its own <code>://</code> and <code>?</code> into percent-codes, breaking it entirely. Running a single query value through URL mode often leaves characters like <code>&</code> or <code>=</code> unescaped inside that value, which then gets misread as a second parameter once it's inserted into the real URL. See <a href="/blog/encodeuricomponent-vs-encodeuri.html">this post</a> for a deeper side-by-side of exactly which characters each function touches.</p>
 
     <h2>What actually happens during encoding</h2>
     <p>Percent-encoding replaces a character with a percent sign followed by its byte value in hexadecimal — a space becomes <code>%20</code>, for example. Multi-byte characters (accented letters, non-Latin scripts, emoji) get encoded as their UTF-8 byte sequence, which is why one visible character can turn into several percent-codes in the output.</p>
@@ -116,7 +116,7 @@ another line to encode"></textarea>
     <h3>Is my data sent anywhere?</h3>
     <p>No. Both directions run using your browser's built-in <code>encodeURIComponent()</code>/<code>decodeURIComponent()</code> and <code>encodeURI()</code>/<code>decodeURI()</code> functions — no network request happens, which you can confirm in your browser's dev tools Network tab.</p>
     <h3>What happens if I try to decode text that isn't actually percent-encoded?</h3>
-    <p>Plain text with no <code>%</code> sequences decodes to itself unchanged, since there's nothing to convert. If the input contains a malformed percent-sequence (like a stray <code>%</code> not followed by two valid hex digits), that specific line is flagged as a decode error rather than silently producing garbled output.</p>
+    <p>Plain text with no <code>%</code> sequences decodes to itself unchanged, since there's nothing to convert. If the input contains a malformed percent-sequence (like a stray <code>%</code> not followed by two valid hex digits), that specific line is flagged as a decode error rather than silently producing garbled output. If you're instead seeing sequences like <code>%2520</code> where you expected <code>%20</code>, that's double encoding, not a decode error — <a href="/blog/double-url-encoding.html">this post</a> explains how it happens and how to spot it.</p>
   </div>
 </section>
 
@@ -138,6 +138,7 @@ another line to encode"></textarea>
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
           <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
           <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>

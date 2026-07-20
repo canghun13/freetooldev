@@ -117,14 +117,14 @@
 <section class="section-navy">
   <div class="wrap prose" style="max-width:720px;">
     <h2>How it works</h2>
-    <p>Each image is drawn onto an HTML canvas at the target dimensions, then re-encoded in the format and quality you choose. This all happens locally in your browser using the Canvas API — files are never uploaded anywhere, and you can confirm that by checking the Network tab in dev tools while a batch runs.</p>
+    <p>Each image is drawn onto an HTML canvas at the target dimensions, then re-encoded in the format and quality you choose. This all happens locally in your browser using the Canvas API — files are never uploaded anywhere, and you can confirm that by checking the Network tab in dev tools while a batch runs. See <a href="/blog/no-upload-image-compression.html">this post</a> for why that distinction matters specifically for client screenshots and other work you can't drop into a random upload box.</p>
 
     <h2>Limits</h2>
-    <p>Each image is capped at 20 MB and each batch at 60 images — enforced up front, not just a suggestion. This keeps browser-based processing from risking an unresponsive tab on very large jobs. For bigger jobs, run them in multiple batches.</p>
+    <p>Each image is capped at 20 MB and each batch at 60 images — enforced up front, not just a suggestion. This keeps browser-based processing from risking an unresponsive tab on very large jobs. For bigger jobs, run them in multiple batches. If you're weighing this against just asking an AI model to convert the batch for you, <a href="/blog/batch-vs-ai-image-convert.html">this post</a> compares the two approaches directly.</p>
 
     <h2>Choosing settings</h2>
     <h3>PNG vs JPG vs WebP — which should I pick?</h3>
-    <p>PNG is lossless and keeps transparency, which makes it the right call for logos, icons, and screenshots with sharp text — but it produces the largest files for photos. JPG is smaller for photographic images but has no transparency support and introduces compression artifacts as quality drops. WebP generally beats both for file size at comparable visual quality and supports transparency, but confirm it's supported everywhere your images will be used before switching entirely.</p>
+    <p>PNG is lossless and keeps transparency, which makes it the right call for logos, icons, and screenshots with sharp text — but it produces the largest files for photos. JPG is smaller for photographic images but has no transparency support and introduces compression artifacts as quality drops. WebP generally beats both for file size at comparable visual quality and supports transparency, but confirm it's supported everywhere your images will be used before switching entirely. This tool doesn't output AVIF — see <a href="/blog/webp-vs-avif-2026.html">this comparison</a> if you're deciding between the two newer formats specifically.</p>
     <h3>What quality setting should I use?</h3>
     <p>0.8 is a reasonable default for JPG and WebP — visually close to the original at meaningfully smaller file size. Going below 0.6 starts to show visible artifacts on photos, especially in skies, gradients, and skin tones. PNG ignores the quality setting entirely since it's lossless.</p>
     <h3>"Fit to width" vs "Fit within max width/height" — what's the difference?</h3>
@@ -160,6 +160,7 @@
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
           <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
           <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>

@@ -114,14 +114,14 @@
     <p>Upload the file to your site root as <code>robots.txt</code> — it needs to be reachable at exactly <code>yoursite.com/robots.txt</code>, not in a subfolder, or crawlers won't find it. Test it afterward in Google Search Console's robots.txt report to confirm it's being read correctly.</p>
 
     <h2>Why block AI crawlers, specifically</h2>
-    <p>Disallowing GPTBot, ClaudeBot, Google-Extended, and similar user-agents opts your content out of that specific company's AI training crawls — it's separate from, and doesn't affect, whether your site shows up in ordinary search results or in that company's live AI-answer features, which often use a different crawler. This is a preference call, not a fix for a technical problem: leaving them unblocked means your public content may be used to train or ground AI models; blocking them opts out of that specific use, at no cost to your regular SEO.</p>
+    <p>Disallowing GPTBot, ClaudeBot, Google-Extended, and similar user-agents opts your content out of that specific company's AI training crawls — it's separate from, and doesn't affect, whether your site shows up in ordinary search results or in that company's live AI-answer features, which often use a different crawler. This is a preference call, not a fix for a technical problem: leaving them unblocked means your public content may be used to train or ground AI models; blocking them opts out of that specific use, at no cost to your regular SEO. For how this file relates to the newer llms.txt convention (permission vs. comprehension — two different questions), see <a href="/blog/robots-txt-vs-llms-txt.html">this comparison</a>.</p>
 
     <h2>A reminder about what robots.txt can't do</h2>
     <p>Every rule here is a request that well-behaved crawlers choose to honor — nothing enforces it. A disallowed page can still appear in search results if other sites link to it, and robots.txt is not a substitute for real access control on anything genuinely private (use authentication or a <code>noindex</code> tag instead). See <a href="/blog/sitemap-vs-robots-txt.html">this post</a> for a fuller breakdown of what robots.txt does and doesn't control.</p>
 
     <h2>FAQ</h2>
     <h3>Will Disallow remove a page that's already indexed?</h3>
-    <p>No — Disallow only stops future crawling, it doesn't retroactively remove a page from the index. To get an already-indexed page removed, use a <code>noindex</code> meta tag (which requires the page to still be crawlable so Google can see the tag) or return a real 404/410 status.</p>
+    <p>No — Disallow only stops future crawling, it doesn't retroactively remove a page from the index. To get an already-indexed page removed, use a <code>noindex</code> meta tag (which requires the page to still be crawlable so Google can see the tag) or return a real 404/410 status. <a href="/blog/robots-txt-mistakes.html">This post</a> covers this and several other mistakes that quietly break a robots.txt file without throwing any obvious error.</p>
     <h3>Should I block CSS and JavaScript files?</h3>
     <p>No, generally. Search engines need to load your CSS and JS to render the page the way a visitor sees it — blocking asset folders was a common practice years ago, but today it can hurt rendering-dependent ranking signals. Only disallow folders that hold genuinely non-public content: admin panels, internal search results, staging directories.</p>
     <h3>Does blocking an AI crawler here also stop it from citing my site in chat answers?</h3>
@@ -147,6 +147,7 @@
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
           <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
           <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>

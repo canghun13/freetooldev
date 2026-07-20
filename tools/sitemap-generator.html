@@ -99,7 +99,7 @@ https://example.com/blog/"></textarea>
 <section class="section-navy">
   <div class="wrap prose" style="max-width:720px;">
     <h2>After generating</h2>
-    <p>Upload the file to your site root as <code>sitemap.xml</code>, then submit it in Google Search Console under Sitemaps. Invalid or duplicate URLs in your list are skipped automatically, so you don't need to manually de-duplicate a pasted list before generating.</p>
+    <p>Upload the file to your site root as <code>sitemap.xml</code>, then submit it in Google Search Console under Sitemaps. Invalid or duplicate URLs in your list are skipped automatically, so you don't need to manually de-duplicate a pasted list before generating. If your site is hosted on GitHub Pages, Netlify, or Vercel, see <a href="/blog/sitemap-static-sites.html">this post</a> for the specific steps each platform needs to actually serve the file at the right path.</p>
 
     <h2>What priority and changefreq actually do</h2>
     <p>Both fields are hints, not instructions — Google has said publicly that it largely ignores <code>priority</code> and treats <code>changefreq</code> as a loose signal at best, deciding crawl frequency mostly from its own observed update patterns. Setting them doesn't force different behavior, but they're still part of the sitemap spec and some other crawlers and tools do read them, so it's worth setting reasonable values rather than leaving defaults everywhere.</p>
@@ -132,6 +132,7 @@ https://example.com/blog/"></textarea>
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
           <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
           <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>

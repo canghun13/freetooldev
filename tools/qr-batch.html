@@ -100,14 +100,14 @@ https://freetooldev.com/blog/index.html"></textarea>
     <p>Each QR code is generated locally using canvas-based QR encoding — the same technique any QR generator uses, just running entirely on your device instead of a server. You can confirm nothing is uploaded by checking your browser's Network tab while a batch runs.</p>
 
     <h2>Limits</h2>
-    <p>Up to 100 items per batch. Rendering a QR code is fast per-item, but a browser tab doing hundreds of canvas draws plus building a ZIP can start to feel sluggish — 100 keeps this comfortably fast on ordinary hardware.</p>
+    <p>Up to 100 items per batch. Rendering a QR code is fast per-item, but a browser tab doing hundreds of canvas draws plus building a ZIP can start to feel sluggish — 100 keeps this comfortably fast on ordinary hardware. See <a href="/blog/bulk-qr-code-use-cases.html">this post</a> for the kinds of jobs that actually need dozens or hundreds at once rather than a single code.</p>
 
     <h2>Choosing an error correction level</h2>
     <p>Higher error correction lets a QR code still scan correctly even if part of it is damaged, dirty, or partially obscured — at the cost of a denser, more complex-looking code. For QR codes printed small or displayed on a screen, M (the default) is a reasonable balance. For codes printed on physical materials that might get scuffed, stickered over, or exposed to weather, use Q or H.</p>
 
     <h2>FAQ</h2>
     <h3>Do the generated QR codes expire or stop working?</h3>
-    <p>No. These are static QR codes — the data is encoded directly into the pattern itself, not looked up from a server. They'll scan correctly indefinitely, for as long as the destination URL itself still works. (This is different from "dynamic" QR codes some services offer, which redirect through their own server and can be edited after printing — this tool doesn't do that.)</p>
+    <p>No. These are static QR codes — the data is encoded directly into the pattern itself, not looked up from a server. They'll scan correctly indefinitely, for as long as the destination URL itself still works. (This is different from "dynamic" QR codes some services offer, which redirect through their own server and can be edited after printing — this tool doesn't do that.) See <a href="/blog/static-vs-dynamic-qr-codes.html">this post</a> for the full tradeoff between the two.</p>
     <h3>What's the difference between a URL and plain text input?</h3>
     <p>None, technically — a QR code just encodes whatever string you give it. Enter a URL to get a scannable link, or plain text (a WiFi password, a short note) to get a QR code that displays that text directly when scanned.</p>
     <h3>Why did one of my items produce a much denser QR code than the others?</h3>
@@ -132,6 +132,7 @@ https://freetooldev.com/blog/index.html"></textarea>
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
           <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
           <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>

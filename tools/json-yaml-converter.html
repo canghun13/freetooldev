@@ -105,7 +105,7 @@
     <p>YAML natively supports multiple documents in a single file or stream, separated by a line containing just <code>---</code> — a pattern common in Kubernetes manifests, Docker Compose overrides, and CI pipeline configs that bundle several related definitions in one file. When "YAML → JSON" is selected and the input contains one or more <code>---</code> separators, every document is parsed and the result is a JSON array, in the same order they appeared — a single document (no separator) converts to a plain JSON object instead, not a one-item array.</p>
 
     <h2>What actually changes between the two formats</h2>
-    <p>JSON and YAML can represent the same underlying data — objects, arrays, strings, numbers, booleans, null — but YAML adds things JSON has no equivalent for: comments (<code>#</code>), anchors and references (<code>&amp;name</code> / <code>*name</code>, for reusing a value in multiple places without repeating it), and multiple representations of the same scalar (an unquoted string, a quoted string, and a block scalar can all produce identical parsed output). Converting JSON to YAML never loses anything, since JSON is a strict subset of what YAML can express. Converting YAML to JSON can lose comments and anchor/reference structure, since JSON has no way to represent either — anchors get resolved to their expanded values in the JSON output, and comments are simply dropped.</p>
+    <p>JSON and YAML can represent the same underlying data — objects, arrays, strings, numbers, booleans, null — but YAML adds things JSON has no equivalent for: comments (<code>#</code>), anchors and references (<code>&amp;name</code> / <code>*name</code>, for reusing a value in multiple places without repeating it), and multiple representations of the same scalar (an unquoted string, a quoted string, and a block scalar can all produce identical parsed output). Converting JSON to YAML never loses anything, since JSON is a strict subset of what YAML can express. Converting YAML to JSON can lose comments and anchor/reference structure, since JSON has no way to represent either — anchors get resolved to their expanded values in the JSON output, and comments are simply dropped. See <a href="/blog/yaml-anchors-aliases.html">this post</a> for how anchors and aliases actually work before that resolution happens, and <a href="/blog/json-vs-yaml.html">this comparison</a> for the broader tradeoffs between the two formats.</p>
 
     <h2>FAQ</h2>
     <h3>Why did my YAML → JSON conversion fail with an indentation error?</h3>
@@ -135,6 +135,7 @@
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
           <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
           <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>

@@ -91,11 +91,11 @@
 
     <h2>FAQ</h2>
     <h3>Does an invalid priority or changefreq value actually hurt my SEO?</h3>
-    <p>Not directly in any severe way — Google has stated it largely ignores <code>changefreq</code> and treats <code>priority</code> as a very weak signal at best, relying on its own crawl data instead. They're still worth fixing for spec compliance and because other search engines or tools consuming your sitemap may handle them more strictly, but a wrong value here is a minor issue, not a critical one like a malformed XML file that can't be parsed at all.</p>
+    <p>See <a href="/blog/sitemap-priority-changefreq.html">this post</a> for the full answer, but the short version: not directly in any severe way — Google has stated it largely ignores <code>changefreq</code> and treats <code>priority</code> as a very weak signal at best, relying on its own crawl data instead. They're still worth fixing for spec compliance and because other search engines or tools consuming your sitemap may handle them more strictly, but a wrong value here is a minor issue, not a critical one like a malformed XML file that can't be parsed at all.</p>
     <h3>My sitemap uses relative URLs and Google still seems to index my pages — is that actually a problem?</h3>
     <p>It's a spec violation, and behavior on non-conformant sitemaps isn't guaranteed to be consistent across every crawler or every situation. Some crawlers may resolve a relative URL against the sitemap's own location and get it right by luck; the safe fix is always absolute URLs, since that's what the spec actually requires.</p>
     <h3>Can this validate a sitemap index file that references other sitemaps?</h3>
-    <p>It checks the XML structure and tag validity of whatever you paste in, including a sitemap index's <code>&lt;sitemapindex&gt;</code>/<code>&lt;sitemap&gt;</code> structure — but since this tool works from pasted text rather than fetching URLs, it won't automatically follow references to the child sitemaps; paste each one in separately (as its own block) to validate them all.</p>
+    <p>It checks the XML structure and tag validity of whatever you paste in, including a sitemap index's <code>&lt;sitemapindex&gt;</code>/<code>&lt;sitemap&gt;</code> structure — but since this tool works from pasted text rather than fetching URLs, it won't automatically follow references to the child sitemaps; paste each one in separately (as its own block) to validate them all. See <a href="/blog/sitemap-index-files.html">this post</a> for when a site actually needs an index file rather than one plain sitemap.</p>
   </div>
 </section>
 
@@ -117,6 +117,7 @@
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
           <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
           <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>

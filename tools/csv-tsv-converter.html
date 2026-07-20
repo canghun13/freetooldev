@@ -91,14 +91,14 @@ Alex,Engineer,"Handles ""tricky"" cases, mostly"'></textarea>
 <section class="section-navy">
   <div class="wrap prose" style="max-width:720px;">
     <h2>Why this isn't just swapping commas for tabs</h2>
-    <p>A naive comma-to-tab replace breaks the moment a field legitimately contains a comma inside quotes — <code>"Smith, John"</code> as a single quoted value would get split into two fields by a blind replace, silently corrupting the row. Correct conversion means actually parsing the structure — respecting quoted fields, doubled quotes as an escaped literal quote (<code>""</code> → <code>"</code>), and embedded newlines inside a quoted field — then re-serializing with the new delimiter, quoting a field again only if it now contains the new delimiter, a quote character, or a newline.</p>
+    <p>A naive comma-to-tab replace breaks the moment a field legitimately contains a comma inside quotes — <code>"Smith, John"</code> as a single quoted value would get split into two fields by a blind replace, silently corrupting the row. Correct conversion means actually parsing the structure — respecting quoted fields, doubled quotes as an escaped literal quote (<code>""</code> → <code>"</code>), and embedded newlines inside a quoted field — then re-serializing with the new delimiter, quoting a field again only if it now contains the new delimiter, a quote character, or a newline. See <a href="/blog/csv-vs-tsv.html">this post</a> for when picking TSV over CSV in the first place actually matters.</p>
 
     <h2>Why TSV usually needs less quoting than CSV</h2>
     <p>Commas show up constantly in ordinary text — "Smith, John", "$1,200", "red, white, and blue" — so CSV fields need quoting often. Tabs almost never appear in typed or pasted text, so TSV output frequently doesn't need to quote fields at all, which is part of why some tools and spreadsheet paste operations default to TSV internally — it's often more readable as raw text, with visible tab characters instead of a wall of quotation marks.</p>
 
     <h2>FAQ</h2>
     <h3>Why do numbers with leading zeros or long ID strings look wrong after opening the output in Excel?</h3>
-    <p>This is an Excel behavior, not a conversion problem — Excel auto-detects numeric-looking columns and strips leading zeros or converts long digit strings to scientific notation when you open a plain CSV/TSV file directly. Import the file through Excel's Data → From Text/CSV wizard instead of double-clicking it, and set the affected column's type to Text during import to preserve it exactly as generated.</p>
+    <p>This is an Excel behavior, not a conversion problem — Excel auto-detects numeric-looking columns and strips leading zeros or converts long digit strings to scientific notation when you open a plain CSV/TSV file directly. Import the file through Excel's Data → From Text/CSV wizard instead of double-clicking it, and set the affected column's type to Text during import to preserve it exactly as generated. <a href="/blog/excel-csv-number-mangling.html">This post</a> covers the other common ways Excel silently rewrites values on open, not just this one.</p>
     <h3>Does this handle files with a header row differently from data rows?</h3>
     <p>No — every row, including the first, is parsed and re-delimited the same way. If your file has a header row, it converts along with the rest; there's no special handling that assumes or requires one.</p>
     <h3>Is my data sent anywhere?</h3>
@@ -124,6 +124,7 @@ Alex,Engineer,"Handles ""tricky"" cases, mostly"'></textarea>
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
           <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
           <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>

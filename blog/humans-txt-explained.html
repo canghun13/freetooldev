@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is humans.txt? The File That's Not for Search Engines at All — FreeToolDev</title>
+<meta name="description" content="humans.txt isn't read by crawlers or AI models — it's a plain-text credits file for the rare human who checks. The format, the history, and whether it's worth adding.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/humans-txt-explained.html">
+<meta property="og:title" content="What Is humans.txt? The File That's Not for Search Engines at All — FreeToolDev">
+<meta property="og:description" content="humans.txt isn't read by crawlers or AI models — it's a plain-text credits file for the rare human who checks. The format, the history, and whether it's worth adding.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="What Is humans.txt? The File That's Not for Search Engines at All — FreeToolDev">
+<meta name="twitter:description" content="humans.txt isn't read by crawlers or AI models — it's a plain-text credits file for the rare human who checks. The format, the history, and whether it's worth adding.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/humans-txt-explained.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 20, 2026</div>
+  <h1>What Is humans.txt? The File That's Not for Search Engines at All</h1>
+
+  <p>Most files sitting at a site's root exist for a machine: robots.txt for crawlers, sitemap.xml for search engines, llms.txt for AI models. humans.txt breaks that pattern on purpose — it's a plain-text file, at the same kind of predictable location, written for the one category of visitor none of the other files address: an actual person who goes looking.</p>
+
+  <h2>Where it came from</h2>
+  <p>The convention dates back to around 2011, published at humanstxt.org, with a simple pitch: websites are built by people, but almost nothing about a typical page says who. A humans.txt file at <code>yoursite.com/humans.txt</code> fixes that with a few lines of plain text — no build step, no CMS plugin, just a file. It never became an official standard the way robots.txt effectively has, but it picked up enough adoption among agencies, personal sites, and open-source projects that it's still recognizable today, even if most visitors have never heard of it.</p>
+
+  <h2>What's actually in one</h2>
+  <p>The loose convention groups content into a few named sections, each wrapped in a comment-style header:</p>
+  <ul>
+    <li><strong>/* TEAM */</strong> — who worked on the site: role, name, and optionally a contact or location for each person.</li>
+    <li><strong>/* THANKS */</strong> — people, projects, or open-source libraries the team wants to credit without giving them a full team entry.</li>
+    <li><strong>/* SITE */</strong> — technical details about the build itself: last update date, standards used (HTML5, CSS3), components or frameworks, and the software the team built it with.</li>
+    <li><strong>/* NOTE */</strong> — anything else, usually a short personal line.</li>
+  </ul>
+  <p>None of these are enforced by a spec in any strict sense — it's closer to a widely-recognized template than a validated format, which is part of why it's stayed so simple for over a decade.</p>
+
+  <h2>Who actually reads it</h2>
+  <p>Realistically: other developers who know the convention exists and check out of curiosity, a handful of browser extensions built specifically to surface humans.txt files, and occasionally a recruiter or client doing due diligence on who built a site. It is not fetched by Googlebot, not parsed by ChatGPT or Claude when they visit a page, and has no mechanism for influencing search rankings or AI answers — that's the clearest way to tell it apart from robots.txt or llms.txt, both of which exist specifically because an automated system reads them.</p>
+
+  <h2>Is it worth adding?</h2>
+  <p>As a ranking or visibility lever, no — treat that expectation as settled. As a low-cost way to put a name on work that would otherwise go uncredited — a freelancer's site, a small agency's client project, a personal build — it costs a few minutes and a handful of lines. Whether that's worth doing is closer to a personal or team preference than a technical decision.</p>
+
+  <h2>Generate one</h2>
+  <p>FreeToolDev's <a href="/tools/humans-txt-generator.html">humans.txt generator</a> turns a short list of team members, credits, and a few site details into a properly formatted file — free, no email required, generated entirely in your browser.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

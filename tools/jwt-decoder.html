@@ -81,7 +81,7 @@
 
     <h2>FAQ</h2>
     <h3>Is it safe to paste a live, valid token here?</h3>
-    <p>Decoding itself never leaves your browser — you can confirm this in your Network tab. That said, treat any tool (including this one) with caution for tokens carrying real permissions: the safest habit is to test with expired or throwaway tokens where possible, and to check the network tab yourself rather than take any tool's word for it.</p>
+    <p>Decoding itself never leaves your browser — you can confirm this in your Network tab. That said, treat any tool (including this one) with caution for tokens carrying real permissions: the safest habit is to test with expired or throwaway tokens where possible, and to check the network tab yourself rather than take any tool's word for it. See <a href="/blog/debug-jwt-base64-locally.html">this post</a> for how to decode a token entirely offline, without even a browser tool, when that's not caution enough.</p>
     <h3>Why does the "alg" in the header matter?</h3>
     <p>It tells you which algorithm was used to sign the token (e.g. HS256, RS256). A known and historically serious JWT vulnerability involves attackers changing this field to <code>none</code> or manipulating algorithm confusion between symmetric and asymmetric schemes — if you're implementing JWT verification yourself, never trust the <code>alg</code> field from the token to decide how to verify it; pin the expected algorithm in your verification code instead.</p>
     <h3>What if a line isn't a valid JWT?</h3>
@@ -108,6 +108,7 @@
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
           <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
           <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>

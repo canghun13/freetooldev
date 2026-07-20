@@ -124,7 +124,7 @@ cloudflare.com"></textarea>
     <h3>Why is DNS propagation sometimes slow after I change a record?</h3>
     <p>DNS records are cached at multiple layers (your router, your ISP, public resolvers) for a duration set by that record's TTL. A change you make at your registrar won't be visible everywhere until every cache holding the old value expires, which is why the same lookup can return different results depending on where it's run from.</p>
     <h3>Why did my SSL check fail or time out?</h3>
-    <p>The SSL check depends on crt.sh, a free public service that isn't always perfectly reliable — it can time out or briefly return a server error even for an ordinary, unremarkable domain. This is on crt.sh's end, not a sign the domain itself has a problem. Waiting a few seconds and retrying almost always resolves it.</p>
+    <p>The SSL check depends on crt.sh, a free public service that isn't always perfectly reliable — it can time out or briefly return a server error even for an ordinary, unremarkable domain. This is on crt.sh's end, not a sign the domain itself has a problem. Waiting a few seconds and retrying almost always resolves it. See <a href="/blog/ssl-expiry-monitoring-free.html">this post</a> for a routine you can use to track expiry across many domains without a paid monitoring service.</p>
     <h3>Is there a limit on how many domains I can run through this bulk DNS lookup at once?</h3>
     <p>There's no hard cap enforced by this tool for A/AAAA/MX/TXT/NS lookups — paste as many domains as you need, one per line. SSL Expiry checks are queued two at a time to stay polite to crt.sh's free service, so a large batch of SSL checks takes proportionally longer than the same batch of DNS record lookups.</p>
   </div>
@@ -148,6 +148,7 @@ cloudflare.com"></textarea>
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
           <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
           <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>

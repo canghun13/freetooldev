@@ -1,6 +1,6 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-07-18 (같은 날 2차 세션 — 신규 툴 Bulk JSON Validator & Formatter + 블로그 2개 추가. 다국어 확장은 사용자가 보류 확정)
+마지막 업데이트: 2026-07-20 (일요일 작업 세션 — 신규 툴 Humans.txt Generator + 블로그 2개 추가, 고아 페이지 내부링크 25개 전량 해소)
 
 ---
 
@@ -37,7 +37,7 @@
 
 ---
 
-## 3. 사이트 구조 (전체 파일, 2026-07-18 2차 세션 기준 60개)
+## 3. 사이트 구조 (전체 파일, 2026-07-20 세션 기준 63개)
 
 ```
 /
@@ -53,9 +53,10 @@
 │   ├── css/style.css           디자인 시스템 전부 여기
 │   ├── js/nav-behavior.js      헤더/푸터는 정적 HTML, 이 JS는 모바일메뉴/연도/활성링크만 처리
 │   └── img/                    favicon.svg, apple-touch-icon.png, og-image.png(신규) 등
-├── tools/                      19개, index.html은 검색/필터 포함 목록
-└── blog/                       35개, index.html은 목록
+├── tools/                      20개, index.html은 검색/필터 포함 목록
+└── blog/                       37개, index.html은 목록
 ```
+**카운트 정합성 검증 완료(2026-07-20)**: tools/index.html 그리드 카드 수=20=footer 링크 기준 tools/ 파일 수, homepage 그리드=20, blog/index.html 카드 수=37=blog/ 파일 수, sitemap.xml `<url>` 개수=63=전체 html 파일 수, llms.txt 항목 수도 전부 일치. python 스크립트로 전 파일 내부링크 스캔해서 끊긴 링크 0건 확인, 신규/수정된 모든 `<script>` 블록 node --check 통과.
 
 **중요 — 헤더/푸터 구조**: `include.js`는 삭제됨, 전부 **정적 HTML로 하드코딩**. 새 페이지/툴/블로그 추가할 때마다 헤더/푸터를 모든 페이지에 반복 삽입 필요. footer의 "Tools" 링크 목록도 전체 페이지에 일괄 반영 필요 (python find-replace 스크립트로 처리, 누락 없는지 `grep -L`로 재확인). `nav-behavior.js`는 모바일 메뉴 토글, 연도, 활성 링크 하이라이트만 담당.
 
@@ -93,6 +94,7 @@
 | **(신규) Bulk Sitemap Validator** | `tools/sitemap-validator.html` | 검증완료(jsdom으로 7개 케이스 테스트: 정상/상대경로/우선순위범위초과/changefreq오류/loc누락/중복URL/XML파싱오류/sitemapindex) | 여러 sitemap.xml을 `-----` 구분선으로 붙여넣어 한번에 검증. DOMParser(브라우저 내장)로 XML 파싱, 외부 라이브러리 없음. Sitemap Protocol 스펙 기준 검사(well-formed XML/절대경로/priority 0.0-1.0/changefreq 7개값/lastmod 날짜형식/중복URL/50000개 한도/sitemapindex 구조). **경쟁사는 전부 "URL 1개 입력→서버fetch" 방식인데 우리는 여러 개 붙여넣기 배치 검증으로 차별화, CORS 문제 자체가 없음(URL fetch 안 하니까)** |
 | robots.txt Generator | `tools/robots-txt-generator.html` | 검증완료 | Disallow/Allow/Sitemap 라인 + GPTBot/ClaudeBot/Google-Extended 등 AI 크롤러 개별 차단 체크박스 |
 | llms.txt Generator | `tools/llms-txt-generator.html` | 검증완료 | `섹션 \| 제목 \| URL \| 설명` 포맷 파싱 → 카테고리별 마크다운 인덱스 생성 |
+| **(신규, 2026-07-20) Humans.txt Generator** | `tools/humans-txt-generator.html` | 검증완료(node로 생성 로직 3케이스 테스트: 전체입력/최소입력(이름만)/빈입력) | `Role \| Name \| Contact \| Location` 파이프 포맷으로 팀원 여러 명 한 번에 입력 → humanstxt.org 스펙 형식(`/* TEAM */`, `/* THANKS */`, `/* SITE */`, `/* NOTE */`) 텍스트 생성. 외부 라이브러리 없음. **차별화 포인트: 경쟁사(rushax.com, rankplusplus.com, beewits 등)는 이메일 발송 방식이거나 URL을 서버에 넣어야 하는 방식인데, 우리는 즉시 브라우저에서 생성+복사/다운로드, 이메일·가입 불필요.** robots.txt/llms.txt Generator와 함께 "사이트 루트의 3종 텍스트 파일" 세트를 완성 — 상호 링크로 토픽 클러스터 형성 |
 | **(신규) Bulk Heading Structure Checker** | `tools/heading-structure-checker.html` | 검증완료(jsdom으로 실제 파싱/계층분석 로직 6개 케이스 테스트) | 여러 페이지 HTML을 `-----` 구분선으로 붙여넣어 한번에 H1-H6 계층 체크. DOMParser(브라우저 내장) 사용, 외부 라이브러리 없음. Missing H1/Multiple H1/Skipped level/Empty heading 4종 검사. **경쟁사는 전부 "URL 1개 입력" 방식인데 우리는 여러 페이지 동시 배치 체크로 차별화** |
 | IP/DNS/SSL Bulk Lookup | `tools/ip-dns-ssl.html` | 검증완료 | DNS는 Google DoH, SSL은 Worker→crt.sh 경유. SSL 큐잉 동시 2개 제한. 페이지 최상단 "내 현재 IP" 카드(`api.ipify.org`) 포함 |
 | Site Crawler & Audit | `tools/site-crawler.html` | 검증완료 | Worker `/crawl` 호출, 최대 40페이지, sitemap/rss/llms.txt 동시생성+깨진링크+메타태그 체크 |
@@ -114,7 +116,9 @@
 - **결론: 순수 "경쟁 없는 아이디어" 기준은 더 이상 안 나옴.** "포화됐어도 브랜드에 맞고 빠르게 만들 수 있는 것" 기준으로 계속 운영 중이며, 카테고리 자체를 넓히는 것도 유효한 확장 축으로 확인됨. **다만 최근 세션들에서 확인된 패턴: 경쟁사가 전부 "단일 항목" 처리인데 우리만 "배치/여러개 동시" 처리를 제공할 수 있는 후보가 채택 성공률이 훨씬 높음** (SVG Optimizer, Heading Checker, Sitemap Validator 전부 이 패턴). 앞으로 신규 후보 검토 시 이 차별화 포인트를 먼저 확인할 것 — **"이미 만든 대기 후보"라도 이 필터로 재검토해서 탈락시킬 수 있음**(2026-07-16 세션에서 실제로 3개 탈락시킴), 오래됐다고 자동으로 만들지 말 것.
 - 8차(2026-07-18 세션, "공격적으로 확장" 지시 — 사용자가 경쟁 있어도 롱테일로 피해서 진행하라고 명확히 지시함): Hash Generator, Timestamp Converter, robots.txt Tester(다중 URL), Cron Expression Parser(crontab 배치), JSON Validator 5개 후보를 웹 검색으로 검토. **5개 전부 "경쟁사가 이미 배치/다중 처리를 지원"하는 상태라 기존 "경쟁사는 단일 처리" 필터로는 하나도 통과 못 함** — 이 필터가 사실상 소진됐음을 재확인. 사용자 지시대로 "경쟁 존재를 인정하고 롱테일 포지셔닝으로 승부" 방침으로 전환해서 **Bulk JSON Validator & Formatter**를 채택함 — 근거는 "배치 자체"가 아니라 "파일 업로드 없이 텍스트 붙여넣기만으로 배치 처리"라는 포지셔닝(경쟁사 다수가 파일 업로드 방식이라 우리 브랜드의 "no-upload" 정체성과 자연스럽게 결합되는 지점). 기존 CSV-to-JSON·JSON-YAML Converter와 동일 사용자층 공유. **패턴 갱신: "경쟁사는 단일처리, 우리는 배치" 필터가 막히면 "경쟁사는 파일업로드 필요, 우리는 텍스트 붙여넣기만으로 가능(no-upload 브랜드 정체성)" 필터를 2차 대안으로 쓸 것.**
 
-**대기 중인 신규 툴 후보**: 없음 (8차 세션 결과 JSON Validator 채택 후 소진). 다음 신규 후보는 "배치 차별화 필터" 우선, 막히면 "no-upload 차별화 필터"(위 8차 참고)로 새로 찾을 것.
+- 9차(2026-07-20 세션, GSC에서 "humans txt generator" 1노출 신규 키워드 발견 → 리서치): 웹 검색 결과 rushax.com/rankplusplus.com/beewits.com 등 기존 생성기 다수 존재하지만 이메일 발송 방식이거나 URL을 서버에 제출해야 하는 방식 — "no-upload 차별화 필터"(8차 패턴)로 채택 가능. 볼륨 자체는 1노출로 약한 신호지만, (1) robots.txt/llms.txt Generator와 자연스러운 "사이트 루트 3종 텍스트 파일" 세트를 완성해 토픽 클러스터 형성에 유리하고 (2) 제작 난이도가 매우 낮고 (3) 9번 원칙(수익화 국면엔 포화 여부보다 페이지 총량이 우선) 기준에 부합해 채택함.
+
+**대기 중인 신규 툴 후보**: 없음 (9차 세션 결과 Humans.txt Generator 채택 후 소진). 다음 신규 후보는 "배치 차별화 필터" 우선, 막히면 "no-upload 차별화 필터"(8차 참고)로 새로 찾을 것.
 
 ---
 
@@ -129,15 +133,15 @@
 
 ---
 
-## 7. 블로그 현황 (35개)
+## 7. 블로그 현황 (37개)
 
-**툴별 커버리지 (2026-07-18 2차 세션 기준, 19개 툴 전부 최소 2개 이상)**:
+**툴별 커버리지 (2026-07-20 세션 기준, 20개 툴 전부 최소 2개 이상)**:
 
 | 툴 | 개수 |
 |---|---|
 | image-batch, rss-generator, site-crawler | 3 |
 | base64, jwt-decoder, csv-to-json, ip-dns-ssl, qr-batch, sitemap-generator, barcode-batch, url-encoder, json-yaml-converter, csv-tsv-converter, svg-optimizer, heading-structure-checker, sitemap-validator, json-validator | 2 |
-| robots-txt-generator, llms-txt-generator | 1개씩 전용 + "robots.txt vs llms.txt" 비교글 1개 공유 = 사실상 2개씩 |
+| robots-txt-generator, llms-txt-generator, humans-txt-generator | 1개씩 전용 + "robots.txt vs llms.txt vs humans.txt" 3자비교 1개 공유 = 사실상 2개씩 |
 
 **2026-07-07 세션 이전 (13개)**: jwt-claims-explained, find-broken-links-free-tool, rss-generator-no-account, free-alternative-screaming-frog, rss-for-automation, bulk-qr-code-use-cases, ssl-expiry-monitoring-free, csv-encoding-gibberish, sitemap-static-sites, debug-jwt-base64-locally, webp-vs-avif-2026, no-upload-image-compression, batch-vs-ai-image-convert
 
@@ -157,7 +161,11 @@
 
 **2026-07-18 세션 2차 추가 (2개, 신규 툴 1개 세트)**: json-syntax-errors-explained(문제해결형 — JSON이 JS 문법을 거부하는 이유 6가지), json-validator-no-upload(비교분석형 — 파일업로드 vs 브라우저전용 JSON 툴, 민감데이터 다룰 때 실질적 차이)
 
+**2026-07-20 세션 추가 (2개, 신규 툴 1개 세트)**: humans-txt-explained(문제해결형 — humans.txt가 뭐고 왜 크롤러/AI가 안 읽는지, 언제 추가할 가치가 있는지), robots-llms-humans-txt-compared(비교분석형 — robots.txt/llms.txt/humans.txt 3개 파일을 독자·역할·SEO영향 기준으로 나란히 비교하는 표 포함, 기존 robots-txt-vs-llms-txt 글에서도 상호링크 추가)
+
 **참고**: jwt-claims-explained는 신규 작성이 아니라 2026-07-16 1차 세션에서 대폭 보강됨(RFC 7519 registered/public/private 용어 섹션 추가, 500→1157단어) — 8번 참고.
+
+**(신규, 2026-07-20) 고아 페이지(본문 내부링크 0건) 25개 전량 해소**: 2026-07-18 세션에서 4개만 처리하고 "잔여 23개"로 남겨뒀던 과제(실측 재검사 결과 25개)를 이번 세션에서 전부 처리함. 방식은 기존 패턴(예: rss-generator.html의 "See this post for..." 인라인 링크) 그대로 유지 — 별도 "관련 글" 블록을 새로 만들지 않고, 각 블로그의 진짜 컴패니언 툴 페이지의 기존 FAQ/본문 문단에 자연스러운 한 문장을 추가하는 방식으로 11개 툴 페이지(csv-to-json, csv-tsv-converter, url-encoder, svg-optimizer, json-yaml-converter, image-batch, barcode-batch, qr-batch, robots-txt-generator, sitemap-generator, sitemap-validator, heading-structure-checker, jwt-decoder, ip-dns-ssl)를 편집. python 스크립트로 헤더/푸터를 제외한 본문 링크만 집계해서 처리 전/후 고아 페이지 수를 직접 검증(25→0). 이 작업이 Coverage의 "발견됨-미색인" 문제 완화에도 도움될 수 있음(12번 다음할일 참고).
 
 ---
 
@@ -171,6 +179,16 @@
 | 2026-07-13 | 3 | 498 (+18%) | 18개 |
 | 2026-07-16 | 3 | 869 (+75%) | 20개 |
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
+| 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
+
+**2026-07-20 세션 — 데이터 재확인 및 조치 사항**:
+
+- **전체 지표**: 총 클릭 4건으로 7/18과 동일 — 신규 클릭 발생 없음. 노출은 1149→1111로 소폭 하락했지만 GSC 원본 일별 데이터가 7/17까지만 채워져 있어(2~3일 처리 지연은 정상) 실제 하락이라기보다 아직 집계 안 된 최근 며칠분 차이로 판단, 유의미한 추세 변화 아님.
+- **페이지별**: `rss-generator.html` 271→276(+2%, 클릭 2 유지), `free-alternative-screaming-frog.html` 452→477(+5.5%, 클릭 여전히 0), `jwt-claims-explained.html` 142→149(+5%, 클릭 여전히 0). 셋 다 완만한 노출 증가 + 클릭 정체라는 기존 패턴 네 번째 스냅샷째 재확인 — **콘텐츠 문제가 아니라 백링크/도메인 권위 문제라는 결론 그대로 유지, 추가 콘텐츠 조치 안 함.**
+- **Coverage**: "발견됨-미색인" 17페이지로 완전히 그대로(7/16부터 4개 스냅샷 연속 17로 고정 — 늘지도 줄지도 않음), "리디렉션 포함 페이지" 3건 그대로, "적절한 표준 태그 대체 페이지" 1건 그대로(정상 동작, 오류 아님). **신규 색인 문제 없음.**
+- **새 키워드 신호 — "humans txt generator"(1노출)**: 이번 세션 신규 등장. 웹 검색으로 경쟁강도 확인 후 Humans.txt Generator 신규 채택(5번 9차 참고) — robots.txt/llms.txt Generator와 "사이트 루트 3종 파일" 클러스터를 완성하는 전략적 가치가 볼륨보다 큰 판단 근거.
+- **고아 페이지 내부링크**: 1-3번 다음할일로 남아있던 잔여 23개(실측 25개) 전량 해소 — 7번 참고.
+- **AdSense 신청 타이밍 능동 체크**: 클릭 여전히 4건 정체(3세션 연속 사실상 변화 없음), 순위도 대부분 50~90위권 그대로 — **여전히 명확히 시기상조, 신청 제안 안 함.** 다음 신호가 나올 때까지(일일 클릭 두 자릿수대 또는 페이지 다수가 30위권 진입) 계속 관찰.
 
 **2026-07-18 세션 — 데이터 재확인 및 조치 사항**:
 
@@ -206,6 +224,7 @@
   - **(2026-07-13 세션, 신청 타이밍 원칙 확정)** 콘텐츠 품질은 문제없음 — 매 글 500~700단어대(실측 확인함), 문제해결 구조(왜 생기는지→어떻게 진단하는지→어떻게 고치는지)로 매번 원본으로 작성 중이라 "가치없는 콘텐츠"로 분류될 요소 없음. **신청을 미루는 이유는 콘텐츠가 아니라 순수 트래픽 문제.** 지금(2026-07-13 기준) GSC 총 클릭 3건 — 이 상태로 신청하면 심사관이 판단할 데이터 자체가 없어서 보류/거절 확률이 높고, 재신청 대기기간이 생기는 게 더 손해. 과거 제휴(Vercel 등) 신청도 트래픽 부족으로 거절된 전례 있음(10번 참고). **Claude는 매 세션 GSC/GA 데이터를 볼 때마다 "지금 신청해도 될 만한 타이밍인가"를 판단해서, 됐다고 판단되면 먼저 "지금 신청하세요"라고 사용자에게 제안할 것.** 사용자가 판단해서 물어보길 기다리지 말 것 — 이건 Claude가 데이터 보고 능동적으로 챙겨야 하는 항목. 참고할 만한 신호: 일일 클릭이 꾸준히 두 자릿수대로 붙기 시작, GSC 순위가 유의미하게(30위권 이내로) 오르기 시작, 또는 페이지 수/사이트 운영기간이 업계 통상 권장 수준(보통 20~30페이지 이상, 운영 몇 주~몇 달)에 도달 등.
   - **(2026-07-16 세션, 능동 체크 결과)** 총 클릭이 7/13→7/16 사흘간 3건에서 그대로 정체(노출은 498→869로 +75% 늘었는데 클릭 전환은 없음). "신청해도 될 만한 신호"(일일 클릭 두 자릿수대, 순위 30위권 진입) 둘 다 아직 미달 — **아직 시기상조로 판단, 신청 제안 안 함.** 다음 스냅샷에서 클릭 추이 계속 볼 것.
   - **(2026-07-18 세션, 능동 체크 결과)** 총 클릭 3→4(+1), 노출 869→1149(+32%). 클릭이 여전히 한 자릿수 초반대에서 거의 안 움직임 — "일일 클릭 두 자릿수대" 기준 크게 미달. 페이지 레벨 순위도 홈(7.75위)·`rss-for-automation.html`(33.88위) 정도만 30위권 근처고 나머지 대부분 50~90위권 — "순위 30위권 진입" 기준도 아직 폭넓게 달성 안 됨. **여전히 시기상조로 판단, 신청 제안 안 함.** 이번 세션 조치(RSS/DNS/llms.txt 보강)가 다음 스냅샷 클릭에 영향 있는지 추적할 것.
+  - **(2026-07-20 세션, 능동 체크 결과)** 총 클릭 4건, 7/18과 완전히 동일 — 이번엔 신규 클릭 자체가 0. 순위 분포도 대부분 그대로 50~90위권. **명확히 시기상조, 신청 제안 안 함.** 3개 스냅샷 연속(7/16→7/18→7/20) 클릭이 3~4건에서 사실상 고정되어 있는 상태 — 콘텐츠/보강보다 백링크·도메인 권위 축적이 이 정체를 풀 핵심 변수라는 기존 판단이 계속 재확인되는 중.
 - **제휴(Vercel/Netlify/DigitalOcean/JetBrains/Cloudflare)**: 1차 시도 → 트래픽 부족으로 거절됨. 트래픽 쌓인 뒤 재신청 예정
 
 ---
@@ -276,12 +295,11 @@
 
 0. **(2026-07-18 세션에서 사용자가 확정) 다국어 페이지는 진행 안 함.** 노르웨이/독일/네덜란드는 영어 구사력이 높은 국가라 번역 없이 지금처럼 영어로 계속 가는 것으로 사용자가 직접 결정함 — 이 항목은 종결, 재검토 불필요.
 1. **대기 중인 신규 툴 후보 없음** — 다음 후보는 "배치 차별화 필터", 막히면 "no-upload 차별화 필터"(5번 8차 세션 참고)로 새로 찾을 것.
-1-1. **(신규, 2026-07-18) `tools/json-validator.html` 클릭/노출 추적 시작할 것** — 신규 툴이라 아직 GSC 데이터 없음, 다음 스냅샷부터 확인.
-1-2. **(2026-07-18 세션 3차에서 해결 완료)** `llms.txt`와 홈페이지 featured 그리드가 오래전부터 갱신 누락되고 있던 문제를 같은 세션에서 마저 처리함. llms.txt는 각 페이지의 실제 title/description을 스크립트로 추출해서 19개 툴+35개 블로그 전체 재생성(순서는 tools/index.html·blog/index.html 노출 순서 따름). 홈페이지 "Every tool, built for batches" 섹션도 9개→19개 전체로 확장(카피가 "모든 툴"이라고 써놓고 실제론 절반만 보여주고 있던 상태였음). 둘 다 내부링크 스캔/HTML 밸런스 검증 통과 후 push 완료. **앞으로 새 툴 추가 시 체크리스트에 "llms.txt·홈페이지 featured 그리드"도 포함할 것** — footer 링크는 스크립트로 일괄 처리하는 습관이 있었지만 이 두 곳은 누락되기 쉬움.
-1-3. **(신규, 2026-07-18 세션 4차 — 내부링크 그래프 분석 결과)** footer(전 페이지 공통이라 신호 아님) 제외하고 본문 내 링크만 집계해보니 **블로그 27개가 blog/index.html 목록 카드 1개 말고는 사이트 어디서도 링크를 못 받는 사실상 고아 페이지 상태**였음. 이번 세션엔 우선순위 가장 높은 4곳(free-alternative-screaming-frog — 노출 452인데 완전 고아였음, dns-records-explained, rss-generator-no-account, rss-for-automation)에만 자연스러운 위치를 찾아 링크 추가함. **나머지 23개 블로그도 같은 문제 있음 — 다음 세션에서 시간 될 때 관련 툴 페이지나 다른 블로그 글에서 자연스러운 자리를 찾아 순차적으로 링크 추가할 것.** 이 작업 자체가 Coverage의 "발견됨-미색인" 문제 완화에 도움될 수 있음(내부링크 깊이/권위 신호가 크롤 우선순위에 영향).
+1-1. **(신규, 2026-07-20) `tools/humans-txt-generator.html` 클릭/노출 추적 시작할 것** — 신규 툴이라 아직 GSC 데이터 없음, 다음 스냅샷부터 확인. `tools/json-validator.html`도 7/18 추가 이후 아직 노출 자체가 안 잡히는 상태(7/20 스냅샷 페이지 목록에도 미등장) — 계속 관찰.
+1-2. **(2026-07-20 세션에서 완전히 해결)** 내부링크 고아 페이지 문제 — 1-3 항목에서 "잔여 23개"로 남아있던 것을 이번 세션에서 실측 재검사(25개로 확인) 후 전량 해소함(7번 참고). **이 항목은 종결.** 다만 앞으로 새 블로그 글을 추가할 때마다 관련 툴 페이지 본문에 링크를 심는 걸 그때그때 같이 처리해서, 다시 누적되지 않게 할 것 — 신규 툴 체크리스트에 "컴패니언 블로그 2개 → 해당 툴 페이지 FAQ/본문에서 반드시 상호링크" 항목 포함.
 2. 메타태그(title/description) 길이 체커는 서버사이드 fetch가 필요해서 보류 중 — Worker에 새 엔드포인트(`GET /meta?url=`) 추가할 의향이 있으면 재검토 가능.
 3. 매 세션 GA/Search Console 데이터 받으면 이전 스냅샷과 비교 → 변화율 기준으로 신규/보강 여부 재판단 (8번 참고). 신규 결정 전 중복 체크 + 웹 키워드 경쟁강도 확인 필수. 신호가 확실히 잡힌 기존 페이지가 있으면 신규 글보다 그 페이지 보강을 먼저 검토할 것(2026-07-16 jwt-claims-explained, 2026-07-18 rss-generator/ip-dns-ssl/llms-txt-generator 사례 참고).
-3-1. **(신규, 2026-07-18) 다음 스냅샷에서 이번 세션 보강 효과 추적할 것**: `tools/rss-generator.html`(generator/creator/builder/maker 비교 섹션), `tools/ip-dns-ssl.html`(NS 레코드 섹션 + bulk FAQ), `tools/llms-txt-generator.html`(llm.txt vs llms.txt FAQ) 3개 페이지 클릭/순위 변화 확인.
+3-1. **(2026-07-20 세션 확인 결과)** 7/18 세션에서 보강한 3개 페이지(rss-generator/ip-dns-ssl/llms-txt-generator)는 이번 스냅샷에서 노출이 완만히 늘긴 했으나(rss-generator +2%) 클릭 전환에는 아직 뚜렷한 변화 없음 — GSC 반영에 시간이 더 걸릴 수 있어 다음 스냅샷도 계속 볼 것.
 4. **툴 카테고리 자체를 넓히는 것도 유효한 확장 축.** 지금은 Encode/Decode·SEO·Network·Media(이미지+SVG)·Data(포맷변환) 5개 카테고리. 신규 후보 검토 시 "경쟁사가 단일 항목 처리인데 우리만 배치 처리 가능한가"를 최우선 필터로 쓸 것 (11번 18항 참고).
 5. rss-generator / free-alternative-screaming-frog 두 클러스터는 계속 관찰 — 순위가 유의미하게 오르기 시작하면 콘텐츠 심화로 전환 검토, 그렇지 않으면 백링크/권위 축적이 우선.
 6. **디렉토리 백링크는 당분간 중단 상태 유지** (10-4 원칙) — 사용자가 다시 명시적으로 요청할 때만 재개.

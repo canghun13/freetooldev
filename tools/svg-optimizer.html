@@ -117,13 +117,13 @@
     <p><code>&lt;title&gt;</code> and <code>&lt;desc&gt;</code> elements, along with <code>aria-*</code> and <code>role</code> attributes, give an SVG an accessible name and description for screen readers — they cost a few bytes and provide real value, unlike genuinely inert editor metadata. This tool leaves them alone by default; the option to strip them too exists for cases where the SVG is a purely decorative background image with <code>aria-hidden="true"</code> already set elsewhere, where they add nothing.</p>
 
     <h2>How much this typically saves</h2>
-    <p>SVGs exported directly from Illustrator or Figma commonly shrink 40–80% after this kind of cleanup — the exact number depends heavily on how complex the original paths are and how much editor metadata the exporting tool included. Simple icons with already-clean markup (hand-written or previously optimized) see much smaller reductions, since there's less bloat left to remove.</p>
+    <p>SVGs exported directly from Illustrator or Figma commonly shrink 40–80% after this kind of cleanup — the exact number depends heavily on how complex the original paths are and how much editor metadata the exporting tool included. Simple icons with already-clean markup (hand-written or previously optimized) see much smaller reductions, since there's less bloat left to remove. See <a href="/blog/svg-export-bloat.html">this post</a> for exactly what each design tool adds to an export and why.</p>
 
     <h2>FAQ</h2>
     <h3>Will rounding coordinate precision make my SVG look different?</h3>
     <p>At 2 decimal places (the default), no — sub-hundredth-of-a-pixel differences aren't visible on any current display. Going down to 1 decimal place can occasionally introduce a barely perceptible shift on very large, zoomed-in graphics with fine detail; if you're optimizing something like a detailed illustration meant to be viewed at large sizes, 2 or 3 decimal places is the safer choice.</p>
     <h3>Is this the same as the SVGO tool other sites use?</h3>
-    <p>No — this is a lighter, custom-built cleanup pass covering the changes that account for most of the size reduction (metadata, comments, precision), not a full port of SVGO's complete plugin set (which also merges paths, converts shapes to paths, and other more invasive transforms). For most exported icons and illustrations, that covers the bulk of the achievable savings without the risk of more aggressive structural changes.</p>
+    <p>No — this is a lighter, custom-built cleanup pass covering the changes that account for most of the size reduction (metadata, comments, precision), not a full port of SVGO's complete plugin set (which also merges paths, converts shapes to paths, and other more invasive transforms). For most exported icons and illustrations, that covers the bulk of the achievable savings without the risk of more aggressive structural changes. Once your SVGs are optimized, how you actually put them on the page still matters — see <a href="/blog/inline-svg-vs-img-vs-css-background.html">this post</a> for when to inline one versus reference it as an image or background.</p>
     <h3>Is my file uploaded anywhere?</h3>
     <p>No. Every file is read and processed with your browser's <code>FileReader</code> and plain string operations — nothing is sent over the network, which you can confirm by checking the Network tab in your browser's dev tools while a batch runs.</p>
   </div>
@@ -147,6 +147,7 @@
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
           <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
           <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>

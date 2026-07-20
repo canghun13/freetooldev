@@ -89,9 +89,9 @@
 
     <h2>Common issues</h2>
     <h3>Korean, Japanese, or other non-English text shows up as garbled characters</h3>
-    <p>CSV files exported from Excel are often saved in a legacy encoding — EUC-KR/CP949 for Korean, Shift-JIS for Japanese — rather than UTF-8, or sometimes as UTF-16 ("Unicode Text" export). This tool checks for a byte-order mark and sniffs for UTF-16 automatically, then falls back through UTF-8 and EUC-KR, so most Excel exports should decode correctly without any manual step on your end.</p>
+    <p>CSV files exported from Excel are often saved in a legacy encoding — EUC-KR/CP949 for Korean, Shift-JIS for Japanese — rather than UTF-8, or sometimes as UTF-16 ("Unicode Text" export). This tool checks for a byte-order mark and sniffs for UTF-16 automatically, then falls back through UTF-8 and EUC-KR, so most Excel exports should decode correctly without any manual step on your end. See <a href="/blog/csv-encoding-gibberish.html">this post</a> for a deeper walkthrough of why the same file opens fine in one program and turns to gibberish in another.</p>
     <h3>A column is missing or values are shifted into the wrong field</h3>
-    <p>This almost always means a field contains an unescaped comma or a stray quote that breaks the quoting rules mid-row. Open the source file in a text editor and check the row in question — a single unmatched <code>"</code> can throw off every column after it for the rest of that row.</p>
+    <p>This almost always means a field contains an unescaped comma or a stray quote that breaks the quoting rules mid-row. Open the source file in a text editor and check the row in question — a single unmatched <code>"</code> can throw off every column after it for the rest of that row. <a href="/blog/csv-to-json-data-types.html">This post</a> covers a related issue: even a perfectly-parsed CSV loses type information once it becomes JSON, since every CSV value starts life as a string.</p>
     <h3>The output file is much larger than the input CSV</h3>
     <p>This is expected, not a bug. JSON repeats every field name in every object (CSV only states it once, in the header row), so JSON output is reliably 2–4x the size of the source CSV for typical data. For files over 1,000 rows, this tool skips pretty-printing automatically to keep that overhead from doubling again.</p>
 
@@ -123,6 +123,7 @@
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
           <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
           <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
