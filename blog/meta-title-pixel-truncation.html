@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Your Meta Title Still Gets Cut Off Even Under 60 Characters — FreeToolDev</title>
+<meta name="description" content="Google truncates titles by pixel width, not character count. A title well under the 'safe' character limit can still get cut off if it's full of wide letters.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/meta-title-pixel-truncation.html">
+<meta property="og:title" content="Why Your Meta Title Still Gets Cut Off Even Under 60 Characters — FreeToolDev">
+<meta property="og:description" content="Google truncates titles by pixel width, not character count. A title well under the 'safe' character limit can still get cut off if it's full of wide letters.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Why Your Meta Title Still Gets Cut Off Even Under 60 Characters — FreeToolDev">
+<meta name="twitter:description" content="Google truncates titles by pixel width, not character count. A title well under the 'safe' character limit can still get cut off if it's full of wide letters.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/meta-title-pixel-truncation.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 20, 2026</div>
+  <h1>Why Your Meta Title Still Gets Cut Off Even Under 60 Characters</h1>
+
+  <p>The "keep your title under 60 characters" rule is close enough to be useful and wrong enough to occasionally betray you. Two titles, both 58 characters, can render completely differently in Google's results — one intact, the other cut off mid-word with an ellipsis. The character count was never the actual rule; it's a stand-in for the real one.</p>
+
+  <h2>What Google is actually measuring</h2>
+  <p>Search result titles are truncated based on rendered pixel width, not character count — Google renders the title in its results font at its results size and cuts it off once it hits roughly 600 pixels (the exact figure shifts with layout changes and isn't published as a hard constant). A character count is just a rough proxy for that, and it's an imperfect one, because letters aren't uniform width.</p>
+
+  <h2>Why identical character counts render differently</h2>
+  <p>Compare a title made of narrow characters — lowercase i, l, t, f, punctuation — against one made of wide characters — capital W, M, O, or a string of numbers. At the same character count, the wide-character title can run meaningfully longer in pixels and get cut off well before the narrow one does. Capital letters, in general, run wider than lowercase; numerals and bold text push wider too. A title like "Small Tools" and a title like "MOMO OMNI WOW" at the same length are not the same length on screen.</p>
+
+  <h2>Why "under 60 characters" is still worth following</h2>
+  <p>It's not wrong, it's just approximate — for typical mixed-case English text, 50-60 characters usually lands safely under the pixel cutoff, which is why it's become the standard rule of thumb every SEO guide repeats. It fails specifically at the edges: titles that lean heavily on capitals, numbers, or symbols, or titles sitting right at the boundary where a few pixels either way changes the outcome. Treat the character count as a fast first check, not a guarantee.</p>
+
+  <h2>What to actually do about it</h2>
+  <p>Front-load the important words. Whatever gets cut off first is whatever comes last in the string, so put your brand name, primary keyword, or key differentiator early rather than at the end where truncation risk is highest. If a title is borderline and uses a lot of capitals or numbers, shave a few more characters off than the "safe" range would suggest — there's no penalty for a shorter title, but a truncated one loses whatever text got cut, mid-word, with no way to control where the cut lands.</p>
+
+  <h2>Check yours</h2>
+  <p>FreeToolDev's <a href="/tools/meta-length-checker.html">bulk meta title &amp; description length checker</a> flags titles against the standard character-count ranges for several pages at once — a fast first pass, with the pixel-width caveat above in mind for anything sitting near the edge.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Text Diff Checker — Compare Multiple Text Pairs at Once | FreeToolDev</title>
+<meta name="description" content="Paste several original/modified text pairs at once and see a line-by-line diff for every one in a single pass. Free, no signup, runs entirely in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/text-diff-checker.html">
+<meta property="og:title" content="Bulk Text Diff Checker — Compare Multiple Text Pairs at Once | FreeToolDev">
+<meta property="og:description" content="Paste several original/modified text pairs at once and see a line-by-line diff for every one in a single pass. Free, no signup, runs entirely in your browser.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk Text Diff Checker — Compare Multiple Text Pairs at Once | FreeToolDev">
+<meta name="twitter:description" content="Paste several original/modified text pairs at once and see a line-by-line diff for every one in a single pass. Free, no signup, runs entirely in your browser.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/text-diff-checker.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Text · Batch</span>
+    <h1>Bulk Text Diff Checker</h1>
+    <p>Paste several original/modified text pairs at once and see a line-by-line diff for every one in a single pass — instead of running one comparison, reading it, then pasting the next pair in.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>Text pairs</h3>
+      <p style="font-size:0.85rem; margin-bottom:10px;">One pair per block. Start a block with <code>### Label</code> (optional), then the original text, a line containing just <code>===</code>, then the modified text. Separate multiple pairs with a line containing just <code>-----</code>.</p>
+      <textarea id="input" style="min-height:240px;" placeholder="### config.yml
+server:
+  port: 80
+  root: /var/www
+===
+server:
+  port: 443
+  root: /var/www
+  ssl: true
+-----
+### About page copy
+We are a small team.
+===
+We're a small, remote-first team."></textarea>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="diffBtn">Compare →</button>
+        <button class="btn btn-outline" id="clearBtn">Clear</button>
+      </div>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="resultsList"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>How the diff works</h2>
+    <p>Each pair is compared line by line using a longest-common-subsequence algorithm — the same basic approach behind <code>git diff</code> and most diff tools — to find the smallest set of removed and added lines that explains the difference between the two versions. Lines that appear unchanged are shown as-is; a line that was edited (not just added or deleted) shows up as one removed line plus one added line, since the algorithm compares whole lines rather than tracking word-level edits within a line. See <a href="/blog/bulk-text-diff-use-cases.html">this post</a> for the situations where comparing several pairs at once actually saves real time over doing them one by one.</p>
+
+    <h2>Limits</h2>
+    <p>Each side of a pair is capped at 2,000 lines. The comparison algorithm is quadratic in the number of lines (checking every line of one version against every line of the other), so very large inputs can get noticeably slower — 2,000 lines keeps every pair comfortably fast even when you're running several at once.</p>
+
+    <h2>FAQ</h2>
+    <h3>Is my text sent anywhere?</h3>
+    <p>No. The comparison runs entirely in your browser using plain JavaScript — no external library, no network request — which you can confirm by checking the Network tab in your browser's dev tools while a comparison runs.</p>
+    <h3>Can this show word-level or character-level differences within a line?</h3>
+    <p>Not currently — this tool compares whole lines, which is the right granularity for config files, structured data, and most code. See <a href="/blog/line-diff-vs-character-diff.html">this post</a> for when line-level is enough and when you actually need finer-grained comparison.</p>
+    <h3>What counts as "identical" if both versions have the same content but different line endings?</h3>
+    <p>Lines are compared as exact strings after splitting on <code>\n</code>, so a difference in invisible whitespace (trailing spaces, or a stray carriage return left over from Windows line endings) will show up as a removed+added pair even if the visible text looks the same. If you're seeing unexpected diffs on lines that look identical, that's usually the cause.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  var LINE_CAP = 2000;
+
+  function diffLines(a, b) {
+    var linesA = a.split('\n');
+    var linesB = b.split('\n');
+    var n = linesA.length, m = linesB.length;
+    var dp = [];
+    for (var i = 0; i <= n; i++) dp.push(new Array(m + 1).fill(0));
+    for (var i = n - 1; i >= 0; i--) {
+      for (var j = m - 1; j >= 0; j--) {
+        if (linesA[i] === linesB[j]) dp[i][j] = dp[i + 1][j + 1] + 1;
+        else dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+      }
+    }
+    var result = [];
+    var i = 0, j = 0;
+    while (i < n && j < m) {
+      if (linesA[i] === linesB[j]) {
+        result.push({ type: 'same', text: linesA[i] });
+        i++; j++;
+      } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+        result.push({ type: 'removed', text: linesA[i] });
+        i++;
+      } else {
+        result.push({ type: 'added', text: linesB[j] });
+        j++;
+      }
+    }
+    while (i < n) { result.push({ type: 'removed', text: linesA[i] }); i++; }
+    while (j < m) { result.push({ type: 'added', text: linesB[j] }); j++; }
+    return result;
+  }
+
+  function renderDiff(diff) {
+    return diff.map(function (d) {
+      var bg = d.type === 'added' ? 'rgba(111,207,151,0.14)' : d.type === 'removed' ? 'rgba(255,138,101,0.14)' : 'transparent';
+      var color = d.type === 'added' ? '#6FCF97' : d.type === 'removed' ? '#FF8A65' : '#EDEBE2';
+      var prefix = d.type === 'added' ? '+ ' : d.type === 'removed' ? '- ' : '  ';
+      return '<div style="background:' + bg + '; color:' + color + '; font-family:\'JetBrains Mono\',monospace; font-size:0.82rem; white-space:pre-wrap; padding:1px 6px;">' + esc(prefix + d.text) + '</div>';
+    }).join('');
+  }
+
+  document.getElementById('diffBtn').addEventListener('click', function () {
+    var raw = document.getElementById('input').value;
+    if (!raw.trim()) { alert('Paste at least one text pair first.'); return; }
+
+    var pairs = raw.split(/\n-{5,}\n/);
+    var resultsList = document.getElementById('resultsList');
+    resultsList.innerHTML = '';
+    document.getElementById('resultsPanel').style.display = 'block';
+
+    pairs.forEach(function (pair, idx) {
+      pair = pair.trim();
+      if (!pair) return;
+
+      var name = 'Pair ' + (idx + 1);
+      var nameMatch = pair.match(/^###\s*(.+)$/m);
+      if (nameMatch) {
+        name = nameMatch[1].trim();
+        pair = pair.replace(/^###\s*.+$/m, '').trim();
+      }
+
+      var panel = document.createElement('div');
+      panel.className = 'file-row ready';
+      panel.style.flexDirection = 'column';
+      panel.style.alignItems = 'flex-start';
+      panel.style.padding = '16px';
+      panel.style.marginBottom = '12px';
+
+      var parts = pair.split(/\n={3,}\n/);
+      if (parts.length !== 2) {
+        panel.innerHTML = '<div style="font-weight:700; margin-bottom:6px;">' + esc(name) + '</div>' +
+          '<div style="color:#b5451b; font-weight:600; font-size:0.85rem;">Couldn\'t find the === separator between original and modified text in this block — skipped.</div>';
+        resultsList.appendChild(panel);
+        return;
+      }
+
+      var original = parts[0].trim();
+      var modified = parts[1].trim();
+      var linesA = original.split('\n');
+      var linesB = modified.split('\n');
+
+      if (linesA.length > LINE_CAP || linesB.length > LINE_CAP) {
+        panel.innerHTML = '<div style="font-weight:700; margin-bottom:6px;">' + esc(name) + '</div>' +
+          '<div style="color:#b5451b; font-weight:600; font-size:0.85rem;">One side of this pair exceeds the ' + LINE_CAP + '-line limit — skipped.</div>';
+        resultsList.appendChild(panel);
+        return;
+      }
+
+      var diff = diffLines(original, modified);
+      var added = diff.filter(function (d) { return d.type === 'added'; }).length;
+      var removed = diff.filter(function (d) { return d.type === 'removed'; }).length;
+
+      var summaryHtml = (added === 0 && removed === 0)
+        ? '<span style="color:#2e8b57; font-weight:600;">Identical — no differences</span>'
+        : '<span style="color:#b5451b; font-weight:600;">' + added + ' line(s) added, ' + removed + ' line(s) removed</span>';
+
+      panel.innerHTML =
+        '<div style="font-weight:700; margin-bottom:6px;">' + esc(name) + '</div>' +
+        '<div style="margin-bottom:10px; font-size:0.85rem;">' + summaryHtml + '</div>' +
+        '<div style="width:100%; background:#081729; border-radius:6px; padding:10px 0; max-height:360px; overflow:auto;">' + renderDiff(diff) + '</div>';
+
+      resultsList.appendChild(panel);
+    });
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    document.getElementById('input').value = '';
+    document.getElementById('resultsPanel').style.display = 'none';
+  });
+});
+</script>
+
+</body>
+</html>

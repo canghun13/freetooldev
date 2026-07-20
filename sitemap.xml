@@ -19,12 +19,14 @@
   <url><loc>https://freetooldev.com/tools/robots-txt-generator.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/llms-txt-generator.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/humans-txt-generator.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/tools/meta-length-checker.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/heading-structure-checker.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/ip-dns-ssl.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/site-crawler.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/jwt-decoder.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/qr-batch.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/barcode-batch.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/tools/text-diff-checker.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/blog/index.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://freetooldev.com/blog/batch-vs-ai-image-convert.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/no-upload-image-compression.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
@@ -46,6 +48,10 @@
   <url><loc>https://freetooldev.com/blog/robots-txt-vs-llms-txt.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/humans-txt-explained.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/robots-llms-humans-txt-compared.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://freetooldev.com/blog/meta-title-pixel-truncation.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://freetooldev.com/blog/meta-description-vs-google-snippet.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://freetooldev.com/blog/bulk-text-diff-use-cases.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://freetooldev.com/blog/line-diff-vs-character-diff.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/upc-vs-ean-vs-code128.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/sitemap-vs-robots-txt.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/sitemap-static-sites.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>

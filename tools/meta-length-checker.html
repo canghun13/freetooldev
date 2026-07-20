@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Meta Title &amp; Description Length Checker — Free Tool | FreeToolDev</title>
+<meta name="description" content="Paste several page titles and descriptions at once — no URL, no fetch — and check every one against safe length ranges in a single pass. Free, no signup, runs in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/meta-length-checker.html">
+<meta property="og:title" content="Bulk Meta Title &amp; Description Length Checker — Free Tool | FreeToolDev">
+<meta property="og:description" content="Paste several page titles and descriptions at once — no URL, no fetch — and check every one against safe length ranges in a single pass. Free, no signup, runs in your browser.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk Meta Title &amp; Description Length Checker — Free Tool | FreeToolDev">
+<meta name="twitter:description" content="Paste several page titles and descriptions at once — no URL, no fetch — and check every one against safe length ranges in a single pass. Free, no signup, runs in your browser.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/meta-length-checker.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">SEO · Batch</span>
+    <h1>Bulk Meta Title &amp; Description Length Checker</h1>
+    <p>Paste the title and description for several pages at once — as text, not URLs — and check every one against safe length ranges in a single pass. Nothing is fetched; there's no server involved at all.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>Pages</h3>
+      <p style="font-size:0.85rem; margin-bottom:10px;">One page per block. Start a block with <code>### Page name</code> (optional), then a <code>Title:</code> line and a <code>Description:</code> line. Separate multiple pages with a line containing just <code>-----</code>.</p>
+      <textarea id="input" style="min-height:220px;" placeholder="### Homepage
+Title: Free Bulk Utility Tools for Developers | FreeToolDev
+Description: Free browser-based batch tools for developers and designers. No signup, no uploads.
+-----
+### Pricing
+Title: Pricing
+Description: "></textarea>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="checkBtn">Check lengths →</button>
+        <button class="btn btn-outline" id="clearBtn">Clear</button>
+      </div>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="resultsList"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>Why paste text instead of a URL</h2>
+    <p>Most bulk title/description checkers work by taking a list of URLs and fetching each page on their server to read the meta tags — which means routing every URL you check through a third party, and being limited by whatever their fetch reliability and rate limits are. This tool skips that step entirely: paste the title and description text you're planning to use (or already have live), and it's checked instantly, client-side, with nothing sent anywhere. That also means it works before a page is published, not just after.</p>
+
+    <h2>The ranges this checks against</h2>
+    <p><strong>Title:</strong> flagged short under 30 characters, good between 30 and 60, flagged long past 60 — Google typically displays somewhere in that range before truncating, though the real cutoff is pixel width, not a fixed character count (more on that below). <strong>Description:</strong> flagged short under 70 characters, good between 70 and 158, flagged long past 158 — short descriptions look thin in results, long ones risk truncation with "...".</p>
+
+    <h2>Character count vs. pixel width</h2>
+    <p>Google's search results truncate based on rendered pixel width, not a fixed character count — a title full of narrow characters like "iiiii" fits more characters than one full of wide characters like "WWWWW" before hitting the same cutoff. Character-count ranges are a widely-used, reasonable approximation (and what this tool uses, like most length checkers), but they're not a guarantee. See <a href="/blog/meta-title-pixel-truncation.html">this post</a> for why a title can still get cut off even while under the character count that's supposed to be "safe."</p>
+
+    <h2>FAQ</h2>
+    <h3>Is there a limit on how many pages I can check at once?</h3>
+    <p>No hard cap enforced by this tool — paste as many page blocks as you need. Everything runs synchronously in your browser, so a very large batch (hundreds of pages) may take a moment to render, but there's no server-side limit to hit.</p>
+    <h3>What happens if a page is missing a title or description?</h3>
+    <p>It's flagged as missing rather than silently skipped or scored as zero-length — a missing tag is a different problem from a too-short one (Google will generate its own snippet from page content instead), and the result makes that distinction clear.</p>
+    <h3>Does a "good" length guarantee my snippet won't get rewritten?</h3>
+    <p>No — Google rewrites titles and descriptions for a meaningful share of results regardless of length, usually when it judges page content or the current query as a better match than what you wrote. Length is one factor in whether your text gets used as-is, not the only one. See <a href="/blog/meta-description-vs-google-snippet.html">this post</a> for what tends to trigger a rewrite.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function classify(len, shortMax, goodMax) {
+    if (len === 0) return { label: 'Missing', color: '#b5451b' };
+    if (len < shortMax) return { label: 'Too short (' + len + ' chars)', color: '#b5451b' };
+    if (len <= goodMax) return { label: 'Good (' + len + ' chars)', color: '#2e8b57' };
+    return { label: 'Too long (' + len + ' chars)', color: '#b5451b' };
+  }
+
+  function parseField(block, label) {
+    var re = new RegExp('^' + label + ':\\s*(.*)$', 'im');
+    var m = block.match(re);
+    return m ? m[1].trim() : '';
+  }
+
+  document.getElementById('checkBtn').addEventListener('click', function () {
+    var raw = document.getElementById('input').value;
+    if (!raw.trim()) { alert('Paste at least one page block first.'); return; }
+
+    var blocks = raw.split(/\n-{5,}\n/);
+    var resultsList = document.getElementById('resultsList');
+    resultsList.innerHTML = '';
+    document.getElementById('resultsPanel').style.display = 'block';
+
+    blocks.forEach(function (block, idx) {
+      block = block.trim();
+      if (!block) return;
+
+      var name = 'Page ' + (idx + 1);
+      var nameMatch = block.match(/^###\s*(.+)$/m);
+      if (nameMatch) {
+        name = nameMatch[1].trim();
+        block = block.replace(/^###\s*.+$/m, '').trim();
+      }
+
+      var title = parseField(block, 'Title');
+      var desc = parseField(block, 'Description');
+
+      var titleStatus = classify(title.length, 30, 60);
+      var descStatus = classify(desc.length, 70, 158);
+
+      var panel = document.createElement('div');
+      panel.className = 'file-row ready';
+      panel.style.flexDirection = 'column';
+      panel.style.alignItems = 'flex-start';
+      panel.style.padding = '16px';
+      panel.style.marginBottom = '12px';
+
+      panel.innerHTML =
+        '<div style="font-weight:700; margin-bottom:10px;">' + esc(name) + '</div>' +
+        '<div style="width:100%; margin-bottom:8px;">' +
+          '<div style="font-size:0.78rem; color:#8a8578; text-transform:uppercase; letter-spacing:0.04em;">Title</div>' +
+          '<div style="font-family:\'JetBrains Mono\',monospace; font-size:0.85rem; margin:2px 0 4px;">' + (title ? esc(title) : '<em>(none)</em>') + '</div>' +
+          '<div style="font-size:0.85rem; font-weight:600; color:' + titleStatus.color + ';">' + titleStatus.label + '</div>' +
+        '</div>' +
+        '<div style="width:100%;">' +
+          '<div style="font-size:0.78rem; color:#8a8578; text-transform:uppercase; letter-spacing:0.04em;">Description</div>' +
+          '<div style="font-family:\'JetBrains Mono\',monospace; font-size:0.85rem; margin:2px 0 4px;">' + (desc ? esc(desc) : '<em>(none)</em>') + '</div>' +
+          '<div style="font-size:0.85rem; font-weight:600; color:' + descStatus.color + ';">' + descStatus.label + '</div>' +
+        '</div>';
+
+      resultsList.appendChild(panel);
+    });
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    document.getElementById('input').value = '';
+    document.getElementById('resultsPanel').style.display = 'none';
+  });
+});
+</script>
+
+</body>
+</html>

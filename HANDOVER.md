@@ -1,6 +1,6 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-07-20 (일요일 작업 세션 — 신규 툴 Humans.txt Generator + 블로그 2개 추가, 고아 페이지 내부링크 25개 전량 해소)
+마지막 업데이트: 2026-07-20 (일요일 작업 세션, 2차 — 사용자 지시로 "공격적 확장" 방향 확정: Bulk Meta Title/Description Length Checker + Bulk Text Diff Checker 신규 툴 2개(+블로그 4개) 추가, 신규 카테고리 "Text" 개설)
 
 ---
 
@@ -37,7 +37,7 @@
 
 ---
 
-## 3. 사이트 구조 (전체 파일, 2026-07-20 세션 기준 63개)
+## 3. 사이트 구조 (전체 파일, 2026-07-20 2차 세션 기준 69개)
 
 ```
 /
@@ -53,10 +53,10 @@
 │   ├── css/style.css           디자인 시스템 전부 여기
 │   ├── js/nav-behavior.js      헤더/푸터는 정적 HTML, 이 JS는 모바일메뉴/연도/활성링크만 처리
 │   └── img/                    favicon.svg, apple-touch-icon.png, og-image.png(신규) 등
-├── tools/                      20개, index.html은 검색/필터 포함 목록
-└── blog/                       37개, index.html은 목록
+├── tools/                      22개, index.html은 검색/필터 포함 목록. **(신규) 필터 카테고리 6번째 "Text" 추가**(기존 All/Image/Data/Encoding/SEO·Content/Network)
+└── blog/                       41개, index.html은 목록
 ```
-**카운트 정합성 검증 완료(2026-07-20)**: tools/index.html 그리드 카드 수=20=footer 링크 기준 tools/ 파일 수, homepage 그리드=20, blog/index.html 카드 수=37=blog/ 파일 수, sitemap.xml `<url>` 개수=63=전체 html 파일 수, llms.txt 항목 수도 전부 일치. python 스크립트로 전 파일 내부링크 스캔해서 끊긴 링크 0건 확인, 신규/수정된 모든 `<script>` 블록 node --check 통과.
+**카운트 정합성 검증 완료(2026-07-20 2차)**: tools/index.html 그리드 카드 수=22=footer 링크 기준 tools/ 파일 수=homepage 그리드, blog/index.html 카드 수=41=blog/ 파일 수, sitemap.xml `<url>` 개수=69=전체 html 파일 수, llms.txt 항목 수(툴 22개/블로그 42개=41+index)도 전부 일치. python 스크립트로 전 파일 내부링크 스캔해서 끊긴 링크 0건, 고아 페이지 0건 확인, 신규/수정된 모든 `<script>` 블록 node --check 통과. **이번 세션에 실제로 잡아서 고친 버그 2건**: (1) 신규 diff 결과박스가 다크섹션(`#081729`) 배경인데 밝은섹션용 텍스트색을 그대로 써서 명암비 미달이 될 뻔함 — 직접 명암비 계산해서 WCAG AA 통과하는 색상(7.79:1~15.1:1)으로 교체(11번 20항 원칙 재적용 사례). (2) 블로그 글 1개의 meta description에 이스케이프 안 된 큰따옴표가 들어가 HTML 속성이 깨질 뻔함 — 발견 즉시 수정. (3) footer 일괄치환 스크립트가 tools/index.html을 "이미 반영됨"으로 오판(그리드 카드 href와 footer href를 구분 못 함)해서 건너뛴 걸 뒤늦게 발견해 직접 수정 — 11번 17항에서 이미 경고했던 유형의 실수가 반복됨, 앞으로 footer 검증은 `<div class="footer-grid">...</div>` 블록 내부만 정확히 스코프해서 확인할 것.
 
 **중요 — 헤더/푸터 구조**: `include.js`는 삭제됨, 전부 **정적 HTML로 하드코딩**. 새 페이지/툴/블로그 추가할 때마다 헤더/푸터를 모든 페이지에 반복 삽입 필요. footer의 "Tools" 링크 목록도 전체 페이지에 일괄 반영 필요 (python find-replace 스크립트로 처리, 누락 없는지 `grep -L`로 재확인). `nav-behavior.js`는 모바일 메뉴 토글, 연도, 활성 링크 하이라이트만 담당.
 
@@ -95,6 +95,8 @@
 | robots.txt Generator | `tools/robots-txt-generator.html` | 검증완료 | Disallow/Allow/Sitemap 라인 + GPTBot/ClaudeBot/Google-Extended 등 AI 크롤러 개별 차단 체크박스 |
 | llms.txt Generator | `tools/llms-txt-generator.html` | 검증완료 | `섹션 \| 제목 \| URL \| 설명` 포맷 파싱 → 카테고리별 마크다운 인덱스 생성 |
 | **(신규, 2026-07-20) Humans.txt Generator** | `tools/humans-txt-generator.html` | 검증완료(node로 생성 로직 3케이스 테스트: 전체입력/최소입력(이름만)/빈입력) | `Role \| Name \| Contact \| Location` 파이프 포맷으로 팀원 여러 명 한 번에 입력 → humanstxt.org 스펙 형식(`/* TEAM */`, `/* THANKS */`, `/* SITE */`, `/* NOTE */`) 텍스트 생성. 외부 라이브러리 없음. **차별화 포인트: 경쟁사(rushax.com, rankplusplus.com, beewits 등)는 이메일 발송 방식이거나 URL을 서버에 넣어야 하는 방식인데, 우리는 즉시 브라우저에서 생성+복사/다운로드, 이메일·가입 불필요.** robots.txt/llms.txt Generator와 함께 "사이트 루트의 3종 텍스트 파일" 세트를 완성 — 상호 링크로 토픽 클러스터 형성 |
+| **(신규, 2026-07-20 2차) Bulk Meta Title & Description Length Checker** | `tools/meta-length-checker.html` | 검증완료(node로 파싱/분류 로직 테스트: 정상/짧음/누락/너무김 케이스) | `### Page name` + `Title:` / `Description:` 라벨 + `-----` 구분선으로 여러 페이지를 한 번에 붙여넣기 → 글자수 기준(title 30-60/desc 70-158) 분류. 외부 라이브러리 없음. **차별화 포인트: 경쟁사 대부분(seranking, contentpowered, sanishtech 등)은 "URL 붙여넣기→서버 fetch"(최대 200개) 방식인데, 우리는 텍스트 직접 붙여넣기(fetch 자체가 없음)+여러 쌍 배치 이중 차별화.** 기존에 "서버 fetch 필요해서 보류" 상태였던 항목(구 12번 다음할일)을 접근 방식을 바꿔서 해결함 — Worker 확장 불필요. |
+| **(신규, 2026-07-20 2차) Bulk Text Diff Checker** | `tools/text-diff-checker.html` | 검증완료(node로 LCS diff 알고리즘 7개 케이스 테스트: 동일/추가/삭제/변경/완전히다름/빈텍스트/실제config diff) | `### Label`(옵션) + 원본텍스트 + `===` + 수정본텍스트, `-----`로 여러 쌍 구분. LCS(최장공통부분수열) 기반 라인 단위 diff를 직접 구현(외부 라이브러리 없음, git diff와 같은 기본 원리). **차별화 포인트: diffchecker.com·draftable·textcompare.io 등 헤드키워드 장악한 대형 경쟁사 포함 검색 결과 전부 예외없이 "1쌍씩만" 비교 — "여러 쌍 한번에" 배치 앵글이 단 하나도 없어 배치 차별화 필터가 깨끗하게 통과.** 신규 카테고리 "Text" 개설의 계기가 된 툴. **(세션 중 발견/수정)** 결과박스가 다크섹션 배경(`#081729`)인데 처음엔 밝은섹션용 텍스트색을 그대로 써서 명암비 미달이 될 뻔함 — 명암비 직접 계산해서 WCAG AA 통과 색상으로 교체 후 커밋. |
 | **(신규) Bulk Heading Structure Checker** | `tools/heading-structure-checker.html` | 검증완료(jsdom으로 실제 파싱/계층분석 로직 6개 케이스 테스트) | 여러 페이지 HTML을 `-----` 구분선으로 붙여넣어 한번에 H1-H6 계층 체크. DOMParser(브라우저 내장) 사용, 외부 라이브러리 없음. Missing H1/Multiple H1/Skipped level/Empty heading 4종 검사. **경쟁사는 전부 "URL 1개 입력" 방식인데 우리는 여러 페이지 동시 배치 체크로 차별화** |
 | IP/DNS/SSL Bulk Lookup | `tools/ip-dns-ssl.html` | 검증완료 | DNS는 Google DoH, SSL은 Worker→crt.sh 경유. SSL 큐잉 동시 2개 제한. 페이지 최상단 "내 현재 IP" 카드(`api.ipify.org`) 포함 |
 | Site Crawler & Audit | `tools/site-crawler.html` | 검증완료 | Worker `/crawl` 호출, 최대 40페이지, sitemap/rss/llms.txt 동시생성+깨진링크+메타태그 체크 |
@@ -118,7 +120,9 @@
 
 - 9차(2026-07-20 세션, GSC에서 "humans txt generator" 1노출 신규 키워드 발견 → 리서치): 웹 검색 결과 rushax.com/rankplusplus.com/beewits.com 등 기존 생성기 다수 존재하지만 이메일 발송 방식이거나 URL을 서버에 제출해야 하는 방식 — "no-upload 차별화 필터"(8차 패턴)로 채택 가능. 볼륨 자체는 1노출로 약한 신호지만, (1) robots.txt/llms.txt Generator와 자연스러운 "사이트 루트 3종 텍스트 파일" 세트를 완성해 토픽 클러스터 형성에 유리하고 (2) 제작 난이도가 매우 낮고 (3) 9번 원칙(수익화 국면엔 포화 여부보다 페이지 총량이 우선) 기준에 부합해 채택함.
 
-**대기 중인 신규 툴 후보**: 없음 (9차 세션 결과 Humans.txt Generator 채택 후 소진). 다음 신규 후보는 "배치 차별화 필터" 우선, 막히면 "no-upload 차별화 필터"(8차 참고)로 새로 찾을 것.
+- 10차(2026-07-20 2차 세션, 사용자가 "공격적으로 확장해야된다... 경쟁 세면 롱테일 키워드로 어떻게든 뚫고 가야된다" 방향 재확인/강화 지시 — 카테고리 확장도 명시적으로 환영): 웹 검색으로 Hash Generator(MD5/SHA), Regex Tester(다중 패턴), Bulk Meta Title/Description Length Checker, Bulk Text Diff Checker 4개 후보 검토. **Hash Generator·Regex Tester는 기각** — 둘 다 경쟁사가 이미 멀티라인/배치 처리를 갖춤(miraclesalad는 "여러 줄=여러 문자열" 지원, onlinestringtools는 "multi-string option"으로 여러 줄 동시 테스트 지원 등) — 배치 차별화 필터가 안 먹힘. **Meta Length Checker·Text Diff Checker는 채택** — 자세한 근거는 5번 표 참고. 특히 Text Diff Checker는 diffchecker.com 같은 초대형 브랜드조차 전부 "1쌍씩"만 지원하는 게 확인돼서, 헤드키워드 경쟁이 아무리 세도 "배치" 앵글 자체가 비어있으면 채택 가치가 있다는 걸 보여준 사례 — 이 패턴은 앞으로도 신규 후보 스크리닝의 핵심 기준으로 유지.
+
+**대기 중인 신규 툴 후보**: 없음 (10차 세션 결과 2개 채택 후 소진). 사용자가 "공격적 확장" 방향을 명확히 유지 중이므로, 다음 세션에서도 신규 후보를 계속 적극적으로 찾을 것 — "배치 차별화" 우선, 막히면 "no-upload 차별화"(8차), 그마저 없으면 **"경쟁사가 전부 단일 항목만 처리하는 헤드키워드"를 찾는 것 자체를 후보 발굴 기준으로 삼을 것**(10차에서 확인된 새 패턴 — diff checker 사례).
 
 ---
 
@@ -133,14 +137,14 @@
 
 ---
 
-## 7. 블로그 현황 (37개)
+## 7. 블로그 현황 (41개)
 
-**툴별 커버리지 (2026-07-20 세션 기준, 20개 툴 전부 최소 2개 이상)**:
+**툴별 커버리지 (2026-07-20 2차 세션 기준, 22개 툴 전부 최소 2개 이상)**:
 
 | 툴 | 개수 |
 |---|---|
 | image-batch, rss-generator, site-crawler | 3 |
-| base64, jwt-decoder, csv-to-json, ip-dns-ssl, qr-batch, sitemap-generator, barcode-batch, url-encoder, json-yaml-converter, csv-tsv-converter, svg-optimizer, heading-structure-checker, sitemap-validator, json-validator | 2 |
+| base64, jwt-decoder, csv-to-json, ip-dns-ssl, qr-batch, sitemap-generator, barcode-batch, url-encoder, json-yaml-converter, csv-tsv-converter, svg-optimizer, heading-structure-checker, sitemap-validator, json-validator, meta-length-checker, text-diff-checker | 2 |
 | robots-txt-generator, llms-txt-generator, humans-txt-generator | 1개씩 전용 + "robots.txt vs llms.txt vs humans.txt" 3자비교 1개 공유 = 사실상 2개씩 |
 
 **2026-07-07 세션 이전 (13개)**: jwt-claims-explained, find-broken-links-free-tool, rss-generator-no-account, free-alternative-screaming-frog, rss-for-automation, bulk-qr-code-use-cases, ssl-expiry-monitoring-free, csv-encoding-gibberish, sitemap-static-sites, debug-jwt-base64-locally, webp-vs-avif-2026, no-upload-image-compression, batch-vs-ai-image-convert
@@ -162,6 +166,8 @@
 **2026-07-18 세션 2차 추가 (2개, 신규 툴 1개 세트)**: json-syntax-errors-explained(문제해결형 — JSON이 JS 문법을 거부하는 이유 6가지), json-validator-no-upload(비교분석형 — 파일업로드 vs 브라우저전용 JSON 툴, 민감데이터 다룰 때 실질적 차이)
 
 **2026-07-20 세션 추가 (2개, 신규 툴 1개 세트)**: humans-txt-explained(문제해결형 — humans.txt가 뭐고 왜 크롤러/AI가 안 읽는지, 언제 추가할 가치가 있는지), robots-llms-humans-txt-compared(비교분석형 — robots.txt/llms.txt/humans.txt 3개 파일을 독자·역할·SEO영향 기준으로 나란히 비교하는 표 포함, 기존 robots-txt-vs-llms-txt 글에서도 상호링크 추가)
+
+**2026-07-20 2차 세션 추가 (4개, 신규 툴 2개 세트 — 사용자 "공격적 확장" 지시)**: meta-title-pixel-truncation(문제해결형 — 픽셀폭 vs 글자수 절단 이슈), meta-description-vs-google-snippet(비교분석형 — 구글이 description을 언제/왜 무시하고 자체 스니펫으로 바꾸는지), bulk-text-diff-use-cases(문제해결형, "When You Actually Need X in Bulk" 기존 네이밍 컨벤션 유지 — config 감사/콘텐츠 마이그레이션 검수/번역 동기화/생성 출력물 검증 4개 실사용 시나리오), line-diff-vs-character-diff(비교분석형 — 라인단위 vs 문자단위 diff의 실질적 차이와 각각의 적합한 상황)
 
 **참고**: jwt-claims-explained는 신규 작성이 아니라 2026-07-16 1차 세션에서 대폭 보강됨(RFC 7519 registered/public/private 용어 섹션 추가, 500→1157단어) — 8번 참고.
 
@@ -287,20 +293,21 @@
 17. **(신규) footer 일괄 치환 스크립트는 "패턴이 일치하는 파일만" 갱신하고 나머지는 조용히 넘어가므로, 오래된 파일이 과거 세션에서 누락된 항목을 가진 채로 계속 방치될 수 있음** (2026-07-16 세션에서 실제 발견 — robots-txt-mistakes.html과 robots-txt-generator.html 2개 파일이 llms.txt Generator 링크 자체가 빠진 채로 5일간 방치돼 있었음). 일괄 치환 스크립트 실행 후 `updated + skipped` 합계가 전체 파일 수와 맞는지 확인하고, `skipped` 목록에 뜨는 파일은 반드시 직접 열어서 왜 패턴이 안 맞는지 확인할 것 — "이미 최신이라 skip"과 "구조가 달라서 skip"을 구분해야 함.
 18. **(신규) 신규 툴 후보를 검토할 때 "경쟁사가 전부 단일 항목 처리인데 우리만 배치 처리를 제공할 수 있는가"를 최우선 필터로 쓸 것.** 2026-07-16 세션에서 확인된 패턴 — SVG Optimizer, Heading Structure Checker, Sitemap Validator 셋 다 "포화된 니치에서 채택 성공한" 사례인데, 공통점이 경쟁사가 전부 "1개만 처리"이고 우리만 "여러 개 동시 처리"를 내세울 수 있었다는 것. 이 차별화가 안 되는 후보(px-rem 변환기, CSS 변수 추출기, Color Palette Extractor, EXIF Remover, File Renamer 등, 경쟁사도 이미 배치모드 지원)는 계속 미채택으로 걸러지고 있음.
 19. **(참고) 2026-07-16 세션에서 사용자가 "Bing에서 이기면 된다"는 대안 전략을 언급했다가 바로 "그냥 이대로 해"로 철회함.** 별도의 Bing 특화 전략은 채택 안 함 — 지금 하던 방식(Google 기준 SEO + 롱테일 키워드 + AI검색 대응 콘텐츠) 그대로 유지.
-20. **(신규, 2026-07-18) 새 툴의 결과/출력 박스에 색을 입힐 때는 그 요소가 실제로 어느 section(`section-navy`=다크 배경 vs `section-paper`=밝은 크림 배경) 안에 들어가는지 먼저 확인하고 명암비를 계산해서 정할 것.** json-validator.html에서 다크 섹션 전제 스타일(반투명 검정 배경+앰버 글자)을 밝은 섹션에 그대로 썼다가 명암비 1.25:1(사실상 안 보임)이 나온 사고가 있었음(사용자가 스크린샷으로 발견). Claude는 코드만 보고 실제 렌더링을 확인 못 하므로, 이런 커스텀 인라인 스타일을 쓸 때는 배경/글자색 조합의 명암비를 직접 계산(WCAG AA 기준 4.5:1 이상)해서 검증하고 넘어갈 것 — 기존 CSS 클래스(`.file-row` 등)를 그대로 쓰면 이미 검증된 조합이라 문제없지만, 인라인 스타일로 새로 배경색을 지정하는 순간부터는 별도 확인이 필요함.
+20. **(신규, 2026-07-18) 새 툴의 결과/출력 박스에 색을 입힐 때는 그 요소가 실제로 어느 section(`section-navy`=다크 배경 vs `section-paper`=밝은 크림 배경) 안에 들어가는지 먼저 확인하고 명암비를 계산해서 정할 것.** json-validator.html에서 다크 섹션 전제 스타일(반투명 검정 배경+앰버 글자)을 밝은 섹션에 그대로 썼다가 명암비 1.25:1(사실상 안 보임)이 나온 사고가 있었음(사용자가 스크린샷으로 발견). Claude는 코드만 보고 실제 렌더링을 확인 못 하므로, 이런 커스텀 인라인 스타일을 쓸 때는 배경/글자색 조합의 명암비를 직접 계산(WCAG AA 기준 4.5:1 이상)해서 검증하고 넘어갈 것 — 기존 CSS 클래스(`.file-row` 등)를 그대로 쓰면 이미 검증된 조합이라 문제없지만, 인라인 스타일로 새로 배경색을 지정하는 순간부터는 별도 확인이 필요함. **(2026-07-20 2차 세션 재확인 사례)** text-diff-checker.html의 결과박스에서 같은 유형의 실수가 또 나올 뻔했음(다크배경에 밝은섹션용 텍스트색 재사용 시도) — 커밋 전에 잡아서 수정함. 이 원칙은 계속 실수가 반복되는 지점이므로 신규 툴 결과박스를 만들 때마다 명시적으로 체크리스트에 넣을 것.
+21. **(신규, 2026-07-20 2차) 사용자가 "공격적으로 확장해야된다, 카테고리 확장이든 뭐든 좋다, 경쟁이 세도 롱테일 키워드로 뚫고 가야 한다, 수비적으로 하면 답이 없다"고 명시적으로 방향을 재확인/강화함.** 기존 원칙(12번 18항 — 포화 여부만으로 신규 툴을 기각하지 않는다)의 연장선이지만, 이번엔 한 단계 더 명확해짐: **경쟁사가 헤드키워드를 장악하고 있어도(심지어 diffchecker.com 같은 초대형 브랜드라도) "배치" 같은 구조적 차별화 앵글이 비어있으면 그 자체로 채택 근거가 된다.** 대형 브랜드와 헤드키워드로 직접 경쟁하는 게 아니라, 그 브랜드가 다루지 않는 롱테일(예: "bulk diff checker", "compare multiple text pairs")로 진입하는 전략. Claude는 매 세션 신규 후보를 검토할 때 이 기준을 적극적으로 적용해서, 사용자가 매번 "진행해도 되나"를 확인받지 않아도 되도록 스스로 판단해서 진행할 것 — 단, 11번 1항(큰 작업은 확인 후 진행)과 상충하지 않도록 실제 파일 생성 전에는 여전히 무엇을 왜 만드는지 근거를 먼저 제시하는 절차는 유지.
 
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
 
 0. **(2026-07-18 세션에서 사용자가 확정) 다국어 페이지는 진행 안 함.** 노르웨이/독일/네덜란드는 영어 구사력이 높은 국가라 번역 없이 지금처럼 영어로 계속 가는 것으로 사용자가 직접 결정함 — 이 항목은 종결, 재검토 불필요.
-1. **대기 중인 신규 툴 후보 없음** — 다음 후보는 "배치 차별화 필터", 막히면 "no-upload 차별화 필터"(5번 8차 세션 참고)로 새로 찾을 것.
-1-1. **(신규, 2026-07-20) `tools/humans-txt-generator.html` 클릭/노출 추적 시작할 것** — 신규 툴이라 아직 GSC 데이터 없음, 다음 스냅샷부터 확인. `tools/json-validator.html`도 7/18 추가 이후 아직 노출 자체가 안 잡히는 상태(7/20 스냅샷 페이지 목록에도 미등장) — 계속 관찰.
+1. **(2026-07-20 2차 세션 갱신) 대기 중인 신규 툴 후보 없음** — 다만 사용자가 이 세션에서 "공격적으로 확장해라, 경쟁 세도 롱테일로 뚫어라, 카테고리 확장도 좋다"고 명시적으로 방향을 강화함(11번 신규 항목 참고). 다음 세션에서도 신규 후보를 계속 적극적으로 찾을 것 — "배치 차별화 필터" 우선, 막히면 "no-upload 차별화 필터"(5번 8차), 그마저 없으면 **"경쟁사 헤드키워드가 전부 단일 항목만 처리하는가"를 후보 발굴 기준으로 쓸 것**(5번 10차, text-diff-checker 사례).
+1-1. **(신규, 2026-07-20 2차) `tools/meta-length-checker.html`, `tools/text-diff-checker.html` 클릭/노출 추적 시작할 것** — 둘 다 신규 툴이라 아직 GSC 데이터 없음, 다음 스냅샷부터 확인. `tools/humans-txt-generator.html`(7/20 1차 추가)도 마찬가지로 다음 스냅샷부터 확인. `tools/json-validator.html`도 7/18 추가 이후 아직 노출 자체가 안 잡히는 상태(7/20 스냅샷 페이지 목록에도 미등장) — 계속 관찰.
 1-2. **(2026-07-20 세션에서 완전히 해결)** 내부링크 고아 페이지 문제 — 1-3 항목에서 "잔여 23개"로 남아있던 것을 이번 세션에서 실측 재검사(25개로 확인) 후 전량 해소함(7번 참고). **이 항목은 종결.** 다만 앞으로 새 블로그 글을 추가할 때마다 관련 툴 페이지 본문에 링크를 심는 걸 그때그때 같이 처리해서, 다시 누적되지 않게 할 것 — 신규 툴 체크리스트에 "컴패니언 블로그 2개 → 해당 툴 페이지 FAQ/본문에서 반드시 상호링크" 항목 포함.
-2. 메타태그(title/description) 길이 체커는 서버사이드 fetch가 필요해서 보류 중 — Worker에 새 엔드포인트(`GET /meta?url=`) 추가할 의향이 있으면 재검토 가능.
+2. **(2026-07-20 2차 세션에서 해결 완료)** 메타태그(title/description) 길이 체커는 "URL 붙여넣기→서버 fetch" 방식으로 접근해서 Worker 확장이 필요해 보류돼 있었으나, "텍스트(title/description) 직접 붙여넣기, fetch 없음" 방식으로 접근을 바꿔서 `tools/meta-length-checker.html`로 구현 완료함. **이 항목은 종결.**
 3. 매 세션 GA/Search Console 데이터 받으면 이전 스냅샷과 비교 → 변화율 기준으로 신규/보강 여부 재판단 (8번 참고). 신규 결정 전 중복 체크 + 웹 키워드 경쟁강도 확인 필수. 신호가 확실히 잡힌 기존 페이지가 있으면 신규 글보다 그 페이지 보강을 먼저 검토할 것(2026-07-16 jwt-claims-explained, 2026-07-18 rss-generator/ip-dns-ssl/llms-txt-generator 사례 참고).
 3-1. **(2026-07-20 세션 확인 결과)** 7/18 세션에서 보강한 3개 페이지(rss-generator/ip-dns-ssl/llms-txt-generator)는 이번 스냅샷에서 노출이 완만히 늘긴 했으나(rss-generator +2%) 클릭 전환에는 아직 뚜렷한 변화 없음 — GSC 반영에 시간이 더 걸릴 수 있어 다음 스냅샷도 계속 볼 것.
-4. **툴 카테고리 자체를 넓히는 것도 유효한 확장 축.** 지금은 Encode/Decode·SEO·Network·Media(이미지+SVG)·Data(포맷변환) 5개 카테고리. 신규 후보 검토 시 "경쟁사가 단일 항목 처리인데 우리만 배치 처리 가능한가"를 최우선 필터로 쓸 것 (11번 18항 참고).
+4. **툴 카테고리 자체를 넓히는 것도 유효한 확장 축.** **(2026-07-20 2차 세션에서 6번째 카테고리 "Text" 신설 — Bulk Text Diff Checker로 개시)** 현재 Encode/Decode·SEO·Network·Media(이미지+SVG)·Data(포맷변환)·**Text**(신규) 6개 카테고리. 신규 후보 검토 시 "경쟁사가 단일 항목 처리인데 우리만 배치 처리 가능한가"를 최우선 필터로 쓸 것 (11번 18항 참고).
 5. rss-generator / free-alternative-screaming-frog 두 클러스터는 계속 관찰 — 순위가 유의미하게 오르기 시작하면 콘텐츠 심화로 전환 검토, 그렇지 않으면 백링크/권위 축적이 우선.
 6. **디렉토리 백링크는 당분간 중단 상태 유지** (10-4 원칙) — 사용자가 다시 명시적으로 요청할 때만 재개.
 7. **(2026-07-18 세션에서 사용자가 종결) 디렉토리 런칭/승인 결과(Product Hunt, Smol Launch, Fazier, AlternativeTo)는 Claude가 더 이상 추적하지 않는다.** 사용자가 "알아서 되는 거니까 신경 쓰지 말고 콘텐츠에 집중하라"고 명확히 지시함 — 앞으로 세션에서 이 항목들을 다음 할 일로 올리거나 확인을 제안하지 말 것.
