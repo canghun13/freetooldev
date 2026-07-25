@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON Validator vs JSON Schema Validator: Two Different Questions — FreeToolDev</title>
+<meta name="description" content="A JSON validator checks if a file parses. A schema validator checks if the data is shaped the way you expect. Here's why passing one says nothing about the other.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/json-validator-vs-schema-validator.html">
+<meta property="og:title" content="JSON Validator vs JSON Schema Validator: Two Different Questions — FreeToolDev">
+<meta property="og:description" content="A JSON validator checks if a file parses. A schema validator checks if the data is shaped the way you expect. Here's why passing one says nothing about the other.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="JSON Validator vs JSON Schema Validator: Two Different Questions — FreeToolDev">
+<meta name="twitter:description" content="A JSON validator checks if a file parses. A schema validator checks if the data is shaped the way you expect. Here's why passing one says nothing about the other.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/json-validator-vs-schema-validator.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 25, 2026</div>
+  <h1>JSON Validator vs JSON Schema Validator: Two Different Questions</h1>
+
+  <p>"Valid JSON" gets used loosely enough that it's worth separating what it actually means. A file can be perfectly valid JSON — every bracket matched, every comma in the right place — and still be completely wrong for what your application expects. These are two different checks, run at two different stages, and confusing them is a common source of bugs that only show up once bad data reaches code that assumed a shape it doesn't have.</p>
+
+  <h2>What a JSON validator checks: syntax</h2>
+  <p>A plain JSON validator answers one question: does this text parse as valid JSON? It checks bracket and brace matching, correct comma placement, properly quoted keys and strings, and no trailing commas or comments (none of which are legal in strict JSON, even though they're common typos from developers used to JavaScript object literals). Passing this check means the text is structurally well-formed — nothing more. A syntactically valid JSON document can still have a string where you expected a number, a missing field your code assumes exists, or an extra field that silently gets ignored somewhere it shouldn't.</p>
+
+  <h2>What a schema validator checks: shape</h2>
+  <p>A JSON Schema validator takes validation a level deeper: given a schema that describes what the data should look like — which fields are required, what type each value should be, allowed ranges, allowed enum values — it checks whether a specific document actually matches that description. This is the check that catches a missing required field, a string sent where a number was expected, an out-of-range value, or a typo'd enum value like <code>"admn"</code> instead of <code>"admin"</code> — all of which are perfectly valid JSON and completely wrong data.</p>
+
+  <h2>Where each one actually catches something</h2>
+  <p>Syntax errors show up most often from hand-editing config files, copying JSON out of a chat message or email where formatting got mangled, or a script that builds a JSON string with string concatenation instead of a proper serializer. Schema violations show up from API responses that changed shape without warning, user-submitted data that skipped client-side validation, or a data migration where a field got renamed or dropped along the way. A syntax check won't catch either of the second set of problems — the JSON is fine, the data just isn't what you needed.</p>
+
+  <h2>Why "valid JSON" isn't reassurance about data quality</h2>
+  <p>Treating a passed syntax check as confirmation that data is safe to use is the actual trap. An API contract, a config file schema, or an import format is really a promise about shape, not just syntax — and only a schema check verifies the promise was kept. For anything you're about to feed into code that reads specific fields expecting specific types, syntax validation is table stakes, not the finish line.</p>
+
+  <h2>Use both, in order</h2>
+  <p>Check syntax first with FreeToolDev's <a href="/tools/json-validator.html">bulk JSON validator &amp; formatter</a> — there's no point checking shape against malformed JSON. Once documents parse cleanly, check shape with the <a href="/tools/json-schema-validator.html">bulk JSON Schema validator</a>, which validates several documents against one schema in a single pass, free, with no per-document limit.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

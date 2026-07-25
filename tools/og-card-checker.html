@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Open Graph &amp; Twitter Card Checker — No URL Fetch | FreeToolDev</title>
+<meta name="description" content="Paste the meta tags or HTML for several pages at once — no URL, no fetch — and preview the social share card for every one. Works on localhost, staging, and pages behind a login.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/og-card-checker.html">
+<meta property="og:title" content="Bulk Open Graph &amp; Twitter Card Checker — No URL Fetch | FreeToolDev">
+<meta property="og:description" content="Paste the meta tags or HTML for several pages at once — no URL, no fetch — and preview the social share card for every one. Works on localhost, staging, and pages behind a login.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk Open Graph &amp; Twitter Card Checker — No URL Fetch | FreeToolDev">
+<meta name="twitter:description" content="Paste the meta tags or HTML for several pages at once — no URL, no fetch — and preview the social share card for every one. Works on localhost, staging, and pages behind a login.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/og-card-checker.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">SEO · Batch</span>
+    <h1>Bulk Open Graph &amp; Twitter Card Checker</h1>
+    <p>Paste the meta tags or full HTML for several pages at once — as text, not URLs — and preview the social share card for every one. No fetch, so it works on localhost, staging, and pages behind a login, not just live public URLs.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>Pages</h3>
+      <p style="font-size:0.85rem; margin-bottom:10px;">One page per block. Paste the page's <code>&lt;meta&gt;</code> tags (or the full page HTML — extra tags are ignored). Start a block with <code>### Page name</code> (optional). Separate multiple pages with a line containing just <code>-----</code>.</p>
+      <textarea id="input" style="min-height:220px;" placeholder="### Homepage
+&lt;meta property=&quot;og:title&quot; content=&quot;FreeToolDev&quot;&gt;
+&lt;meta property=&quot;og:description&quot; content=&quot;Free bulk tools for developers.&quot;&gt;
+&lt;meta property=&quot;og:image&quot; content=&quot;https://freetooldev.com/assets/img/og-image.png&quot;&gt;
+&lt;meta name=&quot;twitter:card&quot; content=&quot;summary_large_image&quot;&gt;
+-----
+### Pricing (missing og:image)
+&lt;meta property=&quot;og:title&quot; content=&quot;Pricing&quot;&gt;"></textarea>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="checkBtn">Check &amp; preview →</button>
+        <button class="btn btn-outline" id="clearBtn">Clear</button>
+      </div>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="resultsList"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>Why paste instead of fetching a URL</h2>
+    <p>Most Open Graph checkers work by fetching your URL on their server, the way a social media crawler would. That's the right approach for a live public page, but it can't reach anything that isn't publicly and immediately accessible — a page on localhost during development, a staging environment behind basic auth, or a page still behind a login before launch. Pasting the tags directly checks exactly what's in your HTML right now, regardless of whether a server can reach it. See <a href="/blog/check-og-tags-localhost-staging.html">this post</a> for the full case for checking tags this way before a page is even live.</p>
+
+    <h2>What gets checked</h2>
+    <p>Each page is checked for <code>og:title</code>, <code>og:description</code>, <code>og:image</code>, and <code>twitter:card</code>. Per the Twitter/X spec, missing <code>twitter:title</code>, <code>twitter:description</code>, and <code>twitter:image</code> fall back to their <code>og:</code> equivalents — this tool applies that same fallback when rendering the X preview, so you're seeing what X would actually display, not just what's explicitly set.</p>
+
+    <h2>Image loading note</h2>
+    <p>The preview loads each <code>og:image</code> URL directly as an image in your browser, the same way any webpage loads an image — it doesn't route through a server, so this works for any publicly reachable image URL. If an image is on localhost or behind auth, the preview card will show a broken image icon even though the tag itself is valid; that's expected, since your browser (like a social platform's crawler) still needs to actually reach the image file.</p>
+
+    <h2>FAQ</h2>
+    <h3>Is there a limit on how many pages I can check at once?</h3>
+    <p>No hard cap enforced by this tool — paste as many page blocks as you need.</p>
+    <h3>Can I paste the full page source instead of just the meta tags?</h3>
+    <p>Yes. The parser scans for <code>&lt;meta&gt;</code> tags with an <code>og:</code> or <code>twitter:</code> property/name anywhere in the pasted text and ignores everything else, so pasting an entire view-source dump works the same as pasting just the relevant tags.</p>
+    <h3>Why does the Twitter/X preview show my og:title instead of a twitter:title I didn't set?</h3>
+    <p>That's the platform's own fallback behavior, not a bug in this tool — X reads <code>og:title</code>, <code>og:description</code>, and <code>og:image</code> whenever the twitter-specific versions are absent. Setting explicit <code>twitter:</code> tags only matters when you want different copy or a different image on X specifically.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function parseMetaTags(html) {
+    var tags = {};
+    var metaRegex = /<meta\s+([^>]+?)\/?>/gi;
+    var match;
+    while ((match = metaRegex.exec(html)) !== null) {
+      var attrsStr = match[1];
+      var attrs = {};
+      var attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*"([^"]*)"|([a-zA-Z0-9_-]+)\s*=\s*'([^']*)'/g;
+      var am;
+      while ((am = attrRegex.exec(attrsStr)) !== null) {
+        var k = (am[1] || am[3]).toLowerCase();
+        var v = am[2] !== undefined ? am[2] : am[4];
+        attrs[k] = v;
+      }
+      var key = attrs.property || attrs.name;
+      if (key && (key.toLowerCase().indexOf('og:') === 0 || key.toLowerCase().indexOf('twitter:') === 0) && attrs.content !== undefined) {
+        tags[key.toLowerCase()] = attrs.content;
+      }
+    }
+    return tags;
+  }
+
+  function domainFromUrl(url) {
+    try { return new URL(url).hostname; } catch (e) { return ''; }
+  }
+
+  document.getElementById('checkBtn').addEventListener('click', function () {
+    var raw = document.getElementById('input').value;
+    if (!raw.trim()) { alert('Paste at least one page block first.'); return; }
+
+    var blocks = raw.split(/\n-{5,}\n/);
+    var resultsList = document.getElementById('resultsList');
+    resultsList.innerHTML = '';
+    document.getElementById('resultsPanel').style.display = 'block';
+
+    blocks.forEach(function (block, idx) {
+      block = block.trim();
+      if (!block) return;
+
+      var name = 'Page ' + (idx + 1);
+      var nameMatch = block.match(/^###\s*(.+)$/m);
+      if (nameMatch) {
+        name = nameMatch[1].trim();
+        block = block.replace(/^###\s*.+$/m, '').trim();
+      }
+
+      var tags = parseMetaTags(block);
+      var ogTitle = tags['og:title'] || '';
+      var ogDesc = tags['og:description'] || '';
+      var ogImage = tags['og:image'] || '';
+      var ogUrl = tags['og:url'] || '';
+      var twTitle = tags['twitter:title'] || ogTitle;
+      var twDesc = tags['twitter:description'] || ogDesc;
+      var twImage = tags['twitter:image'] || ogImage;
+      var twCard = tags['twitter:card'] || '';
+
+      var missing = [];
+      if (!ogTitle) missing.push('og:title');
+      if (!ogDesc) missing.push('og:description');
+      if (!ogImage) missing.push('og:image');
+      if (!twCard) missing.push('twitter:card');
+
+      var panel = document.createElement('div');
+      panel.className = 'file-row ready';
+      panel.style.flexDirection = 'column';
+      panel.style.alignItems = 'flex-start';
+      panel.style.padding = '16px';
+      panel.style.marginBottom = '12px';
+      panel.style.width = '100%';
+
+      var statusHtml = missing.length
+        ? '<div style="color:#b5451b; font-weight:600; font-size:0.85rem; margin-bottom:12px;">Missing: ' + missing.map(esc).join(', ') + '</div>'
+        : '<div style="color:#2e8b57; font-weight:600; font-size:0.85rem; margin-bottom:12px;">All core tags present</div>';
+
+      var domain = domainFromUrl(ogUrl) || 'example.com';
+
+      var fbCard =
+        '<div style="border:1px solid #ddd8c8; border-radius:8px; overflow:hidden; max-width:340px; font-family:Helvetica,Arial,sans-serif;">' +
+          (ogImage ? '<img src="' + esc(ogImage) + '" alt="" style="width:100%; height:178px; object-fit:cover; display:block; background:#e5e1d3;">' : '<div style="width:100%; height:178px; background:#e5e1d3; display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:#8a8578;">No og:image</div>') +
+          '<div style="padding:10px 12px; background:#f2f0e7;">' +
+            '<div style="font-size:0.7rem; text-transform:uppercase; color:#8a8578; margin-bottom:3px;">' + esc(domain) + '</div>' +
+            '<div style="font-size:0.85rem; font-weight:700; color:#1a1a1a; margin-bottom:3px;">' + (ogTitle ? esc(ogTitle) : '<em>No og:title</em>') + '</div>' +
+            '<div style="font-size:0.78rem; color:#606060;">' + (ogDesc ? esc(ogDesc) : '<em>No og:description</em>') + '</div>' +
+          '</div>' +
+        '</div>';
+
+      var isLarge = twCard !== 'summary';
+      var twCardHtml;
+      if (isLarge) {
+        twCardHtml =
+          '<div style="border:1px solid #cfd9de; border-radius:14px; overflow:hidden; max-width:340px; font-family:Helvetica,Arial,sans-serif;">' +
+            (twImage ? '<img src="' + esc(twImage) + '" alt="" style="width:100%; height:178px; object-fit:cover; display:block; background:#e5e1d3;">' : '<div style="width:100%; height:178px; background:#e5e1d3; display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:#8a8578;">No image</div>') +
+            '<div style="padding:10px 12px;">' +
+              '<div style="font-size:0.85rem; font-weight:700; color:#0f1419; margin-bottom:3px;">' + (twTitle ? esc(twTitle) : '<em>No title</em>') + '</div>' +
+              '<div style="font-size:0.78rem; color:#536471; margin-bottom:3px;">' + (twDesc ? esc(twDesc) : '<em>No description</em>') + '</div>' +
+              '<div style="font-size:0.72rem; color:#536471;">' + esc(domain) + '</div>' +
+            '</div>' +
+          '</div>';
+      } else {
+        twCardHtml =
+          '<div style="border:1px solid #cfd9de; border-radius:14px; overflow:hidden; max-width:340px; font-family:Helvetica,Arial,sans-serif; display:flex;">' +
+            (twImage ? '<img src="' + esc(twImage) + '" alt="" style="width:80px; height:80px; object-fit:cover; display:block; background:#e5e1d3; flex-shrink:0;">' : '<div style="width:80px; height:80px; background:#e5e1d3; flex-shrink:0;"></div>') +
+            '<div style="padding:8px 10px; overflow:hidden;">' +
+              '<div style="font-size:0.82rem; font-weight:700; color:#0f1419; margin-bottom:2px;">' + (twTitle ? esc(twTitle) : '<em>No title</em>') + '</div>' +
+              '<div style="font-size:0.76rem; color:#536471; margin-bottom:2px;">' + (twDesc ? esc(twDesc) : '<em>No description</em>') + '</div>' +
+              '<div style="font-size:0.7rem; color:#536471;">' + esc(domain) + '</div>' +
+            '</div>' +
+          '</div>';
+      }
+
+      panel.innerHTML =
+        '<div style="font-weight:700; margin-bottom:6px; width:100%;">' + esc(name) + '</div>' +
+        statusHtml +
+        '<div style="display:flex; gap:24px; flex-wrap:wrap; width:100%;">' +
+          '<div><div style="font-size:0.75rem; font-weight:600; color:#8a8578; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em;">Facebook / LinkedIn (og:)</div>' + fbCard + '</div>' +
+          '<div><div style="font-size:0.75rem; font-weight:600; color:#8a8578; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em;">X / Twitter (' + (twCard || 'no twitter:card set') + ')</div>' + twCardHtml + '</div>' +
+        '</div>';
+
+      resultsList.appendChild(panel);
+    });
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    document.getElementById('input').value = '';
+    document.getElementById('resultsPanel').style.display = 'none';
+  });
+});
+</script>
+
+</body>
+</html>

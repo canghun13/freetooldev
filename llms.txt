@@ -9,6 +9,7 @@
 - [JSON ↔ YAML Converter — Free Batch Tool](https://freetooldev.com/tools/json-yaml-converter.html): Convert JSON to YAML or YAML to JSON, one document at a time or several separated by ---. Free, no signup, runs entirely in your browser.
 - [CSV ↔ TSV Converter — Free Batch Tool](https://freetooldev.com/tools/csv-tsv-converter.html): Convert CSV to TSV or TSV to CSV with proper quote and delimiter handling. Paste text or upload multiple files, free, runs entirely in your browser.
 - [Bulk JSON Validator & Formatter — Check Many Snippets at Once](https://freetooldev.com/tools/json-validator.html): Paste several JSON snippets at once — separated by a divider, no file upload — and validate and pretty-print every one in a single pass, with the exact line and column of any syntax error.
+- [Bulk JSON Schema Validator](https://freetooldev.com/tools/json-schema-validator.html): Validate several JSON documents against one JSON Schema in a single pass — completely free, no premium tier, no per-document limit. Runs entirely in your browser.
 - [Base64 Encode / Decode — Free Online Tool](https://freetooldev.com/tools/base64.html): Encode text to Base64 or decode Base64 back to text. Batch line-by-line processing supported, free, runs entirely in your browser.
 - [Bulk URL Encoder / Decoder — Free Online Tool](https://freetooldev.com/tools/url-encoder.html): Percent-encode or decode a whole list of URLs, query strings, or parameters at once. Component and full-URL modes, free, runs entirely in your browser.
 - [RSS Feed Generator](https://freetooldev.com/tools/rss-generator.html): Generate a valid RSS 2.0 feed from a simple list of titles, links, and dates. No account, no scraping — free and instant.
@@ -25,6 +26,8 @@
 - [Bulk QR Code Generator — From a List of URLs](https://freetooldev.com/tools/qr-batch.html): Generate QR codes for a whole list of URLs or text at once. No upload, no account — runs entirely in your browser. Download individually or as a ZIP.
 - [Bulk Barcode Generator — UPC, EAN, Code128](https://freetooldev.com/tools/barcode-batch.html): Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once. No upload, no account — runs entirely in your browser. Download individually or as a ZIP.
 - [Bulk Text Diff Checker](https://freetooldev.com/tools/text-diff-checker.html): Paste several original/modified text pairs at once and see a line-by-line diff for every one in a single pass. Free, no signup, runs entirely in your browser.
+- [Bulk Open Graph & Twitter Card Checker](https://freetooldev.com/tools/og-card-checker.html): Paste the meta tags or HTML for several pages at once — no URL, no fetch — and preview the social share card for every one. Works on localhost, staging, and pages behind a login.
+- [Bulk OG Image Generator](https://freetooldev.com/tools/og-image-generator.html): Paste a list of titles and generate a unique 1200x630 social share image for every one at once. Free, download as a ZIP.
 
 ## Site
 - [About](https://freetooldev.com/about.html)
@@ -33,6 +36,12 @@
 
 ## Blog
 - [Blog index](https://freetooldev.com/blog/index.html)
+- [Static vs Dynamic OG Images: Which Approach Actually Fits Your Site?](https://freetooldev.com/blog/static-vs-dynamic-og-images.html): Pre-generate every social image once, or build one per request on a server. Two real approaches, different tradeoffs for different sites.
+- [Why Every Post Sharing the Same Social Card Is a Missed Click](https://freetooldev.com/blog/generic-og-image-problem.html): One sitewide OG image is easy to set up and easy to forget about. Here's what it actually costs you.
+- [og:image vs twitter:image: Do You Need Both?](https://freetooldev.com/blog/og-image-vs-twitter-image.html): X falls back to og:image when twitter:image is missing. Here's when the fallback is enough and when it isn't.
+- [Checking Open Graph Tags on Localhost, Staging, or Behind a Login](https://freetooldev.com/blog/check-og-tags-localhost-staging.html): Every OG checker fetches a public URL — which means none of them work before a page is live. Here's the fix.
+- [How an API Response Changes Shape Without Anyone Noticing](https://freetooldev.com/blog/api-schema-drift-explained.html): A field gets renamed, a type quietly changes. None of it breaks a syntax check. Here's how schema drift happens.
+- [JSON Validator vs JSON Schema Validator: Two Different Questions](https://freetooldev.com/blog/json-validator-vs-schema-validator.html): A JSON validator checks if a file parses. A schema validator checks if the data is shaped the way you expect.
 - [Line Diff vs Character Diff: Which One Actually Shows You What Changed?](https://freetooldev.com/blog/line-diff-vs-character-diff.html): Line-level and character-level diffing answer different questions. Here's when each one actually helps, and when finer detail just adds noise.
 - [When You Actually Need to Diff Multiple Text Pairs at Once](https://freetooldev.com/blog/bulk-text-diff-use-cases.html): Comparing two versions of one file takes seconds anywhere. Here's when the job actually becomes a batch problem.
 - [Meta Description vs Google's Auto-Generated Snippet: When Google Ignores What You Wrote](https://freetooldev.com/blog/meta-description-vs-google-snippet.html): Google rewrites a large share of meta descriptions with text pulled from the page instead. Here's what triggers a rewrite.

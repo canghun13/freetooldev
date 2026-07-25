@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk OG Image Generator — Social Cards for Every Blog Post | FreeToolDev</title>
+<meta name="description" content="Paste a list of titles and generate a unique 1200x630 social share image for every one at once — no design tool, no per-image editing. Free, download as a ZIP.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/og-image-generator.html">
+<meta property="og:title" content="Bulk OG Image Generator — Social Cards for Every Blog Post | FreeToolDev">
+<meta property="og:description" content="Paste a list of titles and generate a unique 1200x630 social share image for every one at once — no design tool, no per-image editing. Free, download as a ZIP.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk OG Image Generator — Social Cards for Every Blog Post | FreeToolDev">
+<meta name="twitter:description" content="Paste a list of titles and generate a unique 1200x630 social share image for every one at once — no design tool, no per-image editing. Free, download as a ZIP.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/og-image-generator.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">SEO · Batch</span>
+    <h1>Bulk OG Image Generator</h1>
+    <p>Paste a list of titles and generate a unique 1200×630 social share image for every one at once. No design tool, no per-image editing — pick a style, generate, download as a ZIP.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>Titles</h3>
+      <p style="font-size:0.85rem; margin-bottom:10px;">One image per line: <code>Title | Subtitle</code> — subtitle is optional, leave it off if you don't need one.</p>
+      <textarea id="titlesInput" style="min-height:160px;" placeholder="Why Your Meta Title Still Gets Cut Off Even Under 60 Characters | SEO Guide
+Line Diff vs Character Diff: Which One Actually Shows You What Changed?
+Humans.txt Generator | Free Tool"></textarea>
+
+      <div class="opt-row" style="margin-top:16px;">
+        <div>
+          <label>Site name (shown on every card)</label>
+          <input type="text" id="siteName" value="FreeToolDev" placeholder="yoursite.com">
+        </div>
+        <div>
+          <label>Style</label>
+          <select id="styleSelect">
+            <option value="navy" selected>Navy</option>
+            <option value="amber">Amber</option>
+            <option value="paper">Paper (light)</option>
+            <option value="violet">Violet</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button class="btn btn-amber" id="genBtn">Generate images →</button>
+        <button class="btn btn-outline" id="clearBtn">Clear</button>
+      </div>
+      <p style="font-size:0.78rem; color:#8a8578; margin-top:8px;">Up to 30 titles per batch.</p>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Generated images</h3>
+      <div class="toolbar" style="margin-bottom:14px;">
+        <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download all as ZIP</button>
+      </div>
+      <div id="resultsGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px;"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>How it works</h2>
+    <p>Each title is drawn onto an HTML canvas at the standard 1200×630 social image size, then exported as a PNG — the same fundamental approach services like Vercel's OG image generator use, just running entirely in your browser instead of a server. Nothing is uploaded; you can confirm that by checking the Network tab while a batch runs.</p>
+
+    <h2>Why one image per post beats one image for the whole site</h2>
+    <p>A single sitewide OG image means every link looks identical when shared — a reader scrolling a feed gets no visual signal about which specific article a link leads to. A unique card per post costs nothing extra once you're generating them in a batch instead of one at a time in a design tool, and it gives every shared link its own distinct preview.</p>
+
+    <h2>Limits</h2>
+    <p>Up to 30 titles per batch, capped to keep a browser tab doing 30 full-canvas renders and a ZIP build comfortably fast. For a bigger set, run multiple batches.</p>
+
+    <h2>FAQ</h2>
+    <h3>Where do I put the downloaded images?</h3>
+    <p>Reference each one from your page's <code>og:image</code> tag (and let <code>twitter:image</code> fall back to it — see <a href="/blog/og-image-vs-twitter-image.html">this post</a> for when you'd set that separately). Host the PNG anywhere publicly reachable, since the platform reading the tag needs to fetch it directly.</p>
+    <h3>Can I use a custom background image instead of a color style?</h3>
+    <p>Not currently — this tool generates a solid or gradient background with text, which covers most blog and documentation use cases without any image-sourcing step. For a photo-backed card, a per-image design tool is the better fit for that specific job.</p>
+    <h3>Why does a very long title get smaller, or wrap to more lines, than a short one?</h3>
+    <p>Text is wrapped to fit the canvas width at a fixed font size — a longer title simply wraps across more lines rather than being cut off. Titles over roughly 70 characters are worth shortening for the card even if they're fine as a page <code>&lt;title&gt;</code>, since a very tall wrapped title can start crowding the card's edges.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var MAX_TITLES = 30;
+  var lastResults = [];
+
+  var STYLES = {
+    navy: { bgFrom: '#0b1f38', bgTo: '#081729', text: '#EDEBE2', accent: '#F2B84D', sub: '#9fb3c8' },
+    amber: { bgFrom: '#c9701f', bgTo: '#8a4a12', text: '#fff8ec', accent: '#2a1c0c', sub: '#fce3c2' },
+    paper: { bgFrom: '#f5f3ea', bgTo: '#e5e1d3', text: '#1a1a1a', accent: '#b5451b', sub: '#5c584c' },
+    violet: { bgFrom: '#3b2464', bgTo: '#1f1238', text: '#f3ecff', accent: '#c9a6ff', sub: '#c9b8e6' }
+  };
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function wrapText(ctx, text, maxWidth) {
+    var words = text.split(' ');
+    var lines = [];
+    var current = '';
+    words.forEach(function (word) {
+      var test = current ? current + ' ' + word : word;
+      if (ctx.measureText(test).width > maxWidth && current) {
+        lines.push(current);
+        current = word;
+      } else {
+        current = test;
+      }
+    });
+    if (current) lines.push(current);
+    return lines;
+  }
+
+  function renderCard(title, subtitle, siteName, styleKey) {
+    var canvas = document.createElement('canvas');
+    canvas.width = 1200;
+    canvas.height = 630;
+    var ctx = canvas.getContext('2d');
+    var s = STYLES[styleKey] || STYLES.navy;
+
+    var grad = ctx.createLinearGradient(0, 0, 1200, 630);
+    grad.addColorStop(0, s.bgFrom);
+    grad.addColorStop(1, s.bgTo);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1200, 630);
+
+    ctx.textBaseline = 'top';
+
+    if (siteName) {
+      ctx.fillStyle = s.accent;
+      ctx.font = '700 28px Inter, sans-serif';
+      ctx.fillText(siteName, 80, 64);
+    }
+
+    ctx.fillStyle = s.text;
+    ctx.font = '800 60px Inter, sans-serif';
+    var lines = wrapText(ctx, title, 1040).slice(0, 4);
+    var lineHeight = 72;
+    var subtitleHeight = subtitle ? 56 : 0;
+    var totalTextHeight = lines.length * lineHeight + subtitleHeight;
+    var startY = Math.max(140, (630 - totalTextHeight) / 2);
+
+    lines.forEach(function (line, i) {
+      ctx.fillText(line, 80, startY + i * lineHeight);
+    });
+
+    if (subtitle) {
+      ctx.fillStyle = s.sub;
+      ctx.font = '500 30px Inter, sans-serif';
+      ctx.fillText(subtitle, 80, startY + lines.length * lineHeight + 16);
+    }
+
+    return canvas;
+  }
+
+  function slugify(text) {
+    return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'og-image';
+  }
+
+  document.getElementById('genBtn').addEventListener('click', function () {
+    var raw = document.getElementById('titlesInput').value;
+    var lines = raw.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+    if (!lines.length) { alert('Add at least one title first.'); return; }
+    if (lines.length > MAX_TITLES) {
+      alert('This batch has ' + lines.length + ' titles. The limit is ' + MAX_TITLES + ' per batch — trim the list and run it again for the rest.');
+      return;
+    }
+
+    var siteName = document.getElementById('siteName').value.trim();
+    var styleKey = document.getElementById('styleSelect').value;
+    var resultsGrid = document.getElementById('resultsGrid');
+    resultsGrid.innerHTML = '';
+    lastResults = [];
+    document.getElementById('resultsPanel').style.display = 'block';
+    document.getElementById('downloadZipBtn').style.display = 'none';
+
+    document.fonts.ready.then(function () {
+      lines.forEach(function (line, idx) {
+        var parts = line.split('|').map(function (p) { return p.trim(); });
+        var title = parts[0];
+        var subtitle = parts[1] || '';
+
+        var canvas = renderCard(title, subtitle, siteName, styleKey);
+        var dataUrl = canvas.toDataURL('image/png');
+        var filename = slugify(title) + '.png';
+        lastResults.push({ name: filename, dataUrl: dataUrl });
+
+        var cell = document.createElement('div');
+        cell.style.textAlign = 'center';
+        cell.innerHTML =
+          '<img src="' + dataUrl + '" style="width:100%; height:auto; border-radius:6px; border:1px solid var(--paper-dim); margin-bottom:8px; display:block;" alt="">' +
+          '<div style="font-size:0.75rem; margin-bottom:8px; word-break:break-word;">' + esc(title) + '</div>' +
+          '<a class="btn btn-outline" style="padding:6px 12px; font-size:0.72rem;" href="' + dataUrl + '" download="' + filename + '">Download</a>';
+        resultsGrid.appendChild(cell);
+      });
+
+      if (lastResults.length) document.getElementById('downloadZipBtn').style.display = 'inline-flex';
+    });
+  });
+
+  document.getElementById('downloadZipBtn').addEventListener('click', function () {
+    var zip = new JSZip();
+    lastResults.forEach(function (r) {
+      var base64 = r.dataUrl.split(',')[1];
+      zip.file(r.name, base64, { base64: true });
+    });
+    zip.generateAsync({ type: 'blob' }).then(function (blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'og-images.zip';
+      a.click();
+    });
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    document.getElementById('titlesInput').value = '';
+    document.getElementById('resultsGrid').innerHTML = '';
+    document.getElementById('resultsPanel').style.display = 'none';
+    lastResults = [];
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk JSON Schema Validator — Validate Multiple Documents Free | FreeToolDev</title>
+<meta name="description" content="Validate several JSON documents against one JSON Schema in a single pass — completely free, no premium tier, no upload. Runs entirely in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/json-schema-validator.html">
+<meta property="og:title" content="Bulk JSON Schema Validator — Validate Multiple Documents Free | FreeToolDev">
+<meta property="og:description" content="Validate several JSON documents against one JSON Schema in a single pass — completely free, no premium tier, no upload. Runs entirely in your browser.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk JSON Schema Validator — Validate Multiple Documents Free | FreeToolDev">
+<meta name="twitter:description" content="Validate several JSON documents against one JSON Schema in a single pass — completely free, no premium tier, no upload. Runs entirely in your browser.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/json-schema-validator.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Data · Batch</span>
+    <h1>Bulk JSON Schema Validator</h1>
+    <p>Paste one JSON Schema and several JSON documents, and validate every document against it in a single pass — completely free. No signup, no per-document limit, nothing uploaded.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>JSON Schema</h3>
+      <p style="font-size:0.85rem; margin-bottom:10px;">One schema, checked against every document below. Supports type, required, properties, items, enum, minimum/maximum, minLength/maxLength, pattern, minItems/maxItems, uniqueItems, minProperties/maxProperties, additionalProperties, and format (email, uri, date, date-time).</p>
+      <textarea id="schemaInput" style="min-height:180px;" placeholder='{
+  "type": "object",
+  "required": ["id", "email"],
+  "properties": {
+    "id": { "type": "integer", "minimum": 1 },
+    "email": { "type": "string", "format": "email" },
+    "role": { "type": "string", "enum": ["admin", "user"] }
+  },
+  "additionalProperties": false
+}'></textarea>
+    </div>
+
+    <div class="panel" style="margin-top:20px;">
+      <h3>Documents to validate</h3>
+      <p style="font-size:0.85rem; margin-bottom:10px;">Paste one or more JSON documents. Separate multiple documents with a line containing just <code>-----</code>. Optionally start a document's block with <code>### name</code> to label it in the results.</p>
+      <textarea id="docsInput" style="min-height:220px;" placeholder='### user 1
+{"id": 1, "email": "jane@example.com", "role": "admin"}
+-----
+### user 2 (missing email)
+{"id": 2, "role": "user"}'></textarea>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="checkBtn">Validate all →</button>
+        <button class="btn btn-outline" id="clearBtn">Clear</button>
+      </div>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="resultsList"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>What this checks — and what it doesn't</h2>
+    <p>This validator covers the JSON Schema keywords developers reach for most often: <code>type</code>, <code>required</code>, <code>properties</code>, <code>items</code>, <code>enum</code>, numeric ranges (<code>minimum</code>/<code>maximum</code>/<code>exclusiveMinimum</code>/<code>exclusiveMaximum</code>), string length and <code>pattern</code>, array length and <code>uniqueItems</code>, object size limits, <code>additionalProperties</code>, and basic <code>format</code> checks (email, uri, date, date-time). It does not implement <code>$ref</code>, <code>allOf</code>/<code>anyOf</code>/<code>oneOf</code>/<code>not</code>, or schema composition — for those, a full library like Ajv is the right tool. This covers the schemas most API contracts, config files, and data imports actually use. For how this differs from a plain syntax check, see <a href="/blog/json-validator-vs-schema-validator.html">this post</a>.</p>
+
+    <h2>Why bulk matters here specifically</h2>
+    <p>Validating one document against a schema takes seconds anywhere. The bulk case shows up when you're checking a batch export against a contract before importing it, confirming every item in a seed-data file matches the shape your app expects, or spot-checking API responses collected during testing — situations where reading each result one at a time is the actual bottleneck, not the validation itself. See <a href="/blog/api-schema-drift-explained.html">this post</a> for how an API's response shape can quietly change without a single request ever failing.</p>
+
+    <h2>FAQ</h2>
+    <h3>Is there a limit on how many documents I can validate?</h3>
+    <p>No hard cap enforced by this tool — paste as many document blocks as you need. Everything runs synchronously in your browser, so a very large batch may take a moment to render, but there's no per-document limit or paid tier gating batch validation.</p>
+    <h3>What happens if my schema itself is invalid JSON?</h3>
+    <p>The tool reports that immediately instead of trying to validate documents against a broken schema — fix the schema first, since every document's result would otherwise be meaningless.</p>
+    <h3>Does this support <code>$ref</code> for reusing sub-schemas?</h3>
+    <p>Not currently. <code>$ref</code>, <code>allOf</code>, <code>anyOf</code>, <code>oneOf</code>, and <code>not</code> require a resolution step this tool doesn't implement — schemas using them will be checked keyword-by-keyword on the top-level structure, but referenced sub-schemas won't be resolved. Keep schemas flat (no <code>$ref</code>) for accurate results.</p>
+    <h3>What does <code>format: "email"</code> actually check?</h3>
+    <p>A basic structural check (something@something.something) — not a full RFC 5321 mailbox validation and not a live deliverability check. It catches obviously malformed values, not every edge case a mail server would reject.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function typeOf(val) {
+    if (val === null) return 'null';
+    if (Array.isArray(val)) return 'array';
+    return typeof val;
+  }
+
+  function checkType(val, type) {
+    var actual = typeOf(val);
+    if (type === 'integer') return actual === 'number' && Number.isInteger(val);
+    if (type === 'number') return actual === 'number';
+    return actual === type;
+  }
+
+  function checkFormat(val, format) {
+    if (format === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    if (format === 'date') return /^\d{4}-\d{2}-\d{2}$/.test(val);
+    if (format === 'date-time') return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(val) && !isNaN(Date.parse(val));
+    if (format === 'uri' || format === 'url') { try { new URL(val); return true; } catch (e) { return false; } }
+    return true;
+  }
+
+  function validate(data, schema, path, errors) {
+    if (!schema || typeof schema !== 'object') return;
+    if (schema.type) {
+      var types = Array.isArray(schema.type) ? schema.type : [schema.type];
+      var ok = types.some(function (t) { return checkType(data, t); });
+      if (!ok) {
+        errors.push({ path: path, message: 'Expected type ' + types.join(' or ') + ' but got ' + typeOf(data) });
+        return;
+      }
+    }
+    if (schema.enum) {
+      var found = schema.enum.some(function (v) { return JSON.stringify(v) === JSON.stringify(data); });
+      if (!found) errors.push({ path: path, message: 'Value not in allowed enum' });
+    }
+    var t = typeOf(data);
+    if (t === 'string') {
+      if (schema.minLength != null && data.length < schema.minLength) errors.push({ path: path, message: 'String shorter than minLength ' + schema.minLength });
+      if (schema.maxLength != null && data.length > schema.maxLength) errors.push({ path: path, message: 'String longer than maxLength ' + schema.maxLength });
+      if (schema.pattern) {
+        try { if (!new RegExp(schema.pattern).test(data)) errors.push({ path: path, message: 'Does not match pattern ' + schema.pattern }); } catch (e) {}
+      }
+      if (schema.format && !checkFormat(data, schema.format)) errors.push({ path: path, message: 'Does not match format "' + schema.format + '"' });
+    }
+    if (t === 'number') {
+      if (schema.minimum != null && data < schema.minimum) errors.push({ path: path, message: 'Value below minimum ' + schema.minimum });
+      if (schema.maximum != null && data > schema.maximum) errors.push({ path: path, message: 'Value above maximum ' + schema.maximum });
+      if (schema.exclusiveMinimum != null && data <= schema.exclusiveMinimum) errors.push({ path: path, message: 'Value must be > ' + schema.exclusiveMinimum });
+      if (schema.exclusiveMaximum != null && data >= schema.exclusiveMaximum) errors.push({ path: path, message: 'Value must be < ' + schema.exclusiveMaximum });
+    }
+    if (t === 'array') {
+      if (schema.minItems != null && data.length < schema.minItems) errors.push({ path: path, message: 'Array shorter than minItems ' + schema.minItems });
+      if (schema.maxItems != null && data.length > schema.maxItems) errors.push({ path: path, message: 'Array longer than maxItems ' + schema.maxItems });
+      if (schema.uniqueItems) {
+        var seen = {};
+        data.forEach(function (item) {
+          var k = JSON.stringify(item);
+          if (seen[k]) errors.push({ path: path, message: 'Duplicate item found (uniqueItems: true)' });
+          seen[k] = true;
+        });
+      }
+      if (schema.items) {
+        data.forEach(function (item, i) { validate(item, schema.items, path + '[' + i + ']', errors); });
+      }
+    }
+    if (t === 'object') {
+      if (schema.minProperties != null && Object.keys(data).length < schema.minProperties) errors.push({ path: path, message: 'Fewer properties than minProperties ' + schema.minProperties });
+      if (schema.maxProperties != null && Object.keys(data).length > schema.maxProperties) errors.push({ path: path, message: 'More properties than maxProperties ' + schema.maxProperties });
+      if (schema.required) {
+        schema.required.forEach(function (key) {
+          if (!(key in data)) errors.push({ path: path, message: 'Missing required property "' + key + '"' });
+        });
+      }
+      if (schema.properties) {
+        Object.keys(schema.properties).forEach(function (key) {
+          if (key in data) validate(data[key], schema.properties[key], path + '.' + key, errors);
+        });
+      }
+      if (schema.additionalProperties === false) {
+        var allowed = schema.properties ? Object.keys(schema.properties) : [];
+        Object.keys(data).forEach(function (key) {
+          if (allowed.indexOf(key) === -1) errors.push({ path: path, message: 'Unexpected property "' + key + '" (additionalProperties: false)' });
+        });
+      }
+    }
+  }
+
+  document.getElementById('checkBtn').addEventListener('click', function () {
+    var schemaRaw = document.getElementById('schemaInput').value;
+    var docsRaw = document.getElementById('docsInput').value;
+    if (!schemaRaw.trim()) { alert('Paste a JSON Schema first.'); return; }
+    if (!docsRaw.trim()) { alert('Paste at least one document to validate.'); return; }
+
+    var resultsList = document.getElementById('resultsList');
+    resultsList.innerHTML = '';
+    document.getElementById('resultsPanel').style.display = 'block';
+
+    var schema;
+    try {
+      schema = JSON.parse(schemaRaw);
+    } catch (e) {
+      var errPanel = document.createElement('div');
+      errPanel.className = 'file-row ready';
+      errPanel.style.flexDirection = 'column';
+      errPanel.style.alignItems = 'flex-start';
+      errPanel.style.padding = '16px';
+      errPanel.style.width = '100%';
+      errPanel.innerHTML = '<div style="color:#b5451b; font-weight:600; font-size:0.85rem;">Schema is not valid JSON: ' + esc(e.message) + '</div>';
+      resultsList.appendChild(errPanel);
+      return;
+    }
+
+    var blocks = docsRaw.split(/\n-{5,}\n/);
+    blocks.forEach(function (block, idx) {
+      block = block.trim();
+      if (!block) return;
+
+      var name = 'Document ' + (idx + 1);
+      var nameMatch = block.match(/^###\s*(.+)$/m);
+      if (nameMatch) {
+        name = nameMatch[1].trim();
+        block = block.replace(/^###\s*.+$/m, '').trim();
+      }
+
+      var panel = document.createElement('div');
+      panel.className = 'file-row ready';
+      panel.style.flexDirection = 'column';
+      panel.style.alignItems = 'flex-start';
+      panel.style.padding = '16px';
+      panel.style.marginBottom = '12px';
+      panel.style.width = '100%';
+
+      var data;
+      try {
+        data = JSON.parse(block);
+      } catch (e) {
+        panel.innerHTML =
+          '<div style="font-weight:700; margin-bottom:6px; width:100%;">' + esc(name) + '</div>' +
+          '<div style="color:#b5451b; font-weight:600; font-size:0.85rem;">Not valid JSON: ' + esc(e.message) + '</div>';
+        resultsList.appendChild(panel);
+        return;
+      }
+
+      var errors = [];
+      validate(data, schema, '$', errors);
+
+      var bodyHtml;
+      if (errors.length === 0) {
+        bodyHtml = '<div style="color:#2e8b57; font-weight:600; font-size:0.85rem;">Valid — matches the schema</div>';
+      } else {
+        bodyHtml = '<div style="color:#b5451b; font-weight:600; font-size:0.85rem; margin-bottom:8px;">' + errors.length + ' issue(s) found</div>' +
+          '<div style="width:100%; background:#081729; border-radius:6px; padding:10px 14px;">' +
+          errors.map(function (e) {
+            return '<div style="font-family:\'JetBrains Mono\',monospace; font-size:0.8rem; color:#EDEBE2; padding:3px 0;"><span style="color:#F2B84D;">' + esc(e.path) + '</span> — ' + esc(e.message) + '</div>';
+          }).join('') +
+          '</div>';
+      }
+
+      panel.innerHTML = '<div style="font-weight:700; margin-bottom:6px; width:100%;">' + esc(name) + '</div>' + bodyHtml;
+      resultsList.appendChild(panel);
+    });
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    document.getElementById('schemaInput').value = '';
+    document.getElementById('docsInput').value = '';
+    document.getElementById('resultsPanel').style.display = 'none';
+  });
+});
+</script>
+
+</body>
+</html>

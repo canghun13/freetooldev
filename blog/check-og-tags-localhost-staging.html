@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checking Open Graph Tags on Localhost, Staging, or Behind a Login — FreeToolDev</title>
+<meta name="description" content="Every OG checker fetches a public URL — which means none of them work before a page is live. Here's how to verify your social preview before you ever deploy it.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/check-og-tags-localhost-staging.html">
+<meta property="og:title" content="Checking Open Graph Tags on Localhost, Staging, or Behind a Login — FreeToolDev">
+<meta property="og:description" content="Every OG checker fetches a public URL — which means none of them work before a page is live. Here's how to verify your social preview before you ever deploy it.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Checking Open Graph Tags on Localhost, Staging, or Behind a Login — FreeToolDev">
+<meta name="twitter:description" content="Every OG checker fetches a public URL — which means none of them work before a page is live. Here's how to verify your social preview before you ever deploy it.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/check-og-tags-localhost-staging.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 25, 2026</div>
+  <h1>Checking Open Graph Tags on Localhost, Staging, or Behind a Login</h1>
+
+  <p>Every popular Open Graph checker works the same way: you give it a URL, it fetches that URL the way a social media crawler would, and it reads the meta tags from the response. That design makes perfect sense for a live public page — and it makes every one of those tools useless for a page that isn't live, public, and reachable yet.</p>
+
+  <h2>Where the fetch-a-URL approach breaks down</h2>
+  <p>A page running on <code>localhost:3000</code> during development simply isn't reachable from any external service — there's no URL a checker running on someone else's server can fetch. A staging environment behind basic auth or an IP allowlist has the same problem: the checker's request gets a 401 or gets blocked outright, and you're left staring at an error instead of a preview. A page still gated behind a login, waiting to launch, is unreachable for the same reason. In every one of these cases, the tags might be perfectly correct — there's just no way for a URL-fetching tool to find out.</p>
+
+  <h2>The workaround people actually use</h2>
+  <p>The common fallback is deploying to production first and checking after, which flips the order you'd actually want: catch a missing <code>og:image</code> or a broken fallback before the page is public, not after someone already shared a broken link. A second common workaround — running a local tunnel service to expose localhost temporarily just to run a checker against it — works, but it's a lot of setup for what should be a two-second check on tags that already exist in your HTML.</p>
+
+  <h2>Checking the tags without fetching anything</h2>
+  <p>The tags themselves are already sitting in your page's HTML, reachable the instant the page renders in your own browser — nothing about verifying them requires an external server to independently confirm the page is live. View-source (or copy the relevant <code>&lt;meta&gt;</code> tags directly) and paste that text into a checker that reads it as text, rather than treating the input as a URL to go fetch. This works identically whether the page is on localhost, behind staging auth, or fully public, because it never needs a second request to reach the page — you already have the HTML in front of you.</p>
+
+  <h2>What still needs the page to be public</h2>
+  <p>One thing a paste-based approach can't fully verify locally: whether the <code>og:image</code> URL itself is reachable by an external crawler, since that requires an actual network request to the image host. If your image is served from the same not-yet-public environment as the page, a paste-based preview may still show a broken image locally even once the tags are structurally correct — that part of the check does need the environment to be reachable, at least for the image asset specifically.</p>
+
+  <h2>Try it</h2>
+  <p>FreeToolDev's <a href="/tools/og-card-checker.html">bulk Open Graph &amp; Twitter Card checker</a> works entirely from pasted text — paste your meta tags (or the whole page source) for several pages at once, from any environment, and see the preview and any missing tags immediately.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
