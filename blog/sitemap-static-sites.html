@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sitemaps for Static Sites: GitHub Pages, Netlify, and Vercel — FreeToolDev</title>
-<meta name="description" content="Static site generators don't always create a sitemap.xml for you. Here's how to generate and submit one, whichever host you're on.">
+<meta name="description" content="Static sites don't always generate a sitemap.xml, and it can 404 even after you add one. How to create, submit, and fix it on GitHub Pages, Netlify, Vercel.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://freetooldev.com/blog/sitemap-static-sites.html">
 <meta property="og:title" content="Sitemaps for Static Sites: GitHub Pages, Netlify, and Vercel — FreeToolDev">
-<meta property="og:description" content="Static site generators don't always create a sitemap.xml for you. Here's how to generate and submit one, whichever host you're on.">
+<meta property="og:description" content="Static sites don't always generate a sitemap.xml, and it can 404 even after you add one. How to create, submit, and fix it on GitHub Pages, Netlify, Vercel.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Sitemaps for Static Sites: GitHub Pages, Netlify, and Vercel — FreeToolDev">
-<meta name="twitter:description" content="Static site generators don't always create a sitemap.xml for you. Here's how to generate and submit one, whichever host you're on.">
+<meta name="twitter:description" content="Static sites don't always generate a sitemap.xml, and it can 404 even after you add one. How to create, submit, and fix it on GitHub Pages, Netlify, Vercel.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/blog/sitemap-static-sites.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -64,11 +64,27 @@
   <h2>Netlify and Vercel</h2>
   <p>Both platforms serve static files the same way GitHub Pages does, so the same approach works: drop <code>sitemap.xml</code> in your publish directory. If you're using a framework with a build step, check whether it has a sitemap plugin — Next.js and most static site generators have one — but a hand-generated file works identically for smaller sites, and it's often simpler than configuring a plugin correctly. The tradeoff: a plugin regenerates automatically on every build, while a hand-generated file needs a manual update when you add pages. For a site that publishes a few times a month, that's a minor chore; for one publishing daily, the plugin route is worth the setup time.</p>
 
+  <h2>Why sitemap.xml sometimes 404s even though the file is right there</h2>
+  <p>This is the part that catches people off guard: the file shows up fine in your repository on GitHub.com, but <code>https://yoursite.com/sitemap.xml</code> returns a 404. On GitHub Pages specifically, the usual cause isn't the sitemap at all — it's that GitHub Pages runs every site through Jekyll by default, even if you never touched Jekyll or don't know what it is. As part of that build step, Jekyll silently skips certain files, including anything sitting in a folder that starts with an underscore, and it can mishandle plain dotfiles too. What's in your repo and what actually gets deployed aren't guaranteed to be the same thing until you turn that build step off.</p>
+  <p>The fix is a single empty file: add <code>.nojekyll</code> to the root of your repository, next to <code>index.html</code> and <code>sitemap.xml</code>. It doesn't need any content — its presence alone tells GitHub Pages to skip the Jekyll build and serve exactly what you committed, byte for byte. If you weren't relying on Jekyll templating (front matter, <code>_layouts</code>, Liquid tags) to build your pages in the first place, adding it changes nothing else about your site.</p>
+  <p>If you've also set up a custom domain, isolate the cause before assuming it's Jekyll: try <code>https://your-username.github.io/your-repo/sitemap.xml</code> directly. If that works while your custom domain still 404s, the problem is DNS/HTTPS propagation on the custom domain, not the Jekyll build — a different fix (and usually just a matter of waiting) than adding <code>.nojekyll</code>.</p>
+  <p>Netlify and Vercel don't run a Jekyll build, so this exact cause doesn't apply there, but the equivalent failure mode is a mismatched output directory. If your build tool writes the deployable site to <code>dist/</code> or <code>build/</code> while your platform's publish directory setting points at <code>public/</code> (or vice versa), a file that genuinely exists in your source repository simply won't be part of what gets deployed. The tell: it works when you run the site locally (<code>npx serve</code> or similar) but 404s only in production. Check that <code>sitemap.xml</code> sits inside whichever folder your platform is actually configured to publish, not just somewhere in the repo.</p>
+
   <h2>Keeping it current without a build step</h2>
   <p>If you're not using a framework with automatic sitemap generation, the practical habit is to update <code>sitemap.xml</code> at the same time you publish anything new — treat it as part of the "publish a page" checklist rather than a separate task you'll remember to circle back to later. A sitemap that's slightly stale (missing your newest page for a few days) is a minor issue; one that's stale for months starts to undercut the reason you added it in the first place.</p>
 
   <h2>After you have the file</h2>
   <p>Add a line to your <code>robots.txt</code> pointing to it (<code>Sitemap: https://yoursite.com/sitemap.xml</code>), then submit the URL in Google Search Console under Sitemaps. That's the entire process — no crawling delay to wait out on your end, submission is instant even if indexing takes longer. Search Console will also flag any URLs in your sitemap that return errors, which doubles as a lightweight way to catch broken links you didn't know about.</p>
+
+  <h2>FAQ</h2>
+  <h3>I can see sitemap.xml when I browse my repo on GitHub — why does the live URL still 404?</h3>
+  <p>Because the repository file browser shows your source files, not what GitHub Pages actually served after its build step ran. Until you add <code>.nojekyll</code>, Jekyll's default build can drop files that a plain look at the repo won't reveal — presence in the repo and presence in the deployed output are two different things.</p>
+  <h3>Will adding .nojekyll break anything else on my site?</h3>
+  <p>No. It only disables the automatic Jekyll build. If your site is already plain HTML (or output from a generator other than Jekyll), you weren't using Jekyll's templating anyway, so nothing changes except that files it was previously stripping now get served as-is.</p>
+  <h3>My sitemap loads at the .github.io URL but not my custom domain — same fix?</h3>
+  <p>No — that pattern almost always means DNS or HTTPS is still propagating on the custom domain, not a Jekyll/build problem. Test the <code>.github.io</code> URL first to isolate which layer is actually failing before changing anything.</p>
+  <h3>How do I know my sitemap.xml is actually valid once it's live?</h3>
+  <p>Open it directly in a browser first — a 404, an HTML error page, or garbled text all mean it isn't being served correctly, independent of whether the XML itself is well-formed. Once it loads, FreeToolDev's <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a> checks the actual XML structure (priority ranges, changefreq values, duplicate URLs, malformed tags) for one or several sitemaps at once.</p>
 
   <h2>Generate one now</h2>
   <p>FreeToolDev's <a href="/tools/sitemap-generator.html">sitemap generator</a> turns a pasted list of URLs into a valid sitemap.xml instantly, and the <a href="/tools/rss-generator.html">RSS generator</a> covers the other file most static blogs are missing. If you'd rather not compile the URL list by hand, the <a href="/tools/site-crawler.html">Site Crawler & Audit tool</a> can crawl your site automatically and generate the sitemap, RSS feed, and an llms.txt file in one pass.</p>
