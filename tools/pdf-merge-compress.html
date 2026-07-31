@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk PDF Merge & Compress — Free Tool | FreeToolDev</title>
+<meta name="description" content="Combine multiple PDFs into one file and shrink the size, in one pass. Runs entirely in your browser — nothing is uploaded anywhere. Free.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/pdf-merge-compress.html">
+<meta property="og:title" content="Bulk PDF Merge &amp; Compress — Free Tool | FreeToolDev">
+<meta property="og:description" content="Combine multiple PDFs into one file and shrink the size, in one pass. Runs entirely in your browser — nothing is uploaded anywhere. Free.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk PDF Merge &amp; Compress — Free Tool | FreeToolDev">
+<meta name="twitter:description" content="Combine multiple PDFs into one file and shrink the size, in one pass. Runs entirely in your browser — nothing is uploaded anywhere. Free.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/pdf-merge-compress.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">PDF · Batch</span>
+    <h1>Bulk PDF Merge &amp; Compress</h1>
+    <p>Upload multiple PDFs, put them in order, and combine them into one file — with an optional compression pass to bring the size down. Nothing leaves your browser.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>1. Upload PDFs</h3>
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept="application/pdf,.pdf" multiple>
+        Drag PDFs here or click to browse<br>
+        <span style="font-size:0.78rem;">Files merge in the order shown below — reorder with the arrows · max 50 MB/file, 20 files/batch</span>
+      </div>
+      <div class="file-list" id="fileList"></div>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>2. Compression</h3>
+      <div class="opt-row">
+        <div>
+          <label>Compression mode</label>
+          <select id="compressMode">
+            <option value="none">None — just merge, keep full quality</option>
+            <option value="safe" selected>Safe — lossless cleanup (modest reduction)</option>
+            <option value="aggressive">Aggressive — re-render pages as images (biggest reduction)</option>
+          </select>
+        </div>
+        <div id="qualityWrap" style="display:none;">
+          <label>Image quality</label>
+          <input type="text" id="quality" value="0.7">
+        </div>
+        <div id="resolutionWrap" style="display:none;">
+          <label>Resolution</label>
+          <select id="resolution">
+            <option value="96">Low (~96 DPI)</option>
+            <option value="150" selected>Medium (~150 DPI)</option>
+            <option value="220">High (~220 DPI)</option>
+          </select>
+        </div>
+      </div>
+      <p class="result-empty" id="aggressiveWarning" style="display:none;">Aggressive mode redraws every page as a flattened image. Text stops being selectable, searchable, or copyable, and fine lines/small text can look softer. It's built for scanned documents and image-heavy PDFs — not text reports you still need to search or copy from.</p>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="processBtn">Merge &amp; process →</button>
+      </div>
+      <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>3. Result</h3>
+      <div id="resultArea"><p class="result-empty">// Your merged PDF will appear here</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>How it works</h2>
+    <p>Merging uses <a href="https://pdf-lib.js.org/" target="_blank" rel="noopener">pdf-lib</a> to copy every page from each uploaded file, in the order you set, into one new PDF — this step is always lossless regardless of compression mode. "Safe" compression re-saves that merged file with optimized internal structure (object streams, stripped metadata), which typically saves a modest amount with zero visual change. "Aggressive" compression goes further: each page is rendered to a canvas via <a href="https://mozilla.github.io/pdf.js/" target="_blank" rel="noopener">PDF.js</a> and re-encoded as a JPEG at the quality and resolution you choose, then rebuilt into a new PDF one image per page. All three modes run locally — you can confirm that by checking the Network tab in dev tools while a batch runs.</p>
+
+    <h2>Limits</h2>
+    <p>Each file is capped at 50 MB and each batch at 20 files, enforced up front. Aggressive mode additionally caps out at 200 total pages across the batch, since rendering every page to a canvas is meaningfully more work than copying it — for bigger jobs, use "Safe" mode (page count isn't limited there) or split into multiple aggressive-mode runs.</p>
+
+    <h2>Choosing a mode</h2>
+    <h3>Why does "Safe" only save a little?</h3>
+    <p>Text and vector content in a PDF is already compact — most of a PDF's size usually comes from embedded images and fonts, and "Safe" mode doesn't touch either of those; it only cleans up document structure and metadata. If your PDFs are text-heavy (reports, invoices, contracts), that's genuinely most of what a lossless pass can do. If they're scanned pages or full of photos, "Aggressive" mode will do far more.</p>
+    <h3>When should I use "Aggressive" instead?</h3>
+    <p>When the PDF is mostly images to begin with — scanned pages, photo-heavy brochures, exported slide decks — and you specifically need a smaller file over a searchable one. It won't help (and will actively hurt) a text-heavy document where you or a colleague need to select, search, or copy the text afterward.</p>
+    <h3>What resolution/quality should I pick?</h3>
+    <p>150 DPI at 0.7 quality is a reasonable default — legible on screen and in most printouts. Drop to 96 DPI / 0.5 quality if you just need the smallest possible file for an email attachment and don't care about print quality. Go up to 220 DPI / 0.85 if the pages contain small text you need to stay readable after compression.</p>
+
+    <h2>FAQ</h2>
+    <h3>Will merging change the order of pages within each file?</h3>
+    <p>No — pages inside each uploaded PDF keep their original order. The file-level order you set (via the arrows) only controls which whole file's pages come before which other file's pages in the final output.</p>
+    <h3>Does this remove password protection or encryption?</h3>
+    <p>No. Password-protected or encrypted PDFs generally can't be read without the password, so they'll fail to load here the same way they'd fail to load in most PDF tools — decrypt the file first if you need to include it.</p>
+    <h3>Why is my merged file bigger than the sum of the originals?</h3>
+    <p>This can happen in "None" or "Safe" mode when the source files share a similar structure — pdf-lib doesn't deduplicate identical embedded fonts or images across separate source documents, so a font embedded in three input files gets carried over three times. If the size difference matters, "Aggressive" mode sidesteps this entirely since it rebuilds every page from scratch as a single image.</p>
+    <h3>Can I compress a single PDF without merging anything?</h3>
+    <p>Yes — upload just the one file. With only one file in the list there's nothing to merge, so the tool simply applies whichever compression mode you picked to that file on its own.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var dropzone = document.getElementById('dropzone');
+  var fileInput = document.getElementById('fileInput');
+  var fileList = document.getElementById('fileList');
+  var resultArea = document.getElementById('resultArea');
+  var files = [];
+
+  var MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB per PDF
+  var MAX_BATCH_COUNT = 20; // files per run
+  var MAX_PAGES_AGGRESSIVE = 200; // total rendered pages, aggressive mode only
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  dropzone.addEventListener('click', function () { fileInput.click(); });
+  dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
+  dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('drag'); });
+  dropzone.addEventListener('drop', function (e) {
+    e.preventDefault(); dropzone.classList.remove('drag');
+    addFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', function () { addFiles(fileInput.files); fileInput.value = ''; });
+
+  function addFiles(list) {
+    var rejected = [];
+    Array.from(list).forEach(function (f) {
+      var isPdf = f.type === 'application/pdf' || /\.pdf$/i.test(f.name);
+      if (!isPdf) { rejected.push(f.name + ' (not a PDF)'); return; }
+      if (files.length >= MAX_BATCH_COUNT) { rejected.push(f.name + ' (batch limit reached)'); return; }
+      if (f.size > MAX_FILE_SIZE) { rejected.push(f.name + ' (over 50 MB)'); return; }
+      files.push(f);
+    });
+    renderFileList();
+    if (rejected.length) {
+      alert('Skipped ' + rejected.length + ' file(s):\n' + rejected.join('\n') +
+        '\n\nLimits: PDF files only, 50 MB per file, ' + MAX_BATCH_COUNT + ' files per batch.');
+    }
+  }
+
+  function renderFileList() {
+    fileList.innerHTML = '';
+    files.forEach(function (f, i) {
+      var row = document.createElement('div');
+      row.className = 'file-row';
+      row.innerHTML =
+        '<span class="fname">' + escapeHtml(f.name) + '</span>' +
+        '<span class="fsize">' + (f.size / (1024 * 1024)).toFixed(2) + ' MB</span>' +
+        '<span class="fstatus">pending</span>' +
+        '<button type="button" class="btn btn-outline" data-action="up" data-idx="' + i + '" style="padding:4px 9px;font-size:0.7rem;"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button>' +
+        '<button type="button" class="btn btn-outline" data-action="down" data-idx="' + i + '" style="padding:4px 9px;font-size:0.7rem;"' + (i === files.length - 1 ? ' disabled' : '') + '>&darr;</button>' +
+        '<button type="button" class="btn btn-outline" data-action="remove" data-idx="' + i + '" style="padding:4px 9px;font-size:0.7rem;">&times;</button>';
+      fileList.appendChild(row);
+    });
+  }
+
+  fileList.addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    var idx = parseInt(btn.getAttribute('data-idx'), 10);
+    var action = btn.getAttribute('data-action');
+    if (action === 'remove') {
+      files.splice(idx, 1);
+    } else if (action === 'up' && idx > 0) {
+      var tmp = files[idx - 1]; files[idx - 1] = files[idx]; files[idx] = tmp;
+    } else if (action === 'down' && idx < files.length - 1) {
+      var tmp2 = files[idx + 1]; files[idx + 1] = files[idx]; files[idx] = tmp2;
+    }
+    renderFileList();
+  });
+
+  var compressModeSelect = document.getElementById('compressMode');
+  var qualityWrap = document.getElementById('qualityWrap');
+  var resolutionWrap = document.getElementById('resolutionWrap');
+  var aggressiveWarning = document.getElementById('aggressiveWarning');
+  function updateModeUI() {
+    var isAgg = compressModeSelect.value === 'aggressive';
+    qualityWrap.style.display = isAgg ? '' : 'none';
+    resolutionWrap.style.display = isAgg ? '' : 'none';
+    aggressiveWarning.style.display = isAgg ? '' : 'none';
+  }
+  compressModeSelect.addEventListener('change', updateModeUI);
+  updateModeUI();
+
+  var workerConfigured = false;
+  function ensureWorker() {
+    if (!workerConfigured) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.worker.min.js';
+      workerConfigured = true;
+    }
+  }
+
+  async function mergeAndProcess(fileArray, mode, quality, dpi, onProgress) {
+    var outDoc = await PDFLib.PDFDocument.create();
+    var totalPages = 0;
+
+    if (mode === 'aggressive') {
+      ensureWorker();
+      var scale = dpi / 72;
+      for (var fi = 0; fi < fileArray.length; fi++) {
+        var buf = await fileArray[fi].arrayBuffer();
+        var pdfDoc = await pdfjsLib.getDocument({ data: buf }).promise;
+        for (var p = 1; p <= pdfDoc.numPages; p++) {
+          totalPages++;
+          if (totalPages > MAX_PAGES_AGGRESSIVE) {
+            throw new Error('Aggressive mode is limited to ' + MAX_PAGES_AGGRESSIVE + ' total pages across the batch. Use "Safe" mode for larger jobs, or split this into smaller batches.');
+          }
+          onProgress(fi, 'rendering page ' + p + ' of ' + pdfDoc.numPages + '\u2026');
+          var page = await pdfDoc.getPage(p);
+          var baseViewport = page.getViewport({ scale: 1 });
+          var renderViewport = page.getViewport({ scale: scale });
+          var canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(renderViewport.width));
+          canvas.height = Math.max(1, Math.round(renderViewport.height));
+          var ctx = canvas.getContext('2d');
+          await page.render({ canvasContext: ctx, viewport: renderViewport }).promise;
+          var jpgBytes = await new Promise(function (resolve, reject) {
+            canvas.toBlob(function (blob) {
+              if (!blob) { reject(new Error('Could not encode a rendered page as JPEG.')); return; }
+              var reader = new FileReader();
+              reader.onload = function () { resolve(new Uint8Array(reader.result)); };
+              reader.onerror = function () { reject(new Error('Could not read the rendered page back out.')); };
+              reader.readAsArrayBuffer(blob);
+            }, 'image/jpeg', quality);
+          });
+          var jpgImage = await outDoc.embedJpg(jpgBytes);
+          var outPage = outDoc.addPage([baseViewport.width, baseViewport.height]);
+          outPage.drawImage(jpgImage, { x: 0, y: 0, width: baseViewport.width, height: baseViewport.height });
+          canvas.width = 0; canvas.height = 0; // release memory promptly
+        }
+        if (pdfDoc.destroy) pdfDoc.destroy();
+      }
+    } else {
+      for (var fj = 0; fj < fileArray.length; fj++) {
+        onProgress(fj, 'reading\u2026');
+        var buf2 = await fileArray[fj].arrayBuffer();
+        var srcDoc = await PDFLib.PDFDocument.load(buf2, { ignoreEncryption: true });
+        var pageIndices = srcDoc.getPageIndices();
+        totalPages += pageIndices.length;
+        var copiedPages = await outDoc.copyPages(srcDoc, pageIndices);
+        copiedPages.forEach(function (pg) { outDoc.addPage(pg); });
+      }
+    }
+
+    var saveOptions = mode === 'none' ? {} : { useObjectStreams: true };
+    if (mode !== 'none') {
+      try {
+        outDoc.setTitle('');
+        outDoc.setAuthor('');
+        outDoc.setSubject('');
+        outDoc.setProducer('');
+        outDoc.setCreator('');
+      } catch (metaErr) { /* non-fatal — some malformed source docs reject metadata edits */ }
+    }
+    var outBytes = await outDoc.save(saveOptions);
+    return { bytes: outBytes, pages: totalPages };
+  }
+
+  document.getElementById('processBtn').addEventListener('click', async function () {
+    if (files.length === 0) { alert('Upload at least one PDF first.'); return; }
+    var processBtn = this;
+    var progressStatus = document.getElementById('progressStatus');
+    var progressText = document.getElementById('progressText');
+    var mode = compressModeSelect.value;
+    var quality = parseFloat(document.getElementById('quality').value) || 0.7;
+    var dpi = parseInt(document.getElementById('resolution').value, 10) || 150;
+    var rows = document.querySelectorAll('#fileList .file-row');
+
+    processBtn.disabled = true;
+    progressStatus.classList.add('active');
+    resultArea.innerHTML = '';
+    rows.forEach(function (r) { r.querySelector('.fstatus').textContent = 'queued'; r.querySelector('.fstatus').classList.add('busy'); });
+
+    try {
+      var totalInputSize = files.reduce(function (s, f) { return s + f.size; }, 0);
+      var result = await mergeAndProcess(files, mode, quality, dpi, function (fileIdx, msg) {
+        progressText.textContent = 'File ' + (fileIdx + 1) + ' of ' + files.length + ' \u2014 ' + msg;
+        if (rows[fileIdx]) rows[fileIdx].querySelector('.fstatus').textContent = msg;
+      });
+
+      rows.forEach(function (r) { r.classList.add('ready'); r.querySelector('.fstatus').classList.remove('busy'); r.querySelector('.fstatus').textContent = 'merged'; });
+
+      var outBlob = new Blob([result.bytes], { type: 'application/pdf' });
+      var url = URL.createObjectURL(outBlob);
+      var pct = totalInputSize > 0 ? Math.round((1 - outBlob.size / totalInputSize) * 100) : 0;
+      var sizeLine = (outBlob.size / (1024 * 1024)).toFixed(2) + ' MB \u00b7 ' + result.pages + ' page(s)';
+      if (pct > 0) sizeLine += ' \u2014 ' + pct + '% smaller than the combined originals (' + (totalInputSize / (1024 * 1024)).toFixed(2) + ' MB)';
+      else if (pct < 0) sizeLine += ' \u2014 larger than the combined originals; try "Aggressive" mode for real size reduction';
+
+      resultArea.innerHTML = '<div class="file-row ready"><span class="fname">merged.pdf</span><span class="fsize">' + sizeLine + '</span>' +
+        '<a class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" href="' + url + '" download="merged.pdf">Download</a></div>';
+      progressText.textContent = 'Done.';
+    } catch (err) {
+      resultArea.innerHTML = '<p class="result-empty">Something went wrong: ' + escapeHtml(err && err.message ? err.message : String(err)) + '</p>';
+      progressText.textContent = 'Failed.';
+    } finally {
+      progressStatus.classList.remove('active');
+      processBtn.disabled = false;
+    }
+  });
+});
+</script>
+
+</body>
+</html>

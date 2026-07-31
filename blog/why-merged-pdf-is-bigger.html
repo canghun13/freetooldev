@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Is My Merged PDF Bigger (or Smaller) Than the Originals? — FreeToolDev</title>
+<meta name="description" content="Merging PDFs can shrink or bloat the total size depending on what tool you use and why. What's actually happening, and when you need real compression instead.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/why-merged-pdf-is-bigger.html">
+<meta property="og:title" content="Why Is My Merged PDF Bigger (or Smaller) Than the Originals? — FreeToolDev">
+<meta property="og:description" content="Merging PDFs can shrink or bloat the total size depending on what tool you use and why. What's actually happening, and when you need real compression instead.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Why Is My Merged PDF Bigger (or Smaller) Than the Originals? — FreeToolDev">
+<meta name="twitter:description" content="Merging PDFs can shrink or bloat the total size depending on what tool you use and why. What's actually happening, and when you need real compression instead.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/why-merged-pdf-is-bigger.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Jul 31, 2026</div>
+  <h1>Why Is My Merged PDF Bigger (or Smaller) Than the Originals?</h1>
+
+  <p>Combine three 2 MB PDFs and you'd expect a 6 MB result. Instead you get 4 MB, or 9 MB, and neither number feels like it should be possible if merging is "just" sticking pages together. It is just sticking pages together — the surprising part is everything a PDF quietly carries around per file that has nothing to do with the pages themselves.</p>
+
+  <h2>Why merging can make the file smaller</h2>
+  <p>A PDF isn't just page content — it also embeds the fonts used on those pages, and font data is often the single biggest thing in a small, text-heavy file. If three source PDFs all use the same typeface, each one embeds its own full copy of that font. A merge tool that's smart about it (Adobe Acrobat's "Combine Files" does this) recognizes the duplicate font across source documents and keeps only one copy in the output — three embedded copies become one, and the total drops accordingly. The same logic applies to any other resource repeated across files: a shared color profile, a shared image used as a letterhead on every page, and so on.</p>
+  <p>This is a genuine, lossless size reduction — nothing about how the pages look or behave changes. It just doesn't happen automatically with every merge tool. Whether you see it depends entirely on whether the specific library or app doing the merging bothers to detect and deduplicate shared resources across the files you're combining, which brings up the other direction.</p>
+
+  <h2>Why merging can make the file bigger instead</h2>
+  <p>Plenty of merge tools — including the popular open-source library <code>pdf-lib</code>, which FreeToolDev's own merge tool uses — don't deduplicate anything across source files by default. Each source PDF's fonts, images, and internal objects get copied into the output as-is, one set per source file. If three input PDFs each embed their own copy of the same font, the merged file ends up with three copies too, and the total size lands close to (or slightly above) the simple sum of the originals, once you add the overhead of the new document's own internal structure (a fresh cross-reference table, object streams, and so on).</p>
+  <p>Neither behavior means a tool is broken. "Smaller than the sum" means the tool deduplicated shared resources; "roughly the sum, or a bit more" means it didn't. Both are normal outcomes of the same operation — merging — done two different ways.</p>
+
+  <h2>Merging and compressing are two different problems</h2>
+  <p>It's tempting to assume a merge tool should also shrink the result, but combining pages and reducing file size are separate operations that happen to often get bundled into one workflow because people need both at the same time. Deduplicating repeated fonts across files, at best, recovers what was already redundant — it doesn't touch the biggest actual cost in most PDFs, which is embedded images. A merge tool that only deduplicates fonts will still hand back a large file if the source PDFs are full of high-resolution scans or photos; getting that down meaningfully requires re-encoding those images at a lower quality or resolution, which is a fundamentally different, lossy operation.</p>
+
+  <h2>What real compression actually costs you</h2>
+  <p>There are two honest ways to shrink a PDF, and they trade off differently:</p>
+  <p><strong>Structural cleanup</strong> — stripping unused metadata, optimizing the internal object structure — is lossless. Nothing about the document's appearance or text changes. The catch is the ceiling: for a text-heavy document, this might recover single-digit percentages, because there wasn't much redundant structure to begin with.</p>
+  <p><strong>Re-rendering pages as images</strong> is the only way to get dramatic size reduction on an image-heavy PDF, but it comes at a real cost: every page becomes a flattened picture. Text stops being selectable, searchable, or copyable, and small text or thin lines can look softer depending on the resolution you re-render at. This is the right tradeoff for a stack of scanned receipts or a photo-heavy brochure where a smaller file matters more than a searchable one — and the wrong one for a contract or report someone still needs to search or copy text from afterward.</p>
+
+  <h2>FAQ</h2>
+  <h3>Is there a way to get real compression without losing text selectability?</h3>
+  <p>Not a reliable one for image-heavy PDFs specifically — the size is coming from the images, and shrinking an image without touching it as an image isn't possible. For text-heavy PDFs, structural cleanup (stripping metadata, deduplicating fonts) gets you a modest, fully lossless reduction without this tradeoff, since there's comparatively little image data to begin with.</p>
+  <h3>Does Adobe Acrobat handle this differently from free/open-source tools?</h3>
+  <p>Acrobat's "Combine Files" does deduplicate shared fonts and some resources across source documents by default, which is why people are sometimes surprised to see a smaller-than-expected result from it specifically. Many free and open-source merge tools (including browser-based, no-upload ones) prioritize simplicity and correctness over this kind of cross-document optimization, so seeing a larger result from a different tool doesn't mean anything went wrong.</p>
+  <h3>If I only need to merge one small set of files once, does any of this matter?</h3>
+  <p>Only if the resulting file size is actually a problem for you — an email attachment limit, a slow upload to a portal, a storage quota. If the merged file's size is fine as-is, there's no need to reach for a compression step at all.</p>
+
+  <h2>Try it</h2>
+  <p>FreeToolDev's <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a> tool combines multiple PDFs in the order you choose, with an optional "Safe" (lossless) or "Aggressive" (image re-render) compression pass — entirely in your browser, nothing uploaded.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

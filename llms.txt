@@ -5,6 +5,7 @@
 ## Tools
 - [Bulk Image Resize, Convert & Compress](https://freetooldev.com/tools/image-batch.html): Resize, convert, and compress dozens of images at once. PNG, JPG, WebP. Download individually or as a ZIP. Free, runs in your browser.
 - [Bulk SVG Optimizer](https://freetooldev.com/tools/svg-optimizer.html): Strip editor metadata, comments, and excess coordinate precision from a whole batch of SVG files at once. Free, no signup, runs entirely in your browser.
+- [Bulk PDF Merge & Compress](https://freetooldev.com/tools/pdf-merge-compress.html): Combine multiple PDFs into one file in the order you choose, with an optional lossless or aggressive (image re-render) compression pass. Free, no signup, runs entirely in your browser.
 - [CSV to JSON — Batch Converter](https://freetooldev.com/tools/csv-to-json.html): Convert multiple CSV files to JSON at once. Drag and drop, download individually or as a ZIP, completely free.
 - [JSON ↔ YAML Converter — Free Batch Tool](https://freetooldev.com/tools/json-yaml-converter.html): Convert JSON to YAML or YAML to JSON, one document at a time or several separated by ---. Free, no signup, runs entirely in your browser.
 - [CSV ↔ TSV Converter — Free Batch Tool](https://freetooldev.com/tools/csv-tsv-converter.html): Convert CSV to TSV or TSV to CSV with proper quote and delimiter handling. Paste text or upload multiple files, free, runs entirely in your browser.
@@ -83,3 +84,4 @@
 - [WebP vs AVIF in 2026: Which Should You Batch-Convert To?](https://freetooldev.com/blog/webp-vs-avif-2026.html): A practical, no-nonsense comparison of WebP and AVIF for 2026 — browser support, compression, encoding cost, and which one to pick for a batch conversion job.
 - [Why "No-Upload" Image Compression Is Safer for Client Work](https://freetooldev.com/blog/no-upload-image-compression.html): Uploading client images to a third-party server is a bigger risk than most people realize. Here's why browser-only, no-upload compression tools are becoming the standard for freelancers and agencies.
 - [Converting 100 Images: AI or a Tool?](https://freetooldev.com/blog/batch-vs-ai-image-convert.html): A practical comparison of using AI chat tools versus a dedicated batch tool for converting, resizing, and compressing large numbers of images.
+- [Why Is My Merged PDF Bigger (or Smaller) Than the Originals?](https://freetooldev.com/blog/why-merged-pdf-is-bigger.html): Merging PDFs can shrink or bloat the total size depending on what tool you use and why. What's actually happening, and when you need real compression instead.
