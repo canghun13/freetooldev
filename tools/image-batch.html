@@ -51,7 +51,7 @@
   <div class="wrap">
     <span class="eyebrow">Image · Batch</span>
     <h1>Bulk Image Resize / Convert / Compress</h1>
-    <p>Upload as many images as you need. Set a target size, output format, and quality once — apply it to every image in the batch.</p>
+    <p>Upload as many images as you need. Set a target size, output format, and quality once — apply it to every image in the batch, and save it as a preset to reuse next time.</p>
   </div>
 </section>
 
@@ -69,6 +69,12 @@
 
     <div class="panel" style="margin-top:24px;">
       <h3>2. Batch settings</h3>
+      <div class="opt-row">
+        <div>
+          <label for="presetSelect">Saved presets</label>
+          <select id="presetSelect"><option value="">No saved presets yet</option></select>
+        </div>
+      </div>
       <div class="opt-row">
         <div>
           <label>Resize mode</label>
@@ -102,6 +108,8 @@
       </div>
       <div class="toolbar">
         <button class="btn btn-amber" id="processBtn">Process all →</button>
+        <button class="btn btn-outline" type="button" id="savePresetBtn">Save as preset</button>
+        <button class="btn btn-outline" type="button" id="deletePresetBtn" disabled>Delete preset</button>
         <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download all as ZIP</button>
       </div>
       <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
@@ -133,6 +141,8 @@
     <p>The other two modes always preserve the original aspect ratio, so the output dimensions vary from image to image unless every source image already shares the same proportions. "Crop to exact size" is for when you need every output to be exactly the width and height you specify, no exceptions — thumbnails, avatar grids, social banners, or any layout slot that doesn't tolerate a mismatched size. It scales each image so it fully covers your target box, then trims the overflow evenly from the center on whichever axis is too large. This means some of the original image is cropped away at the edges — for a portrait photo forced into a square, that's typically the sides; for a landscape photo, the top and bottom.</p>
 
     <h2>FAQ</h2>
+    <h3>Can I save my resize + compress settings so I don't have to redo them every time?</h3>
+    <p>Yes — set up your resize mode, size, format, and quality once, then click "Save as preset" and give it a name (e.g. "Thumbnail 400px WebP"). It'll show up in the "Saved presets" dropdown on your next visit, ready to reload with one click. Presets are stored in your browser's local storage, not on any server, so they're private to this browser/device and won't carry over if you switch browsers or clear site data.</p>
     <h3>Will this upscale a small image if I set a larger target size?</h3>
     <p>With "Fit within max width/height," no — images smaller than your target are left at their original size, since Canvas-based upscaling just stretches pixels and produces blurry results rather than adding real detail. "Fit to width" will scale up if needed, since it targets an exact width. "Crop to exact size" will also scale up when necessary — since it has to guarantee the exact output dimensions you set, an image smaller than the target box gets stretched to cover it before cropping, which can look soft if the source was much smaller than the target.</p>
     <h3>Does converting to a different format lose EXIF data (camera info, GPS)?</h3>
@@ -208,6 +218,110 @@ document.addEventListener('DOMContentLoaded', function () {
     targetHeightWrap.style.display = isCrop ? '' : 'none';
     targetSizeLabel.textContent = isCrop ? 'Width (px)' : 'Target size (px)';
   });
+
+  // Saved presets — stores resize/format/quality settings in localStorage so
+  // a combo like "thumbnail 400px WebP" doesn't need to be re-entered every
+  // visit. Local to this browser only, nothing is sent anywhere.
+  var PRESET_KEY = 'ftd_image_batch_presets_v1';
+  var presetSelect = document.getElementById('presetSelect');
+  var savePresetBtn = document.getElementById('savePresetBtn');
+  var deletePresetBtn = document.getElementById('deletePresetBtn');
+  var targetSizeInput = document.getElementById('targetSize');
+  var targetHeightInput = document.getElementById('targetHeight');
+  var formatSelect = document.getElementById('format');
+  var qualityInput = document.getElementById('quality');
+
+  function loadPresets() {
+    try {
+      var raw = localStorage.getItem(PRESET_KEY);
+      var parsed = raw ? JSON.parse(raw) : {};
+      return (parsed && typeof parsed === 'object') ? parsed : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function savePresets(presets) {
+    try {
+      localStorage.setItem(PRESET_KEY, JSON.stringify(presets));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function renderPresetOptions(selectedName) {
+    var presets = loadPresets();
+    var names = Object.keys(presets).sort(function (a, b) { return a.localeCompare(b); });
+    presetSelect.innerHTML = '';
+    var placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = names.length ? 'Load a saved preset\u2026' : 'No saved presets yet';
+    presetSelect.appendChild(placeholder);
+    names.forEach(function (name) {
+      var opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      presetSelect.appendChild(opt);
+    });
+    presetSelect.value = names.indexOf(selectedName) !== -1 ? selectedName : '';
+    deletePresetBtn.disabled = !presetSelect.value;
+  }
+
+  function applyPreset(name) {
+    var presets = loadPresets();
+    var p = presets[name];
+    if (!p) return;
+    resizeModeSelect.value = p.resizeMode || 'none';
+    targetSizeInput.value = p.targetSize != null ? p.targetSize : '1200';
+    targetHeightInput.value = p.targetHeight != null ? p.targetHeight : '1200';
+    formatSelect.value = p.format || 'image/jpeg';
+    qualityInput.value = p.quality != null ? p.quality : '0.8';
+    // Reuse the existing change handler so the height field / label
+    // visibility updates exactly like a manual selection would.
+    resizeModeSelect.dispatchEvent(new Event('change'));
+  }
+
+  presetSelect.addEventListener('change', function () {
+    if (presetSelect.value) applyPreset(presetSelect.value);
+    deletePresetBtn.disabled = !presetSelect.value;
+  });
+
+  savePresetBtn.addEventListener('click', function () {
+    var presets = loadPresets();
+    var existingNames = Object.keys(presets);
+    var name = prompt('Name this preset (e.g. "Thumbnail 400px WebP"):', presetSelect.value || '');
+    if (name === null) return; // cancelled
+    name = name.trim();
+    if (!name) { alert("Preset name can't be empty."); return; }
+    if (existingNames.indexOf(name) !== -1 && !confirm('A preset named "' + name + '" already exists. Overwrite it?')) {
+      return;
+    }
+    presets[name] = {
+      resizeMode: resizeModeSelect.value,
+      targetSize: targetSizeInput.value,
+      targetHeight: targetHeightInput.value,
+      format: formatSelect.value,
+      quality: qualityInput.value
+    };
+    if (!savePresets(presets)) {
+      alert('Could not save the preset — your browser storage may be full or disabled (e.g. private browsing mode).');
+      return;
+    }
+    renderPresetOptions(name);
+  });
+
+  deletePresetBtn.addEventListener('click', function () {
+    var name = presetSelect.value;
+    if (!name) return;
+    if (!confirm('Delete preset "' + name + '"?')) return;
+    var presets = loadPresets();
+    delete presets[name];
+    savePresets(presets);
+    renderPresetOptions('');
+  });
+
+  renderPresetOptions('');
 
   dropzone.addEventListener('click', function () { fileInput.click(); });
   dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
