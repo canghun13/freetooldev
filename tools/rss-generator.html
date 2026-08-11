@@ -68,7 +68,7 @@
     <div class="workspace-grid workspace-grid-2col">
       <div class="panel">
         <h3>Items (batch)</h3>
-        <label>One item per line: Title | URL | YYYY-MM-DD</label>
+        <label>One item per line: Title | URL | YYYY-MM-DD (or a full timestamp)</label>
         <textarea id="items" placeholder="Hello World | https://example.com/hello | 2026-07-01
 Second Post | https://example.com/second | 2026-06-28"></textarea>
         <div class="toolbar">
@@ -91,6 +91,7 @@ Second Post | https://example.com/second | 2026-06-28"></textarea>
   <div class="wrap prose" style="max-width:720px;">
     <h2>Format reference</h2>
     <p>Each line needs three parts separated by a pipe character: the item title, its URL, and a date in YYYY-MM-DD format. Lines that don't match this pattern are skipped, so a typo'd separator won't break the rest of the feed — it just silently drops that one line, which is worth double-checking your item count against your input.</p>
+    <p>That third field also accepts a full ISO timestamp rather than a bare date — <code>2026-08-11T14:30:00Z</code>, or with a UTC offset like <code>2026-08-11T14:30:00+09:00</code> — and the generated <code>&lt;pubDate&gt;</code> will carry that exact moment instead of midnight. A plain date is fine for a feed people read; a real timestamp matters when an automation platform is watching the feed, because some triggers decide what's new by comparing item times against their last check.</p>
 
     <h2>Why static sites need this</h2>
     <p>A hand-built static site or a small documentation set often has no build step that generates a feed automatically the way WordPress or most blogging platforms do by default. Without one, there's no way for a feed reader, or another site's "latest posts" widget, to know when you've published something new — visitors have to check back manually. A generated <code>rss.xml</code> fixes that with no server required.</p>
@@ -110,7 +111,7 @@ Second Post | https://example.com/second | 2026-06-28"></textarea>
     <h3>Do I need to regenerate the whole feed every time I publish?</h3>
     <p>Yes, with this tool — it's not connected to your site, so each time you add a new post, paste your full updated item list back in and regenerate. For a handful of posts a month, that's a minor step; for high-frequency publishing, a build-time script is worth setting up instead — or use the Site Crawler tool above to regenerate it from your live pages instead of retyping your list.</p>
     <h3>Why does my feed reader show the wrong publish time?</h3>
-    <p>Since only a date (not a time) is entered, this tool sets every item's time to midnight UTC. If your feed reader displays times in your local timezone, dates can appear to shift by a few hours — the date itself is still correct, just the implied time isn't meaningful.</p>
+    <p>If you enter a bare date, this tool sets that item's time to midnight UTC. In a feed reader that's cosmetic — dates can appear to shift by a few hours if your reader renders times in local timezone, but the date itself is still correct. It stops being cosmetic once an automation platform is polling the feed: a trigger that decides what's new by comparing item timestamps against its last check can read a midnight-stamped item published later that day as old news and skip it entirely. Enter a full ISO timestamp in the date field to avoid that, and see <a href="/blog/rss-for-automation.html">using RSS to feed newsletters and automation tools</a> for how Zapier and n8n differ on exactly this point.</p>
     <h3>Is RSS still relevant in 2026?</h3>
     <p>For a general audience, RSS usage has declined since its early-2010s peak, but it never went away for developer blogs, documentation sites, and podcasts — feed readers, IDE plugins, and automation tools (like triggering a build when a feed updates) still rely on it directly. It's a low-cost addition with a small but real audience. See <a href="/blog/rss-for-automation.html">this post</a> for specific ways a feed gets used as automation plumbing with Zapier, Make, and newsletter tools.</p>
   </div>
@@ -183,7 +184,9 @@ document.addEventListener('DOMContentLoaded', function () {
       var itemTitle = parts[0];
       var itemLink = parts[1];
       var dateStr = parts[2] || new Date().toISOString().slice(0, 10);
-      var pubDate = new Date(dateStr).toUTCString();
+      var parsed = new Date(dateStr);
+      if (isNaN(parsed.getTime())) { parsed = new Date(); }
+      var pubDate = parsed.toUTCString();
       return '  <item>\n' +
         '    <title>' + esc(itemTitle) + '</title>\n' +
         '    <link>' + esc(itemLink) + '</link>\n' +
