@@ -85,6 +85,7 @@
   <div class="wrap prose" style="max-width:720px;">
     <h2>What gets checked, and why each one matters</h2>
     <p><strong>Well-formed XML</strong> — unclosed tags, mismatched nesting, or unescaped <code>&amp;</code>/<code>&lt;</code>/<code>&gt;</code> characters in a URL make the whole file unparseable, which means search engines can't read any of it, not just the broken part. <strong>Missing <code>&lt;urlset&gt;</code> or <code>&lt;loc&gt;</code></strong> — these are required by the Sitemap Protocol; a URL entry with no <code>&lt;loc&gt;</code> is meaningless. <strong>Relative URLs</strong> — the spec requires absolute URLs (<code>https://example.com/page</code>, not <code>/page</code>); a relative path has no defined domain for a crawler to resolve it against. <strong>Invalid <code>&lt;priority&gt;</code></strong> — must be a number between 0.0 and 1.0; anything outside that range is a spec violation (though Google has said it mostly ignores this value regardless). <strong>Invalid <code>&lt;changefreq&gt;</code></strong> — must be one of <code>always</code>, <code>hourly</code>, <code>daily</code>, <code>weekly</code>, <code>monthly</code>, <code>yearly</code>, or <code>never</code>; anything else isn't a recognized value. <strong>Duplicate URLs</strong> — the same <code>&lt;loc&gt;</code> listed more than once in one sitemap, usually from a generation bug rather than intentional.</p>
+    <p><strong>Uniform <code>&lt;lastmod&gt;</code> dates</strong> — this one isn't a spec violation, and most validators don't look for it, but it's the failure that costs the most. Google treats <code>lastmod</code> as all-or-nothing: it either trusts a site's dates or ignores every one of them. A sitemap where all — or nearly all — URLs claim the same modification date is the signature pattern of dates that were generated rather than observed, because it's what a site-wide edit produces when file or commit timestamps are used directly. This tool flags it when every date is identical, and separately when 80% or more pile onto a single day (both only once there are at least five dates to judge, since a small site legitimately might have been built in one sitting). <strong>Future <code>&lt;lastmod&gt;</code> dates</strong> — a date that hasn't happened yet can't describe a change that already has. <strong>Partial <code>&lt;lastmod&gt;</code> coverage</strong> — some URLs carrying a date while others don't; not invalid, but worth knowing about, since a URL without one gives a crawler nothing to schedule against. See <a href="/blog/sitemap-lastmod-git-commit-date.html">why deriving lastmod from git commit dates produces exactly this problem</a> for the fix on a static site.</p>
 
     <h2>Why check several sitemaps together</h2>
     <p>Sites with more than a few thousand pages commonly split their sitemap into several files (one per content type — pages, blog posts, products) or use a sitemap index referencing multiple child sitemaps. A generation bug in a shared template — a script that produces sitemaps for both the blog and the product catalog, say — often shows up identically across every file it touches. Validating them together surfaces that pattern immediately, rather than finding the same bug five separate times across five separate single-file checks.</p>
@@ -94,6 +95,8 @@
     <p>See <a href="/blog/sitemap-priority-changefreq.html">this post</a> for the full answer, but the short version: not directly in any severe way — Google has stated it largely ignores <code>changefreq</code> and treats <code>priority</code> as a very weak signal at best, relying on its own crawl data instead. They're still worth fixing for spec compliance and because other search engines or tools consuming your sitemap may handle them more strictly, but a wrong value here is a minor issue, not a critical one like a malformed XML file that can't be parsed at all.</p>
     <h3>My sitemap uses relative URLs and Google still seems to index my pages — is that actually a problem?</h3>
     <p>It's a spec violation, and behavior on non-conformant sitemaps isn't guaranteed to be consistent across every crawler or every situation. Some crawlers may resolve a relative URL against the sitemap's own location and get it right by luck; the safe fix is always absolute URLs, since that's what the spec actually requires.</p>
+    <h3>It warns that my lastmod dates are all the same — but they genuinely are. Should I care?</h3>
+    <p>If you truly published everything at once and nothing has changed since, the dates are honest and the warning is just telling you what a crawler will see. The problem is that a crawler can't distinguish "genuinely built in one sitting" from "a script stamped every file on the same day," and it errs toward the second reading. The practical consequence only appears later: once you edit one page and its date moves while eighty others stay put, the file starts carrying real information. What you want to avoid is the reverse — a regeneration step that resets every date on every deploy, which never lets that signal develop. If you can't produce per-page dates you'd stand behind, omitting <code>lastmod</code> entirely is the better option; Google has said as much directly.</p>
     <h3>Can this validate a sitemap index file that references other sitemaps?</h3>
     <p>It checks the XML structure and tag validity of whatever you paste in, including a sitemap index's <code>&lt;sitemapindex&gt;</code>/<code>&lt;sitemap&gt;</code> structure — but since this tool works from pasted text rather than fetching URLs, it won't automatically follow references to the child sitemaps; paste each one in separately (as its own block) to validate them all. See <a href="/blog/sitemap-index-files.html">this post</a> for when a site actually needs an index file rather than one plain sitemap.</p>
   </div>
@@ -188,6 +191,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var seenLocs = {};
     var dupCount = 0;
+    var lastmodDates = [];
+    var missingLastmod = 0;
+    var futureLastmod = 0;
+    var todayStr = new Date().toISOString().slice(0, 10);
 
     urlEls.forEach(function (el, i) {
       var locEl = el.querySelector('loc');
@@ -231,12 +238,41 @@ document.addEventListener('DOMContentLoaded', function () {
         var lm = lastmodEl.textContent.trim();
         if (!/^\d{4}-\d{2}-\d{2}/.test(lm)) {
           warnings.push(label + ': <lastmod> value "' + lm + '" doesn\'t look like a W3C date format (YYYY-MM-DD).');
+        } else {
+          var day = lm.slice(0, 10);
+          lastmodDates.push(day);
+          if (day > todayStr) futureLastmod++;
         }
+      } else {
+        missingLastmod++;
       }
     });
 
     if (dupCount > 0) warnings.push(dupCount + ' duplicate URL(s) found in this sitemap.');
     if (urlEls.length > 50000) errors.push('Sitemap has ' + urlEls.length + ' URLs, exceeding the 50,000 URL limit per file — split into multiple sitemaps with a sitemap index.');
+
+    if (futureLastmod > 0) {
+      warnings.push(futureLastmod + ' URL(s) have a <lastmod> date in the future. A date that hasn\'t happened yet can\'t describe a change that already did, and it\'s a strong signal the dates are generated rather than real.');
+    }
+
+    if (lastmodDates.length >= 5) {
+      var dayCounts = {};
+      lastmodDates.forEach(function (d) { dayCounts[d] = (dayCounts[d] || 0) + 1; });
+      var distinctDays = Object.keys(dayCounts);
+      var topDay = distinctDays[0];
+      distinctDays.forEach(function (d) { if (dayCounts[d] > dayCounts[topDay]) topDay = d; });
+      var share = dayCounts[topDay] / lastmodDates.length;
+
+      if (distinctDays.length === 1) {
+        warnings.push('All ' + lastmodDates.length + ' <lastmod> values are the same date (' + topDay + '). Identical dates across an entire sitemap are the pattern search engines treat as generated rather than real — and trust in lastmod is all-or-nothing, so this can get every date in the file ignored. This is what a site-wide edit (a footer change, an analytics snippet, a rebuild that rewrites every file) looks like when commit or file dates are used directly.');
+      } else if (share >= 0.8) {
+        warnings.push(Math.round(share * 100) + '% of <lastmod> values fall on a single date (' + topDay + ', ' + dayCounts[topDay] + ' of ' + lastmodDates.length + ' URLs). Heavy clustering on one day usually means a site-wide edit overwrote the real per-page dates rather than each page genuinely changing that day.');
+      }
+    }
+
+    if (missingLastmod > 0 && lastmodDates.length > 0) {
+      warnings.push(missingLastmod + ' of ' + urlEls.length + ' URL(s) have no <lastmod> at all, while others do. Mixed coverage isn\'t invalid, but a URL without a date gives a crawler nothing to schedule against — omitting the field entirely is only better than supplying a date you can\'t stand behind.');
+    }
 
     return { errors: errors, warnings: warnings, urlCount: urlEls.length };
   }

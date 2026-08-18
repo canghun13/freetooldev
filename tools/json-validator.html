@@ -103,6 +103,7 @@
 
     <h2>Common JSON mistakes this catches</h2>
     <p>The most frequent ones by far: a <strong>trailing comma</strong> after the last item in an object or array (valid in JavaScript object literals, never valid in JSON), <strong>single-quoted strings</strong> instead of double quotes, <strong>unquoted object keys</strong> (also fine in JS, not in JSON), and a <strong>missing comma</strong> between two properties or array items. All four are easy to introduce when copying a JavaScript object literal and assuming it's already valid JSON — it usually isn't. See <a href="/blog/json-syntax-errors-explained.html">this post</a> for the full list, including two cases (comments and duplicate keys) that don't always throw the error you'd expect.</p>
+    <p>Two of those — comments and trailing commas — are also the usual reason a config file that "should" be JSON turns out to be YAML, or one of the JSON supersets that permits both. If that's the situation you're debugging, the difference between <a href="/blog/json-vs-yaml.html">JSON and YAML as config formats</a> is worth being deliberate about rather than discovering through a parse error.</p>
 
     <h2>FAQ</h2>
     <h3>Does this validate against a JSON Schema?</h3>

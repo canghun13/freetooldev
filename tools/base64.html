@@ -118,7 +118,7 @@
     <h3>Is my data sent anywhere when I use this tool?</h3>
     <p>No. Encoding and decoding both run using your browser's built-in <code>btoa()</code>/<code>atob()</code> functions — there's no network request involved at any point, which you can verify by checking the Network tab in your browser's dev tools while you use it.</p>
     <h3>Can I encode an image or file, not just text?</h3>
-    <p>This tool is built for text input. For image-to-Base64 conversion, browsers typically produce this automatically via a <code>FileReader</code>'s <code>readAsDataURL</code> — if you need that specific workflow regularly, it's worth scripting directly rather than pasting through a text box.</p>
+    <p>This tool is built for text input. For image-to-Base64 conversion, browsers typically produce this automatically via a <code>FileReader</code>'s <code>readAsDataURL</code> — if you need that specific workflow regularly, it's worth scripting directly rather than pasting through a text box. Worth a sanity check first, though: Base64 inflates binary data by roughly a third, so inlining a large image as a data URI usually costs more bytes than it saves in requests. Shrinking the file with a <a href="/tools/image-batch.html">bulk image resizer and compressor</a> before encoding — or just serving it as a normal file — is often the better call.</p>
     <h3>Why does my decoded text show broken characters for non-English input?</h3>
     <p>This usually means the original text was encoded using a different character set than UTF-8 before Base64 was applied. This tool assumes UTF-8 on both ends; if the source system used something else (like Latin-1 or EUC-KR), the bytes will decode to the wrong characters even though the Base64 itself is valid.</p>
   </div>
