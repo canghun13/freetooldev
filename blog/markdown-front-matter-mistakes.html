@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markdown Front Matter Mistakes That Don’t Throw an Error — FreeToolDev</title>
+<meta name="description" content="The front matter failures that cost you time are the silent ones — the build passes, the file parses, and the post quietly disappears from your archive.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/markdown-front-matter-mistakes.html">
+<meta property="og:title" content="Markdown Front Matter Mistakes That Don’t Throw an Error — FreeToolDev">
+<meta property="og:description" content="The front matter failures that cost you time are the silent ones — the build passes, the file parses, and the post quietly disappears from your archive.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Markdown Front Matter Mistakes That Don’t Throw an Error — FreeToolDev">
+<meta name="twitter:description" content="The front matter failures that cost you time are the silent ones — the build passes, the file parses, and the post quietly disappears from your archive.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/markdown-front-matter-mistakes.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Aug 19, 2026</div>
+  <h1>Markdown Front Matter Mistakes That Don't Throw an Error</h1>
+
+  <p>Front matter failures come in two kinds. The loud kind breaks the build, prints a filename and a line number, and gets fixed in about ninety seconds. The quiet kind lets the build pass, renders the page, and removes the post from your archive listing — and you find out three weeks later when someone asks why an article they remember writing isn't on the site. This is about the second kind, because those are the ones worth being able to spot deliberately.</p>
+  <p>What they have in common: every file involved is individually valid. The YAML parses. A validator says it's fine. The problem exists only in the relationship between files, or between a file and what your template expects, and neither of those is something a single-file check can see.</p>
+
+  <h2>The same field under two names</h2>
+  <p>This is the most common silent failure and the most expensive. Your template reads <code>date</code>. One post — written months later, or by someone else, or copied from a different project's boilerplate — uses <code>publishDate</code>. Nothing errors. The template asks for a field that isn't there, gets nothing back, and renders an empty string. Depending on your setup, the post sorts to the bottom of the list, or shows a blank date, or drops out of a collection filtered on that field entirely.</p>
+  <p>The variants multiply quickly: <code>description</code> and <code>summary</code>, <code>tags</code> and <code>categories</code>, <code>image</code> and <code>cover</code>, <code>author</code> and <code>authors</code>. Framework migrations are a common source — Jekyll conventions carried into an Astro project, or Hugo defaults mixed with hand-written files — as is any content folder more than one person has touched.</p>
+  <p>The reliable signal that two names are one field is that <strong>no single file uses both</strong>. If half your posts have <code>date</code> and half have <code>publishDate</code> and none have both, that's not two fields, it's one field spelled two ways. If a post has <code>title</code> and <code>subtitle</code> together, those genuinely are separate fields. That distinction is only visible when you look at the whole folder at once, which is exactly why this survives file-by-file review.</p>
+
+  <h2>Duplicate keys keep the last value and say nothing</h2>
+  <p>Write the same key twice in one block and you don't get an error from most generators — you get the last value, and the first one vanishes. It happens naturally: you add <code>description</code> near the top while editing, not noticing there's already one eight lines down. The rendered page uses the second, and the version you actually wrote is gone with no indication anything was dropped.</p>
+  <p>Strict YAML parsers do reject duplicate mapping keys, and some toolchains surface that. But plenty of setups don't, and the failure is invisible in an editor because both lines are right there looking perfectly reasonable.</p>
+
+  <h2>Fence rules that void the whole block</h2>
+  <p>Front matter has to be the very first thing in the file. Not the first meaningful thing — the first thing. A single blank line above the opening <code>---</code> and most parsers stop treating the block as front matter at all; instead of metadata, you get a horizontal rule and a wall of raw <code>title: ...</code> text rendered into the page body. This is a favorite outcome of copy-paste and of editors that add a trailing newline in the wrong place.</p>
+  <p>Two related ones. An unclosed fence swallows however much of your post sits before the next <code>---</code> it happens to find, which in a post that uses horizontal rules can be an arbitrary chunk of the article. And a byte-order mark at the start of the file sits invisibly <em>before</em> the opening fence, so the parser sees a character it wasn't expecting where the delimiter should be — Jekyll's own documentation is unusually blunt about this, warning that very bad things happen if a BOM is present, which is mainly a hazard on Windows editors.</p>
+
+  <h2>Type drift: a list in forty files, a string in one</h2>
+  <p>YAML lets you write a single-item list as either a proper list or a bare scalar, and both look correct:</p>
+  <pre style="background:#081729; color:#f4efe4; padding:14px 16px; border-radius:8px; overflow-x:auto; font-family:'JetBrains Mono',monospace; font-size:0.82rem; line-height:1.6;">tags:
+  - guide      <span style="color:#7ddba6;"># a list with one item</span>
+
+tags: guide    <span style="color:#f0b429;"># a string, not a list</span></pre>
+  <p>A template that iterates over <code>tags</code> will loop over the list fine. Handed the string, it may iterate over its characters, render nothing, or throw — and which of those you get depends on the generator. The page that produces five tag links reading "g", "u", "i", "d", "e" is the memorable version; the silent one, where the post just never appears on any tag page, is the common one.</p>
+  <p>The same drift hits booleans. <code>draft: false</code> is a boolean, <code>draft: "false"</code> is a non-empty string, and a template testing truthiness treats the second as <em>true</em> — which means the post you marked as published stays hidden, or the draft you meant to hide gets published. This is a specific instance of YAML's broader type-inference behavior, which is <a href="/blog/json-vs-yaml.html">worth understanding in general</a> if you write much YAML.</p>
+
+  <h2>Dates that parse but don't agree</h2>
+  <p>Three posts using <code>01/12/2026</code> while everything else uses <code>2026-01-12</code> is a real problem hiding behind two valid-looking values. Beyond the day/month ambiguity, a generator that parses one shape and not the other will sort those posts to wherever unparseable dates land — usually the very top or the very bottom of your archive.</p>
+  <p>Quoting matters here too. In YAML, an unquoted <code>2026-01-12</code> can be interpreted as a date value while <code>"2026-01-12"</code> is unambiguously a string, and generators differ in what they do with each. Neither is wrong; being inconsistent about it across a folder is what causes trouble. If your dates render differently on posts that look identical in source, quoting is the first thing to check.</p>
+
+  <h2>Two posts fighting over one URL</h2>
+  <p>Duplicate <code>slug</code>, <code>permalink</code>, or <code>url</code> values mean two files resolve to the same output path. Some generators error, some warn, and some just write one file over the other — leaving you with a post that exists in the repo, builds without complaint, and returns a page containing someone else's content. Duplicate titles are milder but worth knowing about, since they usually mean either an accidental copy or two posts competing for the same search query.</p>
+
+  <h2>Checking the whole folder at once</h2>
+  <p>Every failure above is invisible in a single file and obvious across a batch. Naming drift needs the other files to compare against. Type drift needs a majority to drift <em>from</em>. Duplicate slugs need at least two posts by definition. A YAML validator can't help, because nothing here is a YAML error.</p>
+  <p>If you want this enforced automatically, a schema is the right answer — Astro validates content collections against a Zod schema at build time and fails with the offending file and field, and equivalent CLI validators exist for other generators and wire into CI. That catches problems on commit, which is the right place to catch them.</p>
+  <p>For the moment you're actually staring at a folder wondering what's inconsistent, FreeToolDev's <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a> compares posts against each other in the browser: field names that never co-occur, types that change between files, mixed date formats, duplicate slugs, and per-file fence and required-field problems. Paste the posts in, nothing is uploaded. If your front matter also carries the <code>title</code> and <code>description</code> your pages publish as meta tags, the <a href="/tools/meta-length-checker.html">bulk meta length checker</a> is the natural next pass, and <a href="/blog/sitemap-static-sites.html">this post</a> covers the sitemap side of running a static site.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

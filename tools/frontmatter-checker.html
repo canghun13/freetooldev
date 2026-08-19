@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Markdown Front Matter Checker — Check Many Posts at Once | FreeToolDev</title>
+<meta name="description" content="Paste the front matter of many Markdown posts at once and check them together — missing fields, inconsistent field names, mixed date formats, duplicate slugs. Free, no signup.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/frontmatter-checker.html">
+<meta property="og:title" content="Bulk Markdown Front Matter Checker — Check Many Posts at Once | FreeToolDev">
+<meta property="og:description" content="Paste the front matter of many Markdown posts at once and check them together — missing fields, inconsistent field names, mixed date formats, duplicate slugs. Free, no signup.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk Markdown Front Matter Checker — Check Many Posts at Once | FreeToolDev">
+<meta name="twitter:description" content="Paste the front matter of many Markdown posts at once and check them together — missing fields, inconsistent field names, mixed date formats, duplicate slugs. Free, no signup.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/frontmatter-checker.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.1/js-yaml.min.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">SEO · Batch</span>
+    <h1>Bulk Markdown Front Matter Checker</h1>
+    <p>Paste the front matter from many Markdown posts at once and check them <em>against each other</em> — not just one file at a time. Catches missing fields, the same field living under two different names, mixed date formats, type drift, and duplicate slugs across your whole content folder.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>Posts</h3>
+      <p style="font-size:0.85rem; margin-bottom:10px;">Paste each post starting with its <code>---</code> front matter fence. Separate posts with a line containing just <code>-----</code>. Optionally start a block with <code>### filename.md</code> to label it in the results. The Markdown body below the front matter is ignored, so you can paste whole files or just the fenced block.</p>
+      <textarea id="input" style="min-height:240px;" placeholder="### first-post.md
+---
+title: Getting Started
+date: 2026-01-05
+tags:
+  - guide
+---
+-----
+### second-post.md
+---
+title: Next Steps
+publishDate: 01/12/2026
+tags: guide
+---"></textarea>
+      <div style="margin-top:14px;">
+        <label for="required" style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Required fields (comma-separated)</label>
+        <input type="text" id="required" value="title, date" style="width:100%; padding:10px 12px; font-family:'JetBrains Mono',monospace; font-size:0.85rem;">
+        <p style="font-size:0.8rem; margin-top:6px; color:#5a6472;">Set this to whatever your site's build actually needs — Astro's schema fields, Hugo's required params, or just leave the defaults.</p>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="checkBtn">Check front matter →</button>
+        <button class="btn btn-outline" id="clearBtn">Clear</button>
+      </div>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="crossBox" style="margin-bottom:20px;"></div>
+      <div id="resultsList"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>Why checking posts together finds things checking one file can't</h2>
+    <p>A YAML validator tells you whether one block of front matter parses. That's a real check, but it's not the one that breaks builds. The failures that actually cost you an afternoon are <em>relative</em>: the post where someone wrote <code>publishDate</code> instead of <code>date</code>, the three posts that use <code>01/12/2026</code> while everything else uses <code>2026-01-12</code>, the field that's a list in forty files and a bare string in one. Every one of those files is individually valid YAML. The problem only exists in comparison — which is why a single-file checker can't see it, and why this tool takes the whole batch at once.</p>
+
+    <h2>What gets checked</h2>
+    <p><strong>Per file:</strong> whether the fence is present, opens at the very first line, and closes; whether the YAML parses; whether your required fields exist and are non-empty; empty values on any other field; and duplicate keys — which parsers silently resolve by keeping the last value, so the earlier one disappears without any error.</p>
+    <p><strong>Across the batch:</strong> fields that appear in some posts but not others; two field names that are <em>never used together</em>, which almost always means they're the same field under two spellings; fields whose value type changes between files (a list in most, a string in one); date fields written in more than one format; and duplicate <code>title</code>, <code>slug</code>, <code>permalink</code>, or <code>url</code> values, which usually means two posts will fight over the same output path.</p>
+
+    <h2>The two-names problem, specifically</h2>
+    <p>This is the one worth understanding, because it's the one that silently drops content. When a post uses <code>publishDate</code> and your template reads <code>date</code>, nothing errors — the template just renders an empty date, or the post sorts to the bottom, or it falls out of a filtered collection entirely. The build passes. The post looks fine in your editor. You find it weeks later when someone mentions the archive page is missing something.</p>
+    <p>Naming drift is flagged only when two similar field names never appear in the same file. That distinction matters: <code>title</code> and <code>subtitle</code> are genuinely different fields and normally coexist, so they're not flagged, while <code>date</code> and <code>publishDate</code> splitting cleanly across two groups of files is the signature of the same field written two ways.</p>
+
+    <h2>FAQ</h2>
+    <h3>Does anything I paste get uploaded?</h3>
+    <p>No. The page loads the open-source js-yaml parser from a CDN once when it opens, and after that everything runs in your browser — parsing, comparison, and results. Your content never leaves the device, which you can confirm in your browser's Network tab.</p>
+    <h3>Does it handle TOML front matter (+++)?</h3>
+    <p>Not currently — TOML blocks are detected and reported as unparsed rather than silently skipped, so you'll know they weren't checked. Hugo accepts both, but YAML is by far the more common choice across Jekyll, Astro, Eleventy, Next.js, and Hugo itself.</p>
+    <h3>My date is a quoted string in some files and unquoted in others. Is that a problem?</h3>
+    <p>Both are read as the same date here as long as the format matches, so this tool won't flag it on its own. It's still worth being deliberate about: in YAML, an unquoted <code>2026-01-05</code> can be interpreted as a date value while <code>"2026-01-05"</code> is always a string, and generators differ in how they handle each. If your dates render inconsistently despite looking identical, quoting is a good first thing to check.</p>
+    <h3>Can I point this at a repository instead of pasting?</h3>
+    <p>No — there's no server-side fetching here, so it only sees what you paste. For a folder of fifty posts, the fastest route is concatenating the front matter blocks with a shell one-liner and pasting the result. If you'd rather have it run automatically on every commit, a CLI validator wired into CI is the better tool for that job; this one is for the moment you're actually looking at the problem.</p>
+    <h3>What if my front matter is valid but the build still fails?</h3>
+    <p>Then the mismatch is with your generator's schema rather than with YAML itself — Astro validates against a Zod schema, and a field that parses fine can still be the wrong type or fail a constraint. Set the required-fields box to match your schema's required keys and the type-drift check will usually surface the offender. See <a href="/blog/markdown-front-matter-mistakes.html">the common front matter failures</a> for the specific patterns that cause silent breakage.</p>
+  </div>
+</section>
+
+<script>
+
+function parseBlock(block) {
+  // returns {ok, error, data, rawYaml}
+  var lines = block.split('\n');
+  var i = 0;
+  // leading blank lines are themselves an error condition
+  var leadingBlank = false;
+  while (i < lines.length && lines[i].trim() === '') { leadingBlank = true; i++; }
+  if (i >= lines.length) return { ok: false, error: 'Block is empty.' };
+  var opener = lines[i].trim();
+  if (opener !== '---' && opener !== '+++') {
+    return { ok: false, error: 'No front matter block found — the file must begin with a --- (YAML) or +++ (TOML) fence.' };
+  }
+  var fence = opener;
+  if (leadingBlank) {
+    return { ok: false, error: 'Front matter must be the very first thing in the file — there are blank lines above the opening ' + fence + '.' };
+  }
+  if (fence === '+++') {
+    return { ok: false, error: 'TOML front matter (+++) is not parsed by this tool — convert it to YAML (---) or check it with a TOML validator.' };
+  }
+  var close = -1;
+  for (var j = i + 1; j < lines.length; j++) {
+    if (lines[j].trim() === '---') { close = j; break; }
+  }
+  if (close === -1) {
+    return { ok: false, error: 'Front matter fence is never closed — no --- line after the opening one.' };
+  }
+  var rawYaml = lines.slice(i + 1, close).join('\n');
+  if (rawYaml.trim() === '') return { ok: true, data: {}, rawYaml: rawYaml, empty: true };
+  var data, dupKeys = [];
+  try {
+    data = jsyaml.load(rawYaml);
+  } catch (e) {
+    // js-yaml rejects duplicate keys outright; that is a warning for us, not a parse failure,
+    // because every static site generator accepts the file and silently keeps the last value.
+    if (/duplicat/i.test(e.reason || e.message || '')) {
+      try {
+        data = jsyaml.load(rawYaml, { json: true });
+        dupKeys = findDuplicateKeys(rawYaml);
+      } catch (e2) {
+        return { ok: false, error: 'Invalid YAML: ' + (e2.reason || e2.message) };
+      }
+    } else {
+      return { ok: false, error: 'Invalid YAML: ' + (e.reason || e.message) };
+    }
+  }
+  if (data === null || data === undefined) return { ok: true, data: {}, rawYaml: rawYaml, empty: true };
+  if (typeof data !== 'object' || Array.isArray(data)) {
+    return { ok: false, error: 'Front matter must be a set of key: value pairs, not a ' + (Array.isArray(data) ? 'list' : typeof data) + '.' };
+  }
+  return { ok: true, data: data, rawYaml: rawYaml, dupKeys: dupKeys };
+}
+
+function findDuplicateKeys(rawYaml) {
+  var seen = {}, dup = [];
+  rawYaml.split('\n').forEach(function (ln) {
+    var m = ln.match(/^([A-Za-z0-9_\-.]+)\s*:/);
+    if (m) { if (seen[m[1]]) { if (dup.indexOf(m[1]) === -1) dup.push(m[1]); } else seen[m[1]] = true; }
+  });
+  return dup;
+}
+
+function typeOf(v) {
+  if (v === null || v === undefined) return 'empty';
+  if (Array.isArray(v)) return 'list';
+  if (v instanceof Date) return 'date';
+  return typeof v;
+}
+
+function dateShape(v) {
+  if (v instanceof Date) return 'YAML date';
+  if (typeof v !== 'string') return null;
+  var s = v.trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return 'YYYY-MM-DD';
+  if (/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}/.test(s)) return 'YYYY-MM-DD HH:MM';
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return 'MM/DD/YYYY';
+  if (/^\d{4}\/\d{2}\/\d{2}$/.test(s)) return 'YYYY/MM/DD';
+  if (/^[A-Za-z]{3,9} \d{1,2},? \d{4}$/.test(s)) return 'Month D, YYYY';
+  return 'other';
+}
+
+function analyze(files, requiredRaw) {
+  var required = (requiredRaw || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+  var parsed = [];
+  files.forEach(function (f) {
+    var r = parseBlock(f.body);
+    parsed.push({ name: f.name, res: r, perFile: [] });
+  });
+
+  var valid = parsed.filter(function (p) { return p.res.ok; });
+
+  // ---- per-file checks
+  parsed.forEach(function (p) {
+    if (!p.res.ok) return;
+    var d = p.res.data;
+    var keys = Object.keys(d);
+    if (keys.length === 0) p.perFile.push('Front matter block is empty.');
+    required.forEach(function (k) {
+      if (!(k in d)) p.perFile.push('Missing required field: ' + k);
+      else if (d[k] === null || d[k] === '' || (Array.isArray(d[k]) && d[k].length === 0)) p.perFile.push('Required field is empty: ' + k);
+    });
+    keys.forEach(function (k) {
+      if (!required.includes(k) && (d[k] === null || d[k] === '')) p.perFile.push('Empty value: ' + k);
+    });
+    (p.res.dupKeys || []).forEach(function (k) {
+      p.perFile.push('Duplicate key "' + k + '" — only the last value survives parsing');
+    });
+  });
+
+  // ---- cross-file checks
+  var cross = [];
+  var keyCount = {};
+  valid.forEach(function (p) {
+    Object.keys(p.res.data).forEach(function (k) {
+      keyCount[k] = (keyCount[k] || 0) + 1;
+    });
+  });
+  var n = valid.length;
+
+  // Near-duplicate key names. Only flagged when the two names are mutually exclusive
+  // across the batch (no single file uses both) — otherwise "title" and "subtitle" would
+  // be reported on every site that legitimately uses both.
+  var namingPairKeys = [];
+  var keys = Object.keys(keyCount);
+  var norm = function (s) { return s.toLowerCase().replace(/[_\-.]/g, ''); };
+  for (var a = 0; a < keys.length; a++) {
+    for (var b = a + 1; b < keys.length; b++) {
+      var ka = keys[a], kb = keys[b];
+      var na = norm(ka), nb = norm(kb);
+      var related = false;
+      if (na === nb) related = true;
+      else if (na.length >= 4 && nb.length >= 4 && (na.indexOf(nb) !== -1 || nb.indexOf(na) !== -1)) related = true;
+      if (!related) continue;
+      var bothInOne = valid.some(function (p) { return (ka in p.res.data) && (kb in p.res.data); });
+      if (bothInOne) continue;
+      namingPairKeys.push(ka, kb);
+      cross.push({
+        type: 'naming',
+        text: '"' + ka + '" (' + keyCount[ka] + ' files) and "' + kb + '" (' + keyCount[kb] +
+              ' files) are never used together — these are probably the same field under two names.'
+      });
+    }
+  }
+
+  // fields present in some but not all
+  if (n >= 2) {
+    Object.keys(keyCount).sort().forEach(function (k) {
+      if (keyCount[k] < n && !required.includes(k) && namingPairKeys.indexOf(k) === -1) {
+        var missingIn = valid.filter(function (p) { return !(k in p.res.data); }).map(function (p) { return p.name; });
+        cross.push({
+          type: 'partial',
+          text: '"' + k + '" is present in ' + keyCount[k] + ' of ' + n + ' files — missing from: ' + missingIn.join(', ')
+        });
+      }
+    });
+  }
+
+  // type inconsistency
+  Object.keys(keyCount).forEach(function (k) {
+    var types = {};
+    valid.forEach(function (p) {
+      if (k in p.res.data) {
+        var t = typeOf(p.res.data[k]);
+        (types[t] = types[t] || []).push(p.name);
+      }
+    });
+    var tk = Object.keys(types).filter(function (t) { return t !== 'empty'; });
+    if (tk.length > 1) {
+      cross.push({
+        type: 'type',
+        text: '"' + k + '" has mixed types: ' + tk.map(function (t) { return t + ' (' + types[t].join(', ') + ')'; }).join(' vs ')
+      });
+    }
+  });
+
+  // date format inconsistency
+  Object.keys(keyCount).forEach(function (k) {
+    if (!/date|time|published|updated|modified/i.test(k)) return;
+    var shapes = {};
+    valid.forEach(function (p) {
+      if (k in p.res.data) {
+        var s = dateShape(p.res.data[k]);
+        if (s) (shapes[s] = shapes[s] || []).push(p.name);
+      }
+    });
+    var sk = Object.keys(shapes);
+    if (sk.length > 1) {
+      cross.push({
+        type: 'date',
+        text: '"' + k + '" uses ' + sk.length + ' different date formats: ' + sk.map(function (s) { return s + ' (' + shapes[s].join(', ') + ')'; }).join(' vs ')
+      });
+    }
+  });
+
+  // duplicate values on fields that should be unique
+  ['title', 'slug', 'permalink', 'url'].forEach(function (k) {
+    var vals = {};
+    valid.forEach(function (p) {
+      var v = p.res.data[k];
+      if (typeof v === 'string' && v.trim()) {
+        var key = v.trim().toLowerCase();
+        (vals[key] = vals[key] || []).push(p.name);
+      }
+    });
+    Object.keys(vals).forEach(function (v) {
+      if (vals[v].length > 1) cross.push({ type: 'dup', text: 'Duplicate "' + k + '" value across files: "' + v + '" (' + vals[v].join(', ') + ')' });
+    });
+  });
+
+  return { files: parsed, cross: cross, validCount: n };
+}
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  var LABELS = {
+    naming: 'Field naming',
+    partial: 'Inconsistent fields',
+    type: 'Type drift',
+    date: 'Date formats',
+    dup: 'Duplicate values'
+  };
+
+  document.getElementById('checkBtn').addEventListener('click', function () {
+    if (typeof jsyaml === 'undefined') {
+      alert('The YAML parser did not load — check your connection or any script blocker, then reload the page.');
+      return;
+    }
+    var raw = document.getElementById('input').value;
+    if (!raw.trim()) { alert('Paste at least one post first.'); return; }
+
+    var blocks = raw.split(/\n-{5,}\n/);
+    var files = [];
+    blocks.forEach(function (block, idx) {
+      if (!block.trim()) return;
+      var name = 'Post ' + (idx + 1);
+      var nameMatch = block.match(/^###\s*(.+)$/m);
+      if (nameMatch) {
+        name = nameMatch[1].trim();
+        block = block.replace(/^###\s*.+$/m, '');
+        block = block.replace(/^\n+/, '');
+      }
+      files.push({ name: name, body: block });
+    });
+
+    if (!files.length) { alert('Paste at least one post first.'); return; }
+
+    var result = analyze(files, document.getElementById('required').value);
+    document.getElementById('resultsPanel').style.display = 'block';
+
+    var crossBox = document.getElementById('crossBox');
+    crossBox.innerHTML = '';
+    if (result.validCount >= 2) {
+      var grouped = {};
+      result.cross.forEach(function (c) { (grouped[c.type] = grouped[c.type] || []).push(c.text); });
+      var types = Object.keys(grouped);
+      var inner = '<div style="font-weight:700; margin-bottom:8px;">Across all ' + result.validCount + ' posts</div>';
+      if (!types.length) {
+        inner += '<div style="color:#7ddba6; font-weight:600; font-size:0.88rem;">Consistent — no field naming, type, date format, or duplicate-value differences found between posts.</div>';
+      } else {
+        types.forEach(function (t) {
+          inner += '<div style="margin-bottom:10px;">' +
+            '<div style="font-family:\'JetBrains Mono\',monospace; font-size:0.78rem; color:#f0b429; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;">' + esc(LABELS[t] || t) + '</div>' +
+            grouped[t].map(function (x) {
+              return '<div style="font-size:0.86rem; color:#f4efe4; padding:3px 0 3px 12px; border-left:2px solid #f0b429;">' + esc(x) + '</div>';
+            }).join('') +
+            '</div>';
+        });
+      }
+      crossBox.innerHTML = '<div style="background:#081729; border-radius:8px; padding:16px; color:#f4efe4;">' + inner + '</div>';
+    } else if (result.validCount === 1) {
+      crossBox.innerHTML = '<div style="background:#081729; border-radius:8px; padding:14px 16px; color:#c9d3e0; font-size:0.86rem;">' +
+        'Only one post parsed, so there is nothing to compare it against. Paste two or more posts separated by <code style="color:#f0b429;">-----</code> to run the cross-file checks.</div>';
+    }
+
+    var list = document.getElementById('resultsList');
+    list.innerHTML = '';
+    result.files.forEach(function (p) {
+      var row = document.createElement('div');
+      row.className = 'file-row ready';
+      row.style.flexDirection = 'column';
+      row.style.alignItems = 'flex-start';
+      row.style.padding = '16px';
+      row.style.marginBottom = '12px';
+
+      var status;
+      if (!p.res.ok) {
+        status = '<span style="color:#b5451b; font-weight:600;">' + esc(p.res.error) + '</span>';
+      } else if (p.perFile.length) {
+        status = '<span style="color:#b5451b; font-weight:600;">' + p.perFile.map(esc).join(' · ') + '</span>';
+      } else {
+        status = '<span style="color:#1f6b41; font-weight:600;">No issues in this file</span>';
+      }
+
+      var fieldsHtml = '';
+      if (p.res.ok) {
+        var d = p.res.data;
+        var ks = Object.keys(d);
+        fieldsHtml = ks.length
+          ? ks.map(function (k) {
+              var v = d[k];
+              var shown = Array.isArray(v) ? '[' + v.join(', ') + ']'
+                : (v === null || v === '' ? '(empty)' : (typeof v === 'object' ? JSON.stringify(v) : String(v)));
+              if (shown.length > 90) shown = shown.slice(0, 90) + '…';
+              return '<div style="font-family:\'JetBrains Mono\',monospace; font-size:0.8rem; padding:2px 0;">' +
+                '<strong>' + esc(k) + ':</strong> ' + esc(shown) + '</div>';
+            }).join('')
+          : '<div style="font-size:0.85rem; color:#6b675d;">Front matter block is present but empty.</div>';
+      }
+
+      row.innerHTML =
+        '<div style="font-weight:700; margin-bottom:6px;">' + esc(p.name) + '</div>' +
+        '<div style="margin-bottom:10px; font-size:0.85rem;">' + status + '</div>' +
+        '<div style="width:100%;">' + fieldsHtml + '</div>';
+      list.appendChild(row);
+    });
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    document.getElementById('input').value = '';
+    document.getElementById('resultsPanel').style.display = 'none';
+  });
+});
+</script>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
