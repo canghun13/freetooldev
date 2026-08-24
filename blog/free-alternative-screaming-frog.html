@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A Free, Browser-Based Alternative to Screaming Frog for Small Sites — FreeToolDev</title>
-<meta name="description" content="Screaming Frog is the standard SEO crawler, but it's overkill (and eventually paid) for a small site. Here's when a lighter, free crawler covers what you actually need.">
+<meta name="description" content="What Screaming Frog's free 500-URL version actually covers, why that cap arrives sooner than you'd expect, and when a lighter browser crawler is enough for a small site.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://freetooldev.com/blog/free-alternative-screaming-frog.html">
 <meta property="og:title" content="A Free, Browser-Based Alternative to Screaming Frog for Small Sites — FreeToolDev">
-<meta property="og:description" content="Screaming Frog is the standard SEO crawler, but it's overkill (and eventually paid) for a small site. Here's when a lighter, free crawler covers what you actually need.">
+<meta property="og:description" content="What Screaming Frog's free 500-URL version actually covers, why that cap arrives sooner than you'd expect, and when a lighter browser crawler is enough for a small site.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="A Free, Browser-Based Alternative to Screaming Frog for Small Sites — FreeToolDev">
-<meta name="twitter:description" content="Screaming Frog is the standard SEO crawler, but it's overkill (and eventually paid) for a small site. Here's when a lighter, free crawler covers what you actually need.">
+<meta name="twitter:description" content="What Screaming Frog's free 500-URL version actually covers, why that cap arrives sooner than you'd expect, and when a lighter browser crawler is enough for a small site.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/blog/free-alternative-screaming-frog.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -61,8 +61,14 @@
   <h2>Where a lightweight browser tool covers the same ground</h2>
   <p>For a personal site, a small business site, or a side project — the range where you're checking <a href="/blog/find-broken-links-free-tool.html">"are there any broken links,"</a> "does every page have a title and description," and "can I get a sitemap out of this quickly" — installing desktop software, learning its interface, and configuring a crawl is a lot of setup for a fairly simple question. A browser-based crawler that does the essentials (broken links, missing meta tags, sitemap/feed generation) in one pass, with zero install and no account, covers that range of need directly.</p>
 
+  <h2>What Screaming Frog's own free version already gives you</h2>
+  <p>Worth being clear about before reaching for anything else: Screaming Frog is free to download and use, capped at 500 URLs per crawl, and that free build already covers broken links and error codes, page titles and meta descriptions, duplicate detection, and XML sitemap export. For a genuinely small site, that's the audit most people are actually looking for, and it costs nothing. A licence — a per-user annual subscription, listed at £199 / $279 per year as of August 2026, so check the current figure before budgeting — removes the cap and unlocks JavaScript rendering, custom extraction, scheduled crawls, saved crawl sessions, and the API integrations. If someone tells you the free version is a crippled demo, they haven't used it.</p>
+  <p>The part that surprises people is how quickly 500 arrives. The cap counts <em>URLs the crawler encounters</em>, not pages you think of as pages — images, CSS and JavaScript files, PDFs, and by default external links all draw down the same budget. A 120-page site with a dozen images per page is already at the limit before the crawler has seen most of your content, which is why "it went over 500 on a small site" is a recurring complaint from people who assumed the cap meant 500 articles. You can push that back by excluding image and resource file types in the configuration and restricting the crawl to a subfolder, and on a small site that's usually enough. It does mean the free version's practical ceiling is lower than the number suggests.</p>
+  <p>The other free-tier constraint that bites in practice is that crawls can't be saved and reopened, so an interrupted audit starts over from the beginning rather than resuming where it stopped.</p>
+
   <h2>The honest limits of a lightweight, no-install crawler</h2>
   <p>A browser-based tool making requests through a server-side helper (rather than a dedicated desktop application with unlimited resources) will have real constraints: a cap on pages per crawl, no JavaScript rendering (it reads the HTML a server returns, not what client-side JS builds afterward), and less configurability than a dedicated desktop tool. For a small site, none of these usually matter. For anything at real scale, they're exactly the reasons a heavier tool exists.</p>
+  <p>To put a number on ours rather than leave it vague: FreeToolDev's crawler covers up to 40 pages per run and flags the result as partial if your site is larger. That is a much smaller ceiling than 500, and it's the honest trade for requiring no install, no account, and no configuration — it's built for the "did anything break since last week" check on a small site, not for a full audit. If your site is bigger than that, the free desktop build is the better free option, and this comparison should push you there rather than at us.</p>
 
   <h2>A quick gut check for which you need</h2>
   <ul style="color:#2c3540; line-height:1.75; padding-left:22px; margin-bottom:22px;">
@@ -71,6 +77,10 @@
   </ul>
 
   <h2>FAQ</h2>
+  <h3>Do I actually need to pay for a Screaming Frog licence?</h3>
+  <p>Only if you hit what the free build won't do: crawling past 500 URLs in one pass, rendering JavaScript, custom extraction, scheduling, saving a crawl to reopen later, or pulling in Analytics and Search Console data. None of those are relevant to a personal site or a small business site that's mostly server-rendered HTML — for that, the free version is the whole answer and the licence buys you nothing you'd use. If you audit client sites repeatedly, or any one of them runs past a few hundred URLs, the calculation flips quickly, since a single audit's worth of time saved covers the annual cost.</p>
+  <h3>Is there a legitimate way to get the paid features for free?</h3>
+  <p>No. The free tier is the trial — Screaming Frog doesn't run a separate time-limited trial of the paid build, so there's no unlocked evaluation period to sign up for. Sites offering discounted or "unlimited" licences outside the official store are selling something they can't legitimately provide, and running a cracked build of a tool you point at client infrastructure is a poor trade at any price. If cost is the blocker, the honest options are working within the 500-URL cap by excluding resource files and crawling section by section, or using a browser-based tool for the checks that don't need the paid features.</p>
   <h3>Can I use both — Screaming Frog for the deep audit, a browser tool for quick checks?</h3>
   <p>Yes, and that's a reasonable way to split the work in practice: a lightweight browser-based crawl for a fast "did anything break" check between full audits, saved for the times a deeper, configurable pass with Screaming Frog is actually warranted — a site relaunch, a migration, a quarterly SEO review.</p>
   <h3>Does a lightweight crawler replace a full technical SEO audit?</h3>
