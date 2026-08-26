@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Which Fields in an API Response Are Actually Optional? — FreeToolDev</title>
+<meta name="description" content="One sample can't tell you. The answer only exists across many records — and getting it wrong is why clients that pass every test crash on real data.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/which-api-fields-are-optional.html">
+<meta property="og:title" content="Which Fields in an API Response Are Actually Optional? — FreeToolDev">
+<meta property="og:description" content="One sample can't tell you. The answer only exists across many records — and getting it wrong is why clients that pass every test crash on real data.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Which Fields in an API Response Are Actually Optional? — FreeToolDev">
+<meta name="twitter:description" content="One sample can't tell you. The answer only exists across many records — and getting it wrong is why clients that pass every test crash on real data.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/which-api-fields-are-optional.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Aug 25, 2026</div>
+  <h1>Which Fields in an API Response Are Actually Optional?</h1>
+
+  <p>You're integrating an API. The docs are thin or out of date, so you do the sensible thing: hit the endpoint, look at the response, and write your types from what you see. Every field is there, so every field goes in as required. The integration works, the tests pass, and three weeks later it throws on a record where <code>email</code> simply isn't present.</p>
+  <p>The mistake wasn't carelessness. It's that <strong>the question "is this field optional?" has no answer inside a single record.</strong> One sample tells you a field was present once. Optionality is a property of the whole set, and you can only see it by looking at many records at the same time.</p>
+
+  <h2>Why one sample systematically misleads</h2>
+  <p>Look at a single user object and you'll see a name, an email, an avatar URL, a bio. Nothing marks any of them as conditional, because nothing can — a JSON object is a snapshot, not a contract. The fields that happened to be populated for that record look exactly like the fields that are always populated.</p>
+  <p>What makes this worse than an ordinary unknown is that the sample you grab is rarely a random one. It's usually the first record, or your own test account, or the demo data the API provider seeded — and those are the most complete records in the system. Test accounts get filled in. Real users skip the bio, never upload an avatar, sign up through a flow that doesn't collect a phone number. So the one record you inspected is close to a best case, and every assumption you derive from it is optimistic in the same direction.</p>
+
+  <h2>What actually varies between records</h2>
+  <p>Optional fields are the most common case, but they're not the only thing that only shows up in aggregate.</p>
+  <p><strong>Type drift.</strong> A field arrives as a number in most records and a string in a few. This usually means two code paths produce the response — an older serializer that stringified IDs and a newer one that doesn't, or a value that passes through a template in one branch. Typed clients break on it hard, and it's invisible unless you compare the same field across records.</p>
+  <p><strong>Always-null fields.</strong> A field is present in every record and <code>null</code> in every record. You cannot infer its type, and it's important to know that rather than guessing "string" and moving on — it usually means your sample doesn't cover whatever condition populates it.</p>
+  <p><strong>Missing versus present-but-null.</strong> These are different states and often need different handling. A key that's absent and a key set to <code>null</code> reach your code as two different things in most languages, and a server that produces both for the same field is usually doing so unintentionally.</p>
+  <p><strong>Two names for one field.</strong> Some records carry <code>user_id</code> and others carry <code>userId</code>. The tell is that <em>no single record has both</em> — they split cleanly across the set, which is the signature of two serialization paths rather than two genuine fields. Names that do coexist in a record, like <code>title</code> and <code>subtitle</code>, are just different fields.</p>
+
+  <h2>Why the usual tools don't answer this</h2>
+  <p>The instinct is to reach for a JSON diff, and it's the wrong shape. Diff tools take exactly two documents, a left and a right. That's built for "what changed between v1 and v2," not "what varies across forty records." Answering optionality with pairwise diffs means comparing every combination — 780 runs for forty records — and then holding the results in your head.</p>
+  <p>The workaround people land on is a shell loop that pulls N responses and diffs each against the first. It finds fields that record one happens to have and silently misses any field that only appears in records seven and twenty-three. It also anchors everything to whichever record you fetched first, which is exactly the biased sample the whole exercise was meant to escape.</p>
+  <p>Type generators look closer, since they do accept multiple samples. But their job is to emit something that compiles against every sample, so they resolve inconsistency rather than report it. A field missing from some records becomes <code>email?: string</code>. A field that's sometimes a string and sometimes a number becomes a union. That's correct for code generation and precisely backwards for auditing — the variation you were trying to find is the thing that got absorbed into the output. Worse, the <code>?</code> looks like a documented fact when it's actually an artifact of your particular sample.</p>
+
+  <h2>Getting a sample that can tell you the truth</h2>
+  <p>Since the answer depends entirely on the records you look at, the sample matters more than the tooling.</p>
+  <p>Pull from a list endpoint rather than fetching single records, and page deep enough to leave the newest data — recently created records skew toward whatever the current signup flow collects. Include records you know are unusual: the oldest ones in the system, accounts created before a schema migration, entries from a bulk import. Deliberately include a sparse record if you can find one, since those carry the information a complete record can't.</p>
+  <p>And treat the result as evidence, not proof. "Present in 40 of 40" means you didn't observe it missing, not that it can't be. What it does give you is a specific, checkable list of questions for whoever maintains the API — "is <code>avatar_url</code> guaranteed, or did my sample just happen to have it?" is a much better question than "are there any optional fields?", and far more likely to get a real answer.</p>
+
+  <h2>Doing it in one pass</h2>
+  <p>FreeToolDev's <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a> takes the whole set at once — paste a list endpoint's array response as-is, or several records separated by a divider — and reports which fields appear in every record, which are only sometimes there, which change type, which are null throughout, and which pairs of names never co-occur. It runs entirely in your browser, which matters when the payload is real customer data.</p>
+  <p>Once you know what actually varies, encode it: write a schema that marks the genuinely optional fields optional and run future batches against it with a <a href="/tools/json-schema-validator.html">bulk schema validator</a>, so the next shape change shows up as a failed check instead of a bug report. For why that drift happens in the first place, and why it stays invisible for so long, see <a href="/blog/api-schema-drift-explained.html">how an API response changes shape without anyone noticing</a>.</p>
+</article>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -108,6 +108,7 @@
     <h2>FAQ</h2>
     <h3>Does this validate against a JSON Schema?</h3>
     <p>No — this checks that each snippet is well-formed JSON (the syntax parses correctly), not that it matches a particular schema of required fields and types. If you need schema validation, this tool isn't the right fit; it's aimed at the much more common everyday problem of "why won't this parse."</p>
+    <p>There's a step before schema validation, too: working out what your schema should say. If you have a batch of real records but no documented contract, the <a href="/tools/json-field-consistency.html">field consistency checker</a> compares them against each other and reports which fields are present in every record, which change type, and which are only sometimes there — the raw material for writing a schema you can then validate against.</p>
     <h3>Why doesn't every error show a line and column?</h3>
     <p>The exact wording of a <code>JSON.parse</code> error — and whether it includes a position at all — is decided by your browser's JavaScript engine, not by this tool, and it varies between browsers. When the error message includes a position, this tool shows the exact line, column, and a short excerpt with a caret pointing at the problem. When it doesn't, you still get the parser's own error text, just without the extra location detail.</p>
     <h3>Is there a limit on how many snippets I can check at once?</h3>
@@ -144,6 +145,7 @@
           <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
           <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>

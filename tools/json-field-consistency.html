@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk JSON Field Consistency Checker — Compare Many Records | FreeToolDev</title>
+<meta name="description" content="Paste many JSON records or a whole array response and compare them against each other — optional fields, type drift, always-null fields, snake_case vs camelCase drift. Free, no signup.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/json-field-consistency.html">
+<meta property="og:title" content="Bulk JSON Field Consistency Checker — Compare Many Records | FreeToolDev">
+<meta property="og:description" content="Paste many JSON records or a whole array response and compare them against each other — optional fields, type drift, always-null fields, snake_case vs camelCase drift. Free, no signup.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk JSON Field Consistency Checker — Compare Many Records | FreeToolDev">
+<meta name="twitter:description" content="Paste many JSON records or a whole array response and compare them against each other — optional fields, type drift, always-null fields, snake_case vs camelCase drift. Free, no signup.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/json-field-consistency.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Data · Batch</span>
+    <h1>Bulk JSON Field Consistency Checker</h1>
+    <p>Paste a whole array response, or many separate JSON records, and compare them <em>against each other</em>. Finds the fields that are only sometimes there, the ones that change type between records, the ones that are null in every sample, and the same field living under two different names.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>Records</h3>
+      <p style="font-size:0.85rem; margin-bottom:10px;">Paste a JSON array of objects — a list endpoint's response works as-is — and every element is treated as one record. Or paste separate JSON documents divided by a line containing just <code>-----</code>, optionally labelling each with <code>### name</code> so the results are easier to read.</p>
+      <textarea id="input" style="min-height:260px;" placeholder='[
+  { "id": 1, "name": "Alice", "email": "a@example.com", "age": 30, "bio": null },
+  { "id": 2, "name": "Bob",   "email": "b@example.com", "age": "31", "bio": null },
+  { "id": 3, "name": "Carol", "age": 29, "bio": null, "nickname": "Cee" }
+]'></textarea>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="checkBtn">Check consistency →</button>
+        <button class="btn btn-outline" id="clearBtn">Clear</button>
+      </div>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="summaryBox" style="margin-bottom:20px;"></div>
+      <div id="fieldTable"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>Why two-document comparison doesn't answer this</h2>
+    <p>Every JSON diff tool takes exactly two documents: a left and a right. That's the right shape for "what changed between v1 and v2" — but it's the wrong shape for the question you actually have when you're staring at forty records from the same endpoint. <em>Is <code>email</code> guaranteed, or does it only show up on some users? Is <code>age</code> a number or a string? Which of these fields can I safely mark non-nullable?</em> Answering that with a pairwise diff means running it against every combination, which is 780 comparisons for forty records, and then holding the results in your head.</p>
+    <p>The common workaround is a shell loop that fetches N responses and diffs each one against the first — which finds fields that record 1 happens to have, and quietly misses any field that only appears in records 7 and 23. This tool looks at all of them together in one pass instead, which is the only way some of these problems are visible at all.</p>
+
+    <h2>What it reports</h2>
+    <p><strong>Optional fields</strong> — present in some records and absent in others, with the count and which records are missing it. This is the single most common cause of a client crashing on real data after working fine against a sample.</p>
+    <p><strong>Type drift</strong> — the same field arriving as a number in most records and a string in a few, or an object in some and an array in others. Typed clients break on exactly this, and it's invisible when you inspect one record at a time.</p>
+    <p><strong>Always-null fields</strong> — a field that exists in the payload but is null in every single record you've supplied. You can't infer a type from it, and it's worth knowing your sample simply doesn't cover it rather than assuming the field is a string.</p>
+    <p><strong>Missing versus present-but-null</strong> — a field that's sometimes absent and sometimes explicitly <code>null</code>. These are two different states, they usually need different handling in a client, and mixing them is often unintentional on the server side.</p>
+    <p><strong>Naming drift</strong> — two similar field names, like <code>user_id</code> and <code>userId</code>, that <em>never appear in the same record</em>. That pattern almost always means one field being serialized two different ways, usually because two code paths or two service versions produce the response. Similar names that do coexist in a record are left alone, since those are genuinely separate fields.</p>
+
+    <h2>How this differs from a type generator</h2>
+    <p>Tools that generate TypeScript interfaces or JSON Schema from several samples do read all of them — but their job is to produce something that compiles against every sample, so they resolve inconsistency silently. A field missing from some records becomes <code>email?: string</code>. A field that's sometimes a string and sometimes a number becomes a union. That's correct behaviour for code generation and precisely wrong for auditing, because the thing you wanted to see is the thing that got absorbed into the output.</p>
+    <p>This tool does the opposite: it never normalizes, it just tells you what varies and by how much. Run it before you generate types, then generate them knowing which optionals are real and which are gaps in your sample.</p>
+
+    <h2>FAQ</h2>
+    <h3>Does anything I paste get uploaded?</h3>
+    <p>No. Parsing and comparison run in your browser using the built-in JSON parser, with no libraries loaded and no requests made. That matters here more than on most tools, since API responses routinely contain customer names, email addresses, and internal identifiers — you can check a production payload without it leaving the machine, which you can confirm in your browser's Network tab.</p>
+    <h3>How does it handle nested objects and arrays?</h3>
+    <p>Nested objects are flattened to dot paths, so <code>meta.region</code> is tracked as its own field and compared across records like any other. An array of objects collapses to a single <code>items[]</code> path rather than one path per element, so a record with a hundred line items produces one entry, not a hundred. Nesting is followed six levels deep, which covers essentially every real API response.</p>
+    <h3>How many records can I paste?</h3>
+    <p>Two hundred records with thirty fields each analyzes in well under a tenth of a second, and there's no hard cap — the practical limit is your browser's memory. Two records is the minimum for the comparison to mean anything; with one, there's nothing to compare it against and the tool says so rather than reporting a clean result.</p>
+    <h3>One of my records has a syntax error. Does that stop everything?</h3>
+    <p>No. Records that fail to parse are listed separately with their error, and the comparison runs on the rest. That's deliberate — a malformed sample shouldn't block the audit of the twenty good ones. Just keep in mind that a field's "present in 19 of 19" count only covers the records that parsed.</p>
+    <h3>Should I be worried about every issue it reports?</h3>
+    <p>No, and it doesn't grade them for you. Plenty of optional fields are optional by design and documented that way. The report is a list of things that vary, so you can confirm each is intentional — the value is in noticing the one you didn't know about, not in driving the list to zero. If a field turns out to be genuinely optional, that's a fact worth encoding in your <a href="/tools/json-schema-validator.html">schema</a> rather than discovering again later.</p>
+  </div>
+</section>
+
+<script>
+function typeOf(v) {
+  if (v === null) return 'null';
+  if (Array.isArray(v)) return 'array';
+  return typeof v;
+}
+
+// Collect every leaf/branch path in one record.
+// Arrays of objects collapse to a single "field[]" path so 100 items don't produce 100 paths.
+function walk(obj, prefix, out, depth) {
+  if (depth > 6) return;
+  Object.keys(obj).forEach(function (k) {
+    var path = prefix ? prefix + '.' + k : k;
+    var v = obj[k];
+    var t = typeOf(v);
+    if (!out[path]) out[path] = [];
+    out[path].push(v);
+    if (t === 'object') {
+      walk(v, path, out, depth + 1);
+    } else if (t === 'array' && v.length && typeOf(v[0]) === 'object') {
+      var merged = {};
+      v.forEach(function (item) {
+        if (typeOf(item) === 'object') walk(item, path + '[]', merged, depth + 1);
+      });
+      Object.keys(merged).forEach(function (p) {
+        if (!out[p]) out[p] = [];
+        // one entry per record, not per array item — record-level presence is what we report
+        out[p].push(merged[p][0]);
+      });
+    }
+  });
+}
+
+function parseInput(raw) {
+  var text = raw.trim();
+  var records = [];
+  var errors = [];
+
+  // Case 1: one JSON array of objects (a list endpoint response)
+  if (text.charAt(0) === '[') {
+    try {
+      var arr = JSON.parse(text);
+      if (Array.isArray(arr)) {
+        arr.forEach(function (item, i) {
+          if (typeOf(item) === 'object') records.push({ name: 'Record ' + (i + 1), data: item });
+          else errors.push({ name: 'Record ' + (i + 1), error: 'Not an object (' + typeOf(item) + ') — only objects can be compared.' });
+        });
+        return { records: records, errors: errors, mode: 'array' };
+      }
+    } catch (e) { /* fall through to separator mode */ }
+  }
+
+  // Case 2: several JSON documents separated by a line of five or more dashes
+  var blocks = text.split(/\n-{5,}\n/);
+  blocks.forEach(function (block, i) {
+    if (!block.trim()) return;
+    var name = 'Sample ' + (i + 1);
+    var m = block.match(/^###\s*(.+)$/m);
+    if (m) {
+      name = m[1].trim();
+      block = block.replace(/^###\s*.+$/m, '');
+    }
+    var parsed;
+    try {
+      parsed = JSON.parse(block.trim());
+    } catch (e) {
+      errors.push({ name: name, error: 'Invalid JSON: ' + e.message });
+      return;
+    }
+    if (Array.isArray(parsed)) {
+      parsed.forEach(function (item, j) {
+        if (typeOf(item) === 'object') records.push({ name: name + ' [' + j + ']', data: item });
+      });
+    } else if (typeOf(parsed) === 'object') {
+      records.push({ name: name, data: parsed });
+    } else {
+      errors.push({ name: name, error: 'Top level is a ' + typeOf(parsed) + ', not an object or array of objects.' });
+    }
+  });
+  return { records: records, errors: errors, mode: 'separator' };
+}
+
+function analyze(raw) {
+  var p = parseInput(raw);
+  var records = p.records;
+  var n = records.length;
+  var fields = {};
+
+  var recPaths = [];
+  records.forEach(function (rec) {
+    var out = {};
+    walk(rec.data, '', out, 0);
+    recPaths.push(out);
+    Object.keys(out).forEach(function (path) {
+      if (!fields[path]) fields[path] = { present: [], types: {}, nulls: 0, empties: 0 };
+      var f = fields[path];
+      f.present.push(rec.name);
+      out[path].forEach(function (v) {
+        var t = typeOf(v);
+        if (t === 'null') { f.nulls++; return; }
+        if (v === '' || (Array.isArray(v) && v.length === 0)) f.empties++;
+        (f.types[t] = f.types[t] || []).push(rec.name);
+      });
+    });
+  });
+
+  var paths = Object.keys(fields).sort();
+  var issues = [];
+
+  // Naming drift, using the heuristic proven on front matter:
+  // two similar names that never occur in the same record are almost always one field spelled two ways.
+  var namingPaths = [];
+  var norm = function (s) { return s.toLowerCase().replace(/[_\-.\s]/g, ''); };
+  for (var a = 0; a < paths.length; a++) {
+    for (var b = a + 1; b < paths.length; b++) {
+      var pa = paths[a], pb = paths[b];
+      if (pa.split('.').length !== pb.split('.').length) continue;
+      var na = norm(pa), nb = norm(pb);
+      var related = (na === nb) || (na.length >= 4 && nb.length >= 4 && (na.indexOf(nb) !== -1 || nb.indexOf(na) !== -1));
+      if (!related) continue;
+      var together = recPaths.some(function (o) { return (pa in o) && (pb in o); });
+      if (together) continue;
+      namingPaths.push(pa, pb);
+      issues.push({
+        type: 'naming',
+        path: pa + '  /  ' + pb,
+        text: '"' + pa + '" (' + fields[pa].present.length + ') and "' + pb + '" (' + fields[pb].present.length + ') never appear in the same record — probably one field under two names'
+      });
+    }
+  }
+
+  paths.forEach(function (path) {
+    var f = fields[path];
+    var count = f.present.length;
+    var typeKeys = Object.keys(f.types);
+
+    if (count < n && namingPaths.indexOf(path) === -1) {
+      var missing = records.filter(function (r) { return f.present.indexOf(r.name) === -1; }).map(function (r) { return r.name; });
+      issues.push({
+        type: 'optional',
+        path: path,
+        text: 'present in ' + count + ' of ' + n + ' records — missing from ' + shorten(missing)
+      });
+    }
+    if (typeKeys.length > 1) {
+      issues.push({
+        type: 'typedrift',
+        path: path,
+        text: 'changes type: ' + typeKeys.map(function (t) { return t + ' in ' + f.types[t].length; }).join(', ')
+      });
+    }
+    if (count > 0 && typeKeys.length === 0 && f.nulls > 0) {
+      issues.push({ type: 'allnull', path: path, text: 'is null in every record it appears in — no type can be inferred from this data' });
+    } else if (f.nulls > 0 && count < n) {
+      issues.push({ type: 'nullmix', path: path, text: 'is sometimes missing entirely and sometimes present-but-null — two different states a client has to handle separately' });
+    }
+    if (f.empties > 0 && f.nulls > 0) {
+      issues.push({ type: 'emptymix', path: path, text: 'mixes empty values (' + f.empties + ') and nulls (' + f.nulls + ') for the same field' });
+    }
+  });
+
+  return { records: records, parseErrors: p.errors, fields: fields, paths: paths, issues: issues, count: n, mode: p.mode };
+}
+
+function shorten(list) {
+  if (list.length <= 3) return list.join(', ');
+  return list.slice(0, 3).join(', ') + ' and ' + (list.length - 3) + ' more';
+}
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  var LABELS = {
+    optional: 'Optional fields',
+    typedrift: 'Type drift',
+    allnull: 'Always null',
+    nullmix: 'Missing vs null',
+    emptymix: 'Empty vs null',
+    naming: 'Naming drift'
+  };
+
+  document.getElementById('checkBtn').addEventListener('click', function () {
+    var raw = document.getElementById('input').value;
+    if (!raw.trim()) { alert('Paste at least one JSON record first.'); return; }
+
+    var result;
+    try {
+      result = analyze(raw);
+    } catch (e) {
+      alert('Could not read that input: ' + e.message);
+      return;
+    }
+
+    document.getElementById('resultsPanel').style.display = 'block';
+    var box = document.getElementById('summaryBox');
+    var html = '';
+
+    if (result.parseErrors.length) {
+      html += '<div style="margin-bottom:12px;">' +
+        '<div style="font-family:\'JetBrains Mono\',monospace; font-size:0.78rem; color:#ff9d7a; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;">Could not parse</div>' +
+        result.parseErrors.map(function (e) {
+          return '<div style="font-size:0.86rem; color:#f4efe4; padding:3px 0 3px 12px; border-left:2px solid #ff9d7a;">' +
+            '<strong>' + esc(e.name) + '</strong> — ' + esc(e.error) + '</div>';
+        }).join('') + '</div>';
+    }
+
+    if (result.count === 0) {
+      html += '<div style="font-size:0.88rem; color:#f4efe4;">No readable records found. Paste a JSON array of objects, or separate JSON documents divided by a line of five dashes.</div>';
+      box.innerHTML = '<div style="background:#081729; border-radius:8px; padding:16px;">' + html + '</div>';
+      document.getElementById('fieldTable').innerHTML = '';
+      return;
+    }
+
+    if (result.count === 1) {
+      html += '<div style="font-size:0.88rem; color:#c9d3e0;">Only one record was read, so there is nothing to compare it against. Paste two or more to run the consistency checks.</div>';
+    } else {
+      var grouped = {};
+      result.issues.forEach(function (i) { (grouped[i.type] = grouped[i.type] || []).push(i); });
+      var types = Object.keys(grouped);
+      html += '<div style="font-weight:700; margin-bottom:8px; color:#f4efe4;">' +
+        result.count + ' records · ' + result.paths.length + ' distinct fields</div>';
+      if (!types.length) {
+        html += '<div style="color:#7ddba6; font-weight:600; font-size:0.88rem;">Consistent — every field appears in every record with a single stable type.</div>';
+      } else {
+        types.forEach(function (t) {
+          html += '<div style="margin-bottom:10px;">' +
+            '<div style="font-family:\'JetBrains Mono\',monospace; font-size:0.78rem; color:#f0b429; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;">' + esc(LABELS[t] || t) + '</div>' +
+            grouped[t].map(function (x) {
+              return '<div style="font-size:0.86rem; color:#f4efe4; padding:3px 0 3px 12px; border-left:2px solid #f0b429;">' +
+                '<code style="color:#f0b429;">' + esc(x.path) + '</code> ' + esc(x.text) + '</div>';
+            }).join('') +
+            '</div>';
+        });
+      }
+    }
+    box.innerHTML = '<div style="background:#081729; border-radius:8px; padding:16px;">' + html + '</div>';
+
+    var rows = result.paths.map(function (p) {
+      var f = result.fields[p];
+      var types = Object.keys(f.types);
+      var typeStr = types.length ? types.join(' | ') : (f.nulls ? 'null only' : '—');
+      var full = f.present.length === result.count;
+      return '<div style="display:flex; gap:12px; align-items:baseline; padding:6px 0; border-bottom:1px solid rgba(0,0,0,0.07); font-size:0.83rem;">' +
+        '<code style="flex:1 1 auto; font-family:\'JetBrains Mono\',monospace; word-break:break-all;">' + esc(p) + '</code>' +
+        '<span style="flex:0 0 auto; font-family:\'JetBrains Mono\',monospace; color:#5a6472;">' + esc(typeStr) + '</span>' +
+        '<span style="flex:0 0 68px; text-align:right; font-weight:600; color:' + (full ? '#1f6b41' : '#b5451b') + ';">' +
+        f.present.length + '/' + result.count + '</span>' +
+        '</div>';
+    }).join('');
+
+    document.getElementById('fieldTable').innerHTML =
+      '<div style="font-weight:700; margin-bottom:6px;">Field inventory</div>' +
+      '<div style="font-size:0.78rem; color:#5a6472; margin-bottom:8px;">Path · types seen · records containing it</div>' + rows;
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    document.getElementById('input').value = '';
+    document.getElementById('resultsPanel').style.display = 'none';
+  });
+});
+</script>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

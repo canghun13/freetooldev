@@ -66,6 +66,7 @@
 
   <h2>Check a batch now</h2>
   <p>FreeToolDev's <a href="/tools/json-schema-validator.html">bulk JSON Schema validator</a> checks several documents against one schema in a single pass — paste a handful of real API responses or export rows against the shape you expect, free, with no per-document limit. For the difference between this and a plain syntax check, see <a href="/blog/json-validator-vs-schema-validator.html">this post</a>.</p>
+  <p>That assumes you already know what shape to expect, which isn't always true — with an undocumented or third-party API, working out which fields are guaranteed is the first job, and it can't be done from a single response. The <a href="/tools/json-field-consistency.html">field consistency checker</a> takes that angle instead, comparing a batch of records against each other to show what actually varies, and <a href="/blog/which-api-fields-are-optional.html">this post</a> covers why one sample systematically misleads you about it.</p>
 </article>
 
   <footer class="site-footer">
@@ -94,6 +95,7 @@
           <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
           <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
