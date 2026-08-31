@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Why Excel Mangles Your CSV Numbers (and How to Stop It) — FreeToolDev</title>
-<meta name="description" content="Leading zeros vanish, long IDs turn into scientific notation, dates rewrite themselves. None of this is a bug in the CSV file — it's Excel guessing, and you can turn the guessing off.">
+<meta name="description" content="Leading zeros vanish, long IDs turn into scientific notation, and numbers quietly start ending in zeros. Which of those you can still undo depends on one number: 15 digits.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://freetooldev.com/blog/excel-csv-number-mangling.html">
 <meta property="og:title" content="Why Excel Mangles Your CSV Numbers (and How to Stop It) — FreeToolDev">
-<meta property="og:description" content="Leading zeros vanish, long IDs turn into scientific notation, dates rewrite themselves. None of this is a bug in the CSV file — it's Excel guessing, and you can turn the guessing off.">
+<meta property="og:description" content="Leading zeros vanish, long IDs turn into scientific notation, and numbers quietly start ending in zeros. Which of those you can still undo depends on one number: 15 digits.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Why Excel Mangles Your CSV Numbers (and How to Stop It) — FreeToolDev">
-<meta name="twitter:description" content="Leading zeros vanish, long IDs turn into scientific notation, dates rewrite themselves. None of this is a bug in the CSV file — it's Excel guessing, and you can turn the guessing off.">
+<meta name="twitter:description" content="Leading zeros vanish, long IDs turn into scientific notation, and numbers quietly start ending in zeros. Which of those you can still undo depends on one number: 15 digits.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/blog/excel-csv-number-mangling.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -61,6 +61,18 @@
   <h2>Long numbers turn into scientific notation</h2>
   <p>Account numbers, tracking numbers, and other long digit strings (typically 12+ digits) get converted to scientific notation like <code>1.23457E+15</code> once they exceed Excel's default numeric display precision — and depending on how the cell is later formatted or saved, the original exact digits can be permanently lost, not just displayed differently.</p>
 
+  <h2>The 15-digit line: display damage vs. actual data loss</h2>
+  <p>Those two outcomes are worth separating, because they call for completely different responses and most people discover the difference too late.</p>
+  <p>Excel stores numeric values as IEEE 754 double-precision floats, which hold <strong>15 significant digits</strong>. That single fact produces two different failures depending on how long your number is:</p>
+  <p><strong>12 to 15 digits — display damage.</strong> The value is stored intact; Excel is only rendering it as <code>8.7986E+11</code> because the General format switches to scientific notation for long numbers. The digits are still there. Format the cells as Number with zero decimal places, or as Text, and the full value comes back.</p>
+  <p><strong>16 digits or more — real data loss.</strong> The value doesn't fit in 15 significant digits, so everything past the 15th is <em>replaced with zeros</em> at the moment Excel parses the file. An 18-digit ID like <code>250708123456789012</code> becomes <code>250708123456789000</code>. No amount of reformatting brings those digits back, because they were never stored. The only recovery is going back to the original CSV and importing it correctly.</p>
+  <p>This is also why the damage so often goes unnoticed. People look for <code>E+</code> in a cell as the warning sign, but once the file is saved and reopened, or the column is reformatted, the symptom isn't scientific notation any more — it's <strong>a number that looks completely normal and happens to end in zeros</strong>. Bank account numbers, 16-digit card numbers, IMEI codes, and long order IDs all quietly end in a run of zeros that wasn't there before, and nothing about the spreadsheet flags it.</p>
+
+  <h2>It already happened — what now?</h2>
+  <p>Count the digits in the original value, because that determines whether there's anything to salvage.</p>
+  <p>If the original was 15 digits or fewer, the data is intact and you're fixing a display problem: select the column, set the format to Number with 0 decimal places (or Text), and the digits reappear. If the original was 16 or more, the spreadsheet copy is corrupt and there is no fix inside Excel — reformatting, widening, and the TEXT function all operate on a value that has already lost its tail. Go back to the source CSV and re-import it using the method below.</p>
+  <p>If you're not sure the file in front of you is the original, check it in something that doesn't apply numeric heuristics — a plain text editor shows the raw digits exactly as written, and so does any converter that treats values as text. That's the fastest way to confirm whether the zeros are in your data or were added by Excel.</p>
+
   <h2>Text that looks like a date gets rewritten</h2>
   <p>A value like <code>2-3</code>, <code>Mar-2</code>, or a version number like <code>1-2</code> can get silently reinterpreted as a calendar date, since Excel's date-detection heuristics are notoriously eager. This is a well-known enough problem that it's caused real, documented issues in fields like genetics, where gene symbols such as <code>SEPT2</code> or <code>MARCH1</code> get auto-converted to dates in spreadsheet software — significant enough that some naming conventions were eventually revised partly to work around it.</p>
 
@@ -69,6 +81,7 @@
 
   <h2>Why this matters more for generated or re-shared files</h2>
   <p>If you're generating a CSV programmatically and it's likely to be opened in Excel by someone else, this is worth being aware of on both ends: as the generator, there's no way to force Excel's import behavior from inside the file itself, and as the recipient, defaulting to the plain double-click open is exactly what triggers the mangling described above. The safest habit is treating the "From Text/CSV" import path as the default way to open any CSV with IDs, codes, or zero-padded values in it, rather than trusting a double-click.</p>
+  <p>One clarification worth making, since it comes up constantly: quoting a value in the CSV does not protect it. <code>"250708123456789012"</code> is still read as a number by Excel's General format, because quotes in CSV mark field boundaries, not data types — the format has no way to say "this is text." Neither does adding a leading apostrophe, which is an Excel cell convention rather than anything CSV understands. If a downstream tool is treating your CSV column as a number when you meant text, the file isn't the problem; the receiving application's type guessing is, and the fix lives on the import side rather than in the file you generated.</p>
 
   <h2>Convert without the risk</h2>
   <p>FreeToolDev's <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV converter</a> and <a href="/tools/csv-to-json.html">CSV to JSON converter</a> both treat every value as plain text by default rather than guessing at numeric types — the mangling described here is specifically an Excel behavior on open, not something that happens during conversion itself.</p>
