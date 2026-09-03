@@ -106,6 +106,8 @@
     <p>No. Records that fail to parse are listed separately with their error, and the comparison runs on the rest. That's deliberate — a malformed sample shouldn't block the audit of the twenty good ones. Just keep in mind that a field's "present in 19 of 19" count only covers the records that parsed.</p>
     <h3>Should I be worried about every issue it reports?</h3>
     <p>No, and it doesn't grade them for you. Plenty of optional fields are optional by design and documented that way. The report is a list of things that vary, so you can confirm each is intentional — the value is in noticing the one you didn't know about, not in driving the list to zero. If a field turns out to be genuinely optional, that's a fact worth encoding in your <a href="/tools/json-schema-validator.html">schema</a> rather than discovering again later.</p>
+    <h3>Is there a version of this for other kinds of file?</h3>
+    <p>The same "compare N of them, not two" approach applies wherever consistency is a property of a set rather than a pair. The <a href="/tools/package-json-version-checker.html">bulk package.json version checker</a> does it for dependency versions across manifests, and the <a href="/tools/frontmatter-checker.html">front matter checker</a> does it for Markdown posts.</p>
   </div>
 </section>
 
@@ -401,6 +403,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
           <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/package-json-version-checker.html">Bulk package.json Version Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
           <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>

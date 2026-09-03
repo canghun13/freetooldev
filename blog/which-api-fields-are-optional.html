@@ -77,6 +77,7 @@
   <h2>Doing it in one pass</h2>
   <p>FreeToolDev's <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a> takes the whole set at once — paste a list endpoint's array response as-is, or several records separated by a divider — and reports which fields appear in every record, which are only sometimes there, which change type, which are null throughout, and which pairs of names never co-occur. It runs entirely in your browser, which matters when the payload is real customer data.</p>
   <p>Once you know what actually varies, encode it: write a schema that marks the genuinely optional fields optional and run future batches against it with a <a href="/tools/json-schema-validator.html">bulk schema validator</a>, so the next shape change shows up as a failed check instead of a bug report. For why that drift happens in the first place, and why it stays invisible for so long, see <a href="/blog/api-schema-drift-explained.html">how an API response changes shape without anyone noticing</a>.</p>
+  <p>The same shape of problem shows up in your own repo rather than someone else's API: a dependency version that differs across workspaces is also invisible in any single file and only appears when you compare the whole set. <a href="/blog/semver-range-drift-monorepo.html">Range drift across package.json files</a> is the version of this that a pairwise diff can't see either.</p>
 </article>
   <footer class="site-footer">
     <div class="wrap">
@@ -106,6 +107,7 @@
           <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
           <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
           <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/package-json-version-checker.html">Bulk package.json Version Checker</a>
           <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
           <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
           <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>

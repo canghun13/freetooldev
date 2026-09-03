@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk package.json Version Checker — Compare Many Manifests | FreeToolDev</title>
+<meta name="description" content="Paste several package.json files at once and find dependencies whose versions disagree across them — major mismatches, range drift, and deps that moved between dependencies and devDependencies. Free, no signup.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/package-json-version-checker.html">
+<meta property="og:title" content="Bulk package.json Version Checker — Compare Many Manifests | FreeToolDev">
+<meta property="og:description" content="Paste several package.json files at once and find dependencies whose versions disagree across them — major mismatches, range drift, and deps that moved between dependencies and devDependencies. Free, no signup.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk package.json Version Checker — Compare Many Manifests | FreeToolDev">
+<meta name="twitter:description" content="Paste several package.json files at once and find dependencies whose versions disagree across them — major mismatches, range drift, and deps that moved between dependencies and devDependencies. Free, no signup.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/package-json-version-checker.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Data · Batch</span>
+    <h1>Bulk package.json Version Checker</h1>
+    <p>Paste as many <code>package.json</code> files as you like — from a monorepo's workspaces, or from separate repos that have nothing to do with each other — and see every dependency where the versions disagree, ranked by how much the disagreement actually matters.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>Manifests</h3>
+      <p style="font-size:0.85rem; margin-bottom:10px;">Paste each <code>package.json</code> separated by a line containing just <code>-----</code>. Each one is labelled by its <code>name</code> field automatically; add <code>### apps/web</code> above a manifest to label it yourself, which is clearer when several share a name or have none.</p>
+      <textarea id="input" style="min-height:260px;" placeholder='### apps/web
+{
+  "dependencies": { "react": "^18.2.0", "lodash": "^4.17.21" },
+  "devDependencies": { "typescript": "^5.3.0" }
+}
+-----
+### apps/admin
+{
+  "dependencies": { "react": "^16.8.0", "lodash": "^4.17.20" },
+  "devDependencies": { "typescript": "~5.3.0" }
+}'></textarea>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="checkBtn">Compare manifests →</button>
+        <button class="btn btn-outline" id="clearBtn">Clear</button>
+      </div>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="summaryBox" style="margin-bottom:20px;"></div>
+      <div id="depTable"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>Why a two-file diff doesn't cover this</h2>
+    <p>The tools that compare manifests in a browser are diff tools: a left pane and a right pane. That works when you're reviewing one bump. It stops working the moment you have five workspaces, because "which version of React is everyone on?" isn't a question about any single pair. One of the better package.json diff tools says so plainly in its own FAQ — three files means comparing them in pairs, one pair at a time, because a diff is built for two sides.</p>
+    <p>Comparing in pairs also hides things. If <code>web</code> and <code>admin</code> both use React 18 and only <code>legacy-portal</code> is on 16, the <code>web ↔ admin</code> diff comes back clean and tells you nothing. You have to remember to run the third comparison, and the answer only assembles in your head. Ten workspaces would be forty-five comparisons to be sure.</p>
+    <p>Command-line tools do solve the many-file version properly — syncpack and manypkg are the standard answers and are worth adopting if this is a recurring problem in a repo you own. They also want a dev dependency installed, a workspace layout on disk, and usually a config file. That's the wrong shape for the times you're comparing manifests from repos you haven't checked out, reviewing a paste from a teammate, or checking your project against a starter template.</p>
+
+    <h2>What counts as a mismatch, and how much it matters</h2>
+    <p>Not every disagreement is equally interesting, so they're separated rather than dumped in one list.</p>
+    <p><strong>Different major versions</strong> — one workspace on <code>^16.8.0</code> and another on <code>^18.2.0</code>. Under semver a major bump is allowed to break things, so these are genuinely different libraries as far as your code is concerned. If both end up in one bundle you can ship two copies, and with a library that keeps internal state — React, or anything with a singleton context — two copies is a class of bug that's very hard to read from a stack trace.</p>
+    <p><strong>Same major, different version</strong> — <code>^4.17.20</code> against <code>^4.17.21</code>. Usually harmless, since a caret range resolves both to the same installed version. Worth a glance anyway: it's often the fingerprint of a bump that was applied in one place and forgotten in the others.</p>
+    <p><strong>Same version, different range</strong> — <code>^5.3.0</code> against <code>~5.3.0</code> against <code>5.3.0</code>. The declared version matches, but the workspaces disagree about what future updates are acceptable, so they'll silently drift apart at the next install. Cheap to fix now, annoying to diagnose in six months.</p>
+    <p><strong>Different sections</strong> — the same package sitting in <code>dependencies</code> in one manifest and <code>devDependencies</code> in another. This one isn't a version problem at all, which is exactly why it survives version-focused review. It decides whether the package ships to consumers of your package, and getting it wrong in either direction breaks something: a missing runtime dependency, or a build tool shipped to production.</p>
+    <p><strong>Not comparable</strong> — <code>workspace:*</code>, <code>catalog:</code>, npm aliases, git URLs, and file paths aren't version numbers, so they're flagged as present rather than compared as if they were. A package pinned to <code>workspace:*</code> in one place and <code>^2.0.0</code> in another is worth knowing about even though there's no meaningful version comparison to make.</p>
+
+    <h2>FAQ</h2>
+    <h3>Does anything I paste get uploaded?</h3>
+    <p>No. Parsing and comparison run in your browser with the built-in JSON parser — no libraries loaded, no requests made. That matters for manifests specifically, since a private package.json can name internal scoped packages, a private registry host, and unreleased product names, and pasting that into a service that phones home is the kind of thing an employer's data-handling policy actually covers. You can confirm it in your browser's Network tab.</p>
+    <h3>Which sections does it read?</h3>
+    <p><code>dependencies</code>, <code>devDependencies</code>, <code>peerDependencies</code>, and <code>optionalDependencies</code>. A package that appears in more than one section of the same manifest is recorded once with both sections noted, since that's usually deliberate — a peer dependency also installed for local development, for instance.</p>
+    <h3>Does it check whether versions are out of date?</h3>
+    <p>No, and that's a different question with a different answer. Checking against the registry means network requests, and it tells you about the outside world rather than about your own repo. This only compares the manifests you paste against each other, which is why it works offline and on private packages. For "is there a newer version," a registry-aware tool is the right one.</p>
+    <h3>Can I paste a package-lock.json or a pnpm-lock.yaml?</h3>
+    <p>A lockfile isn't the right input here. It records a resolved tree rather than declared ranges, so a comparison of two lockfiles mostly surfaces transitive resolution noise — hundreds of lines moving because one direct dependency changed. Compare the manifests, decide what the declared versions should be, then let the lockfiles follow.</p>
+    <h3>One manifest has a syntax error. Does that stop the comparison?</h3>
+    <p>No. Manifests that fail to parse are listed separately with their error and the rest are compared normally. Just remember that a "used in 3 of 3" count only covers the manifests that parsed.</p>
+    <h3>Should every mismatch be fixed?</h3>
+    <p>No. Deliberate variation is common and fine — a legacy app pinned to an old major while it's being retired, or one package intentionally on a newer build. The report is a list of differences, not a list of defects; the value is finding the one you didn't know about. If you want the differences enforced rather than reviewed, that's a job for a CLI in CI, not for a page you visit.</p>
+  </div>
+</section>
+
+<script>
+var DEP_TYPES = ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies'];
+var TYPE_LABEL = {
+  dependencies: 'dependencies',
+  devDependencies: 'devDependencies',
+  peerDependencies: 'peerDependencies',
+  optionalDependencies: 'optionalDependencies'
+};
+
+// Split a specifier into a range operator and a version core.
+// Anything that isn't plain semver (workspace:, catalog:, git URLs, npm aliases,
+// file paths, tags) is returned as kind:'other' so it can be reported rather than
+// silently compared as if it were a version number.
+function parseSpec(raw) {
+  var s = String(raw).trim();
+  if (!s) return { kind: 'other', raw: s, note: 'empty' };
+  if (/^(workspace|catalog|npm|file|link|git|github|bitbucket|gitlab):/i.test(s) ||
+      /^(https?|git\+)/i.test(s) || /^[.\/]/.test(s)) {
+    return { kind: 'other', raw: s, note: 'protocol' };
+  }
+  if (s === '*' || s === 'x' || s === 'latest' || s === '') {
+    return { kind: 'any', raw: s, op: s, core: null };
+  }
+  var m = s.match(/^(\^|~|>=|<=|>|<|=|)\s*v?(\d+)(?:\.(\d+))?(?:\.(\d+))?([-+][0-9A-Za-z-.+]*)?$/);
+  if (!m) return { kind: 'other', raw: s, note: 'unparsed' };
+  return {
+    kind: 'semver',
+    raw: s,
+    op: m[1] || '',
+    major: parseInt(m[2], 10),
+    minor: m[3] === undefined ? null : parseInt(m[3], 10),
+    patch: m[4] === undefined ? null : parseInt(m[4], 10),
+    pre: m[5] || '',
+    core: [m[2], m[3] === undefined ? '0' : m[3], m[4] === undefined ? '0' : m[4]].join('.') + (m[5] || '')
+  };
+}
+
+function parseInput(raw) {
+  var manifests = [];
+  var errors = [];
+  var blocks = raw.trim().split(/\n-{5,}\n/);
+  blocks.forEach(function (block, i) {
+    if (!block.trim()) return;
+    var label = null;
+    var m = block.match(/^###\s*(.+)$/m);
+    if (m) {
+      label = m[1].trim();
+      block = block.replace(/^###\s*.+$/m, '');
+    }
+    var data;
+    try {
+      data = JSON.parse(block.trim());
+    } catch (e) {
+      errors.push({ name: label || 'Manifest ' + (i + 1), error: 'Invalid JSON: ' + e.message });
+      return;
+    }
+    if (data === null || typeof data !== 'object' || Array.isArray(data)) {
+      errors.push({ name: label || 'Manifest ' + (i + 1), error: 'Top level is not a JSON object.' });
+      return;
+    }
+    var name = label || (typeof data.name === 'string' && data.name) || 'Manifest ' + (i + 1);
+    manifests.push({ name: name, data: data });
+    // key must stay unique even when two pastes carry the same "name",
+    // otherwise their dependencies collapse into one column and the mismatch disappears.
+    manifests[manifests.length - 1].key = name + '\u0000' + manifests.length;
+  });
+  return { manifests: manifests, errors: errors };
+}
+
+function analyze(raw) {
+  var p = parseInput(raw);
+  var manifests = p.manifests;
+  var n = manifests.length;
+
+  // pkgName -> manifestName -> { spec, type }
+  var deps = {};
+  manifests.forEach(function (mf) {
+    DEP_TYPES.forEach(function (dt) {
+      var section = mf.data[dt];
+      if (!section || typeof section !== 'object' || Array.isArray(section)) return;
+      Object.keys(section).forEach(function (pkg) {
+        if (!deps[pkg]) deps[pkg] = {};
+        var mkey = mf.key;
+        // A package listed twice in one manifest under different sections:
+        // keep the first, but remember both types.
+        if (deps[pkg][mkey]) {
+          deps[pkg][mkey].types.push(dt);
+          return;
+        }
+        deps[pkg][mkey] = { spec: String(section[pkg]), types: [dt], parsed: parseSpec(section[pkg]), label: mf.name };
+      });
+    });
+  });
+
+  var names = Object.keys(deps).sort();
+  var issues = [];
+  var rows = [];
+
+  names.forEach(function (pkg) {
+    var byManifest = deps[pkg];
+    var users = Object.keys(byManifest);
+    var labelOf = function (k) { return byManifest[k].label; };
+    var specs = users.map(function (u) { return byManifest[u].spec; });
+    var uniqueSpecs = specs.filter(function (v, i) { return specs.indexOf(v) === i; });
+
+    var row = { pkg: pkg, users: users, byManifest: byManifest, shared: users.length > 1 };
+
+    if (users.length > 1 && uniqueSpecs.length > 1) {
+      // Work out how serious the disagreement is.
+      var parsedList = users.map(function (u) { return byManifest[u].parsed; });
+      var semvers = parsedList.filter(function (x) { return x.kind === 'semver'; });
+      var others = parsedList.filter(function (x) { return x.kind !== 'semver'; });
+      var severity, detail;
+
+      if (others.length) {
+        severity = 'unparsed';
+        detail = 'mixes plain versions with specifiers that are not comparable version numbers';
+      } else {
+        var majors = semvers.map(function (x) { return x.major; });
+        var uniqueMajors = majors.filter(function (v, i) { return majors.indexOf(v) === i; });
+        var cores = semvers.map(function (x) { return x.core; });
+        var uniqueCores = cores.filter(function (v, i) { return cores.indexOf(v) === i; });
+        if (uniqueMajors.length > 1) {
+          severity = 'major';
+          detail = 'different major versions (' + uniqueMajors.sort(function (a, b) { return a - b; }).join(' vs ') + ')';
+        } else if (uniqueCores.length > 1) {
+          severity = 'minor';
+          detail = 'same major, different versions';
+        } else {
+          severity = 'range';
+          detail = 'same version, different range operators';
+        }
+      }
+      row.severity = severity;
+      issues.push({
+        type: severity,
+        pkg: pkg,
+        detail: detail,
+        specs: users.map(function (u) { return labelOf(u) + ': ' + byManifest[u].spec; })
+      });
+    } else if (users.length > 1) {
+      row.severity = 'ok';
+    } else {
+      row.severity = 'single';
+    }
+
+    // Same package declared under different dependency types across manifests.
+    if (users.length > 1) {
+      var typeSets = {};
+      users.forEach(function (u) {
+        var t = byManifest[u].types.slice().sort().join('+');
+        (typeSets[t] = typeSets[t] || []).push(labelOf(u));
+      });
+      var tks = Object.keys(typeSets);
+      if (tks.length > 1) {
+        issues.push({
+          type: 'section',
+          pkg: pkg,
+          detail: 'declared under different sections',
+          specs: tks.map(function (t) { return typeSets[t].join(', ') + ' → ' + t; })
+        });
+        if (row.severity === 'ok') row.severity = 'section';
+      }
+    }
+
+    rows.push(row);
+  });
+
+  // Manifests that declare the same "name" — usually a paste mistake.
+  var nameCounts = {};
+  manifests.forEach(function (mf) { nameCounts[mf.name] = (nameCounts[mf.name] || 0) + 1; });
+  var dupNames = Object.keys(nameCounts).filter(function (k) { return nameCounts[k] > 1; });
+
+  return {
+    manifests: manifests,
+    parseErrors: p.errors,
+    count: n,
+    rows: rows,
+    issues: issues,
+    dupNames: dupNames,
+    sharedCount: rows.filter(function (r) { return r.shared; }).length
+  };
+}
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  var GROUPS = [
+    { type: 'major', label: 'Different major versions', color: '#ff9d7a' },
+    { type: 'unparsed', label: 'Not comparable', color: '#ff9d7a' },
+    { type: 'section', label: 'Different sections', color: '#f0b429' },
+    { type: 'minor', label: 'Same major, different version', color: '#f0b429' },
+    { type: 'range', label: 'Same version, different range', color: '#c9d3e0' }
+  ];
+
+  var SEV_COLOR = { major: '#b5451b', unparsed: '#b5451b', section: '#8a5a00', minor: '#8a5a00', range: '#5a6472', ok: '#1f6b41', single: '#6b675d' };
+  var SEV_TEXT = { major: 'major', unparsed: 'check', section: 'section', minor: 'differs', range: 'range', ok: 'match', single: 'only 1' };
+
+  document.getElementById('checkBtn').addEventListener('click', function () {
+    var raw = document.getElementById('input').value;
+    if (!raw.trim()) { alert('Paste at least one package.json first.'); return; }
+
+    var result;
+    try {
+      result = analyze(raw);
+    } catch (e) {
+      alert('Could not read that input: ' + e.message);
+      return;
+    }
+
+    document.getElementById('resultsPanel').style.display = 'block';
+    var html = '';
+
+    if (result.parseErrors.length) {
+      html += '<div style="margin-bottom:12px;">' +
+        '<div style="font-family:\'JetBrains Mono\',monospace; font-size:0.78rem; color:#ff9d7a; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;">Could not parse</div>' +
+        result.parseErrors.map(function (e) {
+          return '<div style="font-size:0.86rem; color:#f4efe4; padding:3px 0 3px 12px; border-left:2px solid #ff9d7a;"><strong>' +
+            esc(e.name) + '</strong> — ' + esc(e.error) + '</div>';
+        }).join('') + '</div>';
+    }
+
+    if (result.count === 0) {
+      html += '<div style="font-size:0.88rem; color:#f4efe4;">No readable manifests found. Paste package.json files separated by a line of five dashes.</div>';
+      document.getElementById('summaryBox').innerHTML = '<div style="background:#081729; border-radius:8px; padding:16px;">' + html + '</div>';
+      document.getElementById('depTable').innerHTML = '';
+      return;
+    }
+
+    if (result.count === 1) {
+      html += '<div style="font-size:0.88rem; color:#c9d3e0;">Only one manifest was read, so there is nothing to compare it against. Paste two or more separated by <code style="color:#f0b429;">-----</code>.</div>';
+    } else {
+      html += '<div style="font-weight:700; margin-bottom:8px; color:#f4efe4;">' +
+        result.count + ' manifests · ' + result.sharedCount + ' dependencies used by more than one</div>';
+
+      if (result.dupNames.length) {
+        html += '<div style="font-size:0.82rem; color:#c9d3e0; margin-bottom:10px;">Note: more than one manifest is named ' +
+          result.dupNames.map(esc).join(', ') + ' — label them with <code style="color:#f0b429;">###</code> lines to tell them apart in the results.</div>';
+      }
+
+      if (!result.issues.length) {
+        html += '<div style="color:#7ddba6; font-weight:600; font-size:0.88rem;">Consistent — every shared dependency uses the same specifier in the same section across all manifests.</div>';
+      } else {
+        GROUPS.forEach(function (g) {
+          var items = result.issues.filter(function (i) { return i.type === g.type; });
+          if (!items.length) return;
+          html += '<div style="margin-bottom:10px;">' +
+            '<div style="font-family:\'JetBrains Mono\',monospace; font-size:0.78rem; color:' + g.color + '; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;">' +
+            esc(g.label) + ' (' + items.length + ')</div>' +
+            items.map(function (i) {
+              return '<div style="font-size:0.86rem; color:#f4efe4; padding:4px 0 4px 12px; border-left:2px solid ' + g.color + ';">' +
+                '<code style="color:' + g.color + ';">' + esc(i.pkg) + '</code> — ' + esc(i.detail) +
+                '<div style="font-family:\'JetBrains Mono\',monospace; font-size:0.78rem; color:#c9d3e0; margin-top:2px;">' +
+                i.specs.map(esc).join(' · ') + '</div></div>';
+            }).join('') + '</div>';
+        });
+      }
+    }
+    document.getElementById('summaryBox').innerHTML = '<div style="background:#081729; border-radius:8px; padding:16px;">' + html + '</div>';
+
+    var order = { major: 0, unparsed: 1, section: 2, minor: 3, range: 4, ok: 5, single: 6 };
+    var sorted = result.rows.slice().sort(function (a, b) {
+      var d = order[a.severity] - order[b.severity];
+      return d !== 0 ? d : (a.pkg < b.pkg ? -1 : 1);
+    });
+
+    var rowsHtml = sorted.map(function (r) {
+      var users = r.users.map(function (u) { return r.byManifest[u].label + ' ' + r.byManifest[u].spec; });
+      return '<div style="display:flex; gap:12px; align-items:baseline; padding:6px 0; border-bottom:1px solid rgba(0,0,0,0.07); font-size:0.83rem;">' +
+        '<code style="flex:0 0 30%; font-family:\'JetBrains Mono\',monospace; word-break:break-all;">' + esc(r.pkg) + '</code>' +
+        '<span style="flex:1 1 auto; font-family:\'JetBrains Mono\',monospace; color:#5a6472; word-break:break-all;">' + esc(users.join('  ·  ')) + '</span>' +
+        '<span style="flex:0 0 62px; text-align:right; font-weight:600; color:' + SEV_COLOR[r.severity] + ';">' + SEV_TEXT[r.severity] + '</span>' +
+        '</div>';
+    }).join('');
+
+    document.getElementById('depTable').innerHTML =
+      '<div style="font-weight:700; margin-bottom:6px;">All dependencies</div>' +
+      '<div style="font-size:0.78rem; color:#5a6472; margin-bottom:8px;">Package · where it is declared and at what version · verdict</div>' + rowsHtml;
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    document.getElementById('input').value = '';
+    document.getElementById('resultsPanel').style.display = 'none';
+  });
+});
+</script>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/package-json-version-checker.html">Bulk package.json Version Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

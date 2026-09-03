@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Same Version, Different Range: How Monorepo Dependencies Drift Apart — FreeToolDev</title>
+<meta name="description" content="Three workspaces all say 5.3.0 today. One says ^, one says ~, one says neither. Nothing is wrong yet — which is exactly why nobody fixes it.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/semver-range-drift-monorepo.html">
+<meta property="og:title" content="Same Version, Different Range: How Monorepo Dependencies Drift Apart — FreeToolDev">
+<meta property="og:description" content="Three workspaces all say 5.3.0 today. One says ^, one says ~, one says neither. Nothing is wrong yet — which is exactly why nobody fixes it.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Same Version, Different Range: How Monorepo Dependencies Drift Apart — FreeToolDev">
+<meta name="twitter:description" content="Three workspaces all say 5.3.0 today. One says ^, one says ~, one says neither. Nothing is wrong yet — which is exactly why nobody fixes it.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/semver-range-drift-monorepo.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Sep 1, 2026</div>
+  <h1>Same Version, Different Range: How Monorepo Dependencies Drift Apart</h1>
+
+  <p>Three workspaces in one repo. All three depend on TypeScript. All three are running 5.3.0 right now. And their manifests say:</p>
+  <pre style="background:#081729; color:#f4efe4; padding:14px 16px; border-radius:8px; overflow-x:auto; font-family:'JetBrains Mono',monospace; font-size:0.82rem; line-height:1.7;">apps/web     "typescript": "^5.3.0"
+apps/admin   "typescript": "~5.3.0"
+apps/api     "typescript": "5.3.0"</pre>
+  <p>Nothing is broken. Every check passes, the installed version is identical everywhere, and a diff of any two of these files reports the same version number on both sides. That's the whole problem: this isn't a disagreement about what's installed today, it's a disagreement about <em>what's allowed to happen next</em> — and that kind of disagreement doesn't show up as a failure until it already has.</p>
+
+  <h2>What each of those actually permits</h2>
+  <p>The three lines authorize very different futures. <code>^5.3.0</code> accepts any 5.x release from 5.3.0 up, so 5.7.2 satisfies it. <code>~5.3.0</code> accepts patches only — 5.3.9 yes, 5.4.0 no. <code>5.3.0</code> accepts exactly 5.3.0 and nothing else.</p>
+  <p>Since all three currently resolve to the same build, the divergence is invisible while it's cheap to fix. It becomes visible later, when the versions have already separated and you're debugging the symptom rather than the cause.</p>
+
+  <h2>Why they separate</h2>
+  <p>The trigger is that installs don't all happen at the same moment. A lockfile records what was resolved when it was written; a range is re-resolved whenever something forces a fresh resolution. So the drift arrives through ordinary events:</p>
+  <p>Someone adds a package to <code>apps/web</code> and the resolver refreshes that part of the tree, pulling <code>^5.3.0</code> up to the newest 5.x. <code>apps/admin</code> stays on 5.3.x because its range won't go further. <code>apps/api</code> stays exactly where it is. Or a new contributor installs without a lockfile, or CI runs a clean install against a stale lockfile, or a dependency bot bumps one workspace and opens a PR that looks entirely reasonable in isolation.</p>
+  <p>None of these is a mistake. Each one respects the ranges as written. The ranges were just written to mean different things.</p>
+
+  <h2>What breaks, in rough order of how confusing it is</h2>
+  <p><strong>Two copies in one bundle.</strong> If two workspaces end up on incompatible versions of the same runtime library and both get bundled, you ship both. For most utility libraries this costs bytes and nothing else. For anything holding module-level state — a React with its hook dispatcher, a client with a connection pool, anything using instance checks — two copies is a genuine bug, and the error message rarely mentions versions at all. You get a hook call that's suddenly invalid, or an object that fails an <code>instanceof</code> check against a class that looks identical.</p>
+  <p><strong>Tooling that disagrees with itself.</strong> A TypeScript minor bump can add checks. If <code>apps/web</code> is on 5.7 and <code>apps/api</code> is on 5.3, the same shared code can compile in one workspace and fail in another, and the CI job that fails is the one nobody touched. The same applies to ESLint, Prettier reformatting files differently depending on which workspace ran, and bundler plugins that expect a matching core version.</p>
+  <p><strong>Peer dependency warnings that are technically correct.</strong> A shared internal package declaring <code>peerDependencies: { "react": "^18.0.0" }</code> starts warning in whichever workspace drifted, and because peer warnings are frequently noise, the one that matters gets scrolled past.</p>
+
+  <h2>Why review doesn't catch it</h2>
+  <p>Two structural reasons, and they compound.</p>
+  <p>The first is that a range change is a one-character diff in a file people skim. Changing <code>~5.3.0</code> to <code>^5.3.0</code> reads as a formatting tweak, and in the PR that introduced it, it probably was — someone ran an install that rewrote the manifest, or copied a line from another workspace.</p>
+  <p>The second is that these problems are properties of the <em>set</em>, not of any pair. If <code>web</code> and <code>admin</code> both use <code>^</code> and only <code>api</code> pins exactly, then comparing <code>web</code> against <code>admin</code> comes back clean and tells you nothing. You'd have to remember to run the third comparison. With five workspaces there are ten pairs, with ten there are forty-five, and a diff tool — which by definition has a left side and a right side — can only ever show you one of them at a time. The odd workspace out is invisible until you happen to pick the pair that contains it.</p>
+
+  <h2>Picking a policy instead of accumulating one</h2>
+  <p>The fix isn't making everything exact or everything caret — it's deciding once, on purpose, and then having the repo reflect that decision.</p>
+  <p>The usual split: <strong>applications pin exact versions</strong>, because you want the thing you tested to be the thing you deploy, and a lockfile plus a dependency bot already gives you controlled upgrades. <strong>Published libraries use ranges</strong>, because a library that pins exactly forces duplicate installs on everyone who consumes it. If you publish from your monorepo, that means the two kinds of workspace genuinely should differ — which is fine, as long as it's the rule rather than an accident.</p>
+  <p>Shared tooling deserves its own rule regardless: TypeScript, ESLint, and the build toolchain should be identical across every workspace, exact, because the entire point is that all workspaces are checked the same way. A repo where each workspace independently drifts to its own TypeScript has given up the main benefit of being one repo.</p>
+  <p>If your package manager supports catalogs — pnpm and bun both do — they remove the class of problem outright by letting workspaces reference a version defined once at the root, so there's no per-manifest range to drift.</p>
+
+  <h2>Checking where you currently stand</h2>
+  <p>Enforcement belongs in CI, and syncpack and manypkg are the established tools for it — they read every manifest in a workspace and fail the build on mismatches. If this is a repo you own and this problem recurs, install one of them; a check that runs on every PR beats a check someone remembers to run.</p>
+  <p>For the audit before that decision — or for the cases those tools aren't shaped for, like comparing manifests from separate repos, a paste from a teammate, or your project against a starter template — FreeToolDev's <a href="/tools/package-json-version-checker.html">bulk package.json version checker</a> takes as many manifests as you paste and reports every shared dependency where they disagree, separated by whether it's a major version difference, a version difference within one major, a range-operator difference like the one above, or a package that moved between <code>dependencies</code> and <code>devDependencies</code>. It runs in the browser with nothing uploaded, which matters for a file that names your private registry and internal packages.</p>
+</article>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/package-json-version-checker.html">Bulk package.json Version Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
