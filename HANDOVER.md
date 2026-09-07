@@ -1,6 +1,6 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-09-01 (**신규 제작 세션** — 39항 렌즈로 후보 3개 검토 → **2개 기각, 1개 채택**. 신규 툴 `tools/package-json-version-checker.html`(29번째, **새 클러스터: 의존성/모노레포 위생**) + 페어링 블로그 `blog/semver-range-drift-monorepo.html`. **채택 근거는 이중 공백** — 웹 도구는 전부 2파일 diff이고(가장 가까운 경쟁사 comparetext.org가 자기 FAQ에서 "3개는 쌍으로 나눠 비교하라"고 명시), N파일 도구는 전부 CLI 설치형(syncpack·manypkg·packcomp). syncpack은 로컬 체크아웃된 모노레포가 전제라 **별개 repo·팀원 붙여넣기·스타터 템플릿 대조를 못 함** — 거기가 우리 자리. 기존 `which-api-fields-are-optional`·`json-field-consistency`에서 신규로 본문 링크 신설(30항). 전체 87파일 = sitemap 87 = llms.txt 87, 푸터 87/87 정합.)
+마지막 업데이트: 2026-09-07 (**주간 데이터 세션 — 조치 1건, 신규 0건.** 클릭 10→**12**, 노출 4798→5638(+18%). **이번 주 최대 소득은 36항 처방의 조건이 밝혀진 것**: 8/24 스크리밍프로그 보강은 2주째 순위 변화 0인데, 8/31 CSV 보강은 **Bing 노출 2→22(10배)·순위 6.55위**로 즉시 반응했다. 같은 방법이 Bing에서만 듣는다 = **Google은 도메인 권위가 병목이라 콘텐츠 개선이 순위로 환산되지 않는다**는 뜻(45항). 그래서 이번에도 같은 CSV 페이지를 2차 보강(역방향 실패 모드 — 숫자가 텍스트로 들어와 lookup·SUMIF가 조용히 깨지는 경우, 1344→1880단어). **8/25 발행 `which-api-fields-are-optional`이 색인되며 순위 14.14위 진입** — 39항 니치 선정이 옳았다는 첫 순위 증거. 미색인은 18→21(기존 18개 하나도 해소 안 됨, 늘어난 3개는 우리 신규 발행분). **chatgpt 3주 연속 + copilot 신규로 llms.txt 트리거가 발동했으나, 조사 결과 강화할 자리가 없어 조치 안 함.** 전체 87파일 = sitemap 87 = llms.txt 87.)
 
 [이전] 2026-08-04 (분석 전용 세션 — 사용자가 GSC/GA 스냅샷 업로드. **이 세션에서 사이트 HTML 파일은 하나도 수정하지 않음.** Opus가 데이터 분석 + 중복체크 + 웹검색 경쟁강도 확인까지만 하고, 실제 콘텐츠 작업은 Sonnet에게 프롬프트로 넘김. 무결성 재검증 통과: 전체 80파일 = sitemap `<url>` 80개, 끊긴 내부링크 0건, 고아 페이지 0건, tools/index 카드 26개 = tools 파일 26개, blog/index 링크 48개 = blog 글 48개. **신규 확정 방침: AdSense에 의존하지 않음 — 9번 참고.**)
 
@@ -247,6 +247,38 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-09-07 세션 — 데이터 재확인 및 조치 사항**:
+
+- **전체 지표**: 클릭 10→**12**, 노출 4798→**5638(+18%)**, 쿼리 498→549. **신규 클릭 2건**: `blog/json-validator-vs-schema-validator.html`(순위 65.84 — 페이지 7에서 클릭이 났다는 게 특이), `contact.html`(순위 13.36, **CTR 7.14%**). 홈도 3→4클릭(192노출, CTR 2.08%, 31.6위).
+  - **⚠️ 9/01 이후 노출 급락**: 8/29 216 최고 → 9/01 64, 9/02 35, 9/03 47, 9/04 48, 9/05 100. GSC 지연일 수도 있으나 **다음 스냅샷에서 반드시 재확인할 것.** 회복 안 되면 원인 조사 필요.
+- **★ 8/24 스크리밍프로그 보강 — 2주차 효과 없음(부정 결과).** `screaming frog license free`가 **6노출/33.83위로 2주 전과 완전히 동일**. 페이지는 1061→1150노출인데 클릭 1 그대로. `screaming frog free`도 24노출/62.75위. **36항의 처방(검색의도 맞춰 보강하면 순위가 오른다)이 이 페이지에서는 작동하지 않았음.**
+- **★★ 8/31 CSV 보강 — Bing에서 명확한 성공, Google은 무반응.** `blog/excel-csv-number-mangling.html`의 **Bing 노출 2 → 22(10배), 순위 6.55위**. Google은 20→24노출, 순위 29.2→30.62(오히려 소폭 하락).
+  - **보강 내용과 쿼리가 정확히 일치**: 8/31에 추가한 "15자리 경계·끝이 0으로 끝나는 증상·복구 판별"에 대응해 `why csv changed 1015055240001 to 1010000000000`(2위), `why would a csv file change my numbers to have all 0's at the end`(6위), `why does a csv file changing the numebrs at the end`(2위)가 잡힘. **36항 처방이 Bing에서는 작동함.**
+  - **해석(중요)**: 36항 처방 자체가 틀린 게 아니라 **Google에서는 도메인 권위가 병목이라 콘텐츠 개선이 순위로 환산되지 않고, Bing에서는 즉시 환산된다.** 스크리밍프로그와 CSV의 상반된 결과가 같은 설명으로 정리됨(31항 재확인).
+- **★ 색인 18→21.** 기존 18개 중 **하나도 해소 안 됨**(41항 재확인). 늘어난 3개는 전부 우리 신규 발행분: `json-field-consistency`(8/25), `package-json-version-checker`(9/01), `semver-range-drift-monorepo`(9/01).
+  - **다만 신규가 다 막히는 건 아님**: 같은 8/25 발행분인 `blog/which-api-fields-are-optional.html`은 **색인돼서 7노출/순위 14.14위**로 등장 — `sitemap-static-sites`(12.73) 다음가는 **사이트 2위 순위**. 8/19 발행분 2개(frontmatter-checker 4노출/44위, markdown-front-matter-mistakes 2노출/33위)도 색인 상태 유지.
+  - **의미**: 39항으로 고른 니치("N개를 함께 봐야만 답이 나오는 문제")가 **경쟁이 실제로 약하다는 게 순위로 증명됨.** 신규 글이 곧바로 14위에 앉는 건 이 사이트에서 처음.
+  - 왜 어떤 신규는 색인되고 어떤 건 대기하는지는 **여전히 설명 불가**(8/25 발행분 2개 중 블로그는 색인, 툴은 대기). 링크 강도로 설명 안 되는 것도 그대로(41항).
+- **순위 15~40**: `humans txt generator` 91→**103노출/36.94위**(순위는 39.31에서 소폭 회복, 여전히 상업가치 0이라 조치 안 함), `zapier rss` 15노출/29.33위(**6주 연속 완전 동일**), `bulk meta title and description checker` 5노출/16.40위(4주째 동일).
+- **Bing (5주차)**: 키워드 88개로 확대. 클릭 2건 유지(`batch csv to json converter` 2위/CTR 50%, `bulk json file validator` 4위/CTR 100%).
+  - **신규 상위 쿼리**: `validate multifile json schema` **3위**(우리 json-schema-validator — "multifile"이 정확히 우리 포지셔닝), `compress bulk images , convert into dataset` **3위**(image-batch — **Google에서는 미색인인 페이지**), `free ssl certificate monitoring tool multiple domains small business` **3위**, `upc code generator bulk` 7위, `truncation risk meta title` 2위, `can you create qr codes if i gave you a list of urls?` 2위.
+  - **범용 bulk 탐색 쿼리 유지**: `bulk utility tool` 5.4위, `json file bulk tool` 10위, `bulk uploads and utility diff` 9위.
+- **GA4(8/10~9/06)**: 활성 98명, (direct)/(none) 77명은 봇. **실사용자 = google/organic 5 + bing/organic 3 + duckduckgo 3 + chatgpt.com/ai-assistant 1 + copilot.com 1 + 디렉토리 referral 8 ≈ 21명**(지난주 15명에서 증가). 평균 참여 6.2초(봇 비중 증가).
+  - **★ AI 어시스턴트 유입: `chatgpt.com/ai-assistant` 3주 연속 + `copilot.com` 신규 발생.** 8/31에 걸어둔 트리거(3주 연속이면 llms.txt 강화 근거로 승격)가 **발동함.**
+- **수익화**: 9-1-1 조건 여전히 미달. 보고에서 제외.
+
+**2026-09-07 세션 조치 내역**:
+
+1. **`blog/excel-csv-number-mangling.html` 2차 보강 (1344→1880단어).** 근거: 8/31 보강이 Bing에서 10배 반응해 **이 페이지가 반응성이 검증된 유일한 자산**인데, 이번 Bing 쿼리 목록에 **페이지가 아직 답하지 않는 쿼리군**이 새로 잡힘 — `force csv to identify all numbers as numbers`(4위), `csv when a value is stored as number it doesn't produce a match`(10위), `why is my program treating csv as number instead of text`(9위), `why excel has "" but html viewer views it as really ""`(2위). 36항 재적용.
+   - 추가한 것: **역방향 실패 모드**(Excel이 "숫자"로 오판하는 게 아니라 "텍스트"로 오판해서 lookup이 안 맞는 경우). 구체적으로 (a) VLOOKUP/XLOOKUP/MATCH가 `#N/A`를 내고 정렬이 문자열 순이 되는 것, (b) **`SUMIF`/`SUMIFS`는 오류가 아니라 0을 반환**해서 잘못된 합계가 정상처럼 보인다는 것, (c) **초록 삼각형 경고는 신뢰할 수 없고** 정렬 방향(숫자=우측정렬)이나 `=ISNUMBER()`로 확인해야 한다는 것, (d) **CSV 쪽 원인 4가지** — 파일에 리터럴 아포스트로피가 박힌 경우, 앞뒤 공백, 혼합 컬럼(`N/A` 한 줄이 전체를 텍스트로), 사람이 읽으라고 포맷된 숫자(천단위 구분자·통화기호·괄호 음수), (e) **`""` 이중 따옴표는 CSV의 정상 이스케이프**이지 손상이 아니라는 것.
+   - **경쟁 회피 앵글**: "numbers stored as text / VLOOKUP 실패"는 extendoffice·thebricks·theexcelguide·excelerrorfinder·textwonder·excelmacros 등으로 **완전 포화라 단독 글로 쓰면 명백한 열등 카피(16항)**. 그래서 **별도 글을 쓰지 않고 기존 페이지에 섹션으로 흡수**했고, 각도도 경쟁사와 다르게 잡음 — 경쟁사는 전부 "Excel에서 어떻게 고치나"인데 우리는 **"CSV의 무엇이 이 오판을 만들었나 / 파일을 생성하는 쪽에서 뭘 해야 하나"**로 씀. 우리 페이지의 기존 프레이밍("CSV에는 타입 정보가 없다")과도 정확히 이어짐.
+   - meta description도 역방향 케이스를 포함하도록 교체.
+2. **llms.txt 트리거는 발동했으나 조치하지 않음(정직 기록).** 8/31에 "chatgpt 3주 연속이면 llms.txt 강화"라고 걸어뒀고 실제로 발동했지만, 조사 결과 **강화할 자리가 없었음**:
+   - `tools/llms-txt-generator.html`은 이미 1805단어로 Chrome Lighthouse 감사·Google Search Central 입장·llms-full.txt 구분까지 다루고 있어 **36항(검색의도 불일치)에 해당하지 않음.**
+   - Bing에서 잡히는 `do llms read llms.txt robots.txt for ai crawlers`(3위)에 대응하려면 AI 크롤러 user-agent 레퍼런스가 필요한데, **honeyb.ai·agentsurge.io·subscribepr.com·contently·anagram·dataimpulse가 2026년판 종합 레퍼런스를 전부 갖춤**(GPTBot/OAI-SearchBot/ChatGPT-User, ClaudeBot/Claude-SearchBot/Claude-User 3분류까지). 우리가 쓰면 열등 카피(16항).
+   - **트리거가 발동해도 자리가 없으면 안 하는 게 맞다**(사용자 방침). 다만 AI 유입 자체는 계속 추적할 것.
+3. **신규 툴 0개, 신규 글 0개.** 미색인이 21개로 늘었고 그중 3개가 우리 최근 발행분이라, **신규 추가보다 반응성이 검증된 페이지 강화가 우선**(38항).
 
 **2026-08-31 세션 — 데이터 재확인 및 조치 사항**:
 
@@ -631,9 +663,23 @@
 43. **(신규, 2026-09-01) 경쟁사가 "우리는 그건 안 한다"고 스스로 밝힌 문장을 찾으면 그게 가장 강한 채택 근거다.** package.json 후보를 확정한 결정타는 경쟁 웹 도구가 **자기 FAQ에서 "3개는 한 화면에서 못 본다, 쌍으로 나눠 비교하라"고 적어둔 것**이었다. 경쟁사의 마케팅 문구가 아니라 **한계를 인정한 문장**을 찾을 것 — FAQ·"Limitations"·GitHub 이슈의 wontfix가 그 자리다. 33항(공식 문서 확인)의 확장판.
 44. **(신규, 2026-09-01) 39항 패턴을 적용할 때 "관객 적합성"보다 "공백의 깨끗함"을 우선할 것.** 16차에서 CSV 컬럼 일관성(우리 CSV 클러스터와 인접, Bing 2위 보유)과 package.json(완전 신규 영역, 관객 겹침 적음)이 붙었는데, **관객이 더 맞는 CSV 쪽을 기각하고 공백이 깨끗한 package.json을 택했다.** 이유: 인접 클러스터라도 경쟁이 3필터를 다 막고 있으면 들어가서 얻을 게 없고, 신규 영역이라도 공백이 뚜렷하면 그게 곧 순위가 된다. **"우리 클러스터니까"는 채택 사유가 아니다.**
 
+45. **(신규, 2026-09-07) 36항 처방(검색의도에 맞춰 보강)은 Bing에서는 즉시 듣고 Google에서는 안 듣는다 — 효과 판정을 Bing으로 할 것.** 같은 방법을 쓴 두 페이지가 정반대 결과를 냈다: 8/24 스크리밍프로그 보강은 **2주째 순위 33.83위에서 소수점도 안 움직였고**, 8/31 CSV 보강은 **Bing 노출 2→22(10배), 순위 6.55위**로 즉시 반응했다(Google은 29.2→30.62로 무반응). 설명은 하나다 — **Google에서는 도메인 권위가 병목이라 콘텐츠 품질 개선이 순위로 환산되지 않고, Bing에서는 환산된다.** 실무 지침: (a) 보강 작업의 성패는 **Bing 지표로 판정**하고 Google은 후행 지표로 볼 것, (b) Google 순위가 60위대인 페이지는 콘텐츠를 아무리 넣어도 안 올라오므로 **추가 투자를 멈출 것**, (c) 그렇다고 보강이 무의미한 게 아니다 — Bing 클릭은 실제로 나오고 있다(31항과 같은 결론의 처방 버전).
+46. **(신규, 2026-09-07) 미리 걸어둔 트리거가 발동해도 "할 자리"가 없으면 안 하는 게 맞다.** 8/31에 "chatgpt 유입 3주 연속이면 llms.txt 클러스터 강화"라고 조건을 걸었고 9/07에 실제로 발동했다(chatgpt 3주 연속 + copilot 신규). 그런데 조사해보니 우리 llms-txt-generator는 이미 1805단어로 Lighthouse 감사·Google 입장까지 다루고 있어 보강할 곳이 없었고, Bing에서 잡히는 "AI 크롤러가 llms.txt를 읽나" 각도는 **2026년판 종합 레퍼런스가 6곳 이상 존재해 열등 카피밖에 안 됐다.** **트리거는 "검토를 시작하라"는 신호이지 "실행하라"는 명령이 아니다** — 발동했다는 이유로 억지 작업을 만들지 말고, 안 한 이유를 기록해서 다음 세션이 같은 조사를 반복하지 않게 할 것.
+
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-09-07 세션 기준 다음 할 일**
+
+- **A. 9/01 이후 노출 급락이 회복되는지 최우선 확인.** 8/29 216 → 9/01~9/04 35~64로 떨어졌다. GSC 지연일 가능성이 높지만 **회복 안 되면 원인 조사가 이번 국면 최우선**이 된다(사이트 전체 노출이 5주간 쌓아온 기저선을 잃는 것이므로).
+- **B. CSV 페이지 2차 보강 효과 — Bing 기준으로 볼 것(45항).** `excel-csv-number-mangling`이 Bing 22노출/6.55위에서 **클릭이 나오는지**가 핵심. 이 페이지는 순위가 이미 6위대라 **더 이상 순위 문제가 아니라 CTR 문제**다. 클릭이 안 나오면 다음은 title/description 손볼 차례.
+- **C. 36항은 "Bing에서 검증하고 Google은 기다린다"로 운용할 것(45항).** 스크리밍프로그(1150노출/클릭1/64위)는 콘텐츠를 더 넣어도 Google 순위가 안 움직인다는 게 2주로 확인됐으므로 **추가 투자 중단**하고 관찰만.
+- **D. 신규 발행분 색인 추적.** `json-field-consistency`(8/25), `package-json-version-checker`·`semver-range-drift-monorepo`(9/01) 3개가 대기 중. **`which-api-fields-are-optional`이 8/25 발행 → 2주 만에 14위로 색인된 전례가 있으므로**, 3주 넘게 안 풀리면 그때 "툴 페이지가 블로그보다 잘 막힌다"는 가설을 세워볼 것(현재는 표본 부족).
+- **E. 39항 니치를 계속 밀 것 — 처음으로 순위 증거가 나왔다.** `which-api-fields-are-optional` 14.14위는 신규 글이 이 사이트에서 받은 최고 순위다. **다음 신규 후보도 "N개를 함께 봐야만 답이 나오는 문제"에서 찾을 것**(39·44항).
+- **F. AI 어시스턴트 유입 추적 계속.** chatgpt 3주 연속 + copilot 신규. **트리거는 발동했지만 강화할 자리가 없어 이번엔 안 했다** — 자리가 생기면(예: 경쟁이 덜한 각도 발견) 그때 실행. 유입이 월 5건 수준으로 늘면 재검토.
+- **G. 미색인 21개는 온사이트로 건드리지 말 것(41항).**
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-09-01 세션 기준 다음 할 일**
 

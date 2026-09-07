@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Why Excel Mangles Your CSV Numbers (and How to Stop It) — FreeToolDev</title>
-<meta name="description" content="Leading zeros vanish, long IDs turn into scientific notation, and numbers quietly start ending in zeros. Which of those you can still undo depends on one number: 15 digits.">
+<meta name="description" content="Leading zeros vanish, long IDs turn into scientific notation, and numbers quietly start ending in zeros — or arrive as text so lookups stop matching. Both are the same missing-type problem.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://freetooldev.com/blog/excel-csv-number-mangling.html">
 <meta property="og:title" content="Why Excel Mangles Your CSV Numbers (and How to Stop It) — FreeToolDev">
-<meta property="og:description" content="Leading zeros vanish, long IDs turn into scientific notation, and numbers quietly start ending in zeros. Which of those you can still undo depends on one number: 15 digits.">
+<meta property="og:description" content="Leading zeros vanish, long IDs turn into scientific notation, and numbers quietly start ending in zeros — or arrive as text so lookups stop matching. Both are the same missing-type problem.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Why Excel Mangles Your CSV Numbers (and How to Stop It) — FreeToolDev">
-<meta name="twitter:description" content="Leading zeros vanish, long IDs turn into scientific notation, and numbers quietly start ending in zeros. Which of those you can still undo depends on one number: 15 digits.">
+<meta name="twitter:description" content="Leading zeros vanish, long IDs turn into scientific notation, and numbers quietly start ending in zeros — or arrive as text so lookups stop matching. Both are the same missing-type problem.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/blog/excel-csv-number-mangling.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -75,6 +75,20 @@
 
   <h2>Text that looks like a date gets rewritten</h2>
   <p>A value like <code>2-3</code>, <code>Mar-2</code>, or a version number like <code>1-2</code> can get silently reinterpreted as a calendar date, since Excel's date-detection heuristics are notoriously eager. This is a well-known enough problem that it's caused real, documented issues in fields like genetics, where gene symbols such as <code>SEPT2</code> or <code>MARCH1</code> get auto-converted to dates in spreadsheet software — significant enough that some naming conventions were eventually revised partly to work around it.</p>
+
+  <h2>The same problem in reverse: numbers that arrive as text</h2>
+  <p>Everything above is Excel guessing "number" when you wanted text. The identical missing-type-information problem runs the other way too, and it's the one people report as "my lookup just doesn't match" rather than as a CSV problem at all.</p>
+  <p>When a column lands as text, the values look completely normal — <code>1015055240001</code> renders the same either way — but they stop behaving like numbers. <code>VLOOKUP</code>, <code>XLOOKUP</code>, and <code>MATCH</code> compare a numeric lookup value against text and return <code>#N/A</code>, because a number and a string that reads like that number are not equal. Sorting orders them as strings, so 100 lands before 20.</p>
+  <p>The failure worth knowing about is <code>SUMIF</code> and <code>SUMIFS</code>: when the criteria range holds text-stored numbers, they return <strong>0 rather than an error</strong>. A zero in a total looks like a legitimate answer, so unlike <code>#N/A</code> it doesn't announce itself, and the report is simply wrong. Nor can you rely on the green triangle warning to spot it — it shows up for some causes and not others, and columns arriving through an import or a mixed-type source frequently carry no indicator at all. The dependable check is alignment (real numbers right-align, text-stored numbers left-align) or <code>=ISNUMBER()</code> on a sample cell.</p>
+  <p>What's usually missing from the Excel-side explanations is the CSV-side cause, which is the part you can actually control if you're the one generating the file. Four things commonly force the text reading:</p>
+  <ul style="color:#2c3540; line-height:1.75; padding-left:22px; margin-bottom:22px;">
+    <li>A <strong>literal apostrophe written into the file</strong>. Exporters sometimes emit <code>'01234</code> to protect leading zeros. Excel treats the apostrophe as its force-text marker and hides it, so the cell looks clean while every value in the column is text.</li>
+    <li><strong>Leading or trailing spaces</strong> around the value. <code>1234</code> with a trailing space isn't parseable as a number, so the whole cell becomes text — and the space is invisible in the cell.</li>
+    <li>A <strong>mixed column</strong>. One <code>N/A</code>, <code>-</code>, or empty-but-quoted cell among ten thousand numeric rows is enough for some importers to type the entire column as text.</li>
+    <li><strong>Numbers formatted for reading</strong> rather than parsing — thousands separators, currency symbols, or accounting-style negatives in parentheses like <code>(789)</code>. ERP and accounting exports do this routinely, and none of those forms parse as a number.</li>
+  </ul>
+  <p>If you're producing the file, the fix is to emit bare digits with no apostrophe, no padding spaces, no separators, and a consistent representation for missing values, then let the recipient set the column type at import. If you're receiving one, the same "From Text/CSV" import path below is where you choose the type deliberately instead of accepting a guess — in this direction, choosing <em>Number</em> rather than Text.</p>
+  <p>One related thing that surprises people opening a CSV in a text editor: a value containing a quote is escaped by <strong>doubling it</strong>, so <code>He said "hi"</code> is stored as <code>"He said ""hi"""</code>. Those doubled quotes are correct CSV, not corruption — a parser collapses each pair back to one. Seeing <code>""</code> in the raw file means the escaping worked; seeing it after import means whatever read the file didn't handle quoting properly.</p>
 
   <h2>The actual fix: don't let Excel guess</h2>
   <p>Opening a CSV by double-clicking it hands every column over to Excel's automatic type detection with no way to intervene per-column. The fix is importing through <strong>Data → From Text/CSV</strong> instead (technically named "From Text/CSV" or "Get Data" depending on Excel's version), which opens an import wizard that lets you set each column's data type explicitly — critically, setting the type to <strong>Text</strong> for any column that should be preserved exactly as-is, before Excel ever gets the chance to reinterpret it as a number or date.</p>
