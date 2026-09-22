@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Why Is My Merged PDF Bigger (or Smaller) Than the Originals? — FreeToolDev</title>
-<meta name="description" content="Merging PDFs can shrink or bloat the total size depending on what tool you use and why. What's actually happening, and when you need real compression instead.">
+<meta name="description" content="Why one page looks huge or tiny after merging (often an image converted at 72 ppi), and why the merged file size can shrink or bloat — what's happening and how to fix each.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://freetooldev.com/blog/why-merged-pdf-is-bigger.html">
 <meta property="og:title" content="Why Is My Merged PDF Bigger (or Smaller) Than the Originals? — FreeToolDev">
-<meta property="og:description" content="Merging PDFs can shrink or bloat the total size depending on what tool you use and why. What's actually happening, and when you need real compression instead.">
+<meta property="og:description" content="Why one page looks huge or tiny after merging (often an image converted at 72 ppi), and why the merged file size can shrink or bloat — what's happening and how to fix each.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Why Is My Merged PDF Bigger (or Smaller) Than the Originals? — FreeToolDev">
-<meta name="twitter:description" content="Merging PDFs can shrink or bloat the total size depending on what tool you use and why. What's actually happening, and when you need real compression instead.">
+<meta name="twitter:description" content="Why one page looks huge or tiny after merging (often an image converted at 72 ppi), and why the merged file size can shrink or bloat — what's happening and how to fix each.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/blog/why-merged-pdf-is-bigger.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -51,6 +51,15 @@
   <h1>Why Is My Merged PDF Bigger (or Smaller) Than the Originals?</h1>
 
   <p>Combine three 2 MB PDFs and you'd expect a 6 MB result. Instead you get 4 MB, or 9 MB, and neither number feels like it should be possible if merging is "just" sticking pages together. It is just sticking pages together — the surprising part is everything a PDF quietly carries around per file that has nothing to do with the pages themselves.</p>
+  <p>"Bigger" also means something else to a lot of people asking this: not the file size, but one page that <em>looks</em> far bigger or smaller than the rest when you scroll through the merged document. That's a different problem with a different cause, and it's covered in the next section before getting to file size.</p>
+
+  <h2>When one page looks much bigger or smaller than the others</h2>
+  <p>You merge a few documents, scroll through the result, and one page fills the screen while the next is a small rectangle floating in white space — or the page you added is enormous and the originals look like postage stamps beside it. Nothing is broken. Every page in a PDF carries its own physical size, in inches or millimetres, and merging keeps each page at exactly the size it had in its source file. Your viewer is showing them to scale relative to each other, and they were never the same size to begin with.</p>
+  <p>The usual culprit is a page that was made from an image. An image has pixels, not inches, so whatever converted it to PDF had to decide how big each pixel is. Many converters ignore the resolution saved in the image and assume 72 pixels per inch, which is the PDF's own unit. A scan or photo saved at 300 pixels per inch then comes out 300 ÷ 72 ≈ 4.17 times larger in each direction than intended. That exact ratio turns up in real reports: a batch of images meant to be 29 × 26 cm that became 120.83 × 108.34 cm pages after conversion — both dimensions scaled by 4.17. A phone photo, with no meaningful print size at all, can easily become a page three or four feet wide.</p>
+  <p>Smaller mismatches have duller causes. A4 (8.27 × 11.69 in) and US Letter (8.5 × 11 in) differ by about a quarter inch in width and two-thirds of an inch in height, which is barely noticeable on its own but obvious when the two alternate in continuous scroll. A slide exported at a widescreen aspect ratio sits beside portrait pages as a short, wide band. A scanner set to a custom crop produces receipt-sized pages. And an application's own export can surprise you — a spreadsheet laid out for A4 but exported through a print driver set to a different scale comes out at two or three times the size.</p>
+  <p><strong>To confirm which page is off</strong>, check the actual page dimensions rather than trusting how it looks. In Acrobat or Reader, hovering over the bottom-left corner of the page shows its size, and there's a preference to display it permanently. Document Properties shows it too. Once you see that one page is 42 inches wide and the rest are 8.5, the mystery is gone.</p>
+  <p><strong>To fix it</strong>, the reliable approach is to correct the odd page at its source and merge again: re-export the image at a set page size, or reconvert it with a tool that honours the image's resolution. If the sources aren't available, printing the merged file to a PDF printer with a fixed paper size and a "fit" or "shrink oversized pages" option redraws every page onto the same sheet — at the cost of turning it into a new file, and in some tools flattening form fields and links. Adjusting the zoom only hides the problem on your own screen; the next person to open the file sees the same mismatch.</p>
+  <p>Worth knowing before you choose a merge tool: essentially all of them, including FreeToolDev's, copy each page at its original size, because silently rescaling someone's pages is its own kind of bug. If the pages need to match, make them match before merging.</p>
 
   <h2>Why merging can make the file smaller</h2>
   <p>A PDF isn't just page content — it also embeds the fonts used on those pages, and font data is often the single biggest thing in a small, text-heavy file. If three source PDFs all use the same typeface, each one embeds its own full copy of that font. A merge tool that's smart about it (Adobe Acrobat's "Combine Files" does this) recognizes the duplicate font across source documents and keeps only one copy in the output — three embedded copies become one, and the total drops accordingly. The same logic applies to any other resource repeated across files: a shared color profile, a shared image used as a letterhead on every page, and so on.</p>
