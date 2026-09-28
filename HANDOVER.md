@@ -32,6 +32,7 @@
 | 서버리스 백엔드 | Cloudflare Worker (`freetooldev-crawler.canghun13.workers.dev`) — 6번 참고 |
 
 ### GitHub 작업 방식 (중요)
+- **★ 2026-09-28부터 토큰 불필요(확인됨).** 이 작업 환경은 git 요청이 세션 프록시를 거치는데, 토큰을 URL에 넣은 push는 프록시가 403으로 막았다. 대신 `add_repo`(owner `canghun13`, repo `freetooldev`, access `push`)로 저장소를 세션에 연결하고 remote를 토큰 없는 `https://github.com/canghun13/freetooldev`로 두면 **사용자의 GitHub 연결 권한으로 push가 된다.** 새 세션 시작 시: `add_repo` → clone(또는 기존 clone의 remote를 토큰 없는 URL로 교체) → 작업 → fetch/rebase → push. **`add_repo`가 권한 오류를 내면 그때만 사용자에게 PAT를 요청**할 것. 아래 PAT 절차는 그 예비용.
 - 사용자가 **그날그날 GitHub Fine-grained PAT(read/write, 이 repo 한정)를 발급**해서 채팅에 붙여넣어줌
 - Claude는 토큰으로 `git clone`(또는 기존 clone에 `git remote set-url`) → 수정 → `commit` → `push`까지 직접 처리
 - 작업 완료 후 사용자가 토큰을 **revoke**함 — Claude는 토큰을 별도로 저장하거나 재사용하지 않음
