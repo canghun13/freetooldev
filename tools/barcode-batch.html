@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bulk Barcode Generator — UPC, EAN, Code128 | FreeToolDev</title>
-<meta name="description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once. No upload, no account — runs entirely in your browser. Download individually or as a ZIP.">
+<meta name="description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. No upload, no account. Download as a ZIP.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://freetooldev.com/tools/barcode-batch.html">
 <meta property="og:title" content="Bulk Barcode Generator — UPC, EAN, Code128 | FreeToolDev">
-<meta property="og:description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once. No upload, no account — runs entirely in your browser. Download individually or as a ZIP.">
+<meta property="og:description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. No upload, no account. Download as a ZIP.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Bulk Barcode Generator — UPC, EAN, Code128 | FreeToolDev">
-<meta name="twitter:description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once. No upload, no account — runs entirely in your browser. Download individually or as a ZIP.">
+<meta name="twitter:description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. No upload, no account. Download as a ZIP.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/tools/barcode-batch.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -74,6 +74,13 @@ ITEM-00123"></textarea>
           </select>
         </div>
         <div>
+          <label>Check digit (EAN / UPC)</label>
+          <select id="checkMode">
+            <option value="validate" selected>Included — validate it</option>
+            <option value="calc">Missing — calculate it</option>
+          </select>
+        </div>
+        <div>
           <label>Show text under barcode</label>
           <select id="showText">
             <option value="true" selected>Yes</option>
@@ -87,7 +94,7 @@ ITEM-00123"></textarea>
         <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download all as ZIP</button>
       </div>
       <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
-      <p style="margin-top:14px; font-size:0.85rem; color:#8a8578;">Up to 100 codes per batch — this keeps rendering fast and the tab responsive. Invalid codes for the selected format (wrong length, non-numeric for EAN/UPC) are skipped and listed below the results.</p>
+      <p style="margin-top:14px; font-size:0.85rem; color:#5a6472;">Up to 100 codes per batch — this keeps rendering fast and the tab responsive. Codes that don't fit the selected format are skipped and listed below the results with the reason (wrong length, non-numeric, or a check digit that doesn't match). If your EAN list has 12 digits (or your UPC list 11) because the check digit was never added, choose <strong>Missing — calculate it</strong>.</p>
     </div>
 
     <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
@@ -106,15 +113,19 @@ ITEM-00123"></textarea>
     <p>Each barcode is rendered locally using canvas-based encoding (via the open-source JsBarcode library) — the same fundamental technique any barcode generator uses, just running entirely on your device instead of a server. You can confirm nothing is uploaded by checking your browser's Network tab while a batch runs. See <a href="/blog/bulk-barcode-use-cases.html">this post</a> for when generating dozens or hundreds at once actually comes up in practice, beyond one-off product labels.</p>
 
     <h2>Limits</h2>
-    <p>Up to 100 codes per batch. EAN-13 and UPC-A require the correct digit count and a valid checksum digit at the end — codes that don't validate are skipped and listed separately rather than silently producing a broken barcode, since a barcode that fails to scan at checkout is a worse outcome than an obvious error message.</p>
+    <p>Up to 100 codes per batch. EAN-13 and UPC-A require the correct digit count and a valid checksum digit at the end — codes that don't validate are skipped and listed separately, each with the reason, rather than silently producing a broken barcode, since a barcode that fails to scan at checkout is a worse outcome than an obvious error message. Spaces and hyphens inside EAN/UPC numbers (<code>0 36000 29145 2</code>, <code>036000-291452</code>) are stripped before checking.</p>
 
     <h2>FAQ</h2>
     <h3>Can I generate a barcode for a product I'm about to sell on Amazon or another marketplace?</h3>
     <p>Technically yes, this tool will produce a valid UPC/EAN barcode from any correctly-formatted number — but most marketplaces require the underlying number itself to be registered through GS1 (the organization that issues UPC/EAN prefixes) to avoid conflicting with another seller's product. This tool handles the barcode image; it doesn't register or validate ownership of the number itself. If you're not sure which format your marketplace actually expects, <a href="/blog/upc-vs-ean-vs-code128.html">this comparison</a> breaks down where UPC-A, EAN-13, and Code128 are each used.</p>
     <h3>What happens if I enter a 12-digit number and select EAN-13?</h3>
-    <p>EAN-13 expects 13 digits including the checksum. A 12-digit UPC-A number can be converted to EAN-13 by adding a leading zero — if your list is UPC-style 12-digit codes, select UPC-A rather than EAN-13 so they're read correctly without needing to pad them yourself first.</p>
+    <p>A 12-digit number means one of two different things, and the tool can't guess which. It might be a complete <strong>UPC-A</strong> (12 digits including its check digit) — in that case select UPC-A; the same product as an EAN-13 is simply the UPC with a leading zero. Or it might be the first 12 digits of an <strong>EAN-13 whose check digit was never added</strong> — common when numbers come out of a spreadsheet or an ERP export. In that case set <em>Check digit</em> to <strong>Missing — calculate it</strong> and the 13th digit is computed for each line and shown under the barcode.</p>
+    <h3>My list of EAN numbers has no check digits. Can the tool add them?</h3>
+    <p>Yes — choose <strong>Missing — calculate it</strong>. Enter 12 digits per line for EAN-13 or 11 for UPC-A. The check digit is the standard GS1 mod-10: counting from the rightmost digit, multiply alternately by 3 and 1, add the results, and the check digit is whatever brings the sum up to the next multiple of 10. The downloaded file is named after the full code, so you can match each PNG back to its row. Leave the default <em>Included — validate it</em> on when your numbers are already complete: a wrong last digit is then caught as a probable typo instead of being quietly replaced.</p>
     <h3>Why did some of my codes get skipped?</h3>
-    <p>For EAN-13 and UPC-A, a code is skipped if it isn't purely numeric, isn't the exact expected length, or fails the format's built-in checksum validation (the last digit is calculated from the others specifically to catch typos and transcription errors). Code128 has no such restriction and accepts any alphanumeric string.</p>
+    <p>For EAN-13 and UPC-A, a code is skipped if it isn't purely numeric, isn't the exact expected length, or fails the format's built-in checksum validation (the last digit is calculated from the others specifically to catch typos and transcription errors). Code128 has no such restriction and accepts any alphanumeric string. Each skipped code is listed with its reason — including, for a checksum failure, which last digit the number <em>should</em> have had.</p>
+    <h3>Can this make EAN-128 / GS1-128 shipping labels?</h3>
+    <p>No. GS1-128 (the format still widely called EAN-128 or UCC-128) looks exactly like Code128, but it begins with a special FNC1 character and carries data in Application Identifiers such as <code>(01)</code> for a GTIN or <code>(17)</code> for an expiry date. The Code128 option here produces plain Code128 without FNC1, so typing <code>(01)…</code> into it gives you a barcode that scans but that a GS1 receiving system won't parse as structured data. For carton and pallet labels use GS1-aware label software. <a href="/blog/upc-vs-ean-vs-code128.html#ean-128">Why EAN-128 isn't an alternative to UPC</a> explains where each one belongs.</p>
 </section>
 
   <footer class="site-footer">
@@ -187,22 +198,40 @@ document.addEventListener('DOMContentLoaded', function () {
     return String(s).replace(/[^a-z0-9]+/gi, '-').toLowerCase().slice(0, 40) || 'barcode';
   }
 
-  function eanChecksumValid(digits) {
+  function checkDigit(body) {
+    // GS1 mod-10: weights 3,1,3,1... counted from the RIGHTMOST digit of the body
     var sum = 0;
-    for (var i = 0; i < digits.length - 1; i++) {
-      var d = parseInt(digits[i], 10);
-      sum += (i % 2 === 0) ? d * ((digits.length === 13) ? 1 : 3) : d * ((digits.length === 13) ? 3 : 1);
+    for (var i = body.length - 1, w = 3; i >= 0; i--, w = (w === 3 ? 1 : 3)) {
+      sum += parseInt(body[i], 10) * w;
     }
-    var check = (10 - (sum % 10)) % 10;
-    return check === parseInt(digits[digits.length - 1], 10);
+    return (10 - (sum % 10)) % 10;
   }
 
-  function validate(code, format) {
-    if (format === 'CODE128') return true;
-    if (!/^\d+$/.test(code)) return false;
-    if (format === 'EAN13' && code.length !== 13) return false;
-    if (format === 'UPC' && code.length !== 12) return false;
-    return eanChecksumValid(code);
+  // Returns { ok:true, code:<full code>, added:<bool> } or { ok:false, reason:<string> }
+  function prepare(code, format, mode) {
+    if (format === 'CODE128') return { ok: true, code: code, added: false };
+    var name = format === 'EAN13' ? 'EAN-13' : 'UPC-A';
+    var full = format === 'EAN13' ? 13 : 12;
+    var digits = code.replace(/[\s-]/g, '');
+    if (!/^\d+$/.test(digits)) return { ok: false, reason: 'contains non-digit characters (' + name + ' is digits only — use Code128 for letters)' };
+    if (mode === 'calc') {
+      if (digits.length !== full - 1) {
+        var r = 'has ' + digits.length + ' digits — expected ' + (full - 1) + ' without the check digit';
+        if (digits.length === full) r += ' (looks complete already — switch to "Included — validate it")';
+        return { ok: false, reason: r };
+      }
+      return { ok: true, code: digits + checkDigit(digits), added: true };
+    }
+    if (digits.length !== full) {
+      var reason = 'has ' + digits.length + ' digits — ' + name + ' needs ' + full;
+      if (format === 'EAN13' && digits.length === 12) reason += ' (a 12-digit code is either a UPC-A — switch format — or an EAN-13 missing its check digit — choose "Missing — calculate it")';
+      else if (format === 'UPC' && digits.length === 13) reason += ' (13 digits is EAN-13 — switch format)';
+      else if (digits.length === full - 1) reason += ' (check digit missing? choose "Missing — calculate it")';
+      return { ok: false, reason: reason };
+    }
+    var body = digits.slice(0, -1), last = parseInt(digits.slice(-1), 10), want = checkDigit(body);
+    if (last !== want) return { ok: false, reason: 'check digit is ' + last + ' but should be ' + want + ' — likely a typo somewhere in the number' };
+    return { ok: true, code: digits, added: false };
   }
 
   generateBtn.addEventListener('click', function () {
@@ -215,6 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var format = document.getElementById('format').value;
     var showText = document.getElementById('showText').value === 'true';
+    var checkMode = document.getElementById('checkMode').value;
 
     barcodeGrid.innerHTML = '';
     errorList.innerHTML = '';
@@ -224,11 +254,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var errors = [];
     var usedNames = {};
 
-    lines.forEach(function (code) {
-      if (!validate(code, format)) {
-        errors.push(code);
+    lines.forEach(function (input) {
+      var prep = prepare(input, format, checkMode);
+      if (!prep.ok) {
+        errors.push({ code: input, reason: prep.reason });
         return;
       }
+      var code = prep.code;
 
       var canvas = document.createElement('canvas');
       try {
@@ -238,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
           margin: 10
         });
       } catch (e) {
-        errors.push(code);
+        errors.push({ code: input, reason: 'could not be encoded in this format' });
         return;
       }
 
@@ -258,13 +290,15 @@ document.addEventListener('DOMContentLoaded', function () {
       cell.innerHTML =
         '<img src="' + dataUrl + '" style="width:100%; max-width:200px; height:auto; margin-bottom:8px; background:#fff; padding:6px; border:1px solid var(--paper-dim);" alt="Barcode for ' + esc(code) + '">' +
         '<span class="fname" style="width:100%; margin-bottom:8px;">' + esc(code) + '</span>' +
+        (prep.added ? '<span style="display:block; font-size:0.75rem; color:#1f6b41; margin-bottom:8px;">check digit ' + code.slice(-1) + ' added</span>' : '') +
         '<a class="btn btn-outline" style="padding:6px 12px; font-size:0.72rem;" href="' + dataUrl + '" download="' + filename + '">Download</a>';
       barcodeGrid.appendChild(cell);
     });
 
     progressText.textContent = lastResults.length + ' barcode(s) generated' + (errors.length ? ', ' + errors.length + ' skipped.' : '.');
     if (errors.length) {
-      errorList.innerHTML = '<strong>Skipped (invalid for ' + format + '):</strong> ' + errors.map(esc).join(', ');
+      errorList.innerHTML = '<strong>Skipped ' + errors.length + ' (not valid for ' + ({ EAN13: 'EAN-13', UPC: 'UPC-A', CODE128: 'Code128' }[format] || esc(format)) + '):</strong><ul style="margin:8px 0 0; padding-left:20px; color:#2c3540;">' +
+        errors.map(function (er) { return '<li style="margin-bottom:4px;"><code>' + esc(er.code) + '</code> — ' + esc(er.reason) + '</li>'; }).join('') + '</ul>';
     }
     if (lastResults.length) downloadZipBtn.style.display = 'inline-flex';
   });

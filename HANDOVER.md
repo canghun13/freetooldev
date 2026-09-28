@@ -1,6 +1,8 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-09-22 (**주간 데이터 세션 — 조치 2건(같은 주제), 신규 0건.** Google 클릭 13→14, **Bing 클릭 2→5**. **이번 주 최대 소식: 39항 니치 페이지가 처음으로 실클릭을 냈다** — `package-json-version-checker` Google 7.1위 첫 클릭, `which-api-fields-are-optional` Bing 1위 클릭. 39항으로 만든 3개 중 2개가 발행 3~4주 만에 클릭. 조치는 **`why-merged-pdf-is-bigger` 의도 불일치 교정** — Google 미색인이지만 Bing 1~8위 쿼리 10여 개+클릭 1건을 가진 페이지인데, 쿼리가 전부 "병합 후 한 페이지가 크게/작게 보임(페이지 물리 크기)"이었고 본문은 100% 파일 용량 얘기였다. 72ppi 가정→300/72=4.17배 메커니즘과 진단·수정법 추가(1087→1731단어) + 툴 FAQ. **발견됨-미색인 21→18**, 풀린 핵심 툴이 하필 8/18 실험의 무링크 대조군(pdf-merge-compress) — 41항 추가 증거. chatgpt 유입은 4주 만에 끊김. 전체 87파일 = sitemap 87 = llms.txt 87.)
+마지막 업데이트: 2026-09-28 (**주간 데이터 세션 — 보강 2건(바코드 클러스터), 신규 0건.** Google 클릭 14→14(보합), 40위 이내 쿼리 18 보합, 커버리지 변화 0(발견됨-미색인 18 + 크롤링됨-미색인 1, 목록 동일). **Bing 클릭 5→7, 신규 2건 모두 `tools/barcode-batch.html`**(`bulk barcode generator ean-13` 5위, `bulk download barcodes from ean numbers` 2위) + GA4 **bing/organic 6이 google/organic 5를 처음 추월**. 조치: (1) 바코드 툴에 **체크디짓 계산 모드 + 스킵 사유 표시** — 12자리 EAN(체크디짓 없음)이 사유 없이 스킵되던 결함 수정, (2) `upc-vs-ean-vs-code128` 보강(703→1564단어) — Bing 1~9위 쿼리군(EAN-128 or UPC / 눈으로 구분 / Code 128과 비슷한 포맷 / 소매점 재고)에 본문이 한 줄도 답하지 않던 공백. 전체 87파일 = sitemap 87 = llms.txt 87.)
+
+[이전] 2026-09-22 (**주간 데이터 세션 — 조치 2건(같은 주제), 신규 0건.** Google 클릭 13→14, **Bing 클릭 2→5**. **이번 주 최대 소식: 39항 니치 페이지가 처음으로 실클릭을 냈다** — `package-json-version-checker` Google 7.1위 첫 클릭, `which-api-fields-are-optional` Bing 1위 클릭. 39항으로 만든 3개 중 2개가 발행 3~4주 만에 클릭. 조치는 **`why-merged-pdf-is-bigger` 의도 불일치 교정** — Google 미색인이지만 Bing 1~8위 쿼리 10여 개+클릭 1건을 가진 페이지인데, 쿼리가 전부 "병합 후 한 페이지가 크게/작게 보임(페이지 물리 크기)"이었고 본문은 100% 파일 용량 얘기였다. 72ppi 가정→300/72=4.17배 메커니즘과 진단·수정법 추가(1087→1731단어) + 툴 FAQ. **발견됨-미색인 21→18**, 풀린 핵심 툴이 하필 8/18 실험의 무링크 대조군(pdf-merge-compress) — 41항 추가 증거. chatgpt 유입은 4주 만에 끊김. 전체 87파일 = sitemap 87 = llms.txt 87.)
 
 [이전] 2026-08-04 (분석 전용 세션 — 사용자가 GSC/GA 스냅샷 업로드. **이 세션에서 사이트 HTML 파일은 하나도 수정하지 않음.** Opus가 데이터 분석 + 중복체크 + 웹검색 경쟁강도 확인까지만 하고, 실제 콘텐츠 작업은 Sonnet에게 프롬프트로 넘김. 무결성 재검증 통과: 전체 80파일 = sitemap `<url>` 80개, 끊긴 내부링크 0건, 고아 페이지 0건, tools/index 카드 26개 = tools 파일 26개, blog/index 링크 48개 = blog 글 48개. **신규 확정 방침: AdSense에 의존하지 않음 — 9번 참고.**)
 
@@ -247,6 +249,34 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-09-28 세션 — 데이터 재확인 및 조치 사항**:
+
+- **전체 지표(47항 기준)**: Google 클릭 **14 보합**(3개월 창), 노출 6517, 쿼리 586. 40위 이내 쿼리 18 보합. 페이지별 클릭 변화 0. 순위 상승은 `excel-csv-number-mangling` 26.6→**23.2**(2회 보강 후 4주 연속 상승), `jwt-decoder` 29.9→26.4, `meta-title-pixel-truncation` 30.5→22.3.
+- **커버리지**: 발견됨-미색인 18 + 크롤링됨-미색인 1(`upc-vs-ean-vs-code128`, 최종 크롤 7/11) — **9/22와 URL 목록까지 완전히 동일.** 41항대로 온사이트 조치 없음.
+- **Bing(9/22→9/28)**: 클릭 5→**7**, 노출 합 264. **신규 클릭 2건이 모두 `tools/barcode-batch.html`**(9노출/2클릭/6.0위, CTR 22%): `bulk barcode generator ean-13`(5위), `bulk download barcodes from ean numbers`(2위). 같은 페이지·블로그로 바코드 쿼리가 약 20개 모임(`bulk barcode generator 100`, `upc code generator bulk`, `bulk upc generator`, `ean 128 format or upc` 2위, `how can on etell upc a vs. code 128` 1위, `what upc code formats are similar to code 128?` 5위, `code 128 vs upc barcode inventory small retail` 5위, `why use upc, code 128`, `code-128 vs ean/upc` 3위, `upc vs code128` 2위, `code_128 vs ean` 9위).
+  - **지난주 B(PDF 보강)**: why-merged-pdf 19→25노출/3.2위, 클릭 1 유지. 신규 쿼리 `pdf merge file size bigger reasons fonts images compression` 1위, `in the merged pdf document why some pages are displayed large and some small` 6위 — **보강한 물리 크기 의도 쿼리가 계속 늘고 있음.** 클릭 판정은 보류.
+  - **지난주 C(DNS 보강 2주차)**: 23→28노출/6.29위, 쿼리 계속 증가(`txt record or cname which is better for dns` 4위 등), **클릭 여전히 0.** 공식 확정은 보류 — 6위대는 CTR 문제일 수 있어, 3주차에도 0이면 title/description 점검 대상.
+- **GA4(8/31~9/27)**: **bing/organic 6 > google/organic 5 — 처음으로 Bing이 Google을 앞섬.** copilot 2세션(4주 연속), chatgpt 없음(5주 연속). 페이지뷰 2위가 Bulk Barcode Generator(8) — Bing 클릭과 일치. Warsaw 20·Paris 12·Singapore 8은 봇.
+- **수익화**: 9-1-1 조건 미달. 보고에서 제외.
+
+**2026-09-28 세션 조치 내역**:
+
+1. **`tools/barcode-batch.html` 기능 보강 — 클릭 쿼리가 드러낸 입력 형태 결함.** 클릭이 난 쿼리가 "**ean numbers**에서 bulk download", "bulk ... **ean-13**"이었는데, 코드를 읽어보니 **12자리 EAN(체크디짓 없이 스프레드시트/ERP에서 나온 번호)을 넣으면 사유 표시 없이 "Skipped: 코드들"만 뜨고 끝났다.** 실제 벌크 사용자가 가장 흔히 들고 오는 데이터 형태에서 막히는 구조.
+   - 추가: **Check digit 옵션**(기본 "Included — validate it" / "Missing — calculate it"). 계산 모드는 EAN-13 12자리·UPC-A 11자리를 받아 GS1 mod-10(오른쪽 끝부터 3,1 교대 가중)으로 체크디짓을 붙이고, 결과 칸에 "check digit N added" 표시, 파일명은 완성된 코드. **기본값은 검증 모드 유지** — 이미 완성된 번호의 마지막 자리 오타를 조용히 "고쳐버리지" 않기 위해.
+   - **스킵 사유를 코드별로 표시**: 비숫자 / 자릿수(12자리+EAN-13이면 "UPC-A이거나 체크디짓 누락 EAN — 둘 중 하나" 안내, 13자리+UPC면 EAN 전환 안내) / 체크디짓 불일치("3인데 2여야 함 — 오타 가능성"). EAN/UPC 번호 속 공백·하이픈은 제거 후 검사.
+   - **12자리+EAN-13을 자동으로 계산하지 않은 이유**: 12자리는 "완성된 UPC-A"일 수도 있어 체크디짓을 붙이면 **틀린 EAN**이 된다(맞는 변환은 앞에 0). 모호하면 사용자가 고르게 했다.
+   - FAQ 2개 추가/교체(12자리의 두 의미, 체크디짓 계산법), **GS1-128(EAN-128) 미지원을 정직하게 명시하는 FAQ** — 우리 Code128은 FNC1이 없어서 `(01)…`을 넣으면 스캔은 되지만 GS1 시스템이 파싱 못 함. meta/og/twitter description + llms.txt에 "up to 100 per batch, check digits validated or calculated" 반영(쿼리 `bulk barcode generator 100`·`barcode generator bulk 100`이 우리 한도와 정확히 일치). 안내문 색 `#8a8578`(AA 미달) → `#5a6472`.
+   - jsdom 검증: 정상 UPC/EAN, 체크디짓 오류, 11/12/13자리 오입력, 비숫자, 계산 모드(400638133393→…1, 590123412345→…7, 03600029145→…2 — 공개된 실제 코드와 일치), Code128 `<script>` 입력 이스케이프까지 확인.
+2. **`blog/upc-vs-ean-vs-code128.html` 보강(703→1564단어).** Bing 3.9위, 쿼리 약 10개가 전부 본문에 없는 질문이었다(49항). 추가 섹션:
+   - **눈으로 UPC-A vs Code128 구분법**(`how can on etell upc a vs. code 128` 1위): 긴 가드바 3쌍, 숫자 배치 1-5-5-1(EAN-13은 1+6+6), UPC-A는 항상 95모듈 고정폭 vs Code128은 내용 따라 폭 증가, 확정은 폰 앱/AIM 식별자(`]E0` EAN/UPC, `]C0` Code128, `]C1` GS1-128).
+   - **"EAN-128"은 EAN이 아니라 GS1-128**(`ean 128 format or upc` 2위): Code128 + 시작 직후 FNC1 + AI(`(01)` GTIN-14, `(10)` 로트, `(17)` 유통기한 YYMMDD, `(00)` SSCC), 괄호는 인코딩 안 됨. **UPC는 계산대를 지나는 상품에, GS1-128은 그 상품이 담긴 박스/팔레트에** — 둘은 선택지가 아니라 붙는 대상이 다르다.
+   - **Code128과 비슷한 포맷**(`what upc code formats are similar to code 128?`): Code 39 / Code 93 / GS1-128 / ITF-14 vs UPC-A의 형제(UPC-E, EAN-8) 두 계열로 정리, Code set C의 숫자 2개 압축.
+   - **소매점 재고에 UPC냐 Code128이냐**(`code 128 vs upc barcode inventory small retail`): 매입 상품은 제조사 UPC 그대로 / 자체 제작·소분 상품은 GS1 제한유통번호(UPC 2·4로 시작, EAN 20~29 — 국가별 GS1이 용도 정의) / 선반·빈·내부 SKU는 Code128, **POS 소프트웨어가 Code128 값을 상품 조회로 받는지 1장 먼저 테스트**하라는 실무 체크.
+   - 팩트 출처: Wikipedia UPC(95모듈, 가드 패턴, 첫·끝 숫자 바깥 배치, number system 2·4), GS1-128/Code 128(FNC1, AI, 코드셋 A/B/C, mod 103), International Article Number(020~029 리테일러 내부용), barcodepress GS1-128 vs Code128(괄호 비인코딩).
+   - **경쟁 회피 앵글**: 상위 가이드들(barcodepress, Seagull, barcodefaq)은 GS1-128 vs Code128 **공급망 관점**만 다루고, **"EAN-128 or UPC"라는 잘못된 양자택일, 눈으로 구분, 소규모 소매점 판단**은 다루지 않는다. 제목은 Bing 상위라 유지, description만 교체, post-meta에 "Updated Sep 28, 2026".
+3. **sitemap lastmod**: 두 파일만 2026-09-28(27항). 최다 날짜 2026-07-20 = 20/87(23%).
+4. **신규 툴 0개, 신규 글 0개.** 이번은 주간 데이터 세션이고, 클릭이 실제로 나는 페이지의 기능 결함 수정이 더 확실한 ROI였다.
 
 **2026-09-22 세션 — 데이터 재확인 및 조치 사항**:
 
@@ -725,10 +755,22 @@
 48. **(신규, 2026-09-14) 우리가 손댄 페이지와 안 댄 페이지가 반대로 움직였다 — 보강 작업 자체는 유효하다.** 같은 주에 손 안 댄 헤드텀은 순위가 무너졌고(`llms.txt generator` 35→82위, `site-crawler` 4→52위), **보강한 페이지는 전부 올랐다**(excel-csv 30.6→27.2, which-api-fields 14.1→11.1, csv-to-json 44→39.6, humans-txt 40.5→39.4). 45항이 "Google에서는 콘텐츠 개선이 순위로 환산 안 된다"고 적었는데 **그건 60위대 헤드텀에 한정된 이야기이고, 이미 40위 이내인 페이지는 Google에서도 반응한다**로 수정한다. **보강 대상은 "Google 40위 이내 또는 Bing 10위 이내"인 페이지로 좁힐 것.** 60위대 페이지는 무엇을 써도 안 오른다.
 
 49. **(신규, 2026-09-22) 보강 대상을 고를 때는 순위표가 아니라 Bing 쿼리 원문을 한 줄씩 읽을 것 — "제목은 맞는데 뜻이 다른" 불일치가 가장 큰 기회다.** `why-merged-pdf-is-bigger`는 제목("Bigger (or Smaller)")이 쿼리와 단어까지 일치해서 36항 체크를 통과할 것처럼 보였지만, 쿼리 10여 개를 읽어보니 **전부 "화면에서 페이지가 크게 보임"(물리 크기)** 이었고 본문은 **전부 "파일 용량"(바이트)** 이었다. Bing이 1위에 올려주고 클릭까지 났는데도 본문은 그 질문에 한 줄도 답하지 않고 있었다. **단어 일치 ≠ 의도 일치.** 특히 bigger/smaller/size/large 같은 다의어가 제목에 있는 페이지는 쿼리를 반드시 원문으로 확인할 것. Bing 쿼리는 문장형이 많아서 의도가 GSC보다 훨씬 잘 드러난다.
+50. **(신규, 2026-09-28) 툴 페이지의 Bing 클릭 쿼리는 "사용자가 들고 오는 입력 데이터의 형태"를 드러낸다 — 글이 아니라 툴 코드를 먼저 읽을 것.** `bulk download barcodes from ean numbers`(클릭)를 보고 툴 코드를 확인하니, 벌크 사용자가 가장 흔히 가진 **체크디짓 없는 12자리 EAN 목록**이 사유 표시 없이 스킵되고 있었다. 순위·본문만 보면 페이지는 멀쩡해 보였다. **툴 페이지에 클릭/상위 쿼리가 붙으면: (a) 쿼리에 나온 입력 형태(자릿수, 구분자, 파일 형식)를 실제로 넣어보고, (b) 실패 시 이유를 알려주는지, (c) 모호한 입력을 조용히 "고치지" 않는지 확인할 것.** 모호하면(12자리 = 완성된 UPC-A일 수도, 체크디짓 빠진 EAN일 수도) 자동 추정 말고 옵션으로 사용자에게 고르게 한다.
 
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-09-28 세션 기준 다음 할 일**
+
+- **A. 바코드 클러스터 판정 — Bing으로(45항).** `tools/barcode-batch.html`(9노출/2클릭/6.0위)의 클릭이 유지·증가하는지, `blog/upc-vs-ean-vs-code128.html`(11노출/3.9위, 클릭 0)이 보강 후 **첫 클릭**을 내는지. 블로그는 Google 크롤링됨-미색인(7/11 이후 재크롤 없음)이라 **Bing이 유일한 판정 수단.**
+- **B. DNS 보강 3주차.** 28노출/6.29위에서 클릭 0이 계속되면 순위가 아니라 **CTR 문제**로 보고 title/description 점검(Bing 쿼리 원문 기준 — `txt record or cname which is better`, `do i need both cname and txt record` 류 질문형이 많다).
+- **C. PDF 보강(9/22) 2주차.** 25노출/3.2위, 클릭 1. 물리 크기 의도 쿼리가 계속 느는 중.
+- **D. 50항을 다른 툴 페이지에도 적용할 것.** 다음 후보: `tools/rss-generator.html`(Bing 39노출/7.8위, 최대 클릭원 — `rss feed generator for list`, `free rss feed generator from url no signup` 같은 입력 형태 쿼리), `tools/qr-batch.html`(Bing 8노출/3.9위 — `qr generator list of urls batch` 1위, `i need 80 qr codes list for numbers list`, `auto populate qr codes from list of urls` 1위). 쿼리 속 입력을 실제로 넣어보고 막히는 곳이 있는지 확인.
+- **E. 신규 제작 세션은 39항 니치로**(9/22 A 유지).
+- **F. pdf-merge-compress 페이지 크기 진단 표시** — 9/22 E 유지(읽기 전용, 여유 있을 때).
+- **G. 미색인 19개(18+1)는 온사이트로 건드리지 말 것(41항).** 이번 주 목록 변화 0.
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-09-22 세션 기준 다음 할 일**
 
