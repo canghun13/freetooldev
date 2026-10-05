@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A Record vs CNAME vs TXT: DNS Records Explained — FreeToolDev</title>
-<meta name="description" content="What each DNS record type actually does, why "DNS vs zone vs record" is a levels confusion rather than a choice, and why the apex really can't take a CNAME.">
+<meta name="description" content="What A, CNAME, TXT, MX and NS records actually do, CNAME vs TXT for verification and email (and whether you need both), and why the apex can't take a CNAME.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://freetooldev.com/blog/dns-records-explained.html">
 <meta property="og:title" content="A Record vs CNAME vs TXT: DNS Records Explained — FreeToolDev">
-<meta property="og:description" content="What each DNS record type actually does, why "DNS vs zone vs record" is a levels confusion rather than a choice, and why the apex really can't take a CNAME.">
+<meta property="og:description" content="What A, CNAME, TXT, MX and NS records actually do, CNAME vs TXT for verification and email (and whether you need both), and why the apex can't take a CNAME.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="A Record vs CNAME vs TXT: DNS Records Explained — FreeToolDev">
-<meta name="twitter:description" content="What each DNS record type actually does, why "DNS vs zone vs record" is a levels confusion rather than a choice, and why the apex really can't take a CNAME.">
+<meta name="twitter:description" content="What A, CNAME, TXT, MX and NS records actually do, CNAME vs TXT for verification and email (and whether you need both), and why the apex can't take a CNAME.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/blog/dns-records-explained.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -47,7 +47,7 @@
   </header>
 
 <article class="article">
-  <div class="post-meta">Guide · Jul 7, 2026</div>
+  <div class="post-meta">Guide · Jul 7, 2026 · Updated Oct 5, 2026</div>
   <h1>A Record vs CNAME vs TXT: DNS Records Explained</h1>
 
   <p>DNS is one of those systems everyone relies on constantly and almost nobody looks at directly until something breaks — a domain won't point where it should, email silently stops arriving, or a hosting provider's setup instructions casually mention "add a TXT record" with no explanation of what that actually means. The record types themselves are simple once you see what each one is actually for; the confusion is usually just never having had a reason to learn the vocabulary.</p>
@@ -74,8 +74,19 @@
   <p>Two records exist in every zone whether you added them or not. <strong>SOA</strong> (Start of Authority) sits at the top and carries the zone's administrative data: which nameserver is primary, the responsible contact, and the serial number that secondary servers watch to know the zone changed. <strong>NS</strong> records declare which nameservers are authoritative. Most hosted DNS panels create and manage both for you and don't show the SOA at all, which is why plenty of people manage DNS for years without encountering it.</p>
   <p>That pair also explains the apex restriction properly. The real rule isn't "the spec forbids a CNAME on the apex" as an arbitrary prohibition — it's that <strong>a CNAME cannot coexist with any other record at the same name</strong>, because a CNAME means "everything for this name lives over there instead." The apex is required to hold SOA and NS records, so by definition it already has records, and a CNAME there would contradict them. Subdomains have no such requirement, which is why <code>www</code> can be a CNAME and the bare domain can't.</p>
 
+  <h2 id="cname-vs-txt">CNAME vs TXT: which one, and do you need both?</h2>
+  <p>This question usually comes from a setup screen. An email service, an SSL certificate provider, or a site-verification step says "add this TXT record <em>or</em> this CNAME", or lists one of each, and doesn't explain the difference. The two records do opposite things:</p>
+  <ul>
+    <li><strong>A TXT record publishes a value.</strong> The service gives you a string, you put it in your zone, and the service looks it up and compares. The value lives in your DNS, so changing it later means editing your DNS again.</li>
+    <li><strong>A CNAME delegates a name to the service.</strong> You point a name in your zone (often a random-looking one like <code>_a1b2c3.example.com</code>, or <code>selector1._domainkey.example.com</code> for email signing) at a hostname the service controls. Whatever the service publishes there becomes your answer, so it can rotate keys or tokens without you touching DNS again. That's why Microsoft 365 and many email-sending platforms set up DKIM with CNAMEs, while providers that ask you to paste the public key yourself use a TXT record.</li>
+  </ul>
+  <p><strong>Do you need both?</strong> If the instructions offer them as alternatives for the same step ("verify with a TXT record or a CNAME"), one is enough. Pick whichever your DNS panel handles more easily. If they are separate steps (a TXT for SPF, CNAMEs for DKIM, another TXT for DMARC at <code>_dmarc</code>), they do different jobs and each one is needed.</p>
+  <p><strong>Why a CNAME sometimes can't go where you want it.</strong> This is the same rule as the apex restriction below: a CNAME can't share a name with any other record. If a name already holds a TXT record (the bare domain almost always does), you can't add a CNAME at that name. That's also why CNAME-based verification uses its own dedicated subdomain instead of the root.</p>
+  <p><strong>Two practical details.</strong> A TXT value is stored as one or more strings of up to 255 characters each, which are joined when read. That's why long DKIM keys show up split into quoted chunks. A CNAME holds exactly one hostname. And when a TXT record is used for ownership verification, leave it in place after the check passes. Some services, Google Search Console among them, re-check periodically and drop your verification if the record disappears. One more email trap: a domain may publish only <em>one</em> SPF record (<code>v=spf1 …</code>). Adding a second for a new email service, instead of merging both into the existing one, makes SPF fail for both services.</p>
+
   <h2>Why "it hasn't updated yet" is usually true, not an excuse</h2>
   <p>DNS records are cached at multiple layers — your own device, your router, your ISP's resolver, public resolvers like Google's or Cloudflare's — each for a duration set by that record's TTL (time to live). A change made at the registrar or DNS provider isn't instantly visible everywhere; every cache holding the old value needs to expire first, which is exactly why the same lookup can return different, seemingly contradictory results depending on where and when it's run.</p>
+  <p>No record type propagates faster than another. A TXT, a CNAME, and an A record with the same TTL behave the same way. A brand-new name has a head start, because nobody has cached it yet. The exception is a name someone looked up <em>before</em> you created it, including the service's own "Verify" button clicked too early. Resolvers cache the "this name doesn't exist" answer for the zone's negative-caching time (taken from its SOA record, often anywhere from a few minutes to an hour). Until that expires, the new record looks missing even though it's there. Add the record first, wait a few minutes, then click verify.</p>
 
   <h2>Check it yourself</h2>
   <p>FreeToolDev's <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Bulk Lookup tool</a> checks A, AAAA, MX, TXT, and NS records for a whole list of domains at once, and shows your own current public IP address instantly at the top of the page — no code, no separate "what's my IP" search needed.</p>

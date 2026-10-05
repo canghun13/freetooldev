@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bulk Barcode Generator — UPC, EAN, Code128 | FreeToolDev</title>
-<meta name="description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. No upload, no account. Download as a ZIP.">
+<meta name="description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. PNG or print-ready SVG, downloaded as a ZIP. No upload, no account.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://freetooldev.com/tools/barcode-batch.html">
 <meta property="og:title" content="Bulk Barcode Generator — UPC, EAN, Code128 | FreeToolDev">
-<meta property="og:description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. No upload, no account. Download as a ZIP.">
+<meta property="og:description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. PNG or print-ready SVG, downloaded as a ZIP. No upload, no account.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Bulk Barcode Generator — UPC, EAN, Code128 | FreeToolDev">
-<meta name="twitter:description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. No upload, no account. Download as a ZIP.">
+<meta name="twitter:description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. PNG or print-ready SVG, downloaded as a ZIP. No upload, no account.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/tools/barcode-batch.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -81,6 +81,14 @@ ITEM-00123"></textarea>
           </select>
         </div>
         <div>
+          <label>Output</label>
+          <select id="output">
+            <option value="png" selected>PNG — screen size</option>
+            <option value="png4">PNG — large, for print</option>
+            <option value="svg">SVG — vector, any size</option>
+          </select>
+        </div>
+        <div>
           <label>Show text under barcode</label>
           <select id="showText">
             <option value="true" selected>Yes</option>
@@ -94,7 +102,7 @@ ITEM-00123"></textarea>
         <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download all as ZIP</button>
       </div>
       <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
-      <p style="margin-top:14px; font-size:0.85rem; color:#5a6472;">Up to 100 codes per batch — this keeps rendering fast and the tab responsive. Codes that don't fit the selected format are skipped and listed below the results with the reason (wrong length, non-numeric, or a check digit that doesn't match). If your EAN list has 12 digits (or your UPC list 11) because the check digit was never added, choose <strong>Missing — calculate it</strong>.</p>
+      <p style="margin-top:14px; font-size:0.85rem; color:#5a6472;">Up to 100 codes per batch — this keeps rendering fast and the tab responsive. Codes that don't fit the selected format are skipped and listed below the results with the reason (wrong length, non-numeric, or a check digit that doesn't match). If your EAN list has 12 digits (or your UPC list 11) because the check digit was never added, choose <strong>Missing — calculate it</strong>. Numbers that look damaged by a spreadsheet (a dropped leading zero, <code>4.00638E+12</code>) are called out by name. For printing, pick <strong>SVG</strong> or <strong>PNG — large</strong>.</p>
     </div>
 
     <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
@@ -110,7 +118,7 @@ ITEM-00123"></textarea>
     <p>UPC-A is the 12-digit format used on retail products in the US and Canada. EAN-13 is the international equivalent (13 digits) used almost everywhere else, and is also what most UPC-A codes are stored as once padded with a leading zero. Code128 is different in kind — it isn't tied to a fixed digit count or a retail product-numbering scheme, and can encode any alphanumeric string, which makes it the right choice for internal codes, asset tags, or anything that isn't a registered retail product number.</p>
 
     <h2>How it works</h2>
-    <p>Each barcode is rendered locally using canvas-based encoding (via the open-source JsBarcode library) — the same fundamental technique any barcode generator uses, just running entirely on your device instead of a server. You can confirm nothing is uploaded by checking your browser's Network tab while a batch runs. See <a href="/blog/bulk-barcode-use-cases.html">this post</a> for when generating dozens or hundreds at once actually comes up in practice, beyond one-off product labels.</p>
+    <p>Each barcode is rendered locally (via the open-source JsBarcode library) — to a canvas for PNG output, or as SVG vector markup — the same fundamental technique any barcode generator uses, just running entirely on your device instead of a server. You can confirm nothing is uploaded by checking your browser's Network tab while a batch runs. See <a href="/blog/bulk-barcode-use-cases.html">this post</a> for when generating dozens or hundreds at once actually comes up in practice, beyond one-off product labels.</p>
 
     <h2>Limits</h2>
     <p>Up to 100 codes per batch. EAN-13 and UPC-A require the correct digit count and a valid checksum digit at the end — codes that don't validate are skipped and listed separately, each with the reason, rather than silently producing a broken barcode, since a barcode that fails to scan at checkout is a worse outcome than an obvious error message. Spaces and hyphens inside EAN/UPC numbers (<code>0 36000 29145 2</code>, <code>036000-291452</code>) are stripped before checking.</p>
@@ -124,6 +132,10 @@ ITEM-00123"></textarea>
     <p>Yes — choose <strong>Missing — calculate it</strong>. Enter 12 digits per line for EAN-13 or 11 for UPC-A. The check digit is the standard GS1 mod-10: counting from the rightmost digit, multiply alternately by 3 and 1, add the results, and the check digit is whatever brings the sum up to the next multiple of 10. The downloaded file is named after the full code, so you can match each PNG back to its row. Leave the default <em>Included — validate it</em> on when your numbers are already complete: a wrong last digit is then caught as a probable typo instead of being quietly replaced.</p>
     <h3>Why did some of my codes get skipped?</h3>
     <p>For EAN-13 and UPC-A, a code is skipped if it isn't purely numeric, isn't the exact expected length, or fails the format's built-in checksum validation (the last digit is calculated from the others specifically to catch typos and transcription errors). Code128 has no such restriction and accepts any alphanumeric string. Each skipped code is listed with its reason — including, for a checksum failure, which last digit the number <em>should</em> have had.</p>
+    <h3>Which output should I pick for printed labels?</h3>
+    <p><strong>SVG</strong> if your label or design software accepts it (most do — Illustrator, Inkscape, Affinity, Canva, Word, and most label programs). It's vector, so it stays sharp at any size and you can scale it to exactly the width you need. <strong>PNG — large</strong> draws every bar 4 pixels wide, which at 300 dpi comes out close to the nominal 100% size of a retail UPC-A (a 0.33 mm narrow bar, about 37 mm across including the margins). The default <strong>PNG — screen size</strong> is fine for spreadsheets, web pages, and previews, but it's small enough that a printer has to enlarge it. Enlarging a bitmap softens bar edges, and soft edges are what make scanners hesitate. Whichever you use, scale the barcode as a whole — stretching it in one direction only changes the bar-width ratios. For retail checkout, GS1 allows roughly 80% to 200% of the nominal size.</p>
+    <h3>My codes came out of Excel and some are rejected</h3>
+    <p>Spreadsheets damage barcode numbers in two predictable ways, and the skip list names both. <strong>Leading zeros get dropped</strong>, because Excel treats the column as a number, so the UPC <code>036000291452</code> arrives as the 11-digit <code>36000291452</code>. When adding the zero back gives a valid code, the tool says so and shows the full number. <strong>Long numbers turn into scientific notation</strong> (<code>4.00638E+12</code>), and by then the real digits are gone from the cell, so no tool can recover them. In both cases the fix is in the spreadsheet: format the column as Text before pasting or importing the codes, then copy them again. <a href="/blog/excel-csv-number-mangling.html">Why Excel mangles long numbers</a> covers the details. One trap to watch for in <em>Missing — calculate it</em> mode: an 11-digit UPC that only lost its leading zero looks exactly like a UPC body that is missing its check digit. When both readings produce a valid code, the result carries a warning so you can check before printing.</p>
     <h3>Can this make EAN-128 / GS1-128 shipping labels?</h3>
     <p>No. GS1-128 (the format still widely called EAN-128 or UCC-128) looks exactly like Code128, but it begins with a special FNC1 character and carries data in Application Identifiers such as <code>(01)</code> for a GTIN or <code>(17)</code> for an expiry date. The Code128 option here produces plain Code128 without FNC1, so typing <code>(01)…</code> into it gives you a barcode that scans but that a GS1 receiving system won't parse as structured data. For carton and pallet labels use GS1-aware label software. <a href="/blog/upc-vs-ean-vs-code128.html#ean-128">Why EAN-128 isn't an alternative to UPC</a> explains where each one belongs.</p>
 </section>
@@ -208,31 +220,46 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Returns { ok:true, code:<full code>, added:<bool> } or { ok:false, reason:<string> }
+  function isComplete(d, len) {
+    return d.length === len && /^\d+$/.test(d) && checkDigit(d.slice(0, -1)) === parseInt(d.slice(-1), 10);
+  }
+
+  // Returns { ok:true, code, added, warn } or { ok:false, reason }
   function prepare(code, format, mode) {
-    if (format === 'CODE128') return { ok: true, code: code, added: false };
+    if (format === 'CODE128') return { ok: true, code: code, added: false, warn: '' };
     var name = format === 'EAN13' ? 'EAN-13' : 'UPC-A';
     var full = format === 'EAN13' ? 13 : 12;
     var digits = code.replace(/[\s-]/g, '');
+    if (/^\d+([.,]\d+)?e\+?\d+$/i.test(digits)) return { ok: false, reason: 'looks like spreadsheet scientific notation (e.g. 4.00638E+12) — the real digits were already rounded away; re-export the column formatted as Text' };
     if (!/^\d+$/.test(digits)) return { ok: false, reason: 'contains non-digit characters (' + name + ' is digits only — use Code128 for letters)' };
     if (mode === 'calc') {
       if (digits.length !== full - 1) {
         var r = 'has ' + digits.length + ' digits — expected ' + (full - 1) + ' without the check digit';
         if (digits.length === full) r += ' (looks complete already — switch to "Included — validate it")';
+        else if (format === 'EAN13' && digits.length === 11) r += ' (11 digits is a UPC-A without its check digit — switch format to UPC-A)';
         return { ok: false, reason: r };
       }
-      return { ok: true, code: digits + checkDigit(digits), added: true };
+      var warn = '';
+      if (format === 'UPC' && isComplete('0' + digits, 12)) warn = 'Check: 0' + digits + ' is also a complete, valid UPC-A. If this list came from a spreadsheet, the leading zero may have been dropped.';
+      else if (format === 'EAN13' && isComplete(digits, 12)) warn = 'Check: this is also a complete, valid UPC-A. If it is one, use the UPC-A format instead of calculating.';
+      return { ok: true, code: digits + checkDigit(digits), added: true, warn: warn };
     }
     if (digits.length !== full) {
       var reason = 'has ' + digits.length + ' digits — ' + name + ' needs ' + full;
-      if (format === 'EAN13' && digits.length === 12) reason += ' (a 12-digit code is either a UPC-A — switch format — or an EAN-13 missing its check digit — choose "Missing — calculate it")';
+      if (format === 'UPC' && isComplete('0' + digits, 12)) reason += ' (0' + digits + ' is a valid UPC-A — the leading zero was probably dropped by a spreadsheet)';
+      else if (format === 'EAN13' && digits.length === 12 && isComplete(digits, 12)) reason += ' (this is a complete, valid UPC-A — switch format to UPC-A; as an EAN-13 the same code is 0' + digits + ')';
+      else if (format === 'EAN13' && digits.length === 11 && isComplete('0' + digits, 12)) reason += ' (0' + digits + ' is a valid UPC-A — the leading zero was probably dropped by a spreadsheet; switch format to UPC-A)';
+      else if (format === 'EAN13' && digits.length === 12) reason += ' (a 12-digit code is either a UPC-A — switch format — or an EAN-13 missing its check digit — choose "Missing — calculate it")';
       else if (format === 'UPC' && digits.length === 13) reason += ' (13 digits is EAN-13 — switch format)';
+      else if (format === 'EAN13' && digits.length === 11) reason += ' (11 digits is usually a UPC-A without its check digit — switch to UPC-A and choose "Missing — calculate it")';
       else if (digits.length === full - 1) reason += ' (check digit missing? choose "Missing — calculate it")';
       return { ok: false, reason: reason };
     }
     var body = digits.slice(0, -1), last = parseInt(digits.slice(-1), 10), want = checkDigit(body);
     if (last !== want) return { ok: false, reason: 'check digit is ' + last + ' but should be ' + want + ' — likely a typo somewhere in the number' };
-    return { ok: true, code: digits, added: false };
+    return { ok: true, code: digits, added: false, warn: '' };
   }
+
 
   generateBtn.addEventListener('click', function () {
     var lines = itemsInput.value.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
@@ -245,6 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var format = document.getElementById('format').value;
     var showText = document.getElementById('showText').value === 'true';
     var checkMode = document.getElementById('checkMode').value;
+    var output = document.getElementById('output').value;
 
     barcodeGrid.innerHTML = '';
     errorList.innerHTML = '';
@@ -262,25 +290,36 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       var code = prep.code;
 
-      var canvas = document.createElement('canvas');
+      var dataUrl, ext, svgText = null;
+      var opts = { format: format, displayValue: showText, margin: 10, background: '#ffffff' };
+      if (output === 'png4') { opts.width = 4; opts.height = 200; opts.fontSize = 40; opts.margin = 20; }
       try {
-        JsBarcode(canvas, code, {
-          format: format,
-          displayValue: showText,
-          margin: 10
-        });
+        if (output === 'svg') {
+          var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          JsBarcode(svg, code, opts);
+          svgText = new XMLSerializer().serializeToString(svg);
+          // Some serializers emit xmlns twice (JsBarcode also sets it as an attribute) — duplicates make the file invalid XML
+          svgText = svgText.replace(/^(<svg\b[^>]*?\sxmlns="[^"]*")([^>]*?)\sxmlns="[^"]*"/, '$1$2');
+          if (!/^<svg\b[^>]*\sxmlns=/.test(svgText)) svgText = svgText.replace(/^<svg\b/, '<svg xmlns="http://www.w3.org/2000/svg"');
+          dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgText);
+          ext = '.svg';
+        } else {
+          var canvas = document.createElement('canvas');
+          JsBarcode(canvas, code, opts);
+          dataUrl = canvas.toDataURL('image/png');
+          ext = '.png';
+        }
       } catch (e) {
         errors.push({ code: input, reason: 'could not be encoded in this format' });
         return;
       }
 
-      var dataUrl = canvas.toDataURL('image/png');
       var base = slugify(code);
       var name = base, n = 2;
       while (usedNames[name]) { name = base + '-' + n; n++; }
       usedNames[name] = true;
-      var filename = name + '.png';
-      lastResults.push({ name: filename, dataUrl: dataUrl });
+      var filename = name + ext;
+      lastResults.push({ name: filename, dataUrl: dataUrl, svg: svgText });
 
       var cell = document.createElement('div');
       cell.className = 'file-row ready';
@@ -291,6 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '<img src="' + dataUrl + '" style="width:100%; max-width:200px; height:auto; margin-bottom:8px; background:#fff; padding:6px; border:1px solid var(--paper-dim);" alt="Barcode for ' + esc(code) + '">' +
         '<span class="fname" style="width:100%; margin-bottom:8px;">' + esc(code) + '</span>' +
         (prep.added ? '<span style="display:block; font-size:0.75rem; color:#1f6b41; margin-bottom:8px;">check digit ' + code.slice(-1) + ' added</span>' : '') +
+        (prep.warn ? '<span style="display:block; font-size:0.75rem; color:#8a5a00; margin-bottom:8px; text-align:left;">' + esc(prep.warn) + '</span>' : '') +
         '<a class="btn btn-outline" style="padding:6px 12px; font-size:0.72rem;" href="' + dataUrl + '" download="' + filename + '">Download</a>';
       barcodeGrid.appendChild(cell);
     });
@@ -306,6 +346,7 @@ document.addEventListener('DOMContentLoaded', function () {
   downloadZipBtn.addEventListener('click', function () {
     var zip = new JSZip();
     lastResults.forEach(function (r) {
+      if (r.svg !== null && r.svg !== undefined) { zip.file(r.name, r.svg); return; }
       var base64 = r.dataUrl.split(',')[1];
       zip.file(r.name, base64, { base64: true });
     });

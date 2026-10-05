@@ -1,6 +1,8 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-09-28 (**주간 데이터 세션 — 보강 2건(바코드 클러스터), 신규 0건.** Google 클릭 14→14(보합), 40위 이내 쿼리 18 보합, 커버리지 변화 0(발견됨-미색인 18 + 크롤링됨-미색인 1, 목록 동일). **Bing 클릭 5→7, 신규 2건 모두 `tools/barcode-batch.html`**(`bulk barcode generator ean-13` 5위, `bulk download barcodes from ean numbers` 2위) + GA4 **bing/organic 6이 google/organic 5를 처음 추월**. 조치: (1) 바코드 툴에 **체크디짓 계산 모드 + 스킵 사유 표시** — 12자리 EAN(체크디짓 없음)이 사유 없이 스킵되던 결함 수정, (2) `upc-vs-ean-vs-code128` 보강(703→1564단어) — Bing 1~9위 쿼리군(EAN-128 or UPC / 눈으로 구분 / Code 128과 비슷한 포맷 / 소매점 재고)에 본문이 한 줄도 답하지 않던 공백. 전체 87파일 = sitemap 87 = llms.txt 87.)
+마지막 업데이트: 2026-10-05 (**주간 데이터 세션 — 보강 2건, 신규 0건.** **바코드 툴이 사이트 최대 Bing 페이지가 됐다: 9→82노출, 클릭 2→5**(6.2위), Bing 전체 클릭 7→10. 9/28 체크디짓 보강 1주 만이다. Google 클릭 14→16 — **`excel-csv-number-mangling` 첫 Google 클릭(20.3위)**, 2회 보강 후 5주 연속 순위 상승 끝에 나왔다(48항 검증). 커버리지 목록 변화 0. 조치: (1) 바코드 툴에 **출력 형식(PNG / 인쇄용 큰 PNG / SVG)** + **스프레드시트 손상 감지**(앞자리 0 탈락, 4.00638E+12 지수표기) + 계산 모드 오판 경고, (2) `dns-records-explained`에 **"CNAME vs TXT: 어느 쪽, 둘 다 필요?"** 섹션(Bing 최다 쿼리군인데 본문에 없었음) + negative caching. **9/14 이후 이 글의 meta description이 내부 큰따옴표로 잘려 있던 버그도 발견·수정.** 전체 87파일 = sitemap 87 = llms.txt 87.)
+
+[이전] 2026-09-28 (**주간 데이터 세션 — 보강 2건(바코드 클러스터), 신규 0건.** Google 클릭 14→14(보합), 40위 이내 쿼리 18 보합, 커버리지 변화 0(발견됨-미색인 18 + 크롤링됨-미색인 1, 목록 동일). **Bing 클릭 5→7, 신규 2건 모두 `tools/barcode-batch.html`**(`bulk barcode generator ean-13` 5위, `bulk download barcodes from ean numbers` 2위) + GA4 **bing/organic 6이 google/organic 5를 처음 추월**. 조치: (1) 바코드 툴에 **체크디짓 계산 모드 + 스킵 사유 표시** — 12자리 EAN(체크디짓 없음)이 사유 없이 스킵되던 결함 수정, (2) `upc-vs-ean-vs-code128` 보강(703→1564단어) — Bing 1~9위 쿼리군(EAN-128 or UPC / 눈으로 구분 / Code 128과 비슷한 포맷 / 소매점 재고)에 본문이 한 줄도 답하지 않던 공백. 전체 87파일 = sitemap 87 = llms.txt 87.)
 
 [이전] 2026-09-22 (**주간 데이터 세션 — 조치 2건(같은 주제), 신규 0건.** Google 클릭 13→14, **Bing 클릭 2→5**. **이번 주 최대 소식: 39항 니치 페이지가 처음으로 실클릭을 냈다** — `package-json-version-checker` Google 7.1위 첫 클릭, `which-api-fields-are-optional` Bing 1위 클릭. 39항으로 만든 3개 중 2개가 발행 3~4주 만에 클릭. 조치는 **`why-merged-pdf-is-bigger` 의도 불일치 교정** — Google 미색인이지만 Bing 1~8위 쿼리 10여 개+클릭 1건을 가진 페이지인데, 쿼리가 전부 "병합 후 한 페이지가 크게/작게 보임(페이지 물리 크기)"이었고 본문은 100% 파일 용량 얘기였다. 72ppi 가정→300/72=4.17배 메커니즘과 진단·수정법 추가(1087→1731단어) + 툴 FAQ. **발견됨-미색인 21→18**, 풀린 핵심 툴이 하필 8/18 실험의 무링크 대조군(pdf-merge-compress) — 41항 추가 증거. chatgpt 유입은 4주 만에 끊김. 전체 87파일 = sitemap 87 = llms.txt 87.)
 
@@ -250,6 +252,34 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-10-05 세션 — 데이터 재확인 및 조치 사항**:
+
+- **GitHub**: 토큰 없이 `add_repo`(세션 연결)로 진행 — 2번 절차대로 작동.
+- **Google**: 클릭 14→**16**, 노출 6780, 쿼리 625, 40위 이내 18→**22**. 신규 클릭: **`blog/excel-csv-number-mangling.html` 첫 클릭(44노출/20.25위)** — 8/31·9/07 2회 보강 후 29.2→27.2→26.6→23.2→20.3위로 5주 연속 상승하다 클릭. 그 외 `tools/index`(6.9위), `about`(4.4위). 상승: `line-diff-vs-character-diff` 38.8→20.3, `inline-svg-vs-img-vs-css-background` 33.0→26.9.
+  - **⚠️ 성과 데이터에는 커버리지상 '발견됨-미색인'인 페이지 3개가 노출로 처음 등장**: `sitemap-priority-changefreq`(50노출/56.8위, 쿼리 `sitemap priority` 7위), `yaml-anchors-aliases`(11노출/11.3위), `static-vs-dynamic-qr-codes`(7/78위). 커버리지 리포트(목록 9/28과 동일, 18+1)가 지연된 것으로 보임. **색인 판정은 사용자가 준 커버리지 파일 기준이므로 이번엔 "미색인 18+1 유지"로 기록**, 다음 주 커버리지에서 빠지는지 확인.
+- **Bing**: 클릭 7→**10**, 노출 합 약 370.
+  - **★ `tools/barcode-batch.html` 9→82노출 / 클릭 2→5 / 6.22위 — 사이트 최대 Bing 페이지.** 9/28 체크디짓 보강 1주 후. 새 클릭 쿼리: `how to create bulk 128 upc barcodes at once free online`(1위), `generate 128 barcodes numbers list`(1위), `bulk download barcodes`(1위). 헤드 `bulk barcode generator` 14노출/7.8위(클릭 0), `bulk barcode 128 generator` 8.5위, `batch barcode generator` 8.7위, `upc-a batch barcode image generator` 8위, `generate 11 numbers eancode` 8위, 경쟁사명 쿼리(`izitool`, `itself tools`, `barcode factory`)도 우리에게 노출.
+  - `upc-vs-ean-vs-code128`(9/28 보강): 11→13노출/4.38위, 클릭 0 — 1주차라 판정 보류.
+  - DNS(3주차): 28→30노출/6.33위, **클릭 0 계속** → 아래 조치 2.
+  - PDF: 29노출/3.24위, 클릭 1 유지.
+- **GA4(9/07~10/04)**: bing/organic 8 > google/organic 4(2주 연속 Bing 우위). 바코드 툴 이탈률 0.78→**0.44**(참여 개선, 표본 8). chatgpt·copilot 이번 기간 없음.
+- **수익화**: 9-1-1 조건 미달. 보고에서 제외.
+
+**2026-10-05 세션 조치 내역**:
+
+1. **`tools/barcode-batch.html` 2차 기능 보강(50항 적용).**
+   - **출력 형식 선택**: `PNG — screen size`(기존) / `PNG — large, for print`(바 1개=4px, 높이 200 — 300dpi에서 UPC-A 공칭 100% 크기(협폭 바 0.33mm)에 근접) / `SVG — vector`. 경쟁 상위 벌크 툴들(bulkbarcodegenerator.pro, pdfmergely, toolkuai 등)이 PNG/SVG/PDF를 내세우는데 우리는 화면용 작은 PNG만 있었다. 기본 PNG는 인쇄 시 확대 리샘플링 → 바 경계 뭉개짐 → 스캔 실패 원인. ZIP도 선택 형식으로 묶음.
+   - **⚠️ SVG 버그 1건 사전 차단**: JsBarcode가 `xmlns`를 일반 속성으로도 넣어서 직렬화 결과에 **xmlns가 두 번** 찍혔다(=유효하지 않은 XML → 엄격한 파서/일부 편집기에서 안 열림). 정규식으로 중복 제거 + 없으면 추가. jsdom `DOMParser`로 파싱 오류 없음 확인. (jsdom에서 JsBarcode SVG 렌더는 canvas `measureText`가 필요해 스텁 필요 — 테스트 시 참고.)
+   - **스프레드시트 손상 감지**(쿼리 `generate 11 numbers eancode` + 우리 excel-csv 클러스터 연결): (a) `4.00638E+12` 같은 지수표기 → "이미 자릿수가 반올림돼 사라짐, Text 서식으로 다시 내보내라", (b) UPC 11자리인데 앞에 0을 붙이면 유효 → "스프레드시트가 앞자리 0을 지웠을 가능성, 완전한 코드는 0…", (c) EAN-13에 12자리 유효 UPC → "UPC-A로 전환, EAN-13으로는 0…", (d) EAN-13에 11자리 → UPC 계열 안내.
+   - **계산 모드 오판 경고**: 11자리 UPC 입력이 "0을 잃은 완전한 UPC"로도 유효하면 결과 칸에 주황 경고(삭제하지 않고 확인 요청). 12자리 EAN 본문이 그 자체로 유효 UPC-A이면 같은 방식으로 경고. **자동으로 고르지 않는다(50항 c).**
+   - FAQ 2개 추가: 인쇄용 출력 선택(SVG/큰 PNG, 한 방향으로만 늘리지 말 것, GS1 소매 허용 배율 약 80~200%), Excel에서 온 코드가 거부될 때(→ `excel-csv-number-mangling` 링크). description/og/twitter/llms.txt에 "PNG or print-ready SVG" 반영.
+   - jsdom 검증(실제 JsBarcode 3.12.1 로드): 위 모든 케이스 + 큰 PNG 옵션 전달 + SVG 프리뷰·ZIP 파일명/내용·xmlns 1개·파싱 OK.
+2. **`blog/dns-records-explained.html` 보강(약 1223→1754단어) — 3주 클릭 0의 원인이 CTR이 아니라 49항 불일치였다.** Bing 쿼리 원문을 다시 읽으니 최다군이 전부 **"CNAME vs TXT"(인증/이메일 맥락)**: `cname vs txt record`(5노출), `txt record or cname which is better for dns`, `do i need both cname and txt record or just one`, `dns txt records vs cname for dcv`, `cname vs txt record unterschied e-mail`, `cname vs txt record storage`, `a record versus txt versus cname which is fastest propogation`. 본문은 레코드별 설명만 있고 **둘을 맞붙인 섹션이 없었다.**
+   - 추가: "CNAME vs TXT: which one, and do you need both?" — TXT는 값을 게시 / CNAME은 이름을 서비스에 위임(키 로테이션을 서비스가 함 → M365 DKIM이 CNAME인 이유), 대안으로 제시되면 하나만 / 별도 단계면 각각 필요, CNAME 공존 불가 규칙(기존 apex 섹션과 연결), TXT 문자열 255자 단위 분할 vs CNAME 호스트명 1개, 인증 TXT는 지우지 말 것(Search Console 재확인), SPF는 이름당 1개만(두 개면 둘 다 실패). 전파 섹션에 **negative caching**(미리 Verify 누르면 '없음' 응답이 SOA 기반 시간만큼 캐시) — "어느 레코드가 빨리 전파되나"에 대한 답.
+   - **🐞 발견: 9/14 보강 때 넣은 meta description에 큰따옴표(`"DNS vs zone vs record"`)가 들어가 `content="..."` 속성이 `why ` 에서 잘려 있었다(meta/og/twitter 3곳).** 3주 동안 검색결과 스니펫이 깨진 상태였을 가능성 — 클릭 0의 일부 원인일 수 있음. 따옴표 없는 새 description으로 교체. **검증 스위트에 "meta content 내부 따옴표" 검사 추가(아래 51항).**
+3. **sitemap lastmod**: 두 파일만 2026-10-05. 최다 날짜 2026-07-20 = 20/87(23%).
+4. **신규 툴 0개, 신규 글 0개.** 바코드 툴이 1주 만에 Bing 노출 9배 + 클릭원이 된 상황이라 같은 페이지 2차 보강이 수익 관점 최우선(판매자/소매 = 상업 의도 쿼리).
 
 **2026-09-28 세션 — 데이터 재확인 및 조치 사항**:
 
@@ -757,10 +787,22 @@
 
 49. **(신규, 2026-09-22) 보강 대상을 고를 때는 순위표가 아니라 Bing 쿼리 원문을 한 줄씩 읽을 것 — "제목은 맞는데 뜻이 다른" 불일치가 가장 큰 기회다.** `why-merged-pdf-is-bigger`는 제목("Bigger (or Smaller)")이 쿼리와 단어까지 일치해서 36항 체크를 통과할 것처럼 보였지만, 쿼리 10여 개를 읽어보니 **전부 "화면에서 페이지가 크게 보임"(물리 크기)** 이었고 본문은 **전부 "파일 용량"(바이트)** 이었다. Bing이 1위에 올려주고 클릭까지 났는데도 본문은 그 질문에 한 줄도 답하지 않고 있었다. **단어 일치 ≠ 의도 일치.** 특히 bigger/smaller/size/large 같은 다의어가 제목에 있는 페이지는 쿼리를 반드시 원문으로 확인할 것. Bing 쿼리는 문장형이 많아서 의도가 GSC보다 훨씬 잘 드러난다.
 50. **(신규, 2026-09-28) 툴 페이지의 Bing 클릭 쿼리는 "사용자가 들고 오는 입력 데이터의 형태"를 드러낸다 — 글이 아니라 툴 코드를 먼저 읽을 것.** `bulk download barcodes from ean numbers`(클릭)를 보고 툴 코드를 확인하니, 벌크 사용자가 가장 흔히 가진 **체크디짓 없는 12자리 EAN 목록**이 사유 표시 없이 스킵되고 있었다. 순위·본문만 보면 페이지는 멀쩡해 보였다. **툴 페이지에 클릭/상위 쿼리가 붙으면: (a) 쿼리에 나온 입력 형태(자릿수, 구분자, 파일 형식)를 실제로 넣어보고, (b) 실패 시 이유를 알려주는지, (c) 모호한 입력을 조용히 "고치지" 않는지 확인할 것.** 모호하면(12자리 = 완성된 UPC-A일 수도, 체크디짓 빠진 EAN일 수도) 자동 추정 말고 옵션으로 사용자에게 고르게 한다.
+51. **(신규, 2026-10-05) HTML 속성값에 큰따옴표를 넣지 말 것 — 검증 스위트에 `<meta ... content="...">` 내부 따옴표 검사를 반드시 포함.** 9/14 DNS 보강 때 description에 `"DNS vs zone vs record"`를 그대로 넣어 meta/og/twitter description 3곳이 `why `에서 잘린 채 3주간 방치됐다. 기존 스위트(태그 균형·링크·JS)로는 안 잡힌다. 검사식: `re.search(r'<meta[^>]+content="[^"]*"[^\s>/]', html)`. description 안에서 인용이 필요하면 따옴표 대신 표현을 바꾸거나 `&quot;`/곡선 따옴표를 쓸 것.
 
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-10-05 세션 기준 다음 할 일**
+
+- **A. 바코드 툴 — 상업 클러스터 1순위.** Bing 82노출/5클릭/6.2위에서 (a) 헤드 `bulk barcode generator`(7.8위, 클릭 0)가 5위 안으로 오는지, (b) 클릭이 유지되는지. 다음 보강 후보(여유 있을 때, 50항 순서로): **CSV/스프레드시트 2열 붙여넣기**(코드 + 파일명/라벨 — 탭으로 구분된 줄을 지금은 Code128이 탭까지 인코딩함), **라벨 시트 PDF**(경쟁사 공통 기능 — 다만 jsPDF 등 신규 의존성·인쇄 정렬 검증이 필요해 렌더 확인 가능한 세션에서만), 100개 한도는 쿼리(`bulk barcode generator 100`)와 일치하므로 유지.
+- **B. DNS 보강 판정(Bing).** CNAME vs TXT 섹션 + description 버그 수정 후 클릭이 나오는지. 이번엔 원인 두 개를 동시에 고쳤으므로 클릭이 나와도 어느 쪽 효과인지 분리 못 한다는 점을 기록해 둘 것.
+- **C. 커버리지 지연 확인.** 성과 데이터에 노출이 잡힌 `sitemap-priority-changefreq`·`yaml-anchors-aliases`·`static-vs-dynamic-qr-codes`가 다음 커버리지 파일에서 '발견됨-미색인'에서 빠지는지.
+- **D. upc-vs-ean 보강(9/28) 2주차** — Bing 4.4위, 클릭 여부.
+- **E. 50항 다음 적용 대상: `tools/qr-batch.html`**(Bing 10노출/4.2위 — `qr generator list of urls batch` 1위, `qr code generator from list`, `i need 80 qr codes list for numbers list`). 쿼리 속 입력(번호 목록, URL 목록)을 실제로 넣어볼 것. 그다음 `rss-generator`.
+- **F. 신규 제작 세션은 39항 니치로**(유지).
+- **G. 미색인은 온사이트로 건드리지 말 것(41항).**
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-09-28 세션 기준 다음 할 일**
 
