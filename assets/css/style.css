@@ -411,6 +411,11 @@ label { display: block; font-size: 0.82rem; font-weight: 600; color: #45505c; ma
 .toolbar { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
 .opt-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
 .opt-row > div { flex: 1; min-width: 140px; }
+/* Rows with several long option labels: each control gets at least 200px, so a phone
+   shows one per row instead of two squeezed side by side with truncated text. */
+.opt-row-wide { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.opt-row-wide > div { min-width: 0; }
+.opt-row-wide label { white-space: nowrap; }
 
 .result-empty { color: #8a8578; font-size: 0.88rem; font-family: var(--font-display); }
 

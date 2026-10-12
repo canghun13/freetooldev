@@ -281,6 +281,7 @@
    - jsdom: 날짜/타임스탬프/URL만/탭/날짜 없음/잘못된 날짜/구분자 없음/상대 URL/특수문자 이스케이프 → 결과 XML을 DOMParser로 파싱해 오류 없음, 항목 7개 확인.
 3. **신규 0개 — 검토 후 보류**: `generate ean checksum`(Bing 8위) 보고 벌크 체크디짓 계산기 단독 페이지를 검토했으나 **Morovia가 이미 벌크 버전 보유 + 단일 계산기 다수**, 우리 바코드 툴 계산 모드와 카니발리제이션 위험 → 만들지 않음.
 4. **sitemap lastmod**: 두 툴만 2026-10-12. 최다 날짜 2026-07-20 = 20/87(23%).
+5. **(사용자 지적 후 추가) 바코드 툴 옵션 행 모바일 깨짐 수정.** 셀렉트 4개가 `.opt-row`(flex, min-width 140px)에 2열로 끼어 옵션 문구가 잘리고("Code 128 (any", "Included — va") 라벨이 두 줄로 꺾여 칸 높이가 어긋났다. 10/05에 셀렉트를 3→4개로 늘리면서 생긴 것 — **당시 모바일 렌더 확인을 안 했다.** `style.css`에 범위 한정 클래스 `.opt-row-wide`(grid, `minmax(220px,1fr)`, 라벨 nowrap) 추가 → 375px 1열 / 768px 2×2 / 1280px 4열. 라벨 축약("Check digit (EAN/UPC)", "Text under barcode"). Playwright(`/opt/pw-browsers/chromium-1194/chrome-linux/chrome`를 executablePath로)로 3개 폭 스크린샷 확인, 가로 스크롤 없음. **원칙: 툴 UI에 컨트롤을 추가한 세션은 375px 스크린샷까지 찍고 끝낼 것.**
 
 **2026-10-05 세션 — 데이터 재확인 및 조치 사항**:
 
