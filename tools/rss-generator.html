@@ -51,6 +51,7 @@
     <span class="eyebrow">Content</span>
     <h1>RSS Feed Generator</h1>
     <p>Fill in your feed details and add items in bulk — one line per item — to generate a valid RSS 2.0 XML feed. No account, no scraping — this builds a feed from items you already know, for a site you already control.</p>
+    <p style="font-size:0.95rem;">Starting from a website URL instead of a list? The <a href="/tools/site-crawler.html" style="color:var(--amber); text-decoration:underline; text-underline-offset:2px;">Site Crawler</a> reads your site's pages and generates the <code>rss.xml</code> for you.</p>
   </div>
 </section>
 
@@ -68,12 +69,13 @@
     <div class="workspace-grid workspace-grid-2col">
       <div class="panel">
         <h3>Items (batch)</h3>
-        <label>One item per line: Title | URL | YYYY-MM-DD (or a full timestamp)</label>
+        <label>One item per line: Title | URL | YYYY-MM-DD (or a full timestamp). Tabs from a spreadsheet work too, and a line with only a URL becomes an item titled with that URL.</label>
         <textarea id="items" placeholder="Hello World | https://example.com/hello | 2026-07-01
 Second Post | https://example.com/second | 2026-06-28"></textarea>
         <div class="toolbar">
           <button class="btn btn-amber" id="genBtn">Generate feed →</button>
         </div>
+        <div id="rssStatus" style="margin-top:14px; font-size:0.85rem; color:#2c3540;"></div>
       </div>
       <div class="panel">
         <h3>rss.xml</h3>
@@ -90,7 +92,8 @@ Second Post | https://example.com/second | 2026-06-28"></textarea>
 <section class="section-navy">
   <div class="wrap prose" style="max-width:720px;">
     <h2>Format reference</h2>
-    <p>Each line needs three parts separated by a pipe character: the item title, its URL, and a date in YYYY-MM-DD format. Lines that don't match this pattern are skipped, so a typo'd separator won't break the rest of the feed — it just silently drops that one line, which is worth double-checking your item count against your input.</p>
+    <p>Each line takes up to three parts separated by a pipe character: the item title, its URL, and a date in YYYY-MM-DD format. Two columns or three pasted from a spreadsheet (separated by tabs) work the same way, and a line that is just a URL becomes an item titled with that URL, which is handy when all you have is a list of links. The URL must be a full <code>https://</code> address. A line that doesn't fit is skipped without breaking the rest of the feed, and the status under the button tells you which line it was and why, along with the final item count.</p>
+    <p>The date is optional, and when it's missing the item simply gets no <code>&lt;pubDate&gt;</code>. The tool deliberately doesn't stamp it with today's date. If it did, every regeneration would re-date old items, and feed readers and automation triggers could treat them as new posts again.</p>
     <p>That third field also accepts a full ISO timestamp rather than a bare date — <code>2026-08-11T14:30:00Z</code>, or with a UTC offset like <code>2026-08-11T14:30:00+09:00</code> — and the generated <code>&lt;pubDate&gt;</code> will carry that exact moment instead of midnight. A plain date is fine for a feed people read; a real timestamp matters when an automation platform is watching the feed, because some triggers decide what's new by comparing item times against their last check.</p>
 
     <h2>Why static sites need this</h2>
@@ -181,22 +184,51 @@ document.addEventListener('DOMContentLoaded', function () {
     var desc = document.getElementById('feedDesc').value || '';
     var lines = document.getElementById('items').value.split('\n').filter(function (l) { return l.trim(); });
 
-    var items = lines.map(function (line) {
-      var parts = line.split('|').map(function (p) { return p.trim(); });
-      if (parts.length < 2) return '';
-      var itemTitle = parts[0];
-      var itemLink = parts[1];
-      var dateStr = parts[2] || new Date().toISOString().slice(0, 10);
-      var parsed = new Date(dateStr);
-      if (isNaN(parsed.getTime())) { parsed = new Date(); }
-      var pubDate = parsed.toUTCString();
+    var skipped = [], noDate = 0, badDate = [];
+    var items = lines.map(function (line, idx) {
+      var raw = line.trim();
+      var parts = (raw.indexOf('|') !== -1 ? raw.split('|') : raw.split('\t')).map(function (p) { return p.trim(); });
+      var itemTitle, itemLink, dateStr;
+      if (parts.length === 1) {
+        // A bare URL: use it as its own title
+        itemLink = parts[0]; itemTitle = parts[0];
+      } else {
+        itemTitle = parts[0]; itemLink = parts[1]; dateStr = parts[2];
+      }
+      if (!/^https?:\/\/\S+$/i.test(itemLink || '')) {
+        skipped.push({ n: idx + 1, line: raw, reason: parts.length === 1 ? 'no " | " separator and not a URL — expected Title | URL | date' : 'second field is not a full http(s):// URL' });
+        return '';
+      }
+      if (!itemTitle) itemTitle = itemLink;
+      var pubLine = '';
+      if (dateStr) {
+        var parsed = new Date(/^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? dateStr + 'T00:00:00Z' : dateStr);
+        if (isNaN(parsed.getTime())) badDate.push({ n: idx + 1, date: dateStr });
+        else pubLine = '    <pubDate>' + parsed.toUTCString() + '</pubDate>\n';
+      } else {
+        noDate++;
+      }
       return '  <item>\n' +
         '    <title>' + esc(itemTitle) + '</title>\n' +
         '    <link>' + esc(itemLink) + '</link>\n' +
         '    <guid>' + esc(itemLink) + '</guid>\n' +
-        '    <pubDate>' + pubDate + '</pubDate>\n' +
+        pubLine +
         '  </item>';
-    }).filter(Boolean).join('\n');
+    }).filter(Boolean);
+    var count = items.length;
+    items = items.join('\n');
+
+    var status = '<strong>' + count + ' item' + (count === 1 ? '' : 's') + ' in the feed.</strong>';
+    if (noDate || badDate.length) {
+      status += ' <span style="color:#8a5a00;">' + (noDate + badDate.length) + ' without a <code>pubDate</code>' +
+        (badDate.length ? ' (unreadable date on line ' + badDate.map(function (b) { return b.n + ': “' + esc(b.date) + '”'; }).join(', ') + ')' : '') +
+        ' — the field is optional, but feed readers sort by it, so add YYYY-MM-DD where you can.</span>';
+    }
+    if (skipped.length) {
+      status += '<div style="margin-top:8px;">Skipped ' + skipped.length + ':</div><ul style="margin:6px 0 0; padding-left:20px;">' +
+        skipped.map(function (s) { return '<li style="margin-bottom:4px;">Line ' + s.n + ': <code>' + esc(s.line.slice(0, 80)) + '</code> — ' + esc(s.reason) + '</li>'; }).join('') + '</ul>';
+    }
+    document.getElementById('rssStatus').innerHTML = status;
 
     var xml = '<?xml version="1.0" encoding="UTF-8"?>\n' +
       '<rss version="2.0">\n' +
@@ -204,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '  <title>' + esc(title) + '</title>\n' +
       '  <link>' + esc(link) + '</link>\n' +
       '  <description>' + esc(desc) + '</description>\n' +
-      items + '\n' +
+      (items ? items + '\n' : '') +
       '</channel>\n' +
       '</rss>';
 

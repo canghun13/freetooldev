@@ -1,6 +1,8 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-10-05 (**주간 데이터 세션 — 보강 2건, 신규 0건.** **바코드 툴이 사이트 최대 Bing 페이지가 됐다: 9→82노출, 클릭 2→5**(6.2위), Bing 전체 클릭 7→10. 9/28 체크디짓 보강 1주 만이다. Google 클릭 14→16 — **`excel-csv-number-mangling` 첫 Google 클릭(20.3위)**, 2회 보강 후 5주 연속 순위 상승 끝에 나왔다(48항 검증). 커버리지 목록 변화 0. 조치: (1) 바코드 툴에 **출력 형식(PNG / 인쇄용 큰 PNG / SVG)** + **스프레드시트 손상 감지**(앞자리 0 탈락, 4.00638E+12 지수표기) + 계산 모드 오판 경고, (2) `dns-records-explained`에 **"CNAME vs TXT: 어느 쪽, 둘 다 필요?"** 섹션(Bing 최다 쿼리군인데 본문에 없었음) + negative caching. **9/14 이후 이 글의 meta description이 내부 큰따옴표로 잘려 있던 버그도 발견·수정.** 전체 87파일 = sitemap 87 = llms.txt 87.)
+마지막 업데이트: 2026-10-12 (**주간 데이터 세션 — 툴 보강 2건, 신규 0건.** **Bing 클릭 10→22, 노출 약 370→670.** 바코드 툴 82→**276노출 / 5→12클릭**(6.5위), RSS 툴 56→97노출 / 1→**4클릭**(7.3위). 바코드는 3주 연속 보강 → 3주 연속 급증. Google 클릭 16→14(3개월 창 이동, 보합), 40위 이내 쿼리 22→28. **발견됨-미색인 18→13** — 지난주 성과 데이터에 노출이 먼저 잡혔던 3개를 포함해 5개 풀림(커버리지 리포트 지연 가설 확인). 조치: (1) 바코드 — title/description을 "Code 128"(띄어쓰기)로 + **스프레드시트 2열(코드+이름) 붙여넣기**(탭을 바코드에 넣지 않고 이름을 파일명으로), (2) RSS — **URL만 있는 줄·탭 구분 허용, 건너뛴 줄 사유 표시, 날짜 없을 때 오늘 날짜로 채우던 동작 제거**, 상단에 "URL로 시작하면 Site Crawler" 안내. 전체 87파일 = sitemap 87 = llms.txt 87.)
+
+[이전] 2026-10-05 (**주간 데이터 세션 — 보강 2건, 신규 0건.** **바코드 툴이 사이트 최대 Bing 페이지가 됐다: 9→82노출, 클릭 2→5**(6.2위), Bing 전체 클릭 7→10. 9/28 체크디짓 보강 1주 만이다. Google 클릭 14→16 — **`excel-csv-number-mangling` 첫 Google 클릭(20.3위)**, 2회 보강 후 5주 연속 순위 상승 끝에 나왔다(48항 검증). 커버리지 목록 변화 0. 조치: (1) 바코드 툴에 **출력 형식(PNG / 인쇄용 큰 PNG / SVG)** + **스프레드시트 손상 감지**(앞자리 0 탈락, 4.00638E+12 지수표기) + 계산 모드 오판 경고, (2) `dns-records-explained`에 **"CNAME vs TXT: 어느 쪽, 둘 다 필요?"** 섹션(Bing 최다 쿼리군인데 본문에 없었음) + negative caching. **9/14 이후 이 글의 meta description이 내부 큰따옴표로 잘려 있던 버그도 발견·수정.** 전체 87파일 = sitemap 87 = llms.txt 87.)
 
 [이전] 2026-09-28 (**주간 데이터 세션 — 보강 2건(바코드 클러스터), 신규 0건.** Google 클릭 14→14(보합), 40위 이내 쿼리 18 보합, 커버리지 변화 0(발견됨-미색인 18 + 크롤링됨-미색인 1, 목록 동일). **Bing 클릭 5→7, 신규 2건 모두 `tools/barcode-batch.html`**(`bulk barcode generator ean-13` 5위, `bulk download barcodes from ean numbers` 2위) + GA4 **bing/organic 6이 google/organic 5를 처음 추월**. 조치: (1) 바코드 툴에 **체크디짓 계산 모드 + 스킵 사유 표시** — 12자리 EAN(체크디짓 없음)이 사유 없이 스킵되던 결함 수정, (2) `upc-vs-ean-vs-code128` 보강(703→1564단어) — Bing 1~9위 쿼리군(EAN-128 or UPC / 눈으로 구분 / Code 128과 비슷한 포맷 / 소매점 재고)에 본문이 한 줄도 답하지 않던 공백. 전체 87파일 = sitemap 87 = llms.txt 87.)
 
@@ -252,6 +254,33 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-10-12 세션 — 데이터 재확인 및 조치 사항**:
+
+- **Google**: 클릭 16→14(3개월 창에서 7월 클릭이 빠진 것 — 페이지별로 rss-generator 5→4, 홈 4→3), 노출 6890, 쿼리 666, **40위 이내 22→28**. 상승: `line-diff-vs-character-diff` 20.3→16.2. 하락: `yaml-anchors-aliases` 11.3→25.2(색인 직후 변동).
+- **커버리지: 발견됨-미색인 18→13**, 크롤링됨-미색인 1(`upc-vs-ean-vs-code128`, 7/11 그대로). 풀린 5개: `find-broken-links-free-tool`, `rss-generator-no-account`, `sitemap-priority-changefreq`, `static-vs-dynamic-qr-codes`, `yaml-anchors-aliases`. **지난주 "성과 데이터에 먼저 노출 → 커버리지 지연" 가설이 맞았다** — 앞으로 성과 데이터에 미색인 페이지 노출이 보이면 다음 주 해제 신호로 볼 것. 여전히 온사이트 조치와 무관(41항).
+- **Bing: 클릭 10→22, 노출 합 약 670(지난주 약 370).**
+  - `tools/barcode-batch.html` **82→276노출, 5→12클릭, 6.54위.** 헤드 `bulk barcode generator` 14→34노출/6.9위/**클릭 1**. 클릭 쿼리: `bulk barcode generator free download`(2, 5.4위), `bulk ean code creator`(2, 1위), `barcode bulk`(2, 3위), `generate 128 barcodes numbers list`, `how to create bulk 128 upc barcodes at once free online`, `bulk download barcodes`, `bulk download barcodes from ean numbers`, `bulk barcode generator ean-13`. **"128" 쿼리군이 새로 두꺼워짐**: `bulk barcode generator code 128`(6, 8.5위), `bulk barcode 128 generator`(6, 7.7), `bulk barcode 128 online`(5, 10), `bulk barcode generator 128`(5, 8.4), `bulk 128`(4, 9), `online bulk barcode 128`, `free bulk barcode 128 generator`, `bulk code 128 barcode generator free` — **전부 7~10위, 클릭 0** → 조치 1.
+  - `tools/rss-generator.html` **56→97노출, 1→4클릭, 7.34위.** 클릭: `url to rss feed maker free`(2, 5위), `free rss feed generator`, `rss generator`. URL 기반 의도 쿼리가 늘어남: `free rss feed url generator`, `rss generator from url online free`, `free rss feed generator from url no signup`, `xml feed generator`, `html rss feed generator` → 조치 2.
+  - `blog/upc-vs-ean-vs-code128`(9/28 보강): 13→18노출/4.44위, 클릭 0. `what is the difference between upc-a and code 128`(7위), `diff between upc-a and code 128`(3위), `is upc code 128 same as upc-a`(4위) 등 보강 섹션과 맞는 쿼리가 늘어남. 2주차, 클릭 판정 보류.
+  - DNS(10/05 보강 1주차): 30→31노출/6.35위, 클릭 0. PDF: 29→**49노출**/3.33위, 클릭 1.
+  - 그 외 클릭: `skipped-heading-levels`(`jumping from h2 to h4` 1위), `heading-structure-checker`(`bulk heading checker` 3위), `which-api-fields-are-optional`, `json-validator`, `csv-to-json`.
+- **GA4(9/14~10/11)**: **bing/organic 16(세션 21) vs google/organic 5** — Bing이 3배. **페이지뷰 1위가 처음으로 홈이 아닌 Bulk Barcode Generator(18)**, 2위 RSS Generator(16), 홈 15. 평균 참여시간 12.0→23.5초. sellwithboost.com 리퍼럴 1건(판매자 대상 사이트 — 바코드 맥락으로 추정).
+- **수익화**: 9-1-1 조건 미달. 보고에서 제외.
+
+**2026-10-12 세션 조치 내역**:
+
+1. **`tools/barcode-batch.html` 3차 보강.**
+   - **title/og/twitter: "UPC, EAN, Code128" → "UPC, EAN-13, Code 128"**, description도 "UPC-A, EAN-13, or Code 128". 7~10위에 몰린 "128" 쿼리군은 전부 `code 128`/`128`을 띄어 쓴다 — 페이지는 전부 `Code128`로 붙여 썼다. 핵심 앞부분 "Bulk Barcode Generator"는 그대로 두고 토큰만 맞춤(최대 클릭원이라 제목 앞부분은 건드리지 않는 선). 셀렉트 옵션도 "Code 128 (any text)". 본문 나머지 `Code128` 표기는 유지(과도한 일괄 변경 회피). **다음 주 "128" 쿼리군 순위로 효과 판정.**
+   - **스프레드시트 2열 붙여넣기(50항)**: `generat barcode for a list of items` 같은 "품목 목록" 쿼리 → 엑셀/시트에서 코드+품명 두 열을 복사하면 `코드<TAB>품명`으로 들어온다. 기존 코드는 **Code 128에서 탭까지 그대로 인코딩** — 스캔하면 `SKU-0042` 뒤에 보이지 않는 탭+품명이 따라오는 바코드가 조용히 만들어졌다(50항 c 위반). 이제 첫 열만 인코딩하고 나머지는 라벨로 — 미리보기 아래 표시 + **파일명으로 사용**(`blue-mug.png`, 중복은 `-2`). 첫 열이 비면 사유와 함께 건너뜀. FAQ 1개 추가, 도입 문단·placeholder 갱신.
+   - jsdom: 탭 라벨·중복 이름·빈 칸 열·UPC+라벨+SVG·앞자리 0 탈락 케이스, 지난주 테스트 전부 재통과.
+2. **`tools/rss-generator.html` 기능 보강(50항).** 코드를 읽어보니:
+   - `|` 없는 줄은 **아무 표시 없이 삭제**됐다 → URL 목록만 붙여넣은 사용자(`rss feed generator for list`, `url to rss feed maker`)는 빈 피드를 받았다. 이제 **URL만 있는 줄 = URL을 제목으로 한 항목**, **탭 구분**(시트에서 복사) 허용, 상대경로 등 잘못된 URL과 형식 오류 줄은 **줄 번호+사유**로 표시, 최종 항목 수 표시.
+   - **날짜가 없거나 못 읽으면 "오늘"로 채우고 있었다** — 재생성할 때마다 옛 항목의 pubDate가 바뀌어 리더/Zapier가 새 글로 다시 집어갈 수 있는 구조(우리 `rss-for-automation` 글이 경고하는 바로 그 문제). 이제 **pubDate 생략**(RSS 2.0에서 선택 항목) + 몇 개가 날짜 없는지 경고. Format reference에 이유 명시.
+   - 상단에 **"웹사이트 URL로 시작한다면 Site Crawler가 rss.xml을 만들어 준다"** 한 줄(기존엔 본문 중간에만 있었음) — URL 의도 클릭자를 첫 화면에서 맞는 툴로.
+   - jsdom: 날짜/타임스탬프/URL만/탭/날짜 없음/잘못된 날짜/구분자 없음/상대 URL/특수문자 이스케이프 → 결과 XML을 DOMParser로 파싱해 오류 없음, 항목 7개 확인.
+3. **신규 0개 — 검토 후 보류**: `generate ean checksum`(Bing 8위) 보고 벌크 체크디짓 계산기 단독 페이지를 검토했으나 **Morovia가 이미 벌크 버전 보유 + 단일 계산기 다수**, 우리 바코드 툴 계산 모드와 카니발리제이션 위험 → 만들지 않음.
+4. **sitemap lastmod**: 두 툴만 2026-10-12. 최다 날짜 2026-07-20 = 20/87(23%).
 
 **2026-10-05 세션 — 데이터 재확인 및 조치 사항**:
 
@@ -792,6 +821,17 @@
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-10-12 세션 기준 다음 할 일**
+
+- **A. 바코드 "128" 쿼리군 판정(Bing).** title을 "Code 128"로 바꾼 효과 — `bulk barcode generator code 128` 등 7~10위 쿼리가 5위 안으로 오는지, 헤드 `bulk barcode generator`(6.9위/클릭 1) 유지되는지. **떨어지면 title을 되돌릴 것**(페이지 최대 클릭원이므로 손실 감수 금지).
+- **B. 바코드 다음 보강 후보**: 라벨 시트 PDF(경쟁 공통 기능, jsPDF 의존성·인쇄 정렬 검증 필요 — 렌더 확인 가능한 세션에서만), 100개 한도는 유지.
+- **C. RSS 툴 효과(Bing).** 97노출/4클릭/7.3위에서 URL 의도 쿼리(`rss generator from url`, `url to rss feed maker free`)의 클릭이 유지되는지. 다음 50항 점검 대상: **Site Crawler**(RSS 툴에서 넘어가는 사용자가 생김 — 실제로 URL 넣었을 때 rss.xml이 제대로 나오는지).
+- **D. DNS 보강 2주차 / upc-vs-ean 3주차 / PDF** — 클릭 여부(Bing).
+- **E. `tools/qr-batch.html` 50항 점검**(Bing 12노출/4.5위 — `bulk create qr codes from list of urls` 1위, `qr code generator from list`, `i need 80 qr codes list for numbers list`).
+- **F. 신규 제작 세션은 39항 니치로**(유지). 바코드 인접 단독 페이지는 카니발리제이션 검토 후에만.
+- **G. 미색인 13+1은 온사이트로 건드리지 말 것(41항).**
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-10-05 세션 기준 다음 할 일**
 

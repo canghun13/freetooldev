@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bulk Barcode Generator — UPC, EAN, Code128 | FreeToolDev</title>
-<meta name="description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. PNG or print-ready SVG, downloaded as a ZIP. No upload, no account.">
+<title>Bulk Barcode Generator — UPC, EAN-13, Code 128 | FreeToolDev</title>
+<meta name="description" content="Generate UPC-A, EAN-13, or Code 128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. PNG or print-ready SVG, downloaded as a ZIP. No upload, no account.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://freetooldev.com/tools/barcode-batch.html">
-<meta property="og:title" content="Bulk Barcode Generator — UPC, EAN, Code128 | FreeToolDev">
-<meta property="og:description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. PNG or print-ready SVG, downloaded as a ZIP. No upload, no account.">
+<meta property="og:title" content="Bulk Barcode Generator — UPC, EAN-13, Code 128 | FreeToolDev">
+<meta property="og:description" content="Generate UPC-A, EAN-13, or Code 128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. PNG or print-ready SVG, downloaded as a ZIP. No upload, no account.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Bulk Barcode Generator — UPC, EAN, Code128 | FreeToolDev">
-<meta name="twitter:description" content="Generate UPC, EAN-13, or Code128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. PNG or print-ready SVG, downloaded as a ZIP. No upload, no account.">
+<meta name="twitter:title" content="Bulk Barcode Generator — UPC, EAN-13, Code 128 | FreeToolDev">
+<meta name="twitter:description" content="Generate UPC-A, EAN-13, or Code 128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. PNG or print-ready SVG, downloaded as a ZIP. No upload, no account.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/tools/barcode-batch.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -52,7 +52,7 @@
   <div class="wrap">
     <span class="eyebrow">Batch · No-upload</span>
     <h1>Bulk Barcode Generator</h1>
-    <p>Paste a list of codes — one per line — and generate a UPC, EAN-13, or Code128 barcode for each. Everything is drawn locally on canvas; nothing is uploaded to a server, and no account is required.</p>
+    <p>Paste a list of codes — one per line, or two columns straight from a spreadsheet (code + name) — and generate a UPC-A, EAN-13, or Code 128 barcode for each, then download them all as one ZIP. Everything is drawn locally on canvas; nothing is uploaded to a server, and no account is required.</p>
   </div>
 </section>
 
@@ -62,7 +62,8 @@
       <h3>Codes (one per line)</h3>
       <textarea id="items" placeholder="012345678905
 036000291452
-ITEM-00123"></textarea>
+ITEM-00123
+SKU-0042&#9;Blue mug (tab-separated name → used as the file name)"></textarea>
 
       <div class="opt-row" style="margin-top:14px;">
         <div>
@@ -70,7 +71,7 @@ ITEM-00123"></textarea>
           <select id="format">
             <option value="EAN13">EAN-13 (13 digits)</option>
             <option value="UPC">UPC-A (12 digits)</option>
-            <option value="CODE128" selected>Code128 (any text)</option>
+            <option value="CODE128" selected>Code 128 (any text)</option>
           </select>
         </div>
         <div>
@@ -132,6 +133,8 @@ ITEM-00123"></textarea>
     <p>Yes — choose <strong>Missing — calculate it</strong>. Enter 12 digits per line for EAN-13 or 11 for UPC-A. The check digit is the standard GS1 mod-10: counting from the rightmost digit, multiply alternately by 3 and 1, add the results, and the check digit is whatever brings the sum up to the next multiple of 10. The downloaded file is named after the full code, so you can match each PNG back to its row. Leave the default <em>Included — validate it</em> on when your numbers are already complete: a wrong last digit is then caught as a probable typo instead of being quietly replaced.</p>
     <h3>Why did some of my codes get skipped?</h3>
     <p>For EAN-13 and UPC-A, a code is skipped if it isn't purely numeric, isn't the exact expected length, or fails the format's built-in checksum validation (the last digit is calculated from the others specifically to catch typos and transcription errors). Code128 has no such restriction and accepts any alphanumeric string. Each skipped code is listed with its reason — including, for a checksum failure, which last digit the number <em>should</em> have had.</p>
+    <h3>Can I paste two columns from Excel or Google Sheets?</h3>
+    <p>Yes. Select the code column and a name column next to it (code first) and paste. Each row arrives as <em>code, tab, name</em>. The tool encodes only the first column and uses the name for the downloaded file, so <code>SKU-0042</code> next to "Blue mug" becomes <code>blue-mug.png</code> in the ZIP, and the name is shown under each preview. The tab is never put into the barcode itself, which matters for Code 128. Code 128 can encode a tab character, so a tool that encodes the whole pasted line produces a barcode that scans as <code>SKU-0042</code> followed by an invisible tab and the product name. Rows with the same name get <code>-2</code>, <code>-3</code> suffixes instead of overwriting each other. If the cells came out of Excel as numbers, see the spreadsheet question below.</p>
     <h3>Which output should I pick for printed labels?</h3>
     <p><strong>SVG</strong> if your label or design software accepts it (most do — Illustrator, Inkscape, Affinity, Canva, Word, and most label programs). It's vector, so it stays sharp at any size and you can scale it to exactly the width you need. <strong>PNG — large</strong> draws every bar 4 pixels wide, which at 300 dpi comes out close to the nominal 100% size of a retail UPC-A (a 0.33 mm narrow bar, about 37 mm across including the margins). The default <strong>PNG — screen size</strong> is fine for spreadsheets, web pages, and previews, but it's small enough that a printer has to enlarge it. Enlarging a bitmap softens bar edges, and soft edges are what make scanners hesitate. Whichever you use, scale the barcode as a whole — stretching it in one direction only changes the bar-width ratios. For retail checkout, GS1 allows roughly 80% to 200% of the nominal size.</p>
     <h3>My codes came out of Excel and some are rejected</h3>
@@ -282,7 +285,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var errors = [];
     var usedNames = {};
 
-    lines.forEach(function (input) {
+    lines.forEach(function (line) {
+      // A line copied from a spreadsheet arrives as "code<TAB>name". Never encode the tab:
+      // the first column is the barcode data, the rest is a label used for the file name.
+      var cols = line.split('\t');
+      var input = cols[0].trim();
+      var label = cols.slice(1).join(' ').replace(/\s+/g, ' ').trim();
+      if (!input) { errors.push({ code: line, reason: 'first column is empty — the code must come before the name' }); return; }
       var prep = prepare(input, format, checkMode);
       if (!prep.ok) {
         errors.push({ code: input, reason: prep.reason });
@@ -314,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      var base = slugify(code);
+      var base = label ? slugify(label) : slugify(code);
       var name = base, n = 2;
       while (usedNames[name]) { name = base + '-' + n; n++; }
       usedNames[name] = true;
@@ -329,6 +338,7 @@ document.addEventListener('DOMContentLoaded', function () {
       cell.innerHTML =
         '<img src="' + dataUrl + '" style="width:100%; max-width:200px; height:auto; margin-bottom:8px; background:#fff; padding:6px; border:1px solid var(--paper-dim);" alt="Barcode for ' + esc(code) + '">' +
         '<span class="fname" style="width:100%; margin-bottom:8px;">' + esc(code) + '</span>' +
+        (label ? '<span style="display:block; width:100%; font-size:0.78rem; color:#5a6472; margin-bottom:8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + esc(label) + '</span>' : '') +
         (prep.added ? '<span style="display:block; font-size:0.75rem; color:#1f6b41; margin-bottom:8px;">check digit ' + code.slice(-1) + ' added</span>' : '') +
         (prep.warn ? '<span style="display:block; font-size:0.75rem; color:#8a5a00; margin-bottom:8px; text-align:left;">' + esc(prep.warn) + '</span>' : '') +
         '<a class="btn btn-outline" style="padding:6px 12px; font-size:0.72rem;" href="' + dataUrl + '" download="' + filename + '">Download</a>';
