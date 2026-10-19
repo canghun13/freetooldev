@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bulk Barcode Generator — UPC, EAN-13, Code 128 | FreeToolDev</title>
-<meta name="description" content="Generate UPC-A, EAN-13, or Code 128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. PNG or print-ready SVG, downloaded as a ZIP. No upload, no account.">
+<meta name="description" content="Generate UPC-A, EAN-13, or Code 128 barcodes for a whole list of codes at once — up to 100 per batch. Code 128 auto/A/B/C, check digits validated or calculated, PNG or SVG in one ZIP, or a print sheet. No upload, no account.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://freetooldev.com/tools/barcode-batch.html">
 <meta property="og:title" content="Bulk Barcode Generator — UPC, EAN-13, Code 128 | FreeToolDev">
-<meta property="og:description" content="Generate UPC-A, EAN-13, or Code 128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. PNG or print-ready SVG, downloaded as a ZIP. No upload, no account.">
+<meta property="og:description" content="Generate UPC-A, EAN-13, or Code 128 barcodes for a whole list of codes at once — up to 100 per batch. Code 128 auto/A/B/C, check digits validated or calculated, PNG or SVG in one ZIP, or a print sheet. No upload, no account.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Bulk Barcode Generator — UPC, EAN-13, Code 128 | FreeToolDev">
-<meta name="twitter:description" content="Generate UPC-A, EAN-13, or Code 128 barcodes for a whole list of codes at once — up to 100 per batch, with check digits validated or calculated for you. PNG or print-ready SVG, downloaded as a ZIP. No upload, no account.">
+<meta name="twitter:description" content="Generate UPC-A, EAN-13, or Code 128 barcodes for a whole list of codes at once — up to 100 per batch. Code 128 auto/A/B/C, check digits validated or calculated, PNG or SVG in one ZIP, or a print sheet. No upload, no account.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/tools/barcode-batch.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -71,7 +71,10 @@ SKU-0042&#9;Blue mug (tab-separated name → used as the file name)"></textarea>
           <select id="format">
             <option value="EAN13">EAN-13 (13 digits)</option>
             <option value="UPC">UPC-A (12 digits)</option>
-            <option value="CODE128" selected>Code 128 (any text)</option>
+            <option value="CODE128" selected>Code 128 (any text, auto)</option>
+            <option value="CODE128B">Code 128 B (forced set B)</option>
+            <option value="CODE128C">Code 128 C (digit pairs)</option>
+            <option value="CODE128A">Code 128 A (caps + control)</option>
           </select>
         </div>
         <div>
@@ -103,13 +106,26 @@ SKU-0042&#9;Blue mug (tab-separated name → used as the file name)"></textarea>
         <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download all as ZIP</button>
       </div>
       <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
-      <p style="margin-top:14px; font-size:0.85rem; color:#5a6472;">Up to 100 codes per batch — this keeps rendering fast and the tab responsive. Codes that don't fit the selected format are skipped and listed below the results with the reason (wrong length, non-numeric, or a check digit that doesn't match). If your EAN list has 12 digits (or your UPC list 11) because the check digit was never added, choose <strong>Missing — calculate it</strong>. Numbers that look damaged by a spreadsheet (a dropped leading zero, <code>4.00638E+12</code>) are called out by name. For printing, pick <strong>SVG</strong> or <strong>PNG — large</strong>.</p>
+      <p style="margin-top:14px; font-size:0.85rem; color:#5a6472;">Up to 100 codes per batch — this keeps rendering fast and the tab responsive. Codes that don't fit the selected format are skipped and listed below the results with the reason (wrong length, non-numeric, or a check digit that doesn't match). If your EAN list has 12 digits (or your UPC list 11) because the check digit was never added, choose <strong>Missing — calculate it</strong>. Numbers that look damaged by a spreadsheet (a dropped leading zero, <code>4.00638E+12</code>) are called out by name. For printing, pick <strong>SVG</strong> or <strong>PNG — large</strong>, or use the print sheet under the results.</p>
     </div>
 
     <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
       <h3>Results</h3>
       <div id="barcodeGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px;"></div>
       <div id="errorList" style="margin-top:16px; font-size:0.85rem;"></div>
+      <div class="toolbar" id="printBar" style="display:none; align-items:flex-end;">
+        <div style="min-width:150px;">
+          <label for="perRow">Barcodes per row</label>
+          <select id="perRow">
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <button class="btn btn-outline" id="printBtn">Print sheet / Save as PDF</button>
+      </div>
+      <p id="printNote" style="display:none; margin-top:10px; font-size:0.8rem; color:#5a6472;">Opens every barcode above on one page, drawn as vector graphics whatever output you chose, ready to print or to save as a single PDF from the print dialog.</p>
     </div>
   </div>
 </section>
@@ -135,6 +151,18 @@ SKU-0042&#9;Blue mug (tab-separated name → used as the file name)"></textarea>
     <p>For EAN-13 and UPC-A, a code is skipped if it isn't purely numeric, isn't the exact expected length, or fails the format's built-in checksum validation (the last digit is calculated from the others specifically to catch typos and transcription errors). Code128 has no such restriction and accepts any alphanumeric string. Each skipped code is listed with its reason — including, for a checksum failure, which last digit the number <em>should</em> have had.</p>
     <h3>Can I paste two columns from Excel or Google Sheets?</h3>
     <p>Yes. Select the code column and a name column next to it (code first) and paste. Each row arrives as <em>code, tab, name</em>. The tool encodes only the first column and uses the name for the downloaded file, so <code>SKU-0042</code> next to "Blue mug" becomes <code>blue-mug.png</code> in the ZIP, and the name is shown under each preview. The tab is never put into the barcode itself, which matters for Code 128. Code 128 can encode a tab character, so a tool that encodes the whole pasted line produces a barcode that scans as <code>SKU-0042</code> followed by an invisible tab and the product name. Rows with the same name get <code>-2</code>, <code>-3</code> suffixes instead of overwriting each other. If the cells came out of Excel as numbers, see the spreadsheet question below.</p>
+    <h3>Code 128 A, B or C — which one should I pick?</h3>
+    <p>Pick <strong>auto</strong> unless a system or a spec tells you otherwise. Code 128 has three character sets, and a single barcode can switch between them. Auto starts in whichever set produces the shortest barcode and switches when it needs to, the way most label software does. All three read back as the same text: a scanner reading <code>ABC123</code> returns <code>ABC123</code> whichever set encoded it, so the choice changes only the width of the barcode and the characters it is allowed to contain.</p>
+    <ul>
+      <li><strong>Set B</strong> holds the printable characters: upper and lower case letters, digits and punctuation. Choose <em>Code 128 B</em> when a label spec or an older system explicitly asks for "Code 128B".</li>
+      <li><strong>Set C</strong> packs two digits into each symbol, so it is the narrowest option for long numbers. It accepts digits only, and an even number of them. An odd count is rejected with the reason rather than padded silently, because adding a leading zero changes the value your system receives. Auto mode encodes the odd digit in set B instead. If a barcode you already have scans with an unexpected leading zero, <a href="/blog/code-128-scans-wrong.html">that padding is the usual reason</a>.</li>
+      <li><strong>Set A</strong> holds upper-case letters, digits and control characters, with no lower case. It is rarely needed outside legacy industrial systems.</li>
+    </ul>
+    <p>Characters outside a chosen set (lower case in A, a tab in B, letters in C) are skipped and listed, and so is anything outside ASCII (accented letters, curly quotes, non-Latin scripts), which Code 128 can't encode at all.</p>
+    <h3>Can I print them all on one sheet, or save them as one PDF?</h3>
+    <p>Yes. After generating, use <strong>Print sheet / Save as PDF</strong> under the results and choose how many barcodes go in each row. Every barcode is re-drawn as vector graphics for the sheet, so it prints sharp even when you picked the small PNG output. In the print dialog, choose your printer or <em>Save as PDF</em> to get a single file. Keep scaling at 100% ("Actual size"). The dashed borders are cutting guides. UPC-A and EAN-13 are placed at their standard 100% size (about 31 mm of bars, 23 mm bar height), whatever the row count, as long as they fit. At 4 per row they fit on A4 and Letter. At 5 per row the cells are too narrow, so they shrink to about three-quarters of that size, below GS1's 80% minimum for retail checkout, and the sheet warns you. Code 128 fills the cell width, so long values get thin bars at 4–5 per row, and 2 or 3 per row is safer for those. This is a plain grid, not a template for a specific label stock such as Avery sheets.</p>
+    <h3>Does it work offline?</h3>
+    <p>Once the page has loaded, yes. Everything runs in your browser, so you can disconnect and keep generating, downloading and printing. The only network requests happen when the page first loads, to fetch the open-source barcode and ZIP libraries it is built on.</p>
     <h3>Which output should I pick for printed labels?</h3>
     <p><strong>SVG</strong> if your label or design software accepts it (most do — Illustrator, Inkscape, Affinity, Canva, Word, and most label programs). It's vector, so it stays sharp at any size and you can scale it to exactly the width you need. <strong>PNG — large</strong> draws every bar 4 pixels wide, which at 300 dpi comes out close to the nominal 100% size of a retail UPC-A (a 0.33 mm narrow bar, about 37 mm across including the margins). The default <strong>PNG — screen size</strong> is fine for spreadsheets, web pages, and previews, but it's small enough that a printer has to enlarge it. Enlarging a bitmap softens bar edges, and soft edges are what make scanners hesitate. Whichever you use, scale the barcode as a whole — stretching it in one direction only changes the bar-width ratios. For retail checkout, GS1 allows roughly 80% to 200% of the nominal size.</p>
     <h3>My codes came out of Excel and some are rejected</h3>
@@ -207,6 +235,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var progressText = document.getElementById('progressText');
   var generateBtn = document.getElementById('generateBtn');
   var lastResults = [];
+  var printBar = document.getElementById('printBar');
+  var printNote = document.getElementById('printNote');
+  var printBtn = document.getElementById('printBtn');
 
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
   function slugify(s) {
@@ -223,13 +254,28 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Returns { ok:true, code:<full code>, added:<bool> } or { ok:false, reason:<string> }
+  // Code 128 subset rules (same character sets JsBarcode enforces), with a reason a person can act on
+  function check128(code, format) {
+    if (/[^\x00-\x7F]/.test(code)) return 'contains non-ASCII characters (accents, curly quotes, emoji or non-Latin letters) — Code 128 encodes plain ASCII only';
+    if (format === 'CODE128A' && /[a-z`{|}~\x7F]/.test(code)) return 'has lowercase letters or one of ` { | } ~ — set A has none of these; use Code 128 B or auto';
+    if (format === 'CODE128B' && /[\x00-\x1F]/.test(code)) return 'has a control character (such as a tab) — set B has none; use Code 128 A or auto';
+    if (format === 'CODE128C') {
+      if (!/^\d+$/.test(code)) return 'set C is digits only — use Code 128 B or auto for letters and symbols';
+      if (code.length % 2) return 'has ' + code.length + ' digits — set C encodes digit pairs, so it needs an even count; add a leading zero (0' + code + ') only if your system expects it, or use auto, which handles the odd digit for you';
+    }
+    return '';
+  }
+
   function isComplete(d, len) {
     return d.length === len && /^\d+$/.test(d) && checkDigit(d.slice(0, -1)) === parseInt(d.slice(-1), 10);
   }
 
   // Returns { ok:true, code, added, warn } or { ok:false, reason }
   function prepare(code, format, mode) {
-    if (format === 'CODE128') return { ok: true, code: code, added: false, warn: '' };
+    if (format.indexOf('CODE128') === 0) {
+      var c128 = check128(code, format);
+      return c128 ? { ok: false, reason: c128 } : { ok: true, code: code, added: false, warn: '' };
+    }
     var name = format === 'EAN13' ? 'EAN-13' : 'UPC-A';
     var full = format === 'EAN13' ? 13 : 12;
     var digits = code.replace(/[\s-]/g, '');
@@ -328,7 +374,7 @@ document.addEventListener('DOMContentLoaded', function () {
       while (usedNames[name]) { name = base + '-' + n; n++; }
       usedNames[name] = true;
       var filename = name + ext;
-      lastResults.push({ name: filename, dataUrl: dataUrl, svg: svgText });
+      lastResults.push({ name: filename, dataUrl: dataUrl, svg: svgText, code: code, label: label, opts: opts });
 
       var cell = document.createElement('div');
       cell.className = 'file-row ready';
@@ -347,10 +393,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
     progressText.textContent = lastResults.length + ' barcode(s) generated' + (errors.length ? ', ' + errors.length + ' skipped.' : '.');
     if (errors.length) {
-      errorList.innerHTML = '<strong>Skipped ' + errors.length + ' (not valid for ' + ({ EAN13: 'EAN-13', UPC: 'UPC-A', CODE128: 'Code128' }[format] || esc(format)) + '):</strong><ul style="margin:8px 0 0; padding-left:20px; color:#2c3540;">' +
+      errorList.innerHTML = '<strong>Skipped ' + errors.length + ' (not valid for ' + ({ EAN13: 'EAN-13', UPC: 'UPC-A', CODE128: 'Code 128', CODE128A: 'Code 128 A', CODE128B: 'Code 128 B', CODE128C: 'Code 128 C' }[format] || esc(format)) + '):</strong><ul style="margin:8px 0 0; padding-left:20px; color:#2c3540;">' +
         errors.map(function (er) { return '<li style="margin-bottom:4px;"><code>' + esc(er.code) + '</code> — ' + esc(er.reason) + '</li>'; }).join('') + '</ul>';
     }
     if (lastResults.length) downloadZipBtn.style.display = 'inline-flex';
+    printBar.style.display = lastResults.length ? 'flex' : 'none';
+    printNote.style.display = lastResults.length ? 'block' : 'none';
+  });
+
+  // Print sheet: every barcode re-drawn as SVG (sharp at any print size) on one page.
+  printBtn.addEventListener('click', function () {
+    if (!lastResults.length) return;
+    var perRow = parseInt(document.getElementById('perRow').value, 10) || 3;
+    var anyRetail = false;
+    var cells = lastResults.map(function (r) {
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      var o = {}; for (var k in r.opts) o[k] = r.opts[k];
+      var retail = (o.format === 'EAN13' || o.format === 'UPC');
+      // Retail codes: GS1 nominal (100%) proportions — 95 modules = 31.35 mm of bars, 22.85 mm bar height
+      o.width = 2; o.height = retail ? 139 : 100; o.fontSize = 20; o.margin = 10;
+      try { JsBarcode(svg, r.code, o); } catch (e) { return ''; }
+      if (retail) {
+        var px = parseFloat(svg.getAttribute('width')) || 242;
+        svg.setAttribute('style', 'width:' + (31.35 * px / 190).toFixed(2) + 'mm; max-width:100%; height:auto; margin:0 auto;');
+        anyRetail = true;
+      }
+      var markup = new XMLSerializer().serializeToString(svg);
+      return '<div class="cell">' + markup + (r.label ? '<div class="lbl">' + esc(r.label) + '</div>' : '') + '</div>';
+    }).join('');
+    var w = window.open('', '_blank');
+    if (!w) { alert('Your browser blocked the print window. Allow pop-ups for this site and try again.'); return; }
+    w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Barcodes — print sheet</title><style>' +
+      '@page { margin: 10mm; } body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: #000; background: #fff; }' +
+      '.grid { display: grid; grid-template-columns: repeat(' + perRow + ', 1fr); gap: 6mm 4mm; }' +
+      '.cell { break-inside: avoid; page-break-inside: avoid; text-align: center; padding: 2mm; border: 0.2mm dashed #bbb; }' +
+      '.cell svg { width: 100%; height: auto; display: block; margin: 0 auto; } .lbl { font-size: 9pt; margin-top: 1mm; word-break: break-word; }' +
+      '.tip { font-size: 10pt; margin: 0 0 6mm; } @media print { .tip { display: none; } }' +
+      '</style></head><body><p class="tip">Print with scaling at 100% (or "Actual size"). To get one PDF, choose "Save as PDF" as the printer. The dashed lines are cutting guides.' +
+      (anyRetail && perRow >= 5 ? ' <strong>At 5 per row, UPC/EAN codes are shrunk to about three-quarters of their standard size, below the GS1 minimum of 80% for retail checkout. Use 4 or fewer per row for those.</strong>' : '') +
+      '</p><div class="grid">' +
+      cells + '</div></body></html>');
+    w.document.close();
+    w.focus();
+    setTimeout(function () { try { w.print(); } catch (e) {} }, 400);
   });
 
   downloadZipBtn.addEventListener('click', function () {

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code 128 Scans Wrong? Extra Zero, Swapped Letters, Wrong Case — FreeToolDev</title>
+<meta name="description" content="The barcode scans, but the text that arrives is wrong. The seven usual causes, from Code 128 set C padding to keyboard layouts, Caps Lock, Enter suffixes and Excel, and how to tell which one it is.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/code-128-scans-wrong.html">
+<meta property="og:title" content="Code 128 Scans Wrong? Extra Zero, Swapped Letters, Wrong Case — FreeToolDev">
+<meta property="og:description" content="The barcode scans, but the text that arrives is wrong. The seven usual causes, from Code 128 set C padding to keyboard layouts, Caps Lock, Enter suffixes and Excel, and how to tell which one it is.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Code 128 Scans Wrong? Extra Zero, Swapped Letters, Wrong Case — FreeToolDev">
+<meta name="twitter:description" content="The barcode scans, but the text that arrives is wrong. The seven usual causes, from Code 128 set C padding to keyboard layouts, Caps Lock, Enter suffixes and Excel, and how to tell which one it is.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/code-128-scans-wrong.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Oct 19, 2026</div>
+  <h1>Why a Code 128 Barcode Scans as Something Different</h1>
+  <p>The barcode scans — the beep is there — but what lands in the field isn't what you encoded. There's an extra zero at the front, a <code>Y</code> where a <code>Z</code> should be, every letter in the wrong case, or the form submits before you're ready. Almost every one of these comes from one of seven causes. They fall into two groups: either the barcode really encodes something other than what you typed, or the barcode is fine and the trouble is in how the scanner types it into your computer.</p>
+
+  <h2 id="first-test">The first test: is it the barcode or the scanner?</h2>
+  <p>Scan the same barcode with a phone camera app that shows the decoded text. If the phone shows the right value, the barcode is correct, and the problem is somewhere between your scanner and the program receiving the text (causes 3 to 7 below). If the phone shows the wrong value too, the barcode itself encodes the wrong data, so look at how it was generated (cause 1) or at how the data was prepared before it was encoded (cause 2).</p>
+
+  <h2 id="extra-zero">1. An extra leading zero: Code 128 set C with an odd number of digits</h2>
+  <p>Code 128 has three character sets. Set C is the compact one: each symbol holds a <em>pair</em> of digits, which is why long numbers come out much narrower in it. The consequence is that set C can't hold an odd number of digits. Some generators, when told to use set C for a 7-digit number such as <code>1234567</code>, quietly put a zero in front to make an even count. They encode <code>01234567</code>, and that is exactly what every scanner then reads back. Barcode-font vendors document this behavior in their own support pages. Nothing is broken; the generator encoded different data than you gave it.</p>
+  <p>The fix is to let the generator choose the sets ("auto" mode). An auto encoder puts as many digit pairs as it can in set C and encodes the leftover digit in another set, so the barcode reads back exactly <code>1234567</code>, and it is still nearly as compact. Force set C only when a specification requires it, and then make the data even-length yourself, deciding deliberately whether a leading zero is acceptable to the system reading it. FreeToolDev's <a href="/tools/barcode-batch.html">bulk barcode generator</a> uses auto by default, and when you force <em>Code 128 C</em> it rejects odd-length numbers with that reason instead of padding them silently.</p>
+
+  <h2 id="excel">2. Leading zeros vanish or numbers turn into 1.23E+12, but only in Excel</h2>
+  <p>If the phone app shows <code>0036000291452</code> but the cell shows <code>36000291452</code>, or a 13-digit EAN like <code>4006381333931</code> shows up as <code>4.00638E+12</code>, the scanner did its job. Excel received the digits and decided they were a number. Numbers don't have leading zeros, and in the default General format Excel displays any number longer than 11 digits in scientific notation. Beyond 15 digits it goes further and replaces the trailing digits with zeros, and that loss can't be undone. Format the column as <strong>Text</strong> before you scan into it. <a href="/blog/excel-csv-number-mangling.html">Why Excel mangles long numbers</a> covers the details. The same damage happens in reverse when barcode numbers are copied <em>out</em> of a spreadsheet into a generator, which is why ours flags codes that look like they lost a zero or were turned into scientific notation.</p>
+
+  <h2 id="layout">3. Letters or symbols swapped: the keyboard layout doesn't match</h2>
+  <p>Most USB and Bluetooth scanners act as a keyboard (a "keyboard wedge"): they don't send the text, they press keys. A scanner set to a US layout that wants to type <code>Z</code> presses the key that is <code>Z</code> on a US keyboard. On a German QWERTZ computer that same key is <code>Y</code>, so <code>Z</code> and <code>Y</code> come out swapped. On a French AZERTY computer the digit keys produce <code>&amp; é " ' (</code> unless Shift is held, so a barcode full of numbers can arrive as punctuation. A US-versus-UK mismatch shows up in symbols such as <code>@</code>, <code>"</code> and <code>#</code>. The barcode is fine, and so is the scanner. They just disagree about which key is which.</p>
+  <p>The fix is to set the scanner's keyboard or country layout to match the computer. Scanner manuals almost always include a page of configuration barcodes for this. Alternatively, switch the computer's input language to the one the scanner assumes. To catch the problem in seconds, make one test label that contains <code>YZyz@-1234567890</code> and scan it into a text editor.</p>
+
+  <h2 id="caps">4. Every letter in the wrong case: Caps Lock</h2>
+  <p>Because a wedge scanner types like a keyboard, it uses Shift for capital letters. If Caps Lock is on, those Shift presses turn capitals into lower case and lower case into capitals. <code>SKU-ab12</code> arrives as <code>sku-AB12</code>. Digits and most symbols aren't affected, which is why the problem can go unnoticed until a lookup suddenly fails. Turn Caps Lock off, or look in the scanner's configuration guide for a Caps Lock setting. Many models can be told to ignore Caps Lock or to detect it and compensate.</p>
+
+  <h2 id="suffix">5. Extra characters before or after: Enter, Tab, prefixes and identifiers</h2>
+  <p>Out of the box, most scanners press <strong>Enter</strong> after every scan. That suffix is what makes a point-of-sale lookup fire immediately and what makes Excel jump to the next row. It's also what submits a web form halfway through filling it in. Some are set to send Tab instead. Scanners can also add a prefix, and one common option is the AIM symbology identifier, a three-character tag such as <code>]C0</code> (Code 128) or <code>]E0</code> (EAN/UPC) placed in front of the data. If you see those characters, or an unexpected line break, they come from the scanner's configuration, not from the barcode. Remove or change them with the configuration barcodes in the manual.</p>
+  <p>One character you will <em>never</em> see is Code 128's own check symbol. Every Code 128 barcode contains a check character calculated with modulo 103, but the scanner uses it to verify the read and then drops it. Don't expect it in the output, and don't add one to your data yourself.</p>
+
+  <h2 id="gs1">6. GS1-128 labels: missing parentheses and an invisible separator</h2>
+  <p>On a GS1-128 shipping label (the format often still called EAN-128) the human-readable line shows Application Identifiers in parentheses, such as <code>(01)09501101530003(17)271231</code>. The parentheses are not in the barcode, so the scan arrives as <code>0109501101530003171231</code>. The special FNC1 character that marks the barcode as GS1 at the start isn't transmitted either. Where a variable-length field (a lot number, say) is followed by another field, the separating FNC1 arrives as an invisible ASCII "group separator" character (code 29). Depending on the program, that shows up as nothing at all, as a strange box, or as a broken input. Systems that receive GS1 data are built to parse this. A plain text field isn't.</p>
+
+  <h2 id="missing">7. Characters missing or out of order</h2>
+  <p>A long Code 128 value that sometimes arrives with a character missing or two characters swapped is usually a speed problem. The scanner "types" faster than the receiving program can accept keystrokes, which happens most with Bluetooth scanners, remote desktop sessions and slow web apps. Scanners have an inter-character delay setting that slows the typing down. It's a workaround rather than a cure, and the robust fix is software that receives the scan directly instead of as simulated keystrokes. If it never happens with a short code and only sometimes with a long one, this is almost certainly the cause.</p>
+
+  <h2 id="checklist">A one-minute diagnosis</h2>
+  <ol>
+    <li>Scan with a phone app. Wrong there too? It's the barcode: check for set C padding (cause 1) or for data that was damaged before encoding (cause 2).</li>
+    <li>Right on the phone, wrong on the computer? Scan into a plain text editor, not the application. Wrong in the editor too? Then it's the layout (3), Caps Lock (4), the prefix and suffix settings (5), or timing (7).</li>
+    <li>Right in the editor, wrong in the application? The application changed it: Excel's number conversion (2), or a field that can't handle the GS1 separator (6).</li>
+  </ol>
+  <p>For the tests, generate a few labels with the <a href="/tools/barcode-batch.html">bulk barcode generator</a>. Make one with your real data, one with an odd-length number, and the <code>YZyz@-1234567890</code> layout test. Use <em>Print sheet</em> to get them all on one page. For the bigger question of which format a label should use in the first place, see <a href="/blog/upc-vs-ean-vs-code128.html">UPC vs EAN vs Code128</a>.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/package-json-version-checker.html">Bulk package.json Version Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

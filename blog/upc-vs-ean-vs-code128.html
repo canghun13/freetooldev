@@ -93,7 +93,7 @@
     <li><strong>GS1-128</strong> — covered above: Code128 with FNC1 and Application Identifiers.</li>
     <li><strong>ITF-14</strong> — 14 digits only, used on outer shipping cases, often printed inside a thick bearer-bar frame.</li>
   </ul>
-  <p>Code128 is usually the best of the first family because it has three internal character sets. Set C packs two digits into each symbol, so a long all-numeric code comes out far more compact than it would in Code 39.</p>
+  <p>Code128 is usually the best of the first family because it has three internal character sets. Set C packs two digits into each symbol, so a long all-numeric code comes out far more compact than it would in Code 39. The catch is that set C needs an even number of digits, and generators that force it often pad with a zero. That's one of the causes in <a href="/blog/code-128-scans-wrong.html">why a Code 128 barcode scans as something different</a>.</p>
   <p>The second family is UPC-A's own siblings, not Code128's. <strong>UPC-E</strong> is a zero-suppressed 8-digit form for small packages, and <strong>EAN-8</strong> is the short international equivalent. Both are fixed-length retail formats that stay inside the GS1 numbering system.</p>
 
   <h2 id="small-retail">UPC or Code128 for a small shop's inventory?</h2>

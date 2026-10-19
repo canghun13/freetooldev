@@ -1,6 +1,8 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-10-12 (**주간 데이터 세션 — 툴 보강 2건, 신규 0건.** **Bing 클릭 10→22, 노출 약 370→670.** 바코드 툴 82→**276노출 / 5→12클릭**(6.5위), RSS 툴 56→97노출 / 1→**4클릭**(7.3위). 바코드는 3주 연속 보강 → 3주 연속 급증. Google 클릭 16→14(3개월 창 이동, 보합), 40위 이내 쿼리 22→28. **발견됨-미색인 18→13** — 지난주 성과 데이터에 노출이 먼저 잡혔던 3개를 포함해 5개 풀림(커버리지 리포트 지연 가설 확인). 조치: (1) 바코드 — title/description을 "Code 128"(띄어쓰기)로 + **스프레드시트 2열(코드+이름) 붙여넣기**(탭을 바코드에 넣지 않고 이름을 파일명으로), (2) RSS — **URL만 있는 줄·탭 구분 허용, 건너뛴 줄 사유 표시, 날짜 없을 때 오늘 날짜로 채우던 동작 제거**, 상단에 "URL로 시작하면 Site Crawler" 안내. 전체 87파일 = sitemap 87 = llms.txt 87.)
+마지막 업데이트: 2026-10-19 (**주간 데이터 세션 — 툴 보강 1건 + 신규 글 1건.** **Bing 클릭 22→43, 노출 약 670→1570.** 바코드 툴 276→**1022노출 / 12→24클릭**(8.0위) — 지난주 title을 "Code 128"(띄어쓰기)로 바꾼 뒤 **"128" 쿼리군이 47개·422노출로 폭증**(`bulk barcode generator 128` 혼자 266노출/9.4위/클릭 0, `bulk barcode generator code 128` 54노출/7.7위/클릭 3). RSS 97→178노출 / 4→9클릭. GA4 bing/organic 30명 vs google 3명. Google 클릭 13(보합), 커버리지 변화 0(13+1). 조치: (1) 바코드 툴 — **Code 128 A/B/C 강제 선택**(쿼리 `code 128 b`, `128c`, `128b`) + 서브셋별 거부 사유 + **인쇄 시트 / 한 장 PDF**(UPC·EAN은 GS1 공칭 100% 크기로 배치, 5열에서 78%로 줄면 경고) + FAQ 3개, (2) **신규 글 `blog/code-128-scans-wrong.html`** — "스캔하면 다른 값이 나온다" 7가지 원인(set C 0 패딩, Excel, 키보드 레이아웃 Y/Z, Caps Lock, Enter/AIM 접미·접두, GS1 FNC1/GS, 타이밍). 전체 88파일 = sitemap 88 = llms.txt 88.)
+
+[이전] 2026-10-12 (**주간 데이터 세션 — 툴 보강 2건, 신규 0건.** **Bing 클릭 10→22, 노출 약 370→670.** 바코드 툴 82→**276노출 / 5→12클릭**(6.5위), RSS 툴 56→97노출 / 1→**4클릭**(7.3위). 바코드는 3주 연속 보강 → 3주 연속 급증. Google 클릭 16→14(3개월 창 이동, 보합), 40위 이내 쿼리 22→28. **발견됨-미색인 18→13** — 지난주 성과 데이터에 노출이 먼저 잡혔던 3개를 포함해 5개 풀림(커버리지 리포트 지연 가설 확인). 조치: (1) 바코드 — title/description을 "Code 128"(띄어쓰기)로 + **스프레드시트 2열(코드+이름) 붙여넣기**(탭을 바코드에 넣지 않고 이름을 파일명으로), (2) RSS — **URL만 있는 줄·탭 구분 허용, 건너뛴 줄 사유 표시, 날짜 없을 때 오늘 날짜로 채우던 동작 제거**, 상단에 "URL로 시작하면 Site Crawler" 안내. 전체 87파일 = sitemap 87 = llms.txt 87.)
 
 [이전] 2026-10-05 (**주간 데이터 세션 — 보강 2건, 신규 0건.** **바코드 툴이 사이트 최대 Bing 페이지가 됐다: 9→82노출, 클릭 2→5**(6.2위), Bing 전체 클릭 7→10. 9/28 체크디짓 보강 1주 만이다. Google 클릭 14→16 — **`excel-csv-number-mangling` 첫 Google 클릭(20.3위)**, 2회 보강 후 5주 연속 순위 상승 끝에 나왔다(48항 검증). 커버리지 목록 변화 0. 조치: (1) 바코드 툴에 **출력 형식(PNG / 인쇄용 큰 PNG / SVG)** + **스프레드시트 손상 감지**(앞자리 0 탈락, 4.00638E+12 지수표기) + 계산 모드 오판 경고, (2) `dns-records-explained`에 **"CNAME vs TXT: 어느 쪽, 둘 다 필요?"** 섹션(Bing 최다 쿼리군인데 본문에 없었음) + negative caching. **9/14 이후 이 글의 meta description이 내부 큰따옴표로 잘려 있던 버그도 발견·수정.** 전체 87파일 = sitemap 87 = llms.txt 87.)
 
@@ -254,6 +256,34 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-10-19 세션 — 데이터 재확인 및 조치 사항**:
+
+- **환경**: 컨테이너가 새로 떴지만 `/home/claude/freetooldev` clone이 남아 있었음 → `add_repo`(already_present) 후 fetch만. 2번 절차 그대로 작동.
+- **Google**: 클릭 14→13(보합), 노출 6257, 쿼리 629, 40위 이내 28→29. 페이지 변동 미미. **커버리지 13+1, 목록 변화 0.**
+- **Bing: 클릭 22→43, 노출 합 약 1570(지난주 약 670).**
+  - `tools/barcode-batch.html` **276→1022노출, 12→24클릭, 순위 6.5→8.0**(노출이 헤드텀으로 넓어지며 평균 순위는 하락 — 정상). **10/12 title "Code 128" 변경 효과가 즉시 나타남**: "128" 포함 쿼리 47개·422노출·9클릭. 대표: `bulk barcode generator 128`(266노출/9.44위/**클릭 0** — 1페이지 하단, CTR 문제), `bulk barcode generator code 128`(54/7.7/클릭 3), `bulk code 128 barcode generator`(15/8.9), `bulk barcode generator 128 free download`(5/4위). 서브셋 쿼리 등장: `bulk code 128 b barcode generator`(10위), `barcode 128b bulk`(8위), `bulk barcode generator for code-128c.url`(2위·클릭). 판매자 쿼리: `ean codes in bulk`(1위·클릭), `upc bulk barcode`(1위·클릭), `upc to bar codes bulk`(1위·클릭), `free bulk barcode generator code 128 offline`(2위·클릭), `how to make multiple 128 barcodes into 1`(5위). 바코드 관련 쿼리 합계 96개·592노출·25클릭.
+  - `tools/rss-generator.html` 97→**178노출, 4→9클릭**, 6.65위. `free rss feed generator` 19노출/클릭 3.
+  - `blog/why-merged-pdf-is-bigger.html` 49→**85노출, 클릭 1→3**, 4.34위 — 9/22 의도 교정이 4주째 계속 성장.
+  - `blog/upc-vs-ean-vs-code128.html` 18→23노출, **보강 3주 만에 첫 클릭**(`ean 128 equivalent code128 compatible` 1위로 추정).
+  - DNS(10/05 보강) 31→37노출/6.24위, 클릭 0 — 2주차.
+- **GA4(9/21~10/18)**: 활성 사용자 117 — 단 **Singapore 42명(대부분 N일 24일 하루 38명 신규 스파이크) = 봇**. 실질 사용자는 약 70명. bing/organic 30명(세션 42), google/organic 3명. 바코드 페이지는 title 변경 전/후로 GA4 제목이 갈려 18+11=29뷰(사이트 1위), RSS 20뷰. Findly.tools·twelve.tools 디렉토리 유입 각 1.
+- **수익화**: 9-1-1 조건 미달. 보고에서 제외.
+
+**2026-10-19 세션 조치 내역**:
+
+1. **`tools/barcode-batch.html` 4차 보강(50항).**
+   - **Code 128 서브셋 강제 선택**: Format에 `Code 128 (any text, auto)` / `Code 128 B (forced set B)` / `Code 128 C (digit pairs)` / `Code 128 A (caps + control)`. JsBarcode의 `CODE128A/B/C` 사용. 서브셋별 사전 검증과 사유(JsBarcode 내부 문자셋과 동일: A `[\x00-\x5F]`, B `[\x20-\x7F]`, C 짝수 자리 숫자) — A에 소문자, B에 탭 등 제어문자, C에 문자/홀수 자리, 모든 Code 128에 비ASCII(악센트·곡선 따옴표·한글) → 각각 이유 표시. **C의 홀수 자리는 0을 몰래 붙이지 않고 거부**(IDAutomation 등이 0을 붙여 "스캔하면 앞에 0이 생기는" 문제를 지원 문서로 인정 — 43항 신호).
+   - **인쇄 시트 / 한 장 PDF**(`how to make multiple 128 barcodes into 1`, 경쟁사 공통 기능 = 10/05 B항목): 결과 아래 `Barcodes per row`(2~5) + `Print sheet / Save as PDF`. 새 창에 전부 **SVG로 다시 그려** 배치(출력 형식이 작은 PNG여도 선명), 점선 재단선, 100% 배율 안내, `window.print()`. **jsPDF 등 신규 의존성 없음** — 브라우저 인쇄 대화상자의 "PDF로 저장"을 사용. **UPC/EAN은 GS1 공칭 100% 크기(바 영역 31.35mm, 바 높이 22.85mm 비율)로 고정 배치** — Playwright로 A4 인쇄폭(718px)에서 측정: 4열 38.6mm(=100%), **5열은 30.3mm(약 78%, GS1 소매 최소 80% 미만)** → 시트 상단 경고 표시. Code 128은 셀 폭에 맞춤. 팝업 차단 시 alert.
+   - FAQ 3개: Code 128 A/B/C 선택법(스캔 결과는 같고 폭·허용 문자만 다름), 인쇄 시트(Avery 등 특정 라벨지 템플릿은 아님을 명시), **오프라인 동작**(`free bulk barcode generator code 128 offline` 클릭 — 페이지 로드 후엔 오프라인 OK, 최초 로드 시 CDN 라이브러리만 받음). description/og/twitter/llms.txt 갱신(제목은 지난주 변경 효과 판정 중이라 유지).
+   - 검증: **Playwright 실브라우저(실제 JsBarcode·JSZip를 route로 주입)** — 서브셋 거부 사유 4종, 탭 라벨, 인쇄 팝업 4열/5열 SVG mm 측정·경고 여부·A4 PDF 생성(pdftoppm으로 확인)·Code 128 시트 스크린샷, 375px 결과 패널·옵션 행·가로 스크롤 없음. 지난주 jsdom 회귀 테스트도 통과.
+2. **신규 글 `blog/code-128-scans-wrong.html`(1415단어) — 바코드 클러스터 확장.**
+   - 각도: **"생성기는 맞는데 스캔 값이 다르다"** — 원인 7개를 "바코드 쪽 vs 스캐너→PC 쪽"으로 가르는 첫 테스트(폰 앱으로 스캔) + 1분 진단 순서. ① set C 홀수 자리 0 패딩(IDAutomation 문서화), ② Excel(앞자리 0, 11자리 초과 지수 표기, 15자리 초과 손실), ③ 키보드 웨지 레이아웃 불일치(QWERTZ Y/Z, AZERTY 숫자→`& é " ' (`, US/UK 기호), ④ Caps Lock 대소문자 반전, ⑤ Enter/Tab 접미·AIM `]C0`/`]E0` 접두 + Code 128 mod 103 체크 문자는 절대 전송 안 됨, ⑥ GS1-128 괄호 없음·선두 FNC1 미전송·구분 FNC1=ASCII 29, ⑦ 문자 누락·순서 뒤바뀜(문자 간 지연 설정).
+   - 경쟁 확인: Code 128 A/B/C 설명은 Honeywell·Wikipedia·barcodewiz 등 포화 → 서브셋 설명 글은 만들지 않음. "스캔하면 틀리게 나옴" 쪽은 스캐너 판매 블로그(devicefield 등)가 레이아웃·접미사만 다루고 **set C 패딩·체크 문자·GS1 구분자·Excel을 한 곳에 묶은 글은 없음**(39항 "N개를 함께 봐야 답" 유사 — 원인이 여러 층에 흩어진 문제).
+   - 중복 확인: blog에 scanner/스캔 주제 글 없음(upc-vs-ean·bulk-barcode-use-cases와 겹치지 않음).
+   - 내부 링크: 바코드 툴 FAQ(set C 항목) → 새 글, `upc-vs-ean-vs-code128`(Code 128 계열 섹션) → 새 글, 새 글 → 툴·excel 글·upc 글. blog/index 최상단 카드, sitemap(2026-10-19), llms.txt 추가. `<title>`은 롱테일용으로 짧게 "Code 128 Scans Wrong? Extra Zero, Swapped Letters, Wrong Case".
+   - 홈 "Latest posts" 3장은 7월 이후 정적으로 유지돼 온 영역이라 건드리지 않음.
+3. **sitemap lastmod**: barcode-batch·upc-vs-ean(내부 링크 문장 추가)·신규 글 = 2026-10-19. 최다 날짜 2026-07-20 = 20/88(23%).
 
 **2026-10-12 세션 — 데이터 재확인 및 조치 사항**:
 
@@ -822,6 +852,17 @@
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-10-19 세션 기준 다음 할 일**
+
+- **A. `bulk barcode generator 128`(266노출/9.4위/클릭 0) — 사이트 최대 단일 쿼리.** 1페이지 하단이라 CTR이 0. 다음 주 순위가 7위 안으로 오는지 보고, 안 오면 description 첫 문장을 이 쿼리 의도("free bulk Code 128 generator — download all as ZIP or one print sheet")로 다시 쓸 것. **title은 10/12 변경으로 노출 4배를 만든 상태라 건드리지 말 것.**
+- **B. 신규 글 `code-128-scans-wrong` 색인·노출 추적**(38항: 1~2주 대기). Bing 우선.
+- **C. 인쇄 시트 반응**: 바코드 클릭이 유지되는지(24). 라벨지 템플릿(Avery 5160 등)은 요청 쿼리가 보이면 그때 — 정렬 오차 검증이 어렵다.
+- **D. RSS 툴**(178노출/9클릭) — 다음 50항 점검 대상은 **Site Crawler**(RSS 툴 상단 안내로 넘어가는 경로).
+- **E. DNS 보강 3주차 / PDF 글 성장 / upc 글 클릭 유지** 관찰.
+- **F. `tools/qr-batch.html` 50항 점검**(Bing 12노출/4.5위) — 아직 미착수.
+- **G. 미색인 13+1은 온사이트로 건드리지 말 것(41항).**
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-10-12 세션 기준 다음 할 일**
 
