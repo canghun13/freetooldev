@@ -1,6 +1,8 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-10-19 (**주간 데이터 세션 — 툴 보강 1건 + 신규 글 1건.** **Bing 클릭 22→43, 노출 약 670→1570.** 바코드 툴 276→**1022노출 / 12→24클릭**(8.0위) — 지난주 title을 "Code 128"(띄어쓰기)로 바꾼 뒤 **"128" 쿼리군이 47개·422노출로 폭증**(`bulk barcode generator 128` 혼자 266노출/9.4위/클릭 0, `bulk barcode generator code 128` 54노출/7.7위/클릭 3). RSS 97→178노출 / 4→9클릭. GA4 bing/organic 30명 vs google 3명. Google 클릭 13(보합), 커버리지 변화 0(13+1). 조치: (1) 바코드 툴 — **Code 128 A/B/C 강제 선택**(쿼리 `code 128 b`, `128c`, `128b`) + 서브셋별 거부 사유 + **인쇄 시트 / 한 장 PDF**(UPC·EAN은 GS1 공칭 100% 크기로 배치, 5열에서 78%로 줄면 경고) + FAQ 3개, (2) **신규 글 `blog/code-128-scans-wrong.html`** — "스캔하면 다른 값이 나온다" 7가지 원인(set C 0 패딩, Excel, 키보드 레이아웃 Y/Z, Caps Lock, Enter/AIM 접미·접두, GS1 FNC1/GS, 타이밍). 전체 88파일 = sitemap 88 = llms.txt 88.)
+마지막 업데이트: 2026-10-21 (**신규 제작 세션 — 툴 1 + 글 1, SVG 클러스터 확장.** 키워드 후보 약 20개를 Google·Reddit·GitHub·포럼에서 경쟁 확인 → **2026년 들어 툴 키워드는 거의 전부 포화**(바코드/FNSKU/ITF-14/ISBN 생성기, i18n 키 비교, .env diff, Shopify CSV 검증, robots.txt 테스터, cron 겹침, CSV→QIF, CSV 병합, 자막 비교, 보이지 않는 문자 비교 — 전부 신생 툴 사이트 다수). **유일하게 깨끗한 공백: 여러 SVG를 한 페이지에 인라인할 때의 ID 충돌**(온라인 다중 파일 감지·접두 툴 0개, 해법은 SVGO/SVGR 설정·Docusaurus 이슈·Figma 포럼에 흩어짐 = 39·43·44항 동시 충족). 신규: `tools/svg-id-collision-checker.html` + `blog/inline-svg-wrong-gradient.html`. 전체 90파일 = sitemap 90 = llms.txt 90, 툴 30개.)
+
+[이전] 2026-10-19 (**주간 데이터 세션 — 툴 보강 1건 + 신규 글 1건.** **Bing 클릭 22→43, 노출 약 670→1570.** 바코드 툴 276→**1022노출 / 12→24클릭**(8.0위) — 지난주 title을 "Code 128"(띄어쓰기)로 바꾼 뒤 **"128" 쿼리군이 47개·422노출로 폭증**(`bulk barcode generator 128` 혼자 266노출/9.4위/클릭 0, `bulk barcode generator code 128` 54노출/7.7위/클릭 3). RSS 97→178노출 / 4→9클릭. GA4 bing/organic 30명 vs google 3명. Google 클릭 13(보합), 커버리지 변화 0(13+1). 조치: (1) 바코드 툴 — **Code 128 A/B/C 강제 선택**(쿼리 `code 128 b`, `128c`, `128b`) + 서브셋별 거부 사유 + **인쇄 시트 / 한 장 PDF**(UPC·EAN은 GS1 공칭 100% 크기로 배치, 5열에서 78%로 줄면 경고) + FAQ 3개, (2) **신규 글 `blog/code-128-scans-wrong.html`** — "스캔하면 다른 값이 나온다" 7가지 원인(set C 0 패딩, Excel, 키보드 레이아웃 Y/Z, Caps Lock, Enter/AIM 접미·접두, GS1 FNC1/GS, 타이밍). 전체 88파일 = sitemap 88 = llms.txt 88.)
 
 [이전] 2026-10-12 (**주간 데이터 세션 — 툴 보강 2건, 신규 0건.** **Bing 클릭 10→22, 노출 약 370→670.** 바코드 툴 82→**276노출 / 5→12클릭**(6.5위), RSS 툴 56→97노출 / 1→**4클릭**(7.3위). 바코드는 3주 연속 보강 → 3주 연속 급증. Google 클릭 16→14(3개월 창 이동, 보합), 40위 이내 쿼리 22→28. **발견됨-미색인 18→13** — 지난주 성과 데이터에 노출이 먼저 잡혔던 3개를 포함해 5개 풀림(커버리지 리포트 지연 가설 확인). 조치: (1) 바코드 — title/description을 "Code 128"(띄어쓰기)로 + **스프레드시트 2열(코드+이름) 붙여넣기**(탭을 바코드에 넣지 않고 이름을 파일명으로), (2) RSS — **URL만 있는 줄·탭 구분 허용, 건너뛴 줄 사유 표시, 날짜 없을 때 오늘 날짜로 채우던 동작 제거**, 상단에 "URL로 시작하면 Site Crawler" 안내. 전체 87파일 = sitemap 87 = llms.txt 87.)
 
@@ -91,7 +93,7 @@
 
 ---
 
-## 5. 툴 29개 현황 (2026-09-01 기준)
+## 5. 툴 30개 현황 (2026-10-21 기준)
 
 | 툴 | 파일 | 상태 | 비고 |
 |---|---|---|---|
@@ -103,6 +105,7 @@
 | Bulk Image Resize/Convert/Compress | `tools/image-batch.html` | 검증완료 | Canvas API, 20MB/장·60장 제한, 순차처리+진행률. Crop to exact size(center-crop) 모드 포함. **(2026-07-27 2차, 사용자 피드백 반영) 저장된 프리셋 기능 추가** — resizeMode/targetSize/targetHeight/format/quality 5개 값을 이름 붙여 localStorage에 저장, 드롭다운으로 재적용, 삭제 가능. jsdom으로 저장/덮어쓰기/불러오기/삭제/빈이름거부 5개 시나리오 검증완료. 사이트 최초의 localStorage 사용 사례(서버 전송 없음 유지) |
 | **(신규) Bulk SVG Optimizer** | `tools/svg-optimizer.html` | 검증완료(node로 실제 최적화 결과까지 확인, 644B→175B 72.8% 축소 케이스 테스트) | 외부 라이브러리 없이 자체 구현 — 주석/DOCTYPE/XML선언/에디터 네임스페이스(inkscape·sodipodi)/metadata 블록 제거, d·points 속성 좌표 소수점 반올림, 빈 g·defs 제거. title/desc/aria는 기본 보존(체크박스로 해제 가능) |
 | **(신규, 2026-07-31 3차) Bulk PDF Merge & Compress** | `tools/pdf-merge-compress.html` | 검증완료 — jsdom+node-canvas로 none/safe/aggressive 3개 모드 전부 실제 실행 후 pdf-lib로 round-trip 재검증(페이지 수 일치 확인) | 외부 사용자 피드백(launch 플랫폼 댓글, "PDF 합치기+압축을 한번에 처리하고 싶다")에서 출발. `pdf-lib`(cdnjs, v1.17.1)로 페이지 복사 병합(항상 무손실) + `pdfjs-dist`(jsDelivr, legacy 빌드 v3.11.174 — **cdnjs는 pdf.js가 2.6.347에서 멈춰있어서 이 라이브러리만 예외적으로 jsDelivr 사용**)로 "Aggressive" 모드에서 페이지를 캔버스에 렌더 후 JPG로 재인코딩. 3단계 모드: None(순수 병합)/Safe(무손실, useObjectStreams+메타데이터 제거, 효과는 미미)/Aggressive(페이지를 이미지화 — 텍스트 선택/검색 불가가 되는 트레이드오프를 UI 경고문구로 명시, 기본값 아님). 파일당 50MB·배치당 20개, Aggressive 모드는 총 200페이지 캡. 신규 카테고리 "Documents"(`data-cat="doc"`) 신설. 신규 블로그 `blog/why-merged-pdf-is-bigger.html` 페어링 |
+| **(신규, 2026-10-21) Bulk SVG ID Collision Checker & Prefixer** | `tools/svg-id-collision-checker.html` | 검증완료 — Playwright 실브라우저로 5개 픽스처(SVGO식 `a`, Figma식 `clip0`, `<style>` 선택자+`#abc` 색상, `xlink:href` 그라디언트 상속, `aria-labelledby`, 파일 내 중복 id, 스프라이트 미정의 참조, 깨진 XML, 숫자로 시작하는 파일명) 검사 + 수정 전/후 인라인 렌더 스크린샷으로 충돌 해소 확인 | 외부 라이브러리는 JSZip만. DOMParser로 id 수집(정확), 재작성은 문자열 치환(원본 포맷 보존): `id`, `url(#…)`(속성·style·`<style>`), `href`/`xlink:href="#…"`, `aria-labelledby/describedby`, `<style>`의 **선택자 영역에서만** `#id`(선언부 색상 오인 방지). 모드: 전체 id / 충돌 id만, 접두: 파일명 slug(숫자 시작이면 `svg-`) / 사용자 텍스트+번호, 접두 중복 시 `-2`. 300파일·5MB/파일. SMIL `begin`·외부 CSS/JS 참조는 미처리(FAQ 명시) |
 | RSS Generator | `tools/rss-generator.html` | 검증완료 | "계정불필요/스크래핑아님" 차별점 보강. **GSC 신호 있는 페이지 (아래 8번 참고)** |
 | Sitemap Generator | `tools/sitemap-generator.html` | 검증완료 | |
 | **(신규) Bulk Sitemap Validator** | `tools/sitemap-validator.html` | 검증완료(jsdom으로 7개 케이스 테스트: 정상/상대경로/우선순위범위초과/changefreq오류/loc누락/중복URL/XML파싱오류/sitemapindex) | 여러 sitemap.xml을 `-----` 구분선으로 붙여넣어 한번에 검증. DOMParser(브라우저 내장)로 XML 파싱, 외부 라이브러리 없음. Sitemap Protocol 스펙 기준 검사(well-formed XML/절대경로/priority 0.0-1.0/changefreq 7개값/lastmod 날짜형식/중복URL/50000개 한도/sitemapindex 구조). **경쟁사는 전부 "URL 1개 입력→서버fetch" 방식인데 우리는 여러 개 붙여넣기 배치 검증으로 차별화, CORS 문제 자체가 없음(URL fetch 안 하니까)** |
@@ -256,6 +259,29 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-10-21 세션(신규 제작) — 키워드 리서치 및 제작 내역**:
+
+- **후보 리스트와 경쟁 판정(Google·Reddit·GitHub·포럼·Dev.to 검색, 네이버는 영어 사이트라 수요 신호로만 고려 — 이번 후보들은 국내 문서가 사실상 없음)**:
+  | 후보 | 판정 | 근거 |
+  |---|---|---|
+  | i18n 번역 JSON 누락 키 비교 | 포화 | i18next 공식 health-check, lingual.dev, shipglobal, comparetwotexts 등 브라우저 툴 다수 |
+  | .env 다중 환경 비교 | 포화 | VS Code 확장, codingtool.dev, arraydiff, devdiff 등 |
+  | Shopify 상품 CSV 사전 검증 | 포화 | Craftshift, Lasso, catalog-optimizer, Dev.to 자작 툴 + 커뮤니티 홍보글 다수 |
+  | FNSKU/ITF-14/ISBN(+EAN-5) 벌크 바코드 | 포화 | 전용 생성기 사이트 각 5~10개 |
+  | robots.txt 다중 URL 테스터 | 포화 | serpinsight 벌크 테스터 등 10개 이상 |
+  | cron 다중 스케줄 겹침 | 포화 | crontap, cronmonitor, cronboard, GitHub 툴 다수 |
+  | CSV→QIF/OFX(은행 내역) | 포화 | statementvision, accountingconverter 등 |
+  | 서로 다른 헤더 CSV 병합 | 포화 | 병합 툴 10개 이상 |
+  | 다국어 자막 SRT 비교 | 포화 | subtitlewise, diff-all 등 |
+  | 똑같아 보이는데 안 맞는 값(VLOOKUP #N/A, NBSP) | 포화 | listdiff 등 툴 + 가이드 다수 |
+  | 열전사 프린터 바코드 인쇄 불량 / 라벨 정렬 | 글 포화 | "25 causes" 류 AI 글 다수 — 남은 각도: 203dpi 도트 반올림(정수 도트 모듈) 정도 |
+  | requirements.txt 다중 비교 | 약함 | 2파일 비교뿐, 수요 신호 약함 → 보류 |
+  | **여러 SVG 인라인 시 ID 충돌 감지·접두** | **공백** | 온라인 다중 파일 툴 없음. 해법은 SVGO `prefixIds`(기본 꺼짐)·SVGR 설정·React useId로만 존재. Docusaurus 장기 이슈 #8297(SVGO `cleanupIds` 기본 minify가 파일마다 `a`를 만들어 충돌) + Figma 포럼("Figma export로는 고유 id 생성 방법이 없다") = **43항 신호 2개**. 충돌은 파일을 함께 봐야만 보임 = **39항**. 기존 SVG 클러스터(optimizer·export-bloat·inline-vs-img — 마지막은 Google 26.9위) 연결 |
+- **신규 1 — `tools/svg-id-collision-checker.html`**: 위 5번 표 참고. 결과에 "여러 파일이 공유하는 id 표(많이 공유된 순)" + 파일별 리포트(공유 id 수, **파일 내부 중복 id**, **정의 없는 참조**(스프라이트면 정상, 아니면 최적화기가 지운 것)) + 파일별 다운로드 + ZIP. 정직성: SMIL·외부 CSS/JS 참조 미처리를 FAQ에 명시. 수정 전/후 인라인 렌더 비교에서 Chrome이 **첫 번째 `clip0`을 모든 파일에 적용**(파란 사각형이 원으로 잘림) → 수정 후 정상 확인.
+- **신규 2 — `blog/inline-svg-wrong-gradient.html`(995단어)**: 증상 4종(다른 아이콘 색, 잘림, 빈 아이콘, "메뉴 닫혔을 때만" = `display:none` 안의 정의), 원인 4종(SVGO `cleanupIds` minify 기본값, Figma `clip0`/`paint0_linear`·Illustrator `SVGID_1_`, 차트 라이브러리 고정 이름 `clip1`, 같은 파일 2회 인라인), 해법(SVGO `prefixIds`는 preset-default에 없음, SVGR, React `useId`, `<img>` 전환, 숨김 스프라이트는 `display:none` 대신 0×0 절대위치), DevTools 확인법. 브라우저별 승자는 "보고마다 다름(QuickChart 사례 첫 번째, Figma 포럼 Safari 마지막)"으로 단정 회피.
+- **연결**: svg-optimizer FAQ 1개 추가(최적화 후 그라디언트 섞임 → 체커), inline-svg-vs-img 글에 한 문단, 새 글 ↔ 툴 상호 링크, tools/index(image 카테고리)·홈 툴 카드, **전 90파일 푸터에 링크 추가(푸터 블록 한정 치환, 35항)**, blog/index 최상단, sitemap(새 2개 + 본문 수정 2개 lastmod 2026-10-21), llms.txt.
+- **화면 검증**: Playwright 375px — 옵션 행(`.opt-row-wide`), 결과 패널(공유 id 표는 `overflow-x:auto`), 블로그 본문 가로 스크롤 없음.
 
 **2026-10-19 세션 — 데이터 재확인 및 조치 사항**:
 
@@ -852,6 +878,13 @@
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-10-21 세션 기준 다음 할 일**
+
+- **A. 신규 2개(svg-id-collision-checker, inline-svg-wrong-gradient) 색인·Bing 노출 추적**(38항 1~2주). 롱테일 예상 쿼리: `multiple svg same id gradient`, `inline svg wrong gradient`, `svg clip path conflict multiple svgs`, `svgo ids collision`, `figma svg clip0 conflict`, `prefix svg ids online`.
+- **B. 10/19 다음 할 일 A~G는 그대로 유효**(특히 `bulk barcode generator 128` 266노출/9.4위/클릭 0 — 주간 세션에서 판정).
+- **C. 신규 제작 시 참고: 2026년 툴 키워드는 대부분 포화**(이번 세션 표 참고). 남은 공백은 ① 여러 파일을 함께 봐야 보이는 문제(39항) 중 ② 해법이 빌드 설정·이슈 트래커·포럼에만 흩어져 있고 ③ 온라인 툴이 없는 것. 단일 파일 변환·생성 툴은 더 만들지 말 것.
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-10-19 세션 기준 다음 할 일**
 

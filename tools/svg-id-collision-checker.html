@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk SVG ID Collision Checker — Prefix IDs Across Many SVGs | FreeToolDev</title>
+<meta name="description" content="Find IDs shared by several SVG files (the reason inline icons show the wrong gradient, clip or mask) and prefix them per file, with every url(#id) and href rewritten. No upload.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/svg-id-collision-checker.html">
+<meta property="og:title" content="Bulk SVG ID Collision Checker — Prefix IDs Across Many SVGs | FreeToolDev">
+<meta property="og:description" content="Find IDs shared by several SVG files (the reason inline icons show the wrong gradient, clip or mask) and prefix them per file, with every url(#id) and href rewritten. No upload.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk SVG ID Collision Checker — Prefix IDs Across Many SVGs | FreeToolDev">
+<meta name="twitter:description" content="Find IDs shared by several SVG files (the reason inline icons show the wrong gradient, clip or mask) and prefix them per file, with every url(#id) and href rewritten. No upload.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/svg-id-collision-checker.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Batch · No-upload</span>
+    <h1>Bulk SVG ID Collision Checker &amp; Prefixer</h1>
+    <p>Drop in every SVG that ends up on the same page. This finds the IDs that two or more files share — the reason an inlined icon suddenly shows another icon's gradient, clip path or mask — and rewrites each file's IDs with its own prefix, updating every <code>url(#…)</code>, <code>href="#…"</code> and <code>aria-labelledby</code> that points to them. Nothing is uploaded.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>1. Add SVG files</h3>
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept="image/svg+xml,.svg" multiple>
+        Drag SVG files here or click to browse<br>
+        <span style="font-size:0.78rem;">Multiple selection supported · max 5 MB/file, 300 files/batch</span>
+      </div>
+      <div class="file-list" id="fileList"></div>
+      <div class="toolbar" style="margin-top:12px;">
+        <button class="btn btn-outline" id="clearBtn" style="display:none;">Clear list</button>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>2. Prefix options</h3>
+      <div class="opt-row opt-row-wide">
+        <div>
+          <label>Which IDs to rename</label>
+          <select id="scope">
+            <option value="all" selected>All IDs (safe for future files too)</option>
+            <option value="colliding">Only IDs shared with another file</option>
+          </select>
+        </div>
+        <div>
+          <label>Prefix</label>
+          <select id="prefixMode">
+            <option value="name" selected>File name (icon-home-…)</option>
+            <option value="custom">Custom text + file number</option>
+          </select>
+        </div>
+        <div>
+          <label for="customPrefix">Custom prefix text</label>
+          <input type="text" id="customPrefix" value="svg" maxlength="30">
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="checkBtn">Check &amp; prefix →</button>
+        <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download fixed SVGs as ZIP</button>
+      </div>
+      <p style="margin-top:14px; font-size:0.85rem; color:#5a6472;">Only <code>id</code> attributes and the references to them change. The rest of each file is left byte-for-byte as it was, so this is safe to run before or after an optimizer.</p>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="summary" style="font-size:0.92rem; color:#2c3540;"></div>
+      <div id="collisions" style="margin-top:16px;"></div>
+      <div id="perFile" style="margin-top:16px;"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>Why one SVG can break another</h2>
+    <p>An SVG that is inlined into HTML stops being a separate document. Its <code>id</code>s join the page's single ID namespace, and every reference such as <code>fill="url(#a)"</code> or <code>clip-path="url(#clip0)"</code> is looked up across the whole page. When two inlined SVGs both define <code>id="a"</code>, the browser resolves both references to one of the two definitions. The second icon then gets the first icon's gradient, clip or mask, or nothing at all if the definition it got is inside a hidden element. Each file looks perfect when opened on its own, which is why this is so confusing to debug. SVGs used through <code>&lt;img&gt;</code>, CSS <code>background-image</code> or <code>&lt;object&gt;</code> are separate documents and can't collide. <a href="/blog/inline-svg-wrong-gradient.html">Why inline SVG icons show the wrong gradient</a> explains where the duplicate IDs come from and every way to fix them.</p>
+
+    <h2>What gets rewritten</h2>
+    <ul>
+      <li><code>id="…"</code> attributes on every element.</li>
+      <li><code>url(#…)</code> anywhere in the file: presentation attributes (<code>fill</code>, <code>stroke</code>, <code>clip-path</code>, <code>mask</code>, <code>filter</code>, <code>marker-*</code>), inline <code>style</code> attributes and <code>&lt;style&gt;</code> blocks.</li>
+      <li><code>href="#…"</code> and <code>xlink:href="#…"</code>, which is how <code>&lt;use&gt;</code>, gradients that inherit from other gradients, and <code>&lt;textPath&gt;</code> point at each other.</li>
+      <li><code>aria-labelledby</code> and <code>aria-describedby</code>, so an accessible <code>&lt;title id="…"&gt;</code> keeps working.</li>
+      <li><code>#id</code> selectors inside <code>&lt;style&gt;</code> blocks. Only selectors are rewritten, so a color like <code>#abc</code> in a declaration is never mistaken for an ID.</li>
+    </ul>
+    <p>A reference to an ID the file doesn't define is left alone and listed as a warning. That's normal for a <code>&lt;use href="#icon-x"&gt;</code> pointing into a sprite defined elsewhere on the page. In a standalone icon it usually means an optimizer removed a definition that was still needed.</p>
+
+    <h2>FAQ</h2>
+    <h3>Should I rename all IDs or only the colliding ones?</h3>
+    <p>All, in most cases. "Only colliding" fixes the files you have today, but the next icon someone adds can collide with an ID you left untouched. Prefixing every ID per file is what build tools do (SVGO's <code>prefixIds</code> plugin, for example). Choose "only colliding" when other code refers to specific IDs from outside the SVG, such as CSS or JavaScript on the page, and you want to change as few as possible.</p>
+    <h3>What prefix does it use?</h3>
+    <p>By default, the file name: <code>icon-home.svg</code> turns <code>id="a"</code> into <code>id="icon-home-a"</code>. That makes it obvious in DevTools which file an ID belongs to. Prefixes are made safe for use as IDs and CSS selectors (letters, digits, <code>-</code>, <code>_</code>, never starting with a digit), and two files whose names produce the same prefix get <code>-2</code>, <code>-3</code> added. A custom text option gives <code>svg1-a</code>, <code>svg2-a</code>, and so on, in file order.</p>
+    <h3>The same icon is inlined twice on my page. Is that a collision?</h3>
+    <p>Technically yes, because the same IDs appear twice. It's usually harmless, since both copies resolve to identical definitions. The exception is when the first copy sits inside something hidden with <code>display: none</code> (a closed menu, an inactive tab). Gradients and masks defined there may not render, so the visible copy loses its gradient too. Prefixing can't help with two copies of the same file. Keep one visible copy of the definitions, or use the icon through <code>&lt;img&gt;</code>.</p>
+    <h3>What isn't handled?</h3>
+    <p>IDs referenced from <em>outside</em> the SVG (your page's CSS or JavaScript), SMIL animation timing such as <code>begin="fade.end"</code>, and IDs inside embedded scripts. Those references keep the old names, so search your code for any ID the results list as renamed. Files that aren't well-formed XML are reported and left unchanged.</p>
+    <h3>Is anything uploaded?</h3>
+    <p>No. Files are read with your browser's <code>FileReader</code>, parsed with the built-in XML parser to find IDs, and rewritten with string operations on your device.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/svg-id-collision-checker.html">Bulk SVG ID Collision Checker</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/package-json-version-checker.html">Bulk package.json Version Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var MAX_FILE_SIZE = 5 * 1024 * 1024, MAX_FILES = 300;
+  var dropzone = document.getElementById('dropzone');
+  var fileInput = document.getElementById('fileInput');
+  var fileList = document.getElementById('fileList');
+  var clearBtn = document.getElementById('clearBtn');
+  var resultsPanel = document.getElementById('resultsPanel');
+  var summaryEl = document.getElementById('summary');
+  var collisionsEl = document.getElementById('collisions');
+  var perFileEl = document.getElementById('perFile');
+  var downloadZipBtn = document.getElementById('downloadZipBtn');
+  var files = []; // {name, text}
+  var outputs = [];
+
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function reEsc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+  function readAsText(file) {
+    return new Promise(function (resolve, reject) {
+      var r = new FileReader();
+      r.onload = function (e) { resolve(e.target.result); };
+      r.onerror = reject;
+      r.readAsText(file);
+    });
+  }
+
+  function addFiles(list) {
+    var rejected = [];
+    var jobs = Array.from(list).filter(function (f) { return f.type === 'image/svg+xml' || /\.svg$/i.test(f.name); }).map(function (f) {
+      if (files.length >= MAX_FILES) { rejected.push(f.name + ' (batch limit reached)'); return null; }
+      if (f.size > MAX_FILE_SIZE) { rejected.push(f.name + ' (over 5 MB)'); return null; }
+      return readAsText(f).then(function (text) { files.push({ name: f.name, text: text }); });
+    }).filter(Boolean);
+    Promise.all(jobs).then(function () {
+      renderFileList();
+      if (rejected.length) alert('Skipped ' + rejected.length + ' file(s):\n' + rejected.join('\n'));
+    });
+  }
+
+  function renderFileList() {
+    fileList.innerHTML = files.map(function (f) {
+      return '<div class="file-row"><span class="fname">' + esc(f.name) + '</span><span class="fsize" style="color:#5a6472;">' + (f.text.length / 1024).toFixed(1) + ' KB</span></div>';
+    }).join('');
+    clearBtn.style.display = files.length ? 'inline-flex' : 'none';
+  }
+
+  dropzone.addEventListener('click', function () { fileInput.click(); });
+  dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
+  dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('drag'); });
+  dropzone.addEventListener('drop', function (e) { e.preventDefault(); dropzone.classList.remove('drag'); addFiles(e.dataTransfer.files); });
+  fileInput.addEventListener('change', function () { addFiles(fileInput.files); fileInput.value = ''; });
+  clearBtn.addEventListener('click', function () { files = []; outputs = []; renderFileList(); resultsPanel.style.display = 'none'; downloadZipBtn.style.display = 'none'; });
+
+  // Collect ids with the XML parser (accurate), keep counts to spot duplicates inside one file.
+  function analyze(text) {
+    var doc = new DOMParser().parseFromString(text, 'image/svg+xml');
+    if (doc.getElementsByTagName('parsererror').length) return { error: 'not well-formed XML — left unchanged' };
+    var counts = {};
+    var all = doc.getElementsByTagName('*');
+    for (var i = 0; i < all.length; i++) {
+      var id = all[i].getAttribute('id');
+      if (id) counts[id] = (counts[id] || 0) + 1;
+    }
+    var refs = {};
+    function addRef(id) { refs[id] = (refs[id] || 0) + 1; }
+    text.replace(/url\(\s*(['"]?)#([^'")\s]+)\1\s*\)/g, function (m, q, id) { addRef(id); return m; });
+    text.replace(/\b(?:xlink:)?href\s*=\s*(["'])#([^"']+)\1/g, function (m, q, id) { addRef(id); return m; });
+    text.replace(/\baria-(?:labelledby|describedby)\s*=\s*(["'])([^"']*)\1/g, function (m, q, list) { list.split(/\s+/).filter(Boolean).forEach(addRef); return m; });
+    return { counts: counts, refs: refs };
+  }
+
+  function rewriteStyleBlock(css, map) {
+    // Rewrite #id only in selector preludes (text before "{"), never in declarations.
+    var out = '', buf = '';
+    for (var i = 0; i < css.length; i++) {
+      var ch = css[i];
+      if (ch === '{') {
+        out += buf.replace(/#(-?[A-Za-z_][\w-]*)/g, function (m, id) { return map.hasOwnProperty(id) ? '#' + map[id] : m; }) + ch;
+        buf = '';
+      } else if (ch === '}' || ch === ';') {
+        out += buf + ch; buf = '';
+      } else buf += ch;
+    }
+    return out + buf;
+  }
+
+  function rewrite(text, map) {
+    var has = function (id) { return Object.prototype.hasOwnProperty.call(map, id); };
+    var out = text;
+    // <style> selectors first (declarations are handled by the url() pass below)
+    out = out.replace(/(<style\b[^>]*>)([\s\S]*?)(<\/style>)/gi, function (m, a, css, b) { return a + rewriteStyleBlock(css, map) + b; });
+    out = out.replace(/(\sid\s*=\s*)(["'])([^"']+)\2/g, function (m, pre, q, id) { return has(id) ? pre + q + map[id] + q : m; });
+    out = out.replace(/url\(\s*(['"]?)#([^'")\s]+)\1\s*\)/g, function (m, q, id) { return has(id) ? 'url(' + q + '#' + map[id] + q + ')' : m; });
+    out = out.replace(/(\b(?:xlink:)?href\s*=\s*)(["'])#([^"']+)\2/g, function (m, pre, q, id) { return has(id) ? pre + q + '#' + map[id] + q : m; });
+    out = out.replace(/(\baria-(?:labelledby|describedby)\s*=\s*)(["'])([^"']*)\2/g, function (m, pre, q, list) {
+      return pre + q + list.split(/(\s+)/).map(function (t) { return has(t) ? map[t] : t; }).join('') + q;
+    });
+    return out;
+  }
+
+  function slug(name) {
+    var s = name.replace(/\.svg$/i, '').toLowerCase().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+    if (!s) s = 'svg';
+    if (!/^[a-z_]/.test(s)) s = 'svg-' + s;
+    return s;
+  }
+
+  document.getElementById('checkBtn').addEventListener('click', function () {
+    if (!files.length) { alert('Add at least one SVG file.'); return; }
+    var scope = document.getElementById('scope').value;
+    var prefixMode = document.getElementById('prefixMode').value;
+    var custom = (document.getElementById('customPrefix').value || 'svg').toLowerCase().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'svg';
+    if (!/^[a-z_]/.test(custom)) custom = 'svg-' + custom;
+
+    var infos = files.map(function (f) { var a = analyze(f.text); a.name = f.name; a.text = f.text; return a; });
+    // id -> list of file indexes
+    var owners = {};
+    infos.forEach(function (info, i) {
+      if (info.error) return;
+      Object.keys(info.counts).forEach(function (id) { (owners[id] = owners[id] || []).push(i); });
+    });
+    var shared = Object.keys(owners).filter(function (id) { return owners[id].length > 1; })
+      .sort(function (a, b) { return owners[b].length - owners[a].length || a.localeCompare(b); });
+
+    var usedPrefixes = {};
+    outputs = [];
+    var totalRenamed = 0, filesChanged = 0;
+    var rows = infos.map(function (info, i) {
+      if (info.error) {
+        outputs.push({ name: info.name, text: info.text });
+        return '<div class="file-row" style="flex-direction:column; align-items:flex-start;"><span class="fname" style="white-space:normal;"><strong>' + esc(info.name) + '</strong></span><span style="font-size:0.82rem; color:#b5451b;">' + esc(info.error) + '</span></div>';
+      }
+      var base = prefixMode === 'custom' ? custom + (i + 1) : slug(info.name);
+      var prefix = base, n = 2;
+      while (usedPrefixes[prefix]) { prefix = base + '-' + n; n++; }
+      usedPrefixes[prefix] = true;
+      var ids = Object.keys(info.counts);
+      var map = {};
+      ids.forEach(function (id) {
+        if (scope === 'colliding' && owners[id].length < 2) return;
+        map[id] = prefix + '-' + id;
+      });
+      var renamed = Object.keys(map).length;
+      var text = renamed ? rewrite(info.text, map) : info.text;
+      if (renamed) { filesChanged++; totalRenamed += renamed; }
+      outputs.push({ name: info.name, text: text });
+      var dupInside = ids.filter(function (id) { return info.counts[id] > 1; });
+      var dangling = Object.keys(info.refs).filter(function (id) { return !info.counts.hasOwnProperty(id); });
+      var sharedHere = ids.filter(function (id) { return owners[id].length > 1; });
+      var notes = [];
+      notes.push(ids.length + ' ID' + (ids.length === 1 ? '' : 's') + ', ' + renamed + ' renamed' + (renamed ? ' with prefix <code>' + esc(prefix) + '-</code>' : ''));
+      if (sharedHere.length) notes.push('<span style="color:#b5451b;">shares ' + sharedHere.length + ' ID' + (sharedHere.length === 1 ? '' : 's') + ' with other files</span>');
+      if (dupInside.length) notes.push('<span style="color:#8a5a00;">same ID used twice inside this file: ' + dupInside.map(function (d) { return '<code>' + esc(d) + '</code>'; }).join(', ') + ' (invalid on its own — renaming keeps them identical)</span>');
+      if (dangling.length) notes.push('<span style="color:#8a5a00;">points to ID' + (dangling.length === 1 ? '' : 's') + ' this file doesn\'t define: ' + dangling.slice(0, 8).map(function (d) { return '<code>' + esc(d) + '</code>'; }).join(', ') + (dangling.length > 8 ? '…' : '') + ' — fine for a sprite reference, otherwise probably removed by an optimizer</span>');
+      var href = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(text);
+      return '<div class="file-row" style="flex-direction:column; align-items:flex-start; gap:4px;">' +
+        '<span class="fname" style="white-space:normal; width:100%;"><strong>' + esc(info.name) + '</strong></span>' +
+        '<span style="font-size:0.82rem; color:#2c3540;">' + notes.join('<br>') + '</span>' +
+        (renamed ? '<a class="btn btn-outline" style="padding:5px 10px; font-size:0.72rem; margin-top:4px;" href="' + href + '" download="' + esc(info.name) + '">Download fixed file</a>' : '') +
+        '</div>';
+    });
+
+    var errorsCount = infos.filter(function (x) { return x.error; }).length;
+    var s = '<strong>' + files.length + ' file' + (files.length === 1 ? '' : 's') + ' checked.</strong> ';
+    if (shared.length) s += '<span style="color:#b5451b;"><strong>' + shared.length + ' ID' + (shared.length === 1 ? ' is' : 's are') + ' defined in more than one file</strong></span> — inlined on the same page, those references resolve to a single definition for every file. ';
+    else s += 'No ID is shared between files. ';
+    s += totalRenamed ? (totalRenamed + ' IDs renamed in ' + filesChanged + ' file' + (filesChanged === 1 ? '' : 's') + '.') : 'Nothing needed renaming.';
+    if (errorsCount) s += ' ' + errorsCount + ' file(s) could not be parsed.';
+    summaryEl.innerHTML = s;
+
+    if (shared.length) {
+      collisionsEl.innerHTML = '<div style="font-size:0.9rem; margin-bottom:8px;"><strong>Shared IDs</strong> (most widely shared first)</div>' +
+        '<div style="overflow-x:auto;"><table style="width:100%; border-collapse:collapse; font-size:0.82rem;">' +
+        '<thead><tr><th style="text-align:left; padding:6px 8px; border-bottom:1px solid var(--paper-dim);">ID</th><th style="text-align:left; padding:6px 8px; border-bottom:1px solid var(--paper-dim);">Files</th></tr></thead><tbody>' +
+        shared.slice(0, 200).map(function (id) {
+          return '<tr><td style="padding:6px 8px; border-bottom:1px solid var(--paper-dim); vertical-align:top;"><code>' + esc(id) + '</code></td><td style="padding:6px 8px; border-bottom:1px solid var(--paper-dim); word-break:break-word;">' + owners[id].length + ' — ' + owners[id].map(function (i) { return esc(infos[i].name); }).join(', ') + '</td></tr>';
+        }).join('') + '</tbody></table></div>' + (shared.length > 200 ? '<p style="font-size:0.8rem;">…and ' + (shared.length - 200) + ' more.</p>' : '');
+    } else collisionsEl.innerHTML = '';
+    perFileEl.innerHTML = '<div style="font-size:0.9rem; margin-bottom:8px;"><strong>Per file</strong></div><div class="file-list" style="margin-top:0;">' + rows.join('') + '</div>';
+    resultsPanel.style.display = 'block';
+    downloadZipBtn.style.display = totalRenamed ? 'inline-flex' : 'none';
+  });
+
+  downloadZipBtn.addEventListener('click', function () {
+    var zip = new JSZip();
+    var used = {};
+    outputs.forEach(function (o) {
+      var name = o.name, n = 2;
+      while (used[name]) { name = o.name.replace(/(\.svg)?$/i, '-' + n + '$1'); n++; }
+      used[name] = true;
+      zip.file(name, o.text);
+    });
+    zip.generateAsync({ type: 'blob' }).then(function (blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'svg-prefixed.zip';
+      a.click();
+    });
+  });
+});
+</script>
+
+</body>
+</html>

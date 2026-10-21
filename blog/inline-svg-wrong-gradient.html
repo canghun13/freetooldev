@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inline SVG Shows the Wrong Gradient, Clip or Mask? Duplicate IDs — FreeToolDev</title>
+<meta name="description" content="Each SVG looks right alone, but inlined together one icon takes another’s gradient or goes blank. Why duplicate IDs cause it, where they come from (SVGO, Figma, Illustrator, charts), and how to fix it.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/inline-svg-wrong-gradient.html">
+<meta property="og:title" content="Inline SVG Shows the Wrong Gradient, Clip or Mask? Duplicate IDs — FreeToolDev">
+<meta property="og:description" content="Each SVG looks right alone, but inlined together one icon takes another’s gradient or goes blank. Why duplicate IDs cause it, where they come from (SVGO, Figma, Illustrator, charts), and how to fix it.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Inline SVG Shows the Wrong Gradient, Clip or Mask? Duplicate IDs — FreeToolDev">
+<meta name="twitter:description" content="Each SVG looks right alone, but inlined together one icon takes another’s gradient or goes blank. Why duplicate IDs cause it, where they come from (SVGO, Figma, Illustrator, charts), and how to fix it.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/inline-svg-wrong-gradient.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Oct 21, 2026</div>
+  <h1>Why Inline SVG Icons Show the Wrong Gradient (or None at All)</h1>
+  <p>Each SVG looks right when you open it on its own. Put two or three of them inline on the same page and something breaks: an icon shows another icon's gradient, a chart's clip path cuts the wrong shape, a mask hides everything, or an icon goes flat. Remove one SVG and the others come back. The cause is almost always the same. Two files define the same <code>id</code>, and on a single page they are no longer separate.</p>
+
+  <h2 id="why">One page, one ID namespace</h2>
+  <p>Gradients, clip paths, masks, filters, markers and patterns are defined once, given an ID, and referenced from elsewhere: <code>fill="url(#a)"</code>, <code>clip-path="url(#clip0)"</code>, <code>&lt;use href="#shape"&gt;</code>. Inside a standalone <code>.svg</code> file, those IDs only have to be unique within that file. Once you paste the markup into HTML (by hand, through a CMS, or with a framework component that inlines SVGs), every inlined SVG becomes part of one document, and the whole page shares one set of IDs.</p>
+  <p>Duplicate IDs are invalid, so there is no well-defined winner. Browsers resolve <code>url(#a)</code> to one of the definitions for every element that asks for it. Reports differ by browser: QuickChart users saw the first definition in the document win, and Figma users saw Safari use the last. Either way, at least one icon is drawn with a definition from a different file.</p>
+  <p>That's also why the problem disappears when the same files are used through <code>&lt;img src="icon.svg"&gt;</code>, a CSS <code>background-image</code> or <code>&lt;object&gt;</code>. Each of those loads the SVG as its own document with its own IDs. <a href="/blog/inline-svg-vs-img-vs-css-background.html">Inline SVG vs &lt;img&gt; vs CSS background</a> covers when inlining is worth that trade-off.</p>
+
+  <h2 id="symptoms">What it looks like</h2>
+  <ul>
+    <li><strong>Wrong colors.</strong> The second icon renders with the first icon's gradient. It's the classic case: both files call their gradient <code>a</code>, or <code>paint0_linear</code>.</li>
+    <li><strong>Shapes cut off or missing.</strong> A <code>clipPath</code> from another file, sized for a different drawing, clips most of this one away. Charts are prone to this, because they clip their plot area.</li>
+    <li><strong>Icon blank or flat.</strong> It received a mask or filter meant for something else.</li>
+    <li><strong>It breaks only on some pages, or only when the menu is closed.</strong> The definition it resolved to lives in an element hidden with <code>display: none</code>, such as a closed mobile menu, an inactive tab, or a hidden sprite. Gradients and masks defined inside a <code>display: none</code> subtree commonly fail to render, so every icon that resolves to them loses the effect too.</li>
+  </ul>
+
+  <h2 id="sources">Where the duplicate IDs come from</h2>
+  <p>Nobody types <code>id="a"</code> in two files on purpose. Tools generate it, and they generate the <em>same</em> names in every file:</p>
+  <ul>
+    <li><strong>SVGO's <code>cleanupIds</code> plugin.</strong> It is part of SVGO's default preset, and by default it <em>minifies</em> referenced IDs to short names. Each file is optimized separately, so the first gradient in every file can end up as <code>a</code>. Optimizing makes collisions <em>more</em> likely, not less. Docusaurus had a long-running issue about exactly this: two gradients with distinct names went in, and both came out as <code>a</code>.</li>
+    <li><strong>Design-tool exports.</strong> Figma names clip paths like <code>clip0</code> and gradients <code>paint0_linear</code>, plus a suffix, in every export. Illustrator numbers them <code>SVGID_1_</code>, <code>SVGID_2_</code>, starting again in each file. Ten icons from the same design file can easily share a <code>clip0</code>.</li>
+    <li><strong>Chart and diagram generators.</strong> Libraries that emit SVG often use fixed names such as <code>clip1</code> for the plot area, so two charts on one page collide by construction.</li>
+    <li><strong>The same file inlined twice.</strong> Two copies of one icon duplicate every ID. The definitions are identical, so this is usually harmless, but the <code>display: none</code> trap above still applies.</li>
+  </ul>
+
+  <h2 id="fix">How to fix it</h2>
+  <p>The fix is to give each file's IDs a unique prefix and update every reference to match. Pick whichever of these fits how your SVGs reach the page:</p>
+  <ul>
+    <li><strong>At build time, with SVGO:</strong> enable the <code>prefixIds</code> plugin, which is <em>not</em> in the default preset. It prefixes every ID and reference with a per-file string. Alternatively, keep <code>cleanupIds</code> but turn off its <code>minify</code> option, which keeps your meaningful names but doesn't protect against two files that already share one.</li>
+    <li><strong>In React and similar frameworks:</strong> SVGR can apply <code>prefixIds</code> through its SVGO config, and hand-written components can build IDs with React's <code>useId()</code> so every rendered instance is unique.</li>
+    <li><strong>For a folder of files you just need to fix:</strong> run them all through the <a href="/tools/svg-id-collision-checker.html">bulk SVG ID collision checker</a>. It lists every ID that more than one file defines, then rewrites each file's IDs with its own prefix, including <code>url(#…)</code>, <code>href</code>, <code>aria-labelledby</code> and selectors in <code>&lt;style&gt;</code>. You can see exactly which files clash before deciding anything.</li>
+    <li><strong>If you don't need to style the SVG from the page:</strong> use <code>&lt;img&gt;</code> instead of inlining. There's no shared namespace and nothing to rename.</li>
+  </ul>
+  <p>For the hidden-definition case, the fix is different. A sprite or icon set that other icons reference shouldn't be hidden with <code>display: none</code>. Keep it rendered but invisible, for example as an <code>&lt;svg&gt;</code> with <code>width="0" height="0"</code> and <code>position: absolute</code>, so its gradients and masks stay usable.</p>
+
+  <h2 id="check">How to confirm it's an ID problem</h2>
+  <p>In DevTools, select the broken icon's shape and look at its <code>fill</code>, <code>clip-path</code> or <code>mask</code>. Then search the page's Elements panel for that ID (<code>id="a"</code>, say). More than one match means a collision. A quicker test is to rename the ID in one file by hand and reload. If the icon fixes itself, you've found it. For a whole icon set, checking files pairwise doesn't scale, because the collision only exists between files. Drop them all into the <a href="/tools/svg-id-collision-checker.html">checker</a> at once and it builds the list of shared IDs for you. If you optimize your SVGs too, run the <a href="/tools/svg-optimizer.html">optimizer</a> first and prefix afterwards. Prefixing changes only IDs and references, so the order doesn't undo either step.</p>
+</article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/svg-id-collision-checker.html">Bulk SVG ID Collision Checker</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/package-json-version-checker.html">Bulk package.json Version Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

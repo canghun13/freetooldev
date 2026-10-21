@@ -55,6 +55,8 @@
   <h2>Inline SVG: full styling and scripting access</h2>
   <p>Pasting the SVG markup directly into the HTML puts every element inside it in the DOM, reachable by CSS and JavaScript exactly like any other element on the page. This is the only option that lets you recolor parts of the icon with CSS (<code>fill: currentColor</code> to match surrounding text color, for instance), animate individual paths, or change parts of it dynamically in response to user interaction. The cost is that the browser can't cache it separately the way it caches an external file — an inline SVG's bytes are part of the page's own HTML, downloaded fresh with every page load, and repeating the same inline SVG on multiple pages means paying that cost repeatedly rather than once.</p>
 
+  <p>One catch that only shows up once several SVGs are inlined: their <code>id</code>s share the page's namespace, so two icons that both define a gradient called <code>a</code> can end up drawing with the same one. <a href="/blog/inline-svg-wrong-gradient.html">Why inline SVG icons show the wrong gradient</a> covers the cause and the fix.</p>
+
   <h2>&lt;img&gt;: cacheable, simple, but style-locked</h2>
   <p>Referencing an SVG through <code>&lt;img src="icon.svg"&gt;</code> treats it exactly like any other image format — the browser fetches it once and caches it under its URL, reusing that cached copy across every page that references the same file. The tradeoff: CSS on the page can't reach inside it to change colors or otherwise restyle its internals, since from the browser's perspective it's an opaque image, not part of the page's own DOM. Whatever colors and styles are baked into the SVG file itself are what renders, full stop.</p>
 
@@ -81,6 +83,7 @@
           <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
           <a href="/tools/image-batch.html">Bulk Image Tool</a>
           <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/svg-id-collision-checker.html">Bulk SVG ID Collision Checker</a>
           <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
           <a href="/tools/rss-generator.html">RSS Generator</a>
           <a href="/tools/sitemap-generator.html">Sitemap Generator</a>

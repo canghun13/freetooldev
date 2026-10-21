@@ -12,7 +12,8 @@
   <url><loc>https://freetooldev.com/tools/csv-tsv-converter.html</loc><lastmod>2026-07-20</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/json-validator.html</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/image-batch.html</loc><lastmod>2026-07-31</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://freetooldev.com/tools/svg-optimizer.html</loc><lastmod>2026-07-20</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/tools/svg-id-collision-checker.html</loc><lastmod>2026-10-21</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/tools/svg-optimizer.html</loc><lastmod>2026-10-21</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/pdf-merge-compress.html</loc><lastmod>2026-09-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/rss-generator.html</loc><lastmod>2026-10-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/sitemap-generator.html</loc><lastmod>2026-07-20</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -24,6 +25,7 @@
   <url><loc>https://freetooldev.com/tools/og-card-checker.html</loc><lastmod>2026-07-25</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/og-image-generator.html</loc><lastmod>2026-07-25</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/package-json-version-checker.html</loc><lastmod>2026-09-01</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/blog/inline-svg-wrong-gradient.html</loc><lastmod>2026-10-21</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/code-128-scans-wrong.html</loc><lastmod>2026-10-19</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/semver-range-drift-monorepo.html</loc><lastmod>2026-09-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/tools/json-field-consistency.html</loc><lastmod>2026-09-01</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -49,7 +51,7 @@
   <url><loc>https://freetooldev.com/blog/csv-to-json-data-types.html</loc><lastmod>2026-08-18</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/bulk-barcode-use-cases.html</loc><lastmod>2026-07-09</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/encodeuricomponent-vs-encodeuri.html</loc><lastmod>2026-07-13</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://freetooldev.com/blog/inline-svg-vs-img-vs-css-background.html</loc><lastmod>2026-07-14</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://freetooldev.com/blog/inline-svg-vs-img-vs-css-background.html</loc><lastmod>2026-10-21</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/excel-csv-number-mangling.html</loc><lastmod>2026-09-07</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/yaml-anchors-aliases.html</loc><lastmod>2026-07-14</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/double-url-encoding.html</loc><lastmod>2026-07-14</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>

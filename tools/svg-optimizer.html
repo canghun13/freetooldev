@@ -124,6 +124,8 @@
     <p>At 2 decimal places (the default), no — sub-hundredth-of-a-pixel differences aren't visible on any current display. Going down to 1 decimal place can occasionally introduce a barely perceptible shift on very large, zoomed-in graphics with fine detail; if you're optimizing something like a detailed illustration meant to be viewed at large sizes, 2 or 3 decimal places is the safer choice.</p>
     <h3>Is this the same as the SVGO tool other sites use?</h3>
     <p>No — this is a lighter, custom-built cleanup pass covering the changes that account for most of the size reduction (metadata, comments, precision), not a full port of SVGO's complete plugin set (which also merges paths, converts shapes to paths, and other more invasive transforms). For most exported icons and illustrations, that covers the bulk of the achievable savings without the risk of more aggressive structural changes. Once your SVGs are optimized, how you actually put them on the page still matters — see <a href="/blog/inline-svg-vs-img-vs-css-background.html">this post</a> for when to inline one versus reference it as an image or background.</p>
+    <h3>After optimizing, my inline icons show each other's gradients. Why?</h3>
+    <p>This optimizer leaves IDs alone, but many others (SVGO's default <code>cleanupIds</code>) shorten them to <code>a</code>, <code>b</code>, … file by file, and Figma and Illustrator exports reuse names like <code>clip0</code> and <code>SVGID_1_</code> in every file anyway. Once several such files are inlined on one page, they share IDs and pick up each other's gradients, clips and masks. The <a href="/tools/svg-id-collision-checker.html">SVG ID collision checker</a> finds the shared IDs across a batch and prefixes them per file.</p>
     <h3>Is my file uploaded anywhere?</h3>
     <p>No. Every file is read and processed with your browser's <code>FileReader</code> and plain string operations — nothing is sent over the network, which you can confirm by checking the Network tab in your browser's dev tools while a batch runs.</p>
   </div>
@@ -142,6 +144,7 @@
           <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
           <a href="/tools/image-batch.html">Bulk Image Tool</a>
           <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/svg-id-collision-checker.html">Bulk SVG ID Collision Checker</a>
           <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
           <a href="/tools/rss-generator.html">RSS Generator</a>
           <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
