@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Code 128 Barcode Generator — Free, A/B/C, ZIP or Print Sheet | FreeToolDev</title>
+<meta name="description" content="Free bulk Code 128 barcode generator: paste or import a list (CSV, Excel columns), choose auto, A, B or C, and download every barcode as PNG or SVG in one ZIP or print them on one sheet. No upload.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/code-128-bulk-generator.html">
+<meta property="og:title" content="Bulk Code 128 Barcode Generator — Free, A/B/C, ZIP or Print Sheet | FreeToolDev">
+<meta property="og:description" content="Free bulk Code 128 barcode generator: paste or import a list (CSV, Excel columns), choose auto, A, B or C, and download every barcode as PNG or SVG in one ZIP or print them on one sheet. No upload.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bulk Code 128 Barcode Generator — Free, A/B/C, ZIP or Print Sheet | FreeToolDev">
+<meta name="twitter:description" content="Free bulk Code 128 barcode generator: paste or import a list (CSV, Excel columns), choose auto, A, B or C, and download every barcode as PNG or SVG in one ZIP or print them on one sheet. No upload.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/code-128-bulk-generator.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.1/JsBarcode.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Batch · No-upload</span>
+    <h1>Bulk Code 128 Barcode Generator</h1>
+    <p>Paste a list of SKUs, serial numbers or asset tags — or import a CSV, or copy two columns (code + name) straight from Excel — and get a Code 128 barcode for every line. Choose automatic set switching or force Code 128 A, B or C, then download them all as PNG or SVG in one ZIP, or print them on one sheet. Everything runs in your browser.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>Codes (one per line)</h3>
+      <textarea id="items" placeholder="SKU-0001
+BIN-A-042
+ASSET-2026-0007
+SKU-0042&#9;Blue mug (tab-separated name → used as the file name)"></textarea>
+      <div class="toolbar" style="margin-top:10px; align-items:center;">
+        <label class="btn btn-outline" for="importFile" style="cursor:pointer; margin:0;">Import CSV / TXT…</label>
+        <input type="file" id="importFile" accept=".csv,.tsv,.txt,.xlsx,.xls,text/csv,text/plain" style="display:none;">
+        <span id="importNote" style="font-size:0.8rem; color:#5a6472;"></span>
+      </div>
+
+      <div class="opt-row opt-row-wide" style="margin-top:14px;">
+        <div>
+          <label>Format</label>
+          <select id="format">
+            <option value="CODE128" selected>Code 128 (any text, auto)</option>
+            <option value="CODE128B">Code 128 B (forced set B)</option>
+            <option value="CODE128C">Code 128 C (digit pairs)</option>
+            <option value="CODE128A">Code 128 A (caps + control)</option>
+            <option value="EAN13">EAN-13 (13 digits)</option>
+            <option value="UPC">UPC-A (12 digits)</option>
+          </select>
+        </div>
+        <div>
+          <label>Check digit (EAN/UPC)</label>
+          <select id="checkMode">
+            <option value="validate" selected>Included — validate it</option>
+            <option value="calc">Missing — calculate it</option>
+          </select>
+        </div>
+        <div>
+          <label>Output</label>
+          <select id="output">
+            <option value="png" selected>PNG — screen size</option>
+            <option value="png4">PNG — large, for print</option>
+            <option value="svg">SVG — vector, any size</option>
+          </select>
+        </div>
+        <div>
+          <label>Text under barcode</label>
+          <select id="showText">
+            <option value="true" selected>Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button class="btn btn-amber" id="generateBtn">Generate barcodes →</button>
+        <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download all as ZIP</button>
+      </div>
+      <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
+      <p style="margin-top:14px; font-size:0.85rem; color:#5a6472;">Up to 100 codes per batch — this keeps rendering fast and the tab responsive. Codes that don't fit the selected format are skipped and listed below the results with the reason (wrong length, non-numeric, or a check digit that doesn't match). If your EAN list has 12 digits (or your UPC list 11) because the check digit was never added, choose <strong>Missing — calculate it</strong>. Numbers that look damaged by a spreadsheet (a dropped leading zero, <code>4.00638E+12</code>) are called out by name. For printing, pick <strong>SVG</strong> or <strong>PNG — large</strong>, or use the print sheet under the results.</p>
+    </div>
+
+    <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
+      <h3>Results</h3>
+      <div id="barcodeGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px;"></div>
+      <div id="errorList" style="margin-top:16px; font-size:0.85rem;"></div>
+      <div class="toolbar" id="printBar" style="display:none; align-items:flex-end;">
+        <div style="min-width:150px;">
+          <label for="perRow">Barcodes per row</label>
+          <select id="perRow">
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <button class="btn btn-outline" id="printBtn">Print sheet / Save as PDF</button>
+      </div>
+      <p id="printNote" style="display:none; margin-top:10px; font-size:0.8rem; color:#5a6472;">Opens every barcode above on one page, drawn as vector graphics whatever output you chose, ready to print or to save as a single PDF from the print dialog.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy prose" style="max-width:720px; margin:0 auto; padding:64px 24px;">
+    <h2 style="margin-top:0; padding-top:0; border-top:none;">What Code 128 is for</h2>
+    <p>Code 128 encodes any ASCII text — upper and lower case letters, digits and punctuation — at any length, with no registration and no fixed format. That makes it the default barcode for anything you number yourself: SKUs, bin and shelf locations, asset tags, serial numbers, ticket and order numbers, document IDs. It's also the symbology inside GS1-128 carton labels and Amazon's FNSKU labels. For a retail product that will be scanned at someone else's checkout, you need a registered UPC-A or EAN-13 instead. The <a href="/tools/barcode-batch.html">bulk barcode generator</a> covers those (the formats are also in the menu above), and <a href="/blog/upc-vs-ean-vs-code128.html">UPC vs EAN vs Code 128</a> explains which one a label needs.</p>
+
+    <h2>Auto, A, B or C</h2>
+    <p>A Code 128 barcode can switch between three character sets, and a scanner returns the same text whichever set was used. <strong>Auto</strong> picks the shortest combination, the way label software does, and is the right choice unless a specification names a set. <strong>B</strong> covers the printable characters: letters in both cases, digits and punctuation. <strong>C</strong> packs two digits into each symbol for compact all-numeric codes, but needs an even number of digits. An odd count is rejected rather than silently padded, because a padded leading zero is exactly the <a href="/blog/code-128-scans-wrong.html">extra zero people later find when they scan</a>. <strong>A</strong> adds control characters and has no lower case. It's rarely needed outside older industrial systems.</p>
+
+    <h2>How wide will it be?</h2>
+    <p>Code 128 grows with its content. In set B, each character takes 11 modules, plus 35 modules for the start, check and stop characters, plus a quiet zone of at least 10 modules on each side. A 10-character SKU is therefore 145 modules of bars. At a common 0.25 mm module that's about 36 mm, plus at least 2.5 mm of clear space at each end. Long all-numeric codes shrink a lot in set C, where 12 digits become 6 symbols. If a barcode won't fit your label, shorten the data, or use more digits and fewer letters, before you shrink the bars. Bars that are too thin are the usual reason a printed label won't scan.</p>
+
+    <h2>Getting your list in</h2>
+    <p>Paste one code per line. Or select a code column and a name column in Excel or Google Sheets (code first) and paste both. Each row arrives tab-separated: the code is encoded, and the name becomes the downloaded file name and the caption on the print sheet. <strong>Import CSV / TXT</strong> loads a file the same way. The first column is the code, the second is the name, and a header row such as "SKU" or "Code" is skipped. Excel files (.xlsx) can't be read directly, so save them as CSV first or copy and paste. If your codes are long numbers, format the column as Text before exporting. Otherwise Excel may turn them into <code>1.23E+12</code> or drop leading zeros (<a href="/blog/excel-csv-number-mangling.html">why that happens</a>).</p>
+
+    <h2>FAQ</h2>
+    <h3>Is there a limit?</h3>
+    <p>Up to 100 barcodes per run, which keeps the page responsive on any device. For a longer list, run it in chunks of 100. Each run gives you its own ZIP and print sheet.</p>
+    <h3>Can I print them on one page or save one PDF?</h3>
+    <p>Yes. After generating, choose how many barcodes per row and click <strong>Print sheet / Save as PDF</strong>. The sheet redraws every barcode as vector graphics, adds dashed cutting guides and puts the name under each one. Choose "Save as PDF" in the print dialog to get a single file, and print at 100% scale. For long values, use 2 or 3 per row so the bars stay wide enough to scan.</p>
+    <h3>Can I make Amazon FNSKU labels with this?</h3>
+    <p>FNSKU labels are Code 128, so you can generate the barcode itself here from the FNSKU (the <code>X00…</code> code). The label Amazon expects also carries the product title and condition at a specific size, so the label PDF from Seller Central is still the safest source for inbound FBA shipments. Use this tool for internal stock labels, or when you need many barcodes in a format Seller Central doesn't provide.</p>
+    <h3>Is this GS1-128 (EAN-128)?</h3>
+    <p>No. GS1-128 is Code 128 with a special FNC1 start character and Application Identifiers such as <code>(01)</code> and <code>(17)</code>. This tool produces plain Code 128. If you type <code>(01)…</code>, the barcode scans, but GS1 systems won't parse it as structured data. Use GS1-aware label software for carton labels.</p>
+    <h3>Does it work offline? Is anything uploaded?</h3>
+    <p>Once the page has loaded, it works with no connection, and nothing you enter or import leaves your browser. The barcodes are drawn locally with the open-source JsBarcode library.</p>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/svg-id-collision-checker.html">Bulk SVG ID Collision Checker</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/package-json-version-checker.html">Bulk package.json Version Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+          <a href="/tools/code-128-bulk-generator.html">Bulk Code 128 Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script src="/assets/js/barcode-batch.js"></script>
+
+</body>
+</html>

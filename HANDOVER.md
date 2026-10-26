@@ -1,6 +1,8 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-10-21 (**신규 제작 세션 — 툴 1 + 글 1, SVG 클러스터 확장.** 키워드 후보 약 20개를 Google·Reddit·GitHub·포럼에서 경쟁 확인 → **2026년 들어 툴 키워드는 거의 전부 포화**(바코드/FNSKU/ITF-14/ISBN 생성기, i18n 키 비교, .env diff, Shopify CSV 검증, robots.txt 테스터, cron 겹침, CSV→QIF, CSV 병합, 자막 비교, 보이지 않는 문자 비교 — 전부 신생 툴 사이트 다수). **유일하게 깨끗한 공백: 여러 SVG를 한 페이지에 인라인할 때의 ID 충돌**(온라인 다중 파일 감지·접두 툴 0개, 해법은 SVGO/SVGR 설정·Docusaurus 이슈·Figma 포럼에 흩어짐 = 39·43·44항 동시 충족). 신규: `tools/svg-id-collision-checker.html` + `blog/inline-svg-wrong-gradient.html`. 전체 90파일 = sitemap 90 = llms.txt 90, 툴 30개.)
+마지막 업데이트: 2026-10-26 (**주간 데이터 세션 — 신규 툴 1 + 보강 2 + 색인 실험 설계.** **Bing 클릭 43→66, 노출 1570→3015**(4주 연속 거의 2배). 바코드 툴 2332노출/35클릭/8.3위 — **`bulk barcode generator 128` 혼자 886노출/9.36위/CTR 0.56%** = 사이트 최대 기회. RSS 244노출/19클릭(CTR 7.8%), PDF 글 112/5. GA4 bing 44명(Singapore 86명은 봇). Google 클릭 12(보합), 커버리지 13+1 **5주째 동일**. 조치: (1) **신규 `tools/code-128-bulk-generator.html`** — "128" 쿼리군 전용 랜딩(제목·H1·본문이 Code 128 전용, 엔진 공유), (2) 바코드 엔진을 `assets/js/barcode-batch.js`로 분리 + **CSV/TXT 가져오기**(`bulk code 128 barcode excel import`), (3) barcode-batch description을 CTR용으로 재작성(제목 유지), (4) 홈 "Latest posts" 7월 이후 정지 → 최신 3개로 교체, (5) **색인: 기술 점검 이상 없음 확인 + GSC 수동 색인 요청 실험(요청군/대조군) 설계** — 사용자 실행 필요. 전체 91파일 = sitemap 91 = llms.txt 91, 툴 31개.)
+
+[이전] 2026-10-21 (**신규 제작 세션 — 툴 1 + 글 1, SVG 클러스터 확장.** 키워드 후보 약 20개를 Google·Reddit·GitHub·포럼에서 경쟁 확인 → **2026년 들어 툴 키워드는 거의 전부 포화**(바코드/FNSKU/ITF-14/ISBN 생성기, i18n 키 비교, .env diff, Shopify CSV 검증, robots.txt 테스터, cron 겹침, CSV→QIF, CSV 병합, 자막 비교, 보이지 않는 문자 비교 — 전부 신생 툴 사이트 다수). **유일하게 깨끗한 공백: 여러 SVG를 한 페이지에 인라인할 때의 ID 충돌**(온라인 다중 파일 감지·접두 툴 0개, 해법은 SVGO/SVGR 설정·Docusaurus 이슈·Figma 포럼에 흩어짐 = 39·43·44항 동시 충족). 신규: `tools/svg-id-collision-checker.html` + `blog/inline-svg-wrong-gradient.html`. 전체 90파일 = sitemap 90 = llms.txt 90, 툴 30개.)
 
 [이전] 2026-10-19 (**주간 데이터 세션 — 툴 보강 1건 + 신규 글 1건.** **Bing 클릭 22→43, 노출 약 670→1570.** 바코드 툴 276→**1022노출 / 12→24클릭**(8.0위) — 지난주 title을 "Code 128"(띄어쓰기)로 바꾼 뒤 **"128" 쿼리군이 47개·422노출로 폭증**(`bulk barcode generator 128` 혼자 266노출/9.4위/클릭 0, `bulk barcode generator code 128` 54노출/7.7위/클릭 3). RSS 97→178노출 / 4→9클릭. GA4 bing/organic 30명 vs google 3명. Google 클릭 13(보합), 커버리지 변화 0(13+1). 조치: (1) 바코드 툴 — **Code 128 A/B/C 강제 선택**(쿼리 `code 128 b`, `128c`, `128b`) + 서브셋별 거부 사유 + **인쇄 시트 / 한 장 PDF**(UPC·EAN은 GS1 공칭 100% 크기로 배치, 5열에서 78%로 줄면 경고) + FAQ 3개, (2) **신규 글 `blog/code-128-scans-wrong.html`** — "스캔하면 다른 값이 나온다" 7가지 원인(set C 0 패딩, Excel, 키보드 레이아웃 Y/Z, Caps Lock, Enter/AIM 접미·접두, GS1 FNC1/GS, 타이밍). 전체 88파일 = sitemap 88 = llms.txt 88.)
 
@@ -93,7 +95,7 @@
 
 ---
 
-## 5. 툴 30개 현황 (2026-10-21 기준)
+## 5. 툴 31개 현황 (2026-10-26 기준)
 
 | 툴 | 파일 | 상태 | 비고 |
 |---|---|---|---|
@@ -106,6 +108,7 @@
 | **(신규) Bulk SVG Optimizer** | `tools/svg-optimizer.html` | 검증완료(node로 실제 최적화 결과까지 확인, 644B→175B 72.8% 축소 케이스 테스트) | 외부 라이브러리 없이 자체 구현 — 주석/DOCTYPE/XML선언/에디터 네임스페이스(inkscape·sodipodi)/metadata 블록 제거, d·points 속성 좌표 소수점 반올림, 빈 g·defs 제거. title/desc/aria는 기본 보존(체크박스로 해제 가능) |
 | **(신규, 2026-07-31 3차) Bulk PDF Merge & Compress** | `tools/pdf-merge-compress.html` | 검증완료 — jsdom+node-canvas로 none/safe/aggressive 3개 모드 전부 실제 실행 후 pdf-lib로 round-trip 재검증(페이지 수 일치 확인) | 외부 사용자 피드백(launch 플랫폼 댓글, "PDF 합치기+압축을 한번에 처리하고 싶다")에서 출발. `pdf-lib`(cdnjs, v1.17.1)로 페이지 복사 병합(항상 무손실) + `pdfjs-dist`(jsDelivr, legacy 빌드 v3.11.174 — **cdnjs는 pdf.js가 2.6.347에서 멈춰있어서 이 라이브러리만 예외적으로 jsDelivr 사용**)로 "Aggressive" 모드에서 페이지를 캔버스에 렌더 후 JPG로 재인코딩. 3단계 모드: None(순수 병합)/Safe(무손실, useObjectStreams+메타데이터 제거, 효과는 미미)/Aggressive(페이지를 이미지화 — 텍스트 선택/검색 불가가 되는 트레이드오프를 UI 경고문구로 명시, 기본값 아님). 파일당 50MB·배치당 20개, Aggressive 모드는 총 200페이지 캡. 신규 카테고리 "Documents"(`data-cat="doc"`) 신설. 신규 블로그 `blog/why-merged-pdf-is-bigger.html` 페어링 |
 | **(신규, 2026-10-21) Bulk SVG ID Collision Checker & Prefixer** | `tools/svg-id-collision-checker.html` | 검증완료 — Playwright 실브라우저로 5개 픽스처(SVGO식 `a`, Figma식 `clip0`, `<style>` 선택자+`#abc` 색상, `xlink:href` 그라디언트 상속, `aria-labelledby`, 파일 내 중복 id, 스프라이트 미정의 참조, 깨진 XML, 숫자로 시작하는 파일명) 검사 + 수정 전/후 인라인 렌더 스크린샷으로 충돌 해소 확인 | 외부 라이브러리는 JSZip만. DOMParser로 id 수집(정확), 재작성은 문자열 치환(원본 포맷 보존): `id`, `url(#…)`(속성·style·`<style>`), `href`/`xlink:href="#…"`, `aria-labelledby/describedby`, `<style>`의 **선택자 영역에서만** `#id`(선언부 색상 오인 방지). 모드: 전체 id / 충돌 id만, 접두: 파일명 slug(숫자 시작이면 `svg-`) / 사용자 텍스트+번호, 접두 중복 시 `-2`. 300파일·5MB/파일. SMIL `begin`·외부 CSS/JS 참조는 미처리(FAQ 명시) |
+| **(신규, 2026-10-26) Bulk Code 128 Barcode Generator** | `tools/code-128-bulk-generator.html` | 검증완료 — Playwright(실제 JsBarcode/JSZip 주입)로 서브셋 거부·탭 라벨·인쇄 시트 4/5열 mm 측정·CSV 가져오기(헤더 skip, 따옴표 안 콤마·`""`)·xlsx 안내 확인 | **barcode-batch와 같은 엔진**(`assets/js/barcode-batch.js` 공유 — 2026-10-26 인라인 스크립트에서 분리). 차이는 head/H1/본문(Code 128 용도·A/B/C·폭 계산 11n+35 모듈+양쪽 10X 정숙영역·Excel 가져오기·FNSKU·GS1-128 FAQ)과 Format 옵션 순서(Code 128 4종 먼저). 문장 중복률 약 11%(UI 라벨). **엔진 수정 시 두 페이지 모두 영향** |
 | RSS Generator | `tools/rss-generator.html` | 검증완료 | "계정불필요/스크래핑아님" 차별점 보강. **GSC 신호 있는 페이지 (아래 8번 참고)** |
 | Sitemap Generator | `tools/sitemap-generator.html` | 검증완료 | |
 | **(신규) Bulk Sitemap Validator** | `tools/sitemap-validator.html` | 검증완료(jsdom으로 7개 케이스 테스트: 정상/상대경로/우선순위범위초과/changefreq오류/loc누락/중복URL/XML파싱오류/sitemapindex) | 여러 sitemap.xml을 `-----` 구분선으로 붙여넣어 한번에 검증. DOMParser(브라우저 내장)로 XML 파싱, 외부 라이브러리 없음. Sitemap Protocol 스펙 기준 검사(well-formed XML/절대경로/priority 0.0-1.0/changefreq 7개값/lastmod 날짜형식/중복URL/50000개 한도/sitemapindex 구조). **경쟁사는 전부 "URL 1개 입력→서버fetch" 방식인데 우리는 여러 개 붙여넣기 배치 검증으로 차별화, CORS 문제 자체가 없음(URL fetch 안 하니까)** |
@@ -259,6 +262,29 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-10-26 세션 — 데이터 재확인 및 조치 사항**:
+
+- **Google**: 클릭 12(13→12, 보합), 노출 5867, 쿼리 604, 40위 이내 28. `llms-txt-generator` 82→88위 등 헤드텀 계속 하락(47항, 판정 대상 아님). **커버리지 13+1, 9/28 이후 5주째 URL까지 동일.** 10/19·10/21 신규 3개(code-128-scans-wrong, svg-id-collision-checker, inline-svg-wrong-gradient)는 어느 목록에도 없음 = 아직 발견 전.
+- **Bing: 클릭 43→66, 노출 1570→3015.**
+  - `tools/barcode-batch.html` 1022→**2332노출, 24→35클릭, 8.35위.** `bulk barcode generator 128` **886노출/9.36위/클릭 5(0.56%)**, `bulk barcode generator` 123/8.9/1, `bulk barcode generator code 128` 117/6.8/3, `bulk code 128 barcode generator` 51/8.5/1, `bulk barcode generator 128 free` 39/7.9/2, `bulk barcode generator free download` 22/4.2/3. **"128"군이 1페이지 하단(7~10위)에 몰려 CTR이 1% 미만** → 조치 1·3.
+  - `tools/rss-generator.html` 178→**244노출, 9→19클릭(CTR 7.8%)**, 6.43위. `rss feed creator free` 2위/3클릭 신규.
+  - `blog/why-merged-pdf-is-bigger.html` 85→**112노출, 3→5클릭**, 4.28위 — **Google은 3개월째 미색인인데 Bing 3위권 클릭원.**
+  - `blog/upc-vs-ean-vs-code128.html` 23→40노출/4.95위/클릭 1. 신규 쿼리 `is ean 128 barcode the same as ean 13`(4노출/6위) — 본문 EAN-128 섹션이 이미 답함.
+  - DNS 37→39/6.2위, 클릭 0(3주차). excel-csv 42/7.1, 클릭 0.
+- **GA4(9/28~10/25)**: 활성 200명이지만 **Singapore 86명 = 봇**(N일 17·21·22·24일 스파이크). 실사용 약 110명. **bing/organic 44명(세션 59)**, duckduckgo 8, google 2, **chatgpt.com 1(6주 만에 재등장)**, kagi 1. 바코드 페이지뷰 41+14(제목 변경 전후 합산 55, 사이트 1위), RSS 35.
+- **수익화**: 9-1-1 조건 미달. 보고에서 제외.
+
+**2026-10-26 세션 조치 내역**:
+
+1. **신규 `tools/code-128-bulk-generator.html` — "128" 쿼리군 전용 랜딩.** 근거: 128 포함 쿼리가 주간 1,100노출 이상인데 전부 범용 페이지(barcode-batch)가 7~10위로 받고 있음. Bing은 제목·H1 일치에 즉각 반응(10/12 "Code 128" 띄어쓰기 → 노출 4배). 제목 "Bulk Code 128 Barcode Generator — Free, A/B/C, ZIP or Print Sheet", H1 "Bulk Code 128 Barcode Generator". 본문은 Code 128 전용(용도, A/B/C, **폭 계산: set B 문자당 11모듈 + 시작·체크·정지 35모듈 + 양쪽 정숙영역 10X → 10자 SKU = 145모듈 ≈ 0.25mm에서 36mm**, Excel/CSV 가져오기, 100개 한도, 인쇄 시트, FNSKU(바코드는 가능하지만 FBA 입고용은 Seller Central 라벨 PDF 권장 — 정직), GS1-128 아님, 오프라인). 경쟁 회피: 상위 경쟁사는 단일 Code 128 생성기(barcode-maker.com/Code128B 등) 또는 범용 벌크 — **"벌크 + Code 128 전용 + A/B/C 강제 + CSV 가져오기 + 인쇄 시트"** 조합으로 차별.
+   - **카니발리제이션 관리**: 두 페이지 상호 링크(barcode-batch FAQ "Code 128 전용 버전이 있나?" ↔ 새 페이지 본문 첫 섹션에서 UPC/EAN은 범용으로). barcode-batch 제목은 유지. **판정 기준: 2주 뒤 128군 합계 클릭이 늘었는지. barcode-batch 클릭이 줄고 새 페이지가 못 받으면 새 페이지를 범용으로 합치는(=삭제 후 리디렉트 불가한 정적 사이트라 noindex 대신 canonical을 barcode-batch로) 방안 검토.**
+2. **엔진 분리 + CSV/TXT 가져오기.** barcode-batch의 인라인 스크립트(약 230줄)를 `assets/js/barcode-batch.js`로 옮겨 두 페이지가 공유. 신규: `Import CSV / TXT…` 버튼 — 따옴표 인식 파서(콤마/탭/세미콜론 자동 판별, `""` 이스케이프, BOM 제거), 첫 열=코드·둘째 열=이름(파일명), `SKU/Code/Barcode/UPC/EAN/GTIN/Item/ID` 헤더 자동 skip, `.xlsx/.xls` 선택 시 "CSV로 저장하거나 복사·붙여넣기" 안내. 파일명 slug 끝 `-` 제거 버그 수정(`mug-red-large-.png` → `mug-red-large.png`).
+3. **barcode-batch description 재작성(CTR)**: "Free bulk barcode generator for Code 128, UPC-A and EAN-13: paste or import up to 100 codes, download them all as PNG or SVG in one ZIP, or print one sheet. Check digits validated. No upload." — 10/19 다음 할 일 A의 조건(7위 진입 실패) 충족으로 실행. 제목은 그대로.
+4. **홈 "Latest posts" 교체**: 7월부터 고정이던 3장(jwt-claims, find-broken-links, rss-generator-no-account) → inline-svg-wrong-gradient(10/21), code-128-scans-wrong(10/19), why-merged-pdf-is-bigger. 목적은 **신규 페이지의 발견 경로**(홈 = 가장 자주 크롤되는 페이지). 41항의 "미색인 페이지에 내부링크 재시도"와는 다른 목적이지만 why-merged-pdf는 미색인군이라 결과 해석 시 주의.
+5. **색인 기술 점검(미색인 13+1 + 신규 3)**: 전부 canonical 자기참조 정상, `noindex` 없음, sitemap 포함, robots.txt Allow + Sitemap 선언, 푸터 외 내부링크 2~6개. **= 온사이트 결함 없음, 41항 재확인.** 남은 레버는 GSC URL 검사의 "색인 생성 요청"(하루 약 10건, 사용자만 가능)뿐.
+   - **실험 설계(사용자 실행)** — 요청군: `blog/why-merged-pdf-is-bigger.html`, `blog/upc-vs-ean-vs-code128.html`(크롤됨-미색인, 7/11 크롤 이후 703→1622단어로 보강됨 — 재크롤 요청 가치 가장 큼), `tools/image-batch.html`, `tools/csv-tsv-converter.html`, `blog/semver-range-drift-monorepo.html` + 신규 4개(`tools/code-128-bulk-generator.html`, `tools/svg-id-collision-checker.html`, `blog/inline-svg-wrong-gradient.html`, `blog/code-128-scans-wrong.html`). **대조군(요청 안 함)**: `blog/og-image-vs-twitter-image.html`, `blog/robots-llms-humans-txt-compared.html`, `blog/json-vs-yaml.html`, `blog/batch-vs-ai-image-convert.html`, `blog/sitemap-lastmod-git-commit-date.html`, `tools/json-field-consistency.html`, `tools/sitemap-generator.html`, `blog/robots-txt-vs-llms-txt.html`. 2~3주 뒤 커버리지에서 두 군의 해제 비율 비교.
+6. **sitemap lastmod**: 신규 + barcode-batch만 2026-10-26.
 
 **2026-10-21 세션(신규 제작) — 키워드 리서치 및 제작 내역**:
 
@@ -878,6 +904,17 @@
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-10-26 세션 기준 다음 할 일**
+
+- **A. 128군 판정(Bing, 1~2주)**: `bulk barcode generator 128`(886노출/9.36위)을 어느 페이지가 받는지, 합계 클릭이 늘었는지. barcode-batch 35클릭이 유지되는지. 악화 시 1번 조치의 되돌림 방안대로.
+- **B. 색인 실험 판정**: 사용자가 요청군 9개 URL을 GSC에서 "색인 생성 요청"했는지 확인 후, 2~3주 뒤 커버리지에서 요청군 vs 대조군 해제 비율 비교. **요청군만 풀리면 "Discovered 대기는 수동 요청으로 당길 수 있다"를 원칙으로 승격**, 둘 다 안 풀리면 41항(도메인 권위 문제) 강화.
+- **C. CSV 가져오기 사용 여부**는 GA4 이벤트가 없어 직접 측정 불가 — Bing `excel import` 류 쿼리 클릭으로 간접 확인.
+- **D. RSS 툴**(244/19, CTR 7.8%) — 순위 6.4위, 50항 점검은 Site Crawler 쪽이 남음.
+- **E. DNS 3주 클릭 0** — title 점검 후보(쿼리 원문 대부분 "cname vs txt"). 단 Bing 6위라 CTR 기대치 자체가 낮음.
+- **F. 신규 2개(10/21) Bing 노출 추적** — 이번 주 Bing 리포트에 아직 없음(정상, 38항).
+- **G. 미색인은 온사이트로 건드리지 말 것(41항)** — 수동 요청은 온사이트 조치가 아님.
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-10-21 세션 기준 다음 할 일**
 
