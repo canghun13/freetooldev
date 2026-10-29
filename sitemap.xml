@@ -14,7 +14,8 @@
   <url><loc>https://freetooldev.com/tools/image-batch.html</loc><lastmod>2026-07-31</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/svg-id-collision-checker.html</loc><lastmod>2026-10-21</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/svg-optimizer.html</loc><lastmod>2026-10-21</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://freetooldev.com/tools/pdf-merge-compress.html</loc><lastmod>2026-09-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/tools/merge-pdf-forms.html</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/tools/pdf-merge-compress.html</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/rss-generator.html</loc><lastmod>2026-10-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/sitemap-generator.html</loc><lastmod>2026-07-20</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/sitemap-validator.html</loc><lastmod>2026-08-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -25,6 +26,7 @@
   <url><loc>https://freetooldev.com/tools/og-card-checker.html</loc><lastmod>2026-07-25</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/og-image-generator.html</loc><lastmod>2026-07-25</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/tools/package-json-version-checker.html</loc><lastmod>2026-09-01</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://freetooldev.com/blog/combine-filled-pdf-forms.html</loc><lastmod>2026-10-29</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/inline-svg-wrong-gradient.html</loc><lastmod>2026-10-21</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/code-128-scans-wrong.html</loc><lastmod>2026-10-19</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/semver-range-drift-monorepo.html</loc><lastmod>2026-09-01</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
@@ -43,7 +45,7 @@
   <url><loc>https://freetooldev.com/tools/json-schema-validator.html</loc><lastmod>2026-07-25</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://freetooldev.com/blog/index.html</loc><lastmod>2026-09-01</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://freetooldev.com/blog/batch-vs-ai-image-convert.html</loc><lastmod>2026-07-07</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://freetooldev.com/blog/why-merged-pdf-is-bigger.html</loc><lastmod>2026-09-22</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://freetooldev.com/blog/why-merged-pdf-is-bigger.html</loc><lastmod>2026-10-29</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/no-upload-image-compression.html</loc><lastmod>2026-08-18</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/webp-vs-avif-2026.html</loc><lastmod>2026-07-07</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://freetooldev.com/blog/debug-jwt-base64-locally.html</loc><lastmod>2026-07-07</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>

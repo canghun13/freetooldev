@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merge Filled PDF Forms Without Mixing Answers — No Upload | FreeToolDev</title>
+<meta name="description" content="Combine filled-in copies of the same PDF form so each copy keeps its own answers. Fields are renamed per file and stay fillable, or get flattened. Lists shared field names first. Runs in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/merge-pdf-forms.html">
+<meta property="og:title" content="Merge Filled PDF Forms Without Mixing Answers — No Upload | FreeToolDev">
+<meta property="og:description" content="Combine filled-in copies of the same PDF form so each copy keeps its own answers. Fields are renamed per file and stay fillable, or get flattened. Lists shared field names first. Runs in your browser.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Merge Filled PDF Forms Without Mixing Answers — No Upload | FreeToolDev">
+<meta name="twitter:description" content="Combine filled-in copies of the same PDF form so each copy keeps its own answers. Fields are renamed per file and stay fillable, or get flattened. Lists shared field names first. Runs in your browser.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/merge-pdf-forms.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="/assets/js/pdf-forms.js"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">PDF · Batch · No-upload</span>
+    <h1>Merge Filled PDF Forms (Keep Every Copy's Answers)</h1>
+    <p>Combining filled-in copies of the same form usually goes wrong: every page shows the first person's answers, or the fields stop being fillable. Drop the filled PDFs here. You'll see which field names they share, then you can merge them so each copy keeps its own answers and stays fillable, or lock the answers in by flattening. Forms often hold personal data, so nothing is uploaded: it all runs in your browser.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>1. Add the filled PDFs</h3>
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept="application/pdf,.pdf" multiple>
+        Drag PDFs here or click to browse<br>
+        <span style="font-size:0.78rem;">Merged in the order shown — reorder with the arrows · max 50 MB/file, 50 files/batch · non-form PDFs (cover pages, instructions) can be mixed in</span>
+      </div>
+      <div class="file-list" id="fileList"></div>
+      <div id="sharedReport" style="margin-top:14px; font-size:0.88rem; color:#2c3540;"></div>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>2. How to treat the form fields</h3>
+      <div class="opt-row opt-row-wide">
+        <div>
+          <label for="formMode">Form fields</label>
+          <select id="formMode">
+            <option value="separate" selected>Keep fillable, each copy separate</option>
+            <option value="flatten">Flatten: lock the answers in</option>
+            <option value="shared">Keep names (answers shared)</option>
+          </select>
+        </div>
+      </div>
+      <p id="modeHelp" style="font-size:0.85rem; color:#5a6472; margin-top:4px;"></p>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="mergeBtn">Merge forms →</button>
+      </div>
+      <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>3. Result</h3>
+      <div id="resultArea"><p class="result-empty">// Your merged PDF will appear here</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>Why merged forms show the same answers</h2>
+    <p>A PDF form field is identified by its name, such as <code>applicant.name</code>, and a field holds exactly one value. The boxes you see on the page are only places where that field is displayed. A form that repeats your name on page 1 and page 5 relies on this. Ten filled copies of the same form contain ten fields that all have the same name. Most combine tools, Acrobat's included, treat same-named fields as one field, so the merged file holds one value and shows it in every copy. Typing into one box then changes all of them. <a href="/blog/combine-filled-pdf-forms.html">Why combining filled PDF forms changes the answers</a> goes through the mechanism, and the other common failure, where the merged file looks filled in but nothing can be edited.</p>
+
+    <h2>The three options</h2>
+    <ul>
+      <li><strong>Keep fillable, each copy separate</strong> (default). Every top-level field in each file gets a prefix made from its file name, so <code>applicant.name</code> in <code>w9-alice.pdf</code> becomes <code>w9-alice_applicant.name</code>. The answers stay as they were, and every field stays editable. Use this when someone still needs to check or correct the forms after merging.</li>
+      <li><strong>Flatten.</strong> Each answer is drawn into the page as ordinary content, and the fields are removed. Nothing can change it afterwards, and it looks the same in every viewer, including ones that handle forms badly. Use it when you're submitting or archiving. Flattening can't be undone, so keep the originals.</li>
+      <li><strong>Keep names.</strong> Fields keep their original names, so same-named fields share one answer. This is what most tools do. It's only right when you actually want one answer to fill every copy.</li>
+    </ul>
+
+    <h2>FAQ</h2>
+    <h3>Why not just use any PDF merger?</h3>
+    <p>Mergers handle forms in one of two ways, and both cause trouble. Tools that copy pages one by one bring the visible boxes across but not the document's form, so the result looks filled in but nothing is fillable anymore. Tools that copy the form join same-named fields, which produces the "everyone has the first person's answers" problem. A few services can rename fields too, but they need the files uploaded to their servers, which is a poor fit for tax forms, applications and medical paperwork.</p>
+    <h3>What does the "shared field names" list mean?</h3>
+    <p>It lists every field name that appears in more than one of your files, with the number of files that contain it. These are exactly the fields that would collide under "Keep names". With the default option they're renamed apart, so the list is a preview of what would have gone wrong.</p>
+    <h3>What about signed forms?</h3>
+    <p>Merging creates a new document, so a digital signature from a source file won't verify in the merged file, whichever option you pick. The tool flags files that contain signature fields. Merge signed copies only for reading, and keep the signed originals as the record.</p>
+    <h3>My form says "Please wait…" or shows empty boxes</h3>
+    <p>That's an XFA form, built with Adobe LiveCycle or Designer. Most XFA forms carry an ordinary form underneath, and that is what this tool keeps. "Dynamic" XFA forms that exist only as XFA have nothing underneath for a browser-based tool to read, so the tool flags them. For those, print each one to PDF from Adobe Reader first, then merge the printed copies.</p>
+    <h3>Is anything uploaded?</h3>
+    <p>No. Files are read and merged with the open-source <a href="https://pdf-lib.js.org/" target="_blank" rel="noopener">pdf-lib</a> library inside your browser. You can check the Network tab in your browser's developer tools while it runs. For merging without forms, plus compression, use the <a href="/tools/pdf-merge-compress.html">bulk PDF merge &amp; compress</a> tool, which now keeps form fields fillable and separate in the same way.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/svg-id-collision-checker.html">Bulk SVG ID Collision Checker</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/merge-pdf-forms.html">Merge Filled PDF Forms</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/package-json-version-checker.html">Bulk package.json Version Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+          <a href="/tools/code-128-bulk-generator.html">Bulk Code 128 Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var MAX_FILE_SIZE = 50 * 1024 * 1024, MAX_FILES = 50;
+  var dropzone = document.getElementById('dropzone');
+  var fileInput = document.getElementById('fileInput');
+  var fileList = document.getElementById('fileList');
+  var sharedReport = document.getElementById('sharedReport');
+  var resultArea = document.getElementById('resultArea');
+  var progressStatus = document.getElementById('progressStatus');
+  var progressText = document.getElementById('progressText');
+  var formMode = document.getElementById('formMode');
+  var modeHelp = document.getElementById('modeHelp');
+  var items = []; // {file, info}
+
+  var HELP = {
+    separate: 'Each file\'s fields get a prefix from its file name, so every copy keeps its own answers and stays editable.',
+    flatten: 'Answers are drawn into the page and the fields are removed. Final and identical in every viewer, but no longer editable.',
+    shared: 'Fields keep their names, so a name that appears in several files becomes one field with one answer everywhere.'
+  };
+  function updateHelp() { modeHelp.textContent = HELP[formMode.value]; }
+  formMode.addEventListener('change', updateHelp); updateHelp();
+
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  dropzone.addEventListener('click', function () { fileInput.click(); });
+  dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
+  dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('drag'); });
+  dropzone.addEventListener('drop', function (e) { e.preventDefault(); dropzone.classList.remove('drag'); addFiles(e.dataTransfer.files); });
+  fileInput.addEventListener('change', function () { addFiles(fileInput.files); fileInput.value = ''; });
+
+  async function inspectFile(f) {
+    try {
+      var doc = await PDFLib.PDFDocument.load(await f.arrayBuffer(), { ignoreEncryption: true });
+      var info = PdfForms.inspect(doc);
+      info.pages = doc.getPageCount();
+      info.encrypted = !!doc.isEncrypted;
+      return info;
+    } catch (e) {
+      return { error: 'could not be read as a PDF (' + ((e && e.message) || e) + ')', names: [], count: 0, pages: 0 };
+    }
+  }
+
+  async function addFiles(list) {
+    var rejected = [];
+    var toAdd = Array.from(list).filter(function (f) {
+      if (!(f.type === 'application/pdf' || /\.pdf$/i.test(f.name))) { rejected.push(f.name + ' (not a PDF)'); return false; }
+      if (f.size > MAX_FILE_SIZE) { rejected.push(f.name + ' (over 50 MB)'); return false; }
+      return true;
+    });
+    for (var i = 0; i < toAdd.length; i++) {
+      if (items.length >= MAX_FILES) { rejected.push(toAdd[i].name + ' (batch limit reached)'); continue; }
+      var item = { file: toAdd[i], info: null };
+      items.push(item);
+      render();
+      item.info = await inspectFile(toAdd[i]);
+      render();
+    }
+    if (rejected.length) alert('Skipped ' + rejected.length + ' file(s):\n' + rejected.join('\n'));
+  }
+
+  function describe(info) {
+    if (!info) return 'checking…';
+    if (info.error) return '<span style="color:#b5451b;">' + esc(info.error) + '</span>';
+    var parts = [info.pages + ' page' + (info.pages === 1 ? '' : 's')];
+    parts.push(info.count ? info.count + ' form field' + (info.count === 1 ? '' : 's') : 'no form fields');
+    if (info.signatures) parts.push('<span style="color:#8a5a00;">' + info.signatures + ' signature field(s): signatures won\'t verify after merging</span>');
+    if (info.hasXfa && !info.count) parts.push('<span style="color:#b5451b;">XFA-only form: fields can\'t be read here, so print it to PDF first</span>');
+    else if (info.hasXfa) parts.push('<span style="color:#8a5a00;">XFA form: its standard form layer is kept</span>');
+    if (info.encrypted) parts.push('<span style="color:#8a5a00;">encrypted: may fail to merge</span>');
+    return parts.join(' · ');
+  }
+
+  function render() {
+    fileList.innerHTML = items.map(function (it, i) {
+      return '<div class="file-row" style="flex-wrap:wrap;">' +
+        '<span class="fname" style="flex:1 1 180px;">' + esc(it.file.name) + '</span>' +
+        '<button type="button" class="btn btn-outline" data-action="up" data-idx="' + i + '" style="padding:4px 9px;font-size:0.7rem;"' + (i === 0 ? ' disabled' : '') + ' aria-label="Move up">&uarr;</button>' +
+        '<button type="button" class="btn btn-outline" data-action="down" data-idx="' + i + '" style="padding:4px 9px;font-size:0.7rem;"' + (i === items.length - 1 ? ' disabled' : '') + ' aria-label="Move down">&darr;</button>' +
+        '<button type="button" class="btn btn-outline" data-action="remove" data-idx="' + i + '" style="padding:4px 9px;font-size:0.7rem;" aria-label="Remove">&times;</button>' +
+        '<span style="flex-basis:100%; font-size:0.8rem; color:#5a6472;">' + describe(it.info) + '</span>' +
+        '</div>';
+    }).join('');
+    renderShared();
+  }
+
+  function renderShared() {
+    var owners = {};
+    items.forEach(function (it, i) {
+      if (!it.info || !it.info.names) return;
+      var seen = {};
+      it.info.names.forEach(function (n) { if (seen[n]) return; seen[n] = true; (owners[n] = owners[n] || []).push(i); });
+    });
+    var shared = Object.keys(owners).filter(function (n) { return owners[n].length > 1; })
+      .sort(function (a, b) { return owners[b].length - owners[a].length || a.localeCompare(b); });
+    if (items.length < 2) { sharedReport.innerHTML = ''; return; }
+    if (!shared.length) { sharedReport.innerHTML = 'No field name appears in more than one file, so these files can\'t collide.'; return; }
+    sharedReport.innerHTML = '<strong style="color:#b5451b;">' + shared.length + ' field name' + (shared.length === 1 ? ' is' : 's are') + ' shared between files.</strong> ' +
+      'If the names were kept, each of these would hold one answer for every copy:' +
+      '<div style="margin-top:6px; overflow-x:auto;"><table style="border-collapse:collapse; font-size:0.82rem; width:100%;"><tbody>' +
+      shared.slice(0, 25).map(function (n) {
+        return '<tr><td style="padding:4px 8px; border-bottom:1px solid var(--paper-dim);"><code>' + esc(n) + '</code></td><td style="padding:4px 8px; border-bottom:1px solid var(--paper-dim); white-space:nowrap;">in ' + owners[n].length + ' files</td></tr>';
+      }).join('') + '</tbody></table></div>' + (shared.length > 25 ? '<div style="font-size:0.8rem; margin-top:4px;">…and ' + (shared.length - 25) + ' more.</div>' : '');
+  }
+
+  fileList.addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    var i = parseInt(btn.getAttribute('data-idx'), 10), a = btn.getAttribute('data-action'), t;
+    if (a === 'remove') items.splice(i, 1);
+    else if (a === 'up' && i > 0) { t = items[i - 1]; items[i - 1] = items[i]; items[i] = t; }
+    else if (a === 'down' && i < items.length - 1) { t = items[i + 1]; items[i + 1] = items[i]; items[i] = t; }
+    render();
+  });
+
+  document.getElementById('mergeBtn').addEventListener('click', async function () {
+    if (!items.length) { alert('Add at least one PDF.'); return; }
+    var btn = this, mode = formMode.value;
+    btn.disabled = true; progressStatus.classList.add('active'); resultArea.innerHTML = '';
+    try {
+      var out = await PDFLib.PDFDocument.create();
+      var state = PdfForms.newState(), used = {}, pages = 0, skipped = [];
+      for (var i = 0; i < items.length; i++) {
+        progressText.textContent = 'File ' + (i + 1) + ' of ' + items.length + ': ' + items[i].file.name;
+        var src;
+        try { src = await PDFLib.PDFDocument.load(await items[i].file.arrayBuffer(), { ignoreEncryption: true }); }
+        catch (e) { skipped.push(items[i].file.name); continue; }
+        try { PdfForms.prepare(src, mode, PdfForms.slugPrefix(items[i].file.name, used), out, state); }
+        catch (e) { state.warnings.push(items[i].file.name + ': form fields could not be processed (' + e.message + ').'); }
+        var copied = await out.copyPages(src, src.getPageIndices());
+        copied.forEach(function (p) { out.addPage(p); });
+        pages += copied.length;
+      }
+      var fin = { fields: 0 };
+      if (mode !== 'flatten') { try { fin = PdfForms.finalize(out, state); } catch (e) { state.warnings.push('The merged form could not be rebuilt (' + e.message + ').'); } }
+      var bytes = await out.save();
+      var url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+      var summary = pages + ' page' + (pages === 1 ? '' : 's') + ' from ' + (items.length - skipped.length) + ' file(s). ';
+      if (!state.fieldsSeen) summary += 'No form fields were found.';
+      else if (mode === 'flatten') summary += state.flattened + ' field(s) flattened: the answers are now part of the pages.';
+      else if (mode === 'separate') summary += fin.fields + ' fillable field group(s) kept, ' + state.renamed + ' renamed with a per-file prefix.';
+      else summary += fin.fields + ' field group(s) kept with their original names. Same-named fields now share one answer.';
+      resultArea.innerHTML = '<div class="file-row ready" style="flex-wrap:wrap;"><span class="fname">merged-forms.pdf</span><span class="fsize" style="color:#5a6472;">' + (bytes.length / (1024 * 1024)).toFixed(2) + ' MB</span>' +
+        '<a class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" href="' + url + '" download="merged-forms.pdf">Download</a>' +
+        '<span style="flex-basis:100%; font-size:0.85rem; color:#2c3540;">' + esc(summary) + '</span></div>' +
+        (skipped.length ? '<p style="font-size:0.85rem; color:#b5451b;">Skipped (unreadable): ' + skipped.map(esc).join(', ') + '</p>' : '') +
+        (state.warnings.length ? '<p style="font-size:0.85rem; color:#8a5a00;">' + state.warnings.map(esc).join('<br>') + '</p>' : '');
+      progressText.textContent = 'Done.';
+    } catch (err) {
+      resultArea.innerHTML = '<p class="result-empty">Something went wrong: ' + esc(err && err.message ? err.message : String(err)) + '</p>';
+      progressText.textContent = 'Failed.';
+    } finally {
+      progressStatus.classList.remove('active'); btn.disabled = false;
+    }
+  });
+});
+</script>
+
+</body>
+</html>

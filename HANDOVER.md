@@ -1,6 +1,8 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-10-26 (**주간 데이터 세션 — 신규 툴 1 + 보강 2 + 색인 실험 설계.** **Bing 클릭 43→66, 노출 1570→3015**(4주 연속 거의 2배). 바코드 툴 2332노출/35클릭/8.3위 — **`bulk barcode generator 128` 혼자 886노출/9.36위/CTR 0.56%** = 사이트 최대 기회. RSS 244노출/19클릭(CTR 7.8%), PDF 글 112/5. GA4 bing 44명(Singapore 86명은 봇). Google 클릭 12(보합), 커버리지 13+1 **5주째 동일**. 조치: (1) **신규 `tools/code-128-bulk-generator.html`** — "128" 쿼리군 전용 랜딩(제목·H1·본문이 Code 128 전용, 엔진 공유), (2) 바코드 엔진을 `assets/js/barcode-batch.js`로 분리 + **CSV/TXT 가져오기**(`bulk code 128 barcode excel import`), (3) barcode-batch description을 CTR용으로 재작성(제목 유지), (4) 홈 "Latest posts" 7월 이후 정지 → 최신 3개로 교체, (5) **색인: 기술 점검 이상 없음 확인 + GSC 수동 색인 요청 실험(요청군/대조군) 설계** — 사용자 실행 필요. 전체 91파일 = sitemap 91 = llms.txt 91, 툴 31개.)
+마지막 업데이트: 2026-10-29 (**신규 제작 세션 — 툴 1 + 글 1 + 기존 툴 기능 수정, PDF 클러스터에 "폼" 하위 클러스터 신설.** 후보 리서치: DMARC 리포트 뷰어(10개 이상), Merchant Center GTIN 검증(nventory·merchantutil 등), RSS 피드 URL 패턴(wprssaggregator 등)은 전부 포화. **공백: 같은 PDF 양식의 작성본 여러 개를 합치면 모든 사본이 첫 사람 답으로 바뀌는 문제**(같은 이름 필드 = 한 필드). Adobe 커뮤니티 2014~2026 스레드 다수(대표 스레드 6,219뷰, 채택 답변이 "먼저 flatten") = 43항, 해결 툴은 업로드형 Sejda뿐 = 44항, 파일을 함께 봐야만 충돌이 보임 = 39항. 신규 `tools/merge-pdf-forms.html` + `blog/combine-filled-pdf-forms.html`. **발견: 우리 `pdf-merge-compress`도 copyPages만 써서 폼 필드를 버리고 있었음 → 공유 모듈 `assets/js/pdf-forms.js`로 수정.** 전체 93파일 = sitemap 93 = llms.txt 93, 툴 32개.)
+
+[이전] 2026-10-26 (**주간 데이터 세션 — 신규 툴 1 + 보강 2 + 색인 실험 설계.** **Bing 클릭 43→66, 노출 1570→3015**(4주 연속 거의 2배). 바코드 툴 2332노출/35클릭/8.3위 — **`bulk barcode generator 128` 혼자 886노출/9.36위/CTR 0.56%** = 사이트 최대 기회. RSS 244노출/19클릭(CTR 7.8%), PDF 글 112/5. GA4 bing 44명(Singapore 86명은 봇). Google 클릭 12(보합), 커버리지 13+1 **5주째 동일**. 조치: (1) **신규 `tools/code-128-bulk-generator.html`** — "128" 쿼리군 전용 랜딩(제목·H1·본문이 Code 128 전용, 엔진 공유), (2) 바코드 엔진을 `assets/js/barcode-batch.js`로 분리 + **CSV/TXT 가져오기**(`bulk code 128 barcode excel import`), (3) barcode-batch description을 CTR용으로 재작성(제목 유지), (4) 홈 "Latest posts" 7월 이후 정지 → 최신 3개로 교체, (5) **색인: 기술 점검 이상 없음 확인 + GSC 수동 색인 요청 실험(요청군/대조군) 설계** — 사용자 실행 필요. 전체 91파일 = sitemap 91 = llms.txt 91, 툴 31개.)
 
 [이전] 2026-10-21 (**신규 제작 세션 — 툴 1 + 글 1, SVG 클러스터 확장.** 키워드 후보 약 20개를 Google·Reddit·GitHub·포럼에서 경쟁 확인 → **2026년 들어 툴 키워드는 거의 전부 포화**(바코드/FNSKU/ITF-14/ISBN 생성기, i18n 키 비교, .env diff, Shopify CSV 검증, robots.txt 테스터, cron 겹침, CSV→QIF, CSV 병합, 자막 비교, 보이지 않는 문자 비교 — 전부 신생 툴 사이트 다수). **유일하게 깨끗한 공백: 여러 SVG를 한 페이지에 인라인할 때의 ID 충돌**(온라인 다중 파일 감지·접두 툴 0개, 해법은 SVGO/SVGR 설정·Docusaurus 이슈·Figma 포럼에 흩어짐 = 39·43·44항 동시 충족). 신규: `tools/svg-id-collision-checker.html` + `blog/inline-svg-wrong-gradient.html`. 전체 90파일 = sitemap 90 = llms.txt 90, 툴 30개.)
 
@@ -95,7 +97,7 @@
 
 ---
 
-## 5. 툴 31개 현황 (2026-10-26 기준)
+## 5. 툴 32개 현황 (2026-10-29 기준)
 
 | 툴 | 파일 | 상태 | 비고 |
 |---|---|---|---|
@@ -109,6 +111,7 @@
 | **(신규, 2026-07-31 3차) Bulk PDF Merge & Compress** | `tools/pdf-merge-compress.html` | 검증완료 — jsdom+node-canvas로 none/safe/aggressive 3개 모드 전부 실제 실행 후 pdf-lib로 round-trip 재검증(페이지 수 일치 확인) | 외부 사용자 피드백(launch 플랫폼 댓글, "PDF 합치기+압축을 한번에 처리하고 싶다")에서 출발. `pdf-lib`(cdnjs, v1.17.1)로 페이지 복사 병합(항상 무손실) + `pdfjs-dist`(jsDelivr, legacy 빌드 v3.11.174 — **cdnjs는 pdf.js가 2.6.347에서 멈춰있어서 이 라이브러리만 예외적으로 jsDelivr 사용**)로 "Aggressive" 모드에서 페이지를 캔버스에 렌더 후 JPG로 재인코딩. 3단계 모드: None(순수 병합)/Safe(무손실, useObjectStreams+메타데이터 제거, 효과는 미미)/Aggressive(페이지를 이미지화 — 텍스트 선택/검색 불가가 되는 트레이드오프를 UI 경고문구로 명시, 기본값 아님). 파일당 50MB·배치당 20개, Aggressive 모드는 총 200페이지 캡. 신규 카테고리 "Documents"(`data-cat="doc"`) 신설. 신규 블로그 `blog/why-merged-pdf-is-bigger.html` 페어링 |
 | **(신규, 2026-10-21) Bulk SVG ID Collision Checker & Prefixer** | `tools/svg-id-collision-checker.html` | 검증완료 — Playwright 실브라우저로 5개 픽스처(SVGO식 `a`, Figma식 `clip0`, `<style>` 선택자+`#abc` 색상, `xlink:href` 그라디언트 상속, `aria-labelledby`, 파일 내 중복 id, 스프라이트 미정의 참조, 깨진 XML, 숫자로 시작하는 파일명) 검사 + 수정 전/후 인라인 렌더 스크린샷으로 충돌 해소 확인 | 외부 라이브러리는 JSZip만. DOMParser로 id 수집(정확), 재작성은 문자열 치환(원본 포맷 보존): `id`, `url(#…)`(속성·style·`<style>`), `href`/`xlink:href="#…"`, `aria-labelledby/describedby`, `<style>`의 **선택자 영역에서만** `#id`(선언부 색상 오인 방지). 모드: 전체 id / 충돌 id만, 접두: 파일명 slug(숫자 시작이면 `svg-`) / 사용자 텍스트+번호, 접두 중복 시 `-2`. 300파일·5MB/파일. SMIL `begin`·외부 CSS/JS 참조는 미처리(FAQ 명시) |
 | **(신규, 2026-10-26) Bulk Code 128 Barcode Generator** | `tools/code-128-bulk-generator.html` | 검증완료 — Playwright(실제 JsBarcode/JSZip 주입)로 서브셋 거부·탭 라벨·인쇄 시트 4/5열 mm 측정·CSV 가져오기(헤더 skip, 따옴표 안 콤마·`""`)·xlsx 안내 확인 | **barcode-batch와 같은 엔진**(`assets/js/barcode-batch.js` 공유 — 2026-10-26 인라인 스크립트에서 분리). 차이는 head/H1/본문(Code 128 용도·A/B/C·폭 계산 11n+35 모듈+양쪽 10X 정숙영역·Excel 가져오기·FNSKU·GS1-128 FAQ)과 Format 옵션 순서(Code 128 4종 먼저). 문장 중복률 약 11%(UI 라벨). **엔진 수정 시 두 페이지 모두 영향** |
+| **(신규, 2026-10-29) Merge Filled PDF Forms** | `tools/merge-pdf-forms.html` | 검증완료 — Node(pdf-lib + pdf.js `getFieldObjects`)로 3모드 결과 구조 확인 + Playwright 실브라우저 업로드→공유 필드명 표→3모드 병합→다운로드 파일을 pdf-lib로 재검사, 375px 확인 | pdf-lib(cdnjs 1.17.1) + 공유 모듈 `assets/js/pdf-forms.js`. 모드: **separate**(기본 — 각 파일 최상위 필드 `T`에 파일명 slug 접두 `w9-alice_applicant.name`, 편집 가능 유지, 편집 시 다른 사본 영향 없음 확인) / **flatten**(`form.flatten()`) / **shared**(이름 유지 → pdf.js가 같은 이름을 한 필드로 묶음 = 버그 재현용, 의도적으로 원할 때만). 병합 후 페이지 위젯의 `/Parent` 체인을 따라 루트 필드를 모아 `/AcroForm`(Fields·DR 폰트 병합·DA)을 재구성 — **pdf-lib `copyPages`는 위젯만 옮기고 AcroForm을 안 옮기기 때문.** 파일별 리포트: 페이지 수·필드 수·서명 필드(병합 후 서명 검증 불가 경고)·XFA(전용이면 "인쇄 후 병합" 안내)·암호화. 50파일·50MB/파일 |
 | RSS Generator | `tools/rss-generator.html` | 검증완료 | "계정불필요/스크래핑아님" 차별점 보강. **GSC 신호 있는 페이지 (아래 8번 참고)** |
 | Sitemap Generator | `tools/sitemap-generator.html` | 검증완료 | |
 | **(신규) Bulk Sitemap Validator** | `tools/sitemap-validator.html` | 검증완료(jsdom으로 7개 케이스 테스트: 정상/상대경로/우선순위범위초과/changefreq오류/loc누락/중복URL/XML파싱오류/sitemapindex) | 여러 sitemap.xml을 `-----` 구분선으로 붙여넣어 한번에 검증. DOMParser(브라우저 내장)로 XML 파싱, 외부 라이브러리 없음. Sitemap Protocol 스펙 기준 검사(well-formed XML/절대경로/priority 0.0-1.0/changefreq 7개값/lastmod 날짜형식/중복URL/50000개 한도/sitemapindex 구조). **경쟁사는 전부 "URL 1개 입력→서버fetch" 방식인데 우리는 여러 개 붙여넣기 배치 검증으로 차별화, CORS 문제 자체가 없음(URL fetch 안 하니까)** |
@@ -262,6 +265,21 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-10-29 세션(신규 제작) — 키워드 리서치 및 제작 내역**:
+
+- **후보와 경쟁 판정(Google·Reddit·Adobe 커뮤니티·Dev.to·GitHub)**:
+  | 후보 | 판정 | 근거 |
+  |---|---|---|
+  | DMARC 집계 리포트(XML/gz/zip) 뷰어 | 포화 | mxio, suped, dmarctrust, powerdmarc, shieldmarc, intodns 등 10개 이상 + "읽는 법" 가이드 다수 |
+  | Merchant Center GTIN 대량 검증(2/02/04 제한, 99·981-984 쿠폰, 9 벌크 지시자) | 포화 | nventory 배치 검증, merchantutil 중복 GTIN, aifeedsnapshot, mercantads, GitHub feedlint-gmc |
+  | 웹사이트/플랫폼별 숨은 RSS 피드 URL(유튜브·레딧·GitHub·Substack) | 포화 | wprssaggregator 플랫폼별 목록, inoreader finder, 유튜브 RSS 생성기 다수 |
+  | **같은 양식의 작성된 PDF 여러 개 병합 시 답이 섞임/필드 사라짐** | **공백** | Adobe 커뮤니티 스레드 2014~2026(대표 6,219뷰, 채택 답변 "flattenPages 후 병합"), acrobatusers Q&A 다수. 툴: **Sejda**만 "Merge (Rename existing)/Flatten" 옵션 보유(서버 업로드·무료 제한). 글: useanvil 1개(개발자용 pypdf 관점). 개인정보(W-9·신청서·의료) 문서라 **"업로드 없음"이 결정적 차별점** |
+- **신규 1 — `tools/merge-pdf-forms.html`**: 위 5번 표. 업로드 즉시 파일별 필드 수와 **여러 파일이 공유하는 필드명 표**(= 이름 유지 시 충돌할 목록) 표시 → 3모드 선택 → 병합. 비PDF·손상 파일은 이유와 함께 건너뜀.
+- **신규 2 — `blog/combine-filled-pdf-forms.html`(923단어)**: 구조(필드=문서 단위 AcroForm, 위젯=페이지의 상자, 이름이 정체성, 한 필드 한 값), 증상 A(모든 사본이 같은 답 — 같은 이름 필드 병합), 증상 B(보기엔 채워졌는데 편집 불가 — 페이지 복사형 병합기는 AcroForm을 두고 옴), 해결(제출·보관=flatten 먼저, 검토·수정=사본별 이름 변경, 같은 답 원하면 기본 동작), 예외 3종(서명 검증 불가, XFA, 외관 미갱신 뷰어). 단정 회피: "어느 사본 답이 남는지는 도구마다 다름(대개 첫 번째)".
+- **기존 툴 수정 — `tools/pdf-merge-compress.html`**: 코드를 확인하니 None/Safe 모드가 `copyPages`만 써서 **폼 파일을 합치면 필드가 전부 죽은 그림이 됐다**(pdf.js `getFieldObjects` = null로 확인). "Form fields" 옵션 추가(기본: 파일별 이름 변경으로 편집 가능 유지 / flatten), Aggressive 모드에선 숨김(어차피 이미지화). 결과에 처리된 필드 수 표시. 옵션 행을 `.opt-row-wide`로(375px 잘림 방지). FAQ 1개 추가.
+- **연결**: why-merged-pdf-is-bigger 끝에 "폼을 합치는 경우" 섹션(→ 새 글·툴), 두 툴 상호 링크, tools/index(doc 카테고리)·홈 툴 카드, **전 93파일 푸터**(PDF Merge 다음), blog/index 최상단, 홈 Latest posts 최신 3개로(combine-filled-pdf-forms / inline-svg / code-128), sitemap(신규 2 + pdf-merge-compress·why-merged-pdf lastmod 2026-10-29), llms.txt.
+- **색인 실험(10/26)과의 관계**: 신규 2개도 **요청군**에 추가 권장(`tools/merge-pdf-forms.html`, `blog/combine-filled-pdf-forms.html`). why-merged-pdf는 본문 수정 + 홈 카드 제외로 변수가 생겼음 — 판정 시 감안.
 
 **2026-10-26 세션 — 데이터 재확인 및 조치 사항**:
 
@@ -904,6 +922,13 @@
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-10-29 세션 기준 다음 할 일**
+
+- **A. 신규 2개(merge-pdf-forms, combine-filled-pdf-forms) Bing 노출 추적**(38항). 예상 롱테일: `combine pdf forms same field names`, `merged pdf forms all show same data`, `combine fillable pdfs without changing entries`, `merge filled pdf forms keep data separate`, `pdf form fields duplicating when combining`.
+- **B. 10/26 다음 할 일 A~G 유효**(128군 판정, 색인 실험 — 요청군에 신규 2개 추가).
+- **C. PDF "폼" 하위 클러스터 후속 후보**(반응 보고): 폼 필드 목록/값을 여러 파일에서 CSV로 추출(작성된 양식 수십 장 → 표), 폼 flatten 단독(업로드 없는 일괄 flatten). 둘 다 같은 모듈 재사용 가능.
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-10-26 세션 기준 다음 할 일**
 

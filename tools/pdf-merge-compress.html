@@ -33,6 +33,7 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js"></script>
+<script src="/assets/js/pdf-forms.js"></script>
 </head>
 <body>
 
@@ -70,13 +71,20 @@
 
     <div class="panel" style="margin-top:24px;">
       <h3>2. Compression</h3>
-      <div class="opt-row">
+      <div class="opt-row opt-row-wide">
         <div>
           <label>Compression mode</label>
           <select id="compressMode">
             <option value="none">None — just merge, keep full quality</option>
             <option value="safe" selected>Safe — lossless cleanup (modest reduction)</option>
             <option value="aggressive">Aggressive — re-render pages as images (biggest reduction)</option>
+          </select>
+        </div>
+        <div id="formModeWrap">
+          <label>Form fields (fillable PDFs)</label>
+          <select id="formMode">
+            <option value="separate" selected>Keep fillable — each file's answers separate</option>
+            <option value="flatten">Flatten — lock the answers into the page</option>
           </select>
         </div>
         <div id="qualityWrap" style="display:none;">
@@ -131,6 +139,8 @@
     <p>This can happen in "None" or "Safe" mode when the source files share a similar structure — pdf-lib doesn't deduplicate identical embedded fonts or images across separate source documents, so a font embedded in three input files gets carried over three times. If the size difference matters, "Aggressive" mode sidesteps this entirely since it rebuilds every page from scratch as a single image.</p>
     <h3>After merging, one page looks much bigger or smaller than the others. Is the tool resizing pages?</h3>
     <p>No — the opposite. Every page is copied at exactly the physical size it had in its source file, which is what you'd want in almost every case, since silently rescaling pages would change documents in ways you didn't ask for. A page that looks huge or tiny next to the rest was already that size before merging, most often because it started life as an image that was converted to PDF at an assumed 72 pixels per inch, making it several times larger than intended. Aggressive mode keeps page dimensions too. The fix is to correct that page at its source and merge again; <a href="/blog/why-merged-pdf-is-bigger.html">this post</a> covers how to confirm which page is off and the options for fixing it.</p>
+    <h3>I merged several filled-in copies of the same form and they all show the same answers. Why?</h3>
+    <p>In a PDF, a form field is identified by its name, and a field with one name has one value. Most combine tools join same-named fields, so ten copies of one form end up as one field showing one answer everywhere. This tool keeps fillable fields but renames them per file (for example <code>w9-alice_name</code> and <code>w9-bob_name</code>), so each copy keeps its own answers, or flattens them if you choose. For a batch of filled forms, the <a href="/tools/merge-pdf-forms.html">PDF form merger</a> also lists the field names your files share before you merge. <a href="/blog/combine-filled-pdf-forms.html">Why combining filled forms changes the answers</a> explains the mechanism.</p>
     <h3>Can I compress a single PDF without merging anything?</h3>
     <p>Yes — upload just the one file. With only one file in the list there's nothing to merge, so the tool simply applies whichever compression mode you picked to that file on its own.</p>
   </div>
@@ -151,6 +161,7 @@
           <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
           <a href="/tools/svg-id-collision-checker.html">Bulk SVG ID Collision Checker</a>
           <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/merge-pdf-forms.html">Merge Filled PDF Forms</a>
           <a href="/tools/rss-generator.html">RSS Generator</a>
           <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
@@ -273,6 +284,7 @@ document.addEventListener('DOMContentLoaded', function () {
     qualityWrap.style.display = isAgg ? '' : 'none';
     resolutionWrap.style.display = isAgg ? '' : 'none';
     aggressiveWarning.style.display = isAgg ? '' : 'none';
+    document.getElementById('formModeWrap').style.display = isAgg ? 'none' : '';
   }
   compressModeSelect.addEventListener('change', updateModeUI);
   updateModeUI();
@@ -288,6 +300,8 @@ document.addEventListener('DOMContentLoaded', function () {
   async function mergeAndProcess(fileArray, mode, quality, dpi, onProgress) {
     var outDoc = await PDFLib.PDFDocument.create();
     var totalPages = 0;
+    var formMode = document.getElementById('formMode').value;
+    var formState = PdfForms.newState(), usedPrefixes = {};
 
     if (mode === 'aggressive') {
       ensureWorker();
@@ -330,11 +344,14 @@ document.addEventListener('DOMContentLoaded', function () {
         onProgress(fj, 'reading\u2026');
         var buf2 = await fileArray[fj].arrayBuffer();
         var srcDoc = await PDFLib.PDFDocument.load(buf2, { ignoreEncryption: true });
+        try { PdfForms.prepare(srcDoc, formMode, PdfForms.slugPrefix(fileArray[fj].name, usedPrefixes), outDoc, formState); }
+        catch (formErr) { formState.warnings.push(fileArray[fj].name + ': form fields could not be processed (' + formErr.message + ').'); }
         var pageIndices = srcDoc.getPageIndices();
         totalPages += pageIndices.length;
         var copiedPages = await outDoc.copyPages(srcDoc, pageIndices);
         copiedPages.forEach(function (pg) { outDoc.addPage(pg); });
       }
+      try { PdfForms.finalize(outDoc, formState); } catch (finErr) { formState.warnings.push('The merged form could not be rebuilt (' + finErr.message + ').'); }
     }
 
     var saveOptions = mode === 'none' ? {} : { useObjectStreams: true };
@@ -348,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } catch (metaErr) { /* non-fatal — some malformed source docs reject metadata edits */ }
     }
     var outBytes = await outDoc.save(saveOptions);
-    return { bytes: outBytes, pages: totalPages };
+    return { bytes: outBytes, pages: totalPages, forms: formState, formMode: formMode };
   }
 
   document.getElementById('processBtn').addEventListener('click', async function () {
@@ -384,6 +401,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
       resultArea.innerHTML = '<div class="file-row ready"><span class="fname">merged.pdf</span><span class="fsize">' + sizeLine + '</span>' +
         '<a class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" href="' + url + '" download="merged.pdf">Download</a></div>';
+      if (result.forms && result.forms.fieldsSeen) {
+        var fm = result.formMode === 'flatten'
+          ? result.forms.flattened + ' form field(s) flattened: the answers are now part of the page and can\'t be edited.'
+          : result.forms.fieldsSeen + ' form field(s) kept fillable, renamed per file so copies of the same form keep their own answers.';
+        resultArea.innerHTML += '<p style="font-size:0.85rem; color:#2c3540; margin-top:10px;">' + fm + ' <a href="/tools/merge-pdf-forms.html">Merging filled forms?</a></p>';
+      }
+      if (result.forms && result.forms.warnings.length) {
+        resultArea.innerHTML += '<p style="font-size:0.85rem; color:#8a5a00; margin-top:6px;">' + result.forms.warnings.map(escapeHtml).join('<br>') + '</p>';
+      }
       progressText.textContent = 'Done.';
     } catch (err) {
       resultArea.innerHTML = '<p class="result-empty">Something went wrong: ' + escapeHtml(err && err.message ? err.message : String(err)) + '</p>';
