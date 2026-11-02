@@ -1,6 +1,8 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-10-29 (**신규 제작 세션 — 툴 1 + 글 1 + 기존 툴 기능 수정, PDF 클러스터에 "폼" 하위 클러스터 신설.** 후보 리서치: DMARC 리포트 뷰어(10개 이상), Merchant Center GTIN 검증(nventory·merchantutil 등), RSS 피드 URL 패턴(wprssaggregator 등)은 전부 포화. **공백: 같은 PDF 양식의 작성본 여러 개를 합치면 모든 사본이 첫 사람 답으로 바뀌는 문제**(같은 이름 필드 = 한 필드). Adobe 커뮤니티 2014~2026 스레드 다수(대표 스레드 6,219뷰, 채택 답변이 "먼저 flatten") = 43항, 해결 툴은 업로드형 Sejda뿐 = 44항, 파일을 함께 봐야만 충돌이 보임 = 39항. 신규 `tools/merge-pdf-forms.html` + `blog/combine-filled-pdf-forms.html`. **발견: 우리 `pdf-merge-compress`도 copyPages만 써서 폼 필드를 버리고 있었음 → 공유 모듈 `assets/js/pdf-forms.js`로 수정.** 전체 93파일 = sitemap 93 = llms.txt 93, 툴 32개.)
+마지막 업데이트: 2026-11-02 (**주간 데이터 세션 — 바코드 엔진 보강(1,000개 + 벡터 PDF 시트), 신규 페이지 0.** **Bing 클릭 66→85, 노출 3015→4739.** 바코드 툴 3907노출/47클릭/8.4위 — `bulk barcode generator 128` **1456노출/9.2위/CTR 0.41%** 여전히 1페이지 하단. 10/26 신규 Code 128 전용 페이지는 Bing 리포트에 아직 없음(1주, 38항). 쿼리에서 `bulk barcode generator 128 unlimited`, `free bulk barcode generator & pdf sheet creator`(6노출) 확인 → **한도 100→1,000 + "Download PDF sheet"(pdf-lib로 바를 벡터 사각형으로 그림, 1,000개 893KB/32쪽)** 추가. Google 클릭 10(보합·하락세), **발견됨-미색인 13→16**(10/19·10/21 신규 3개가 "발견됨"으로 등장, 해제 0). GA4 **chatgpt 유입 5명(8세션) — 46항의 "월 5건" 재검토선 도달.** 전체 93파일 = sitemap 93 = llms.txt 93.)
+
+[이전] 2026-10-29 (**신규 제작 세션 — 툴 1 + 글 1 + 기존 툴 기능 수정, PDF 클러스터에 "폼" 하위 클러스터 신설.** 후보 리서치: DMARC 리포트 뷰어(10개 이상), Merchant Center GTIN 검증(nventory·merchantutil 등), RSS 피드 URL 패턴(wprssaggregator 등)은 전부 포화. **공백: 같은 PDF 양식의 작성본 여러 개를 합치면 모든 사본이 첫 사람 답으로 바뀌는 문제**(같은 이름 필드 = 한 필드). Adobe 커뮤니티 2014~2026 스레드 다수(대표 스레드 6,219뷰, 채택 답변이 "먼저 flatten") = 43항, 해결 툴은 업로드형 Sejda뿐 = 44항, 파일을 함께 봐야만 충돌이 보임 = 39항. 신규 `tools/merge-pdf-forms.html` + `blog/combine-filled-pdf-forms.html`. **발견: 우리 `pdf-merge-compress`도 copyPages만 써서 폼 필드를 버리고 있었음 → 공유 모듈 `assets/js/pdf-forms.js`로 수정.** 전체 93파일 = sitemap 93 = llms.txt 93, 툴 32개.)
 
 [이전] 2026-10-26 (**주간 데이터 세션 — 신규 툴 1 + 보강 2 + 색인 실험 설계.** **Bing 클릭 43→66, 노출 1570→3015**(4주 연속 거의 2배). 바코드 툴 2332노출/35클릭/8.3위 — **`bulk barcode generator 128` 혼자 886노출/9.36위/CTR 0.56%** = 사이트 최대 기회. RSS 244노출/19클릭(CTR 7.8%), PDF 글 112/5. GA4 bing 44명(Singapore 86명은 봇). Google 클릭 12(보합), 커버리지 13+1 **5주째 동일**. 조치: (1) **신규 `tools/code-128-bulk-generator.html`** — "128" 쿼리군 전용 랜딩(제목·H1·본문이 Code 128 전용, 엔진 공유), (2) 바코드 엔진을 `assets/js/barcode-batch.js`로 분리 + **CSV/TXT 가져오기**(`bulk code 128 barcode excel import`), (3) barcode-batch description을 CTR용으로 재작성(제목 유지), (4) 홈 "Latest posts" 7월 이후 정지 → 최신 3개로 교체, (5) **색인: 기술 점검 이상 없음 확인 + GSC 수동 색인 요청 실험(요청군/대조군) 설계** — 사용자 실행 필요. 전체 91파일 = sitemap 91 = llms.txt 91, 툴 31개.)
 
@@ -265,6 +267,26 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-11-02 세션 — 데이터 재확인 및 조치 사항**:
+
+- **Google**: 클릭 12→10, 노출 5335, 쿼리 573, 40위 이내 28→23(헤드텀 하락 지속, 47항). **커버리지: 발견됨-미색인 13→16** — 신규 `code-128-scans-wrong`, `inline-svg-wrong-gradient`, `svg-id-collision-checker`가 "발견됨"으로 진입(크롤 대기열 진입 = 정상 경로), **기존 13개 해제 0**, 크롤됨-미색인 1(upc) 그대로. 10/26 Code 128 페이지·10/29 폼 툴/글은 아직 목록에 없음. **색인 요청 실험(10/26)은 사용자가 요청을 실행했는지 미확인 — 다음 주 확인 필요.**
+- **Bing: 클릭 66→85, 노출 3015→4739.**
+  - `tools/barcode-batch.html` 2332→**3907노출, 35→47클릭, 8.40위.** `bulk barcode generator 128` 886→**1456노출/9.20위/클릭 6(0.41%)**, `bulk barcode generator` 123→**403**/9.24/2, `bulk barcode generator code 128` 191/6.37/3, `bulk barcode generator free download` 32/4.2/**4**. **Code 128 전용 페이지(10/26)는 Bing 페이지 리포트에 없음** — 1주라 판정 보류(38항). GA4엔 7뷰(직접/내부 이동).
+  - 신규 쿼리 신호: `bulk barcode generator 128 unlimited`(4/6.75위), `free bulk barcode generator &amp; pdf sheet creator`(4+2노출, 7~10위 — 경쟁사 제목으로 추정되는 문구 그대로 검색), `bulk barcode generator 128 online free pdf` → **한도와 PDF가 비교 기준.**
+  - `tools/rss-generator.html` 244→313노출, 19→24클릭(CTR 7.7%), 6.05위. `blog/why-merged-pdf-is-bigger.html` 112→164노출, 5→6클릭. `tools/qr-batch.html` 첫 클릭(`qr code from list`).
+- **GA4(10/05~11/01)**: 활성 291명 중 **Singapore 128명(봇)**, Warsaw 14 → 실사용 약 150명. **bing/organic 54명(세션 73)**, duckduckgo 9, **chatgpt.com 5명(세션 8)** — 9월 이후 최다. google/organic 1. 페이지뷰: 홈 69, 바코드 68+9+Code128 7, RSS 43.
+- **수익화**: 9-1-1 조건 미달. 보고에서 제외.
+
+**2026-11-02 세션 조치 내역**:
+
+1. **바코드 엔진(`assets/js/barcode-batch.js`, 두 페이지 공유) — 한도 100→1,000.** 생성 루프를 50개마다 이벤트 루프에 양보하는 비동기로 바꾸고(1,000개 약 1초), 진행률 표시, **미리보기는 처음 200개만 DOM에 그림**(나머지는 ZIP/PDF에 전부 포함, 결과 문구로 안내). 생성 중 버튼 비활성.
+2. **"Download PDF sheet" 신규** — 기존 "Print sheet"(브라우저 인쇄창 경유)와 별개로 **바로 PDF 파일을 내려받음**. pdf-lib(cdnjs 1.17.1, **버튼 누를 때만 지연 로드**)로 JsBarcode의 객체 렌더 결과(`encodings` = 세그먼트별 0/1 문자열·텍스트 정렬·가드바 높이)를 읽어 **바를 벡터 사각형으로 직접 그림** → 모듈 폭이 정확, 파일 작음. 처음엔 600dpi PNG 임베드로 만들었다가 **1,000개 36MB**라 폐기, 벡터로 **893KB/32쪽**. A4/US Letter, 줄당 2~5개, 점선 재단선, 여러 쪽 자동. **UPC/EAN은 GS1 100%(모듈 0.33mm, 바 높이 22.85mm)로 고정, 셀보다 크면 축소하고 비율을 결과에 표시, 80% 미만이면 주황 경고**(A4 5열 ≈80% 경계, Letter 5열 83%로 측정). Code 128은 셀 폭에 맞추되 모듈 최대 0.6mm. 사람이 읽는 글자는 Helvetica(ASCII 외 문자는 `?`로 치환), **이름(라벨)이 Helvetica로 인코딩 안 되면(한글 등) 캔버스로 그린 작은 PNG로 대체** — 한글 라벨 렌더 확인.
+3. **결과 패널 순서 변경**: PDF/인쇄 버튼과 건너뛴 목록을 **미리보기 위로** 이동(1,000개 생성 시 버튼이 200개 미리보기 아래 묻히던 문제).
+4. **문구 갱신**: 두 툴 description/og/twitter/llms.txt("up to 1,000 … ZIP or a ready-to-print PDF sheet"), 안내문·Limits·FAQ(PDF 시트 설명으로 교체, "600 dpi" 문구 없음 확인), upc-vs-ean 글의 툴 소개 문장. **barcode-batch 제목은 여전히 유지.**
+5. **검증**: Playwright 실브라우저(실제 JsBarcode·JSZip·pdf-lib를 route로 주입) — Code 128 1,000개(3개마다 한글 라벨) 생성·미리보기 200·ZIP 1,000파일·PDF 32쪽/A4 크기 확인, EAN-13 Letter 5열(83% 경고)·4열(축소 없음), 두 페이지 모두, 375px 가로 스크롤 없음. pdftoppm 200dpi 크롭으로 바·글자 간격 육안 확인(글자가 바에 붙던 것 1회 수정).
+6. **신규 페이지 0**: 이번 주는 바코드 128군(주 1,500노출)이 사이트 최대 기회라 같은 엔진 보강이 우선. Code 128 페이지가 Bing에 잡히기 전에 또 페이지를 늘리면 카니발리제이션 판정이 흐려짐.
+7. **sitemap lastmod**: barcode-batch, code-128-bulk-generator, upc-vs-ean = 2026-11-02.
 
 **2026-10-29 세션(신규 제작) — 키워드 리서치 및 제작 내역**:
 
@@ -922,6 +944,15 @@
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-11-02 세션 기준 다음 할 일**
+
+- **A. 128군·Code 128 페이지 판정(Bing)**: Code 128 페이지가 리포트에 등장하는지, `bulk barcode generator 128`(1456/9.2위)이 오르는지. PDF·1,000개 반영 후 클릭률 변화.
+- **B. 색인 요청 실험 실행 여부 확인** — 사용자에게 10/26 요청군(+10/29 신규 2개, + Code 128 페이지)을 GSC에서 요청했는지 물어볼 것. 미실행이면 실험 판정 불가.
+- **C. AI 유입(46항 재검토선 도달)**: chatgpt 5명/월. 다음 세션에서 GA4 랜딩 페이지를 함께 받으면 어떤 페이지가 인용되는지 확인 → 해당 페이지 llms.txt 설명·첫 문단 명확화 검토.
+- **D. 10/29 신규(merge-pdf-forms, combine-filled-pdf-forms) Bing 노출 추적.**
+- **E. 미색인은 온사이트로 건드리지 말 것(41항).**
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-10-29 세션 기준 다음 할 일**
 

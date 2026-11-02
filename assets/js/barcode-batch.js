@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-  var MAX_ITEMS = 100;
+  var MAX_ITEMS = 1000;
+  var MAX_PREVIEWS = 200; // all results go into the ZIP/PDF; only the first ones are previewed on the page
   var itemsInput = document.getElementById('items');
   var barcodeGrid = document.getElementById('barcodeGrid');
   var errorList = document.getElementById('errorList');
@@ -58,6 +59,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var printBar = document.getElementById('printBar');
   var printNote = document.getElementById('printNote');
   var printBtn = document.getElementById('printBtn');
+  var pdfBtn = document.getElementById('pdfBtn');
+  var pdfStatus = document.getElementById('pdfStatus');
 
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
   function slugify(s) {
@@ -130,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 
-  generateBtn.addEventListener('click', function () {
+  generateBtn.addEventListener('click', async function () {
     var lines = itemsInput.value.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
     if (lines.length === 0) { alert('Enter at least one code.'); return; }
     if (lines.length > MAX_ITEMS) {
@@ -150,8 +153,15 @@ document.addEventListener('DOMContentLoaded', function () {
     lastResults = [];
     var errors = [];
     var usedNames = {};
+    generateBtn.disabled = true;
+    progressStatus.classList.add('active');
 
-    lines.forEach(function (line) {
+    for (var li = 0; li < lines.length; li++) {
+      if (li && li % 50 === 0) {
+        progressText.textContent = 'Generating ' + li + ' of ' + lines.length + '…';
+        await new Promise(function (r) { setTimeout(r, 0); });
+      }
+      (function (line) {
       // A line copied from a spreadsheet arrives as "code<TAB>name". Never encode the tab:
       // the first column is the barcode data, the rest is a label used for the file name.
       var cols = line.split('\t');
@@ -195,6 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
       usedNames[name] = true;
       var filename = name + ext;
       lastResults.push({ name: filename, dataUrl: dataUrl, svg: svgText, code: code, label: label, opts: opts });
+      if (lastResults.length > MAX_PREVIEWS) return;
 
       var cell = document.createElement('div');
       cell.className = 'file-row ready';
@@ -209,9 +220,13 @@ document.addEventListener('DOMContentLoaded', function () {
         (prep.warn ? '<span style="display:block; font-size:0.75rem; color:#8a5a00; margin-bottom:8px; text-align:left;">' + esc(prep.warn) + '</span>' : '') +
         '<a class="btn btn-outline" style="padding:6px 12px; font-size:0.72rem;" href="' + dataUrl + '" download="' + filename + '">Download</a>';
       barcodeGrid.appendChild(cell);
-    });
+      })(lines[li]);
+    }
+    generateBtn.disabled = false;
+    progressStatus.classList.remove('active');
 
-    progressText.textContent = lastResults.length + ' barcode(s) generated' + (errors.length ? ', ' + errors.length + ' skipped.' : '.');
+    progressText.textContent = lastResults.length + ' barcode(s) generated' + (errors.length ? ', ' + errors.length + ' skipped.' : '.') +
+      (lastResults.length > MAX_PREVIEWS ? ' Showing the first ' + MAX_PREVIEWS + ' previews — all ' + lastResults.length + ' are in the ZIP and the PDF sheet.' : '');
     if (errors.length) {
       errorList.innerHTML = '<strong>Skipped ' + errors.length + ' (not valid for ' + ({ EAN13: 'EAN-13', UPC: 'UPC-A', CODE128: 'Code 128', CODE128A: 'Code 128 A', CODE128B: 'Code 128 B', CODE128C: 'Code 128 C' }[format] || esc(format)) + '):</strong><ul style="margin:8px 0 0; padding-left:20px; color:#2c3540;">' +
         errors.map(function (er) { return '<li style="margin-bottom:4px;"><code>' + esc(er.code) + '</code> — ' + esc(er.reason) + '</li>'; }).join('') + '</ul>';
@@ -219,43 +234,137 @@ document.addEventListener('DOMContentLoaded', function () {
     if (lastResults.length) downloadZipBtn.style.display = 'inline-flex';
     printBar.style.display = lastResults.length ? 'flex' : 'none';
     printNote.style.display = lastResults.length ? 'block' : 'none';
+    pdfStatus.style.display = 'none';
   });
 
-  // Print sheet: every barcode re-drawn as SVG (sharp at any print size) on one page.
-  printBtn.addEventListener('click', function () {
+  // PDF sheet: every barcode drawn as vector bars with pdf-lib (exact module widths, tiny files).
+  var pdfLibPromise = null;
+  function loadPdfLib() {
+    if (window.PDFLib) return Promise.resolve();
+    if (!pdfLibPromise) pdfLibPromise = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
+      s.onload = function () { resolve(); };
+      s.onerror = function () { pdfLibPromise = null; reject(new Error('Could not load the PDF library. Check your connection and try again.')); };
+      document.head.appendChild(s);
+    });
+    return pdfLibPromise;
+  }
+  // Text that can't be drawn with the built-in PDF font (non-Latin names, emoji) is rendered to a small PNG instead.
+  function textToPng(text, px) {
+    var c = document.createElement('canvas'), ctx = c.getContext('2d');
+    ctx.font = px + 'px Arial, Helvetica, sans-serif';
+    c.width = Math.max(1, Math.ceil(ctx.measureText(text).width) + 4); c.height = Math.ceil(px * 1.3);
+    ctx.font = px + 'px Arial, Helvetica, sans-serif'; ctx.fillStyle = '#000'; ctx.textBaseline = 'top';
+    ctx.fillText(text, 2, Math.round(px * 0.1));
+    return new Promise(function (res, rej) { c.toBlob(function (b) { if (!b) { rej(new Error('label render failed')); return; } b.arrayBuffer().then(function (buf) { res({ bytes: new Uint8Array(buf), w: c.width, h: c.height }); }, rej); }, 'image/png'); });
+  }
+  function layoutBarcode(r, innerW) {
+    var enc = {};
+    var o = {}; for (var k in r.opts) o[k] = r.opts[k];
+    o.width = 2; o.height = 100; o.fontSize = 20; o.margin = 10;
+    JsBarcode(enc, r.code, o);
+    var segs = enc.encodings || [];
+    var mods = 10; segs.forEach(function (sg) { mods += sg.data.length; }); // 5 modules of margin each side, like the PNG/SVG output
+    var retail = (o.format === 'EAN13' || o.format === 'UPC');
+    var m, scale = 1;
+    if (retail) { m = 0.33; if (mods * m > innerW) { scale = innerW / (mods * m); m = innerW / mods; } }
+    else m = Math.min(innerW / mods, 0.6);
+    var H = retail ? 22.85 * scale : Math.max(8, Math.min(22, 50 * m));
+    var fs = retail ? 3.3 * scale : Math.max(2, Math.min(4, 10 * m));
+    return { segs: segs, mods: mods, m: m, H: H, fs: o.displayValue === false ? 0 : fs, retail: retail, scale: scale };
+  }
+  pdfBtn.addEventListener('click', async function () {
     if (!lastResults.length) return;
-    var perRow = parseInt(document.getElementById('perRow').value, 10) || 3;
-    var anyRetail = false;
-    var cells = lastResults.map(function (r) {
-      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      var o = {}; for (var k in r.opts) o[k] = r.opts[k];
-      var retail = (o.format === 'EAN13' || o.format === 'UPC');
-      // Retail codes: GS1 nominal (100%) proportions — 95 modules = 31.35 mm of bars, 22.85 mm bar height
-      o.width = 2; o.height = retail ? 139 : 100; o.fontSize = 20; o.margin = 10;
-      try { JsBarcode(svg, r.code, o); } catch (e) { return ''; }
-      if (retail) {
-        var px = parseFloat(svg.getAttribute('width')) || 242;
-        svg.setAttribute('style', 'width:' + (31.35 * px / 190).toFixed(2) + 'mm; max-width:100%; height:auto; margin:0 auto;');
-        anyRetail = true;
+    var btn = this; btn.disabled = true;
+    pdfStatus.style.display = 'block'; pdfStatus.style.color = '#2c3540';
+    pdfStatus.textContent = 'Preparing the PDF…';
+    try {
+      await loadPdfLib();
+      var perRow = parseInt(document.getElementById('perRow').value, 10) || 3;
+      var size = document.getElementById('pageSize').value === 'letter' ? [215.9, 279.4] : [210, 297];
+      var PT = 72 / 25.4, M = 10, GX = 4, GY = 6, PAD = 2, LBL = 3;
+      var cellW = (size[0] - 2 * M - GX * (perRow - 1)) / perRow, innerW = cellW - 2 * PAD;
+      var doc = await PDFLib.PDFDocument.create();
+      var font = await doc.embedFont(PDFLib.StandardFonts.Helvetica);
+      var black = PDFLib.rgb(0, 0, 0);
+      var page = doc.addPage([size[0] * PT, size[1] * PT]);
+      var y = M, row = [], minScale = 1, anyRetail = false;
+      function fits(text) { try { font.widthOfTextAtSize(text, 10); return true; } catch (e) { return false; } }
+      function drawCell(c, x, top) {
+        var L = c.L, bx = x + (cellW - L.mods * L.m) / 2, cx = bx + 5 * L.m;
+        var pageTop = function (mm) { return (size[1] - mm) * PT; };
+        L.segs.forEach(function (sg) {
+          var h = L.H * ((sg.options && sg.options.height) || 100) / 100;
+          var d = sg.data, i = 0;
+          while (i < d.length) {
+            if (d[i] === '1') { var j = i; while (j < d.length && d[j] === '1') j++;
+              page.drawRectangle({ x: (cx + i * L.m) * PT, y: pageTop(top + h), width: (j - i) * L.m * PT, height: h * PT, color: black });
+              i = j; } else i++;
+          }
+          if (L.fs && sg.text) {
+            var txt = sg.text.replace(/[^\x20-\x7E]/g, '?'), size2 = L.fs * PT, tw = font.widthOfTextAtSize(txt, size2) / PT;
+            var ta = (sg.options && sg.options.textAlign) || 'center', tx;
+            if (ta === 'left') tx = cx; else if (ta === 'right') tx = cx + sg.data.length * L.m - tw; else tx = cx + (sg.data.length * L.m - tw) / 2;
+            page.drawText(txt, { x: tx * PT, y: pageTop(top + L.H + 0.8 + L.fs * 0.75), size: size2, font: font, color: black });
+          }
+          cx += sg.data.length * L.m;
+        });
+        var ly = top + L.H + (L.fs ? L.fs + 1.2 : 0.6);
+        if (c.label) {
+          if (c.labelImg) {
+            var lh = LBL * 1.1, lw = Math.min(innerW, lh * c.labelImg.w / c.labelImg.h);
+            page.drawImage(c.labelImg.img, { x: (x + (cellW - lw) / 2) * PT, y: pageTop(ly + lh), width: lw * PT, height: (lw * c.labelImg.h / c.labelImg.w) * PT });
+          } else {
+            var t = c.label, ls = LBL * PT;
+            while (font.widthOfTextAtSize(t, ls) / PT > innerW && t.length > 4) t = t.slice(0, -2) + '…';
+            page.drawText(t, { x: (x + (cellW - font.widthOfTextAtSize(t, ls) / PT) / 2) * PT, y: pageTop(ly + LBL * 0.8), size: ls, font: font, color: black });
+          }
+        }
       }
-      var markup = new XMLSerializer().serializeToString(svg);
-      return '<div class="cell">' + markup + (r.label ? '<div class="lbl">' + esc(r.label) + '</div>' : '') + '</div>';
-    }).join('');
-    var w = window.open('', '_blank');
-    if (!w) { alert('Your browser blocked the print window. Allow pop-ups for this site and try again.'); return; }
-    w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Barcodes — print sheet</title><style>' +
-      '@page { margin: 10mm; } body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: #000; background: #fff; }' +
-      '.grid { display: grid; grid-template-columns: repeat(' + perRow + ', 1fr); gap: 6mm 4mm; }' +
-      '.cell { break-inside: avoid; page-break-inside: avoid; text-align: center; padding: 2mm; border: 0.2mm dashed #bbb; }' +
-      '.cell svg { width: 100%; height: auto; display: block; margin: 0 auto; } .lbl { font-size: 9pt; margin-top: 1mm; word-break: break-word; }' +
-      '.tip { font-size: 10pt; margin: 0 0 6mm; } @media print { .tip { display: none; } }' +
-      '</style></head><body><p class="tip">Print with scaling at 100% (or "Actual size"). To get one PDF, choose "Save as PDF" as the printer. The dashed lines are cutting guides.' +
-      (anyRetail && perRow >= 5 ? ' <strong>At 5 per row, UPC/EAN codes are shrunk to about three-quarters of their standard size, below the GS1 minimum of 80% for retail checkout. Use 4 or fewer per row for those.</strong>' : '') +
-      '</p><div class="grid">' +
-      cells + '</div></body></html>');
-    w.document.close();
-    w.focus();
-    setTimeout(function () { try { w.print(); } catch (e) {} }, 400);
+      function cellHeight(c) { return c.L.H + (c.L.fs ? c.L.fs + 1.2 : 0.6) + (c.label ? LBL * 1.3 : 0); }
+      function flushRow() {
+        if (!row.length) return;
+        var rowH = Math.max.apply(null, row.map(cellHeight)) + 2 * PAD;
+        if (y + rowH > size[1] - M && y > M) { page = doc.addPage([size[0] * PT, size[1] * PT]); y = M; }
+        row.forEach(function (c, i) {
+          var x = M + i * (cellW + GX);
+          page.drawRectangle({ x: x * PT, y: (size[1] - y - rowH) * PT, width: cellW * PT, height: rowH * PT,
+            borderColor: PDFLib.rgb(0.73, 0.73, 0.73), borderWidth: 0.4, borderDashArray: [2, 2] });
+          drawCell(c, x, y + PAD);
+        });
+        y += rowH + GY; row = [];
+      }
+      for (var i = 0; i < lastResults.length; i++) {
+        if (i % 50 === 0) { pdfStatus.textContent = 'Drawing barcode ' + (i + 1) + ' of ' + lastResults.length + '…'; await new Promise(function (r) { setTimeout(r, 0); }); }
+        var r = lastResults[i], L;
+        try { L = layoutBarcode(r, innerW); } catch (e) { continue; }
+        if (L.retail) { anyRetail = true; minScale = Math.min(minScale, L.scale); }
+        var cell = { L: L, label: r.label || '' };
+        if (cell.label && !fits(cell.label)) {
+          var png = await textToPng(cell.label, 48);
+          cell.labelImg = { img: await doc.embedPng(png.bytes), w: png.w, h: png.h };
+        }
+        row.push(cell);
+        if (row.length === perRow) flushRow();
+      }
+      flushRow();
+      var bytes = await doc.save();
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+      a.download = 'barcodes-sheet.pdf';
+      document.body.appendChild(a); a.click(); a.remove();
+      var msg = 'PDF ready: ' + lastResults.length + ' barcode(s) on ' + doc.getPageCount() + ' page(s), ' + (bytes.length / 1024).toFixed(0) + ' KB. Print at 100% scale ("Actual size").';
+      if (anyRetail && minScale < 1) {
+        msg += ' UPC/EAN codes had to shrink to ' + Math.round(minScale * 100) + '% of standard size to fit ' + perRow + ' per row' +
+          (minScale < 0.8 ? ', below the GS1 minimum of 80% for retail checkout. Use fewer per row.' : '.');
+        if (minScale < 0.8) pdfStatus.style.color = '#8a5a00';
+      }
+      pdfStatus.textContent = msg;
+    } catch (e) {
+      pdfStatus.style.color = '#b5451b';
+      pdfStatus.textContent = 'Could not build the PDF: ' + ((e && e.message) || e);
+    } finally { btn.disabled = false; }
   });
 
   downloadZipBtn.addEventListener('click', function () {

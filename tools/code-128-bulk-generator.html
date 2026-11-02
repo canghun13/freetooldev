@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bulk Code 128 Barcode Generator — Free, A/B/C, ZIP or Print Sheet | FreeToolDev</title>
-<meta name="description" content="Free bulk Code 128 barcode generator: paste or import a list (CSV, Excel columns), choose auto, A, B or C, and download every barcode as PNG or SVG in one ZIP or print them on one sheet. No upload.">
+<meta name="description" content="Free bulk Code 128 barcode generator: paste or import up to 1,000 SKUs (CSV or Excel columns), choose auto, A, B or C, and download PNG/SVG in one ZIP or a ready-to-print PDF sheet. No upload.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://freetooldev.com/tools/code-128-bulk-generator.html">
 <meta property="og:title" content="Bulk Code 128 Barcode Generator — Free, A/B/C, ZIP or Print Sheet | FreeToolDev">
-<meta property="og:description" content="Free bulk Code 128 barcode generator: paste or import a list (CSV, Excel columns), choose auto, A, B or C, and download every barcode as PNG or SVG in one ZIP or print them on one sheet. No upload.">
+<meta property="og:description" content="Free bulk Code 128 barcode generator: paste or import up to 1,000 SKUs (CSV or Excel columns), choose auto, A, B or C, and download PNG/SVG in one ZIP or a ready-to-print PDF sheet. No upload.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Bulk Code 128 Barcode Generator — Free, A/B/C, ZIP or Print Sheet | FreeToolDev">
-<meta name="twitter:description" content="Free bulk Code 128 barcode generator: paste or import a list (CSV, Excel columns), choose auto, A, B or C, and download every barcode as PNG or SVG in one ZIP or print them on one sheet. No upload.">
+<meta name="twitter:description" content="Free bulk Code 128 barcode generator: paste or import up to 1,000 SKUs (CSV or Excel columns), choose auto, A, B or C, and download PNG/SVG in one ZIP or a ready-to-print PDF sheet. No upload.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/tools/code-128-bulk-generator.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -111,13 +111,11 @@ SKU-0042&#9;Blue mug (tab-separated name → used as the file name)"></textarea>
         <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download all as ZIP</button>
       </div>
       <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
-      <p style="margin-top:14px; font-size:0.85rem; color:#5a6472;">Up to 100 codes per batch — this keeps rendering fast and the tab responsive. Codes that don't fit the selected format are skipped and listed below the results with the reason (wrong length, non-numeric, or a check digit that doesn't match). If your EAN list has 12 digits (or your UPC list 11) because the check digit was never added, choose <strong>Missing — calculate it</strong>. Numbers that look damaged by a spreadsheet (a dropped leading zero, <code>4.00638E+12</code>) are called out by name. For printing, pick <strong>SVG</strong> or <strong>PNG — large</strong>, or use the print sheet under the results.</p>
+      <p style="margin-top:14px; font-size:0.85rem; color:#5a6472;">Up to 1,000 codes per batch (the first 200 are previewed; every one goes into the ZIP and the PDF sheet). Codes that don't fit the selected format are skipped and listed below the results with the reason (wrong length, non-numeric, or a check digit that doesn't match). If your EAN list has 12 digits (or your UPC list 11) because the check digit was never added, choose <strong>Missing — calculate it</strong>. Numbers that look damaged by a spreadsheet (a dropped leading zero, <code>4.00638E+12</code>) are called out by name. For printing, pick <strong>SVG</strong> or <strong>PNG — large</strong>, or use the print sheet under the results.</p>
     </div>
 
     <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
       <h3>Results</h3>
-      <div id="barcodeGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px;"></div>
-      <div id="errorList" style="margin-top:16px; font-size:0.85rem;"></div>
       <div class="toolbar" id="printBar" style="display:none; align-items:flex-end;">
         <div style="min-width:150px;">
           <label for="perRow">Barcodes per row</label>
@@ -128,9 +126,21 @@ SKU-0042&#9;Blue mug (tab-separated name → used as the file name)"></textarea>
             <option value="5">5</option>
           </select>
         </div>
-        <button class="btn btn-outline" id="printBtn">Print sheet / Save as PDF</button>
+        <div style="min-width:150px;">
+          <label for="pageSize">Page size</label>
+          <select id="pageSize">
+            <option value="a4" selected>A4</option>
+            <option value="letter">US Letter</option>
+          </select>
+        </div>
+        <button class="btn btn-amber" id="pdfBtn">Download PDF sheet</button>
+        <button class="btn btn-outline" id="printBtn">Print sheet</button>
       </div>
-      <p id="printNote" style="display:none; margin-top:10px; font-size:0.8rem; color:#5a6472;">Opens every barcode above on one page, drawn as vector graphics whatever output you chose, ready to print or to save as a single PDF from the print dialog.</p>
+      <p id="printNote" style="display:none; margin-top:10px; font-size:0.8rem; color:#5a6472;"><strong>Download PDF sheet</strong> lays every barcode out on A4 or Letter pages (as many pages as needed) with dashed cutting guides, drawn as vector bars so every bar has its exact width at any printer resolution. UPC-A and EAN-13 are placed at their standard 100% size. <strong>Print sheet</strong> opens the same layout as a web page for your printer. Print either one at 100% scale.</p>
+      <p id="pdfStatus" style="display:none; margin-top:6px; font-size:0.85rem; color:#2c3540;"></p>
+      <div id="errorList" style="margin-top:16px; font-size:0.85rem;"></div>
+      <div id="barcodeGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px; margin-top:16px;"></div>
+
     </div>
   </div>
 </section>
@@ -150,9 +160,9 @@ SKU-0042&#9;Blue mug (tab-separated name → used as the file name)"></textarea>
 
     <h2>FAQ</h2>
     <h3>Is there a limit?</h3>
-    <p>Up to 100 barcodes per run, which keeps the page responsive on any device. For a longer list, run it in chunks of 100. Each run gives you its own ZIP and print sheet.</p>
-    <h3>Can I print them on one page or save one PDF?</h3>
-    <p>Yes. After generating, choose how many barcodes per row and click <strong>Print sheet / Save as PDF</strong>. The sheet redraws every barcode as vector graphics, adds dashed cutting guides and puts the name under each one. Choose "Save as PDF" in the print dialog to get a single file, and print at 100% scale. For long values, use 2 or 3 per row so the bars stay wide enough to scan.</p>
+    <p>Up to 1,000 barcodes per run. The page previews the first 200 so it stays responsive on phones, but all of them go into the ZIP and the PDF sheet. For a longer list, run it in chunks of 1,000.</p>
+    <h3>Can I get them all as one PDF?</h3>
+    <p>Yes. After generating, choose how many barcodes per row and a page size (A4 or US Letter), then click <strong>Download PDF sheet</strong>. Every barcode is drawn as vector bars, so the widths stay exact on any printer, with its name underneath and dashed cutting guides, over as many pages as the list needs. Print it at 100% scale ("Actual size"). For long values, use 2 or 3 per row so the bars stay wide enough to scan. <strong>Print sheet</strong> opens the same layout as a web page if you'd rather print from the browser.</p>
     <h3>Can I make Amazon FNSKU labels with this?</h3>
     <p>FNSKU labels are Code 128, so you can generate the barcode itself here from the FNSKU (the <code>X00…</code> code). The label Amazon expects also carries the product title and condition at a specific size, so the label PDF from Seller Central is still the safest source for inbound FBA shipments. Use this tool for internal stock labels, or when you need many barcodes in a format Seller Central doesn't provide.</p>
     <h3>Is this GS1-128 (EAN-128)?</h3>

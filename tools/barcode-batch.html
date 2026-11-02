@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bulk Barcode Generator — UPC, EAN-13, Code 128 | FreeToolDev</title>
-<meta name="description" content="Free bulk barcode generator for Code 128, UPC-A and EAN-13: paste or import up to 100 codes, download them all as PNG or SVG in one ZIP, or print one sheet. Check digits validated. No upload.">
+<meta name="description" content="Free bulk barcode generator for Code 128, UPC-A and EAN-13: paste or import up to 1,000 codes and download them as PNG/SVG in one ZIP or a ready-to-print PDF sheet. No upload, no signup.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://freetooldev.com/tools/barcode-batch.html">
 <meta property="og:title" content="Bulk Barcode Generator — UPC, EAN-13, Code 128 | FreeToolDev">
-<meta property="og:description" content="Free bulk barcode generator for Code 128, UPC-A and EAN-13: paste or import up to 100 codes, download them all as PNG or SVG in one ZIP, or print one sheet. Check digits validated. No upload.">
+<meta property="og:description" content="Free bulk barcode generator for Code 128, UPC-A and EAN-13: paste or import up to 1,000 codes and download them as PNG/SVG in one ZIP or a ready-to-print PDF sheet. No upload, no signup.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Bulk Barcode Generator — UPC, EAN-13, Code 128 | FreeToolDev">
-<meta name="twitter:description" content="Free bulk barcode generator for Code 128, UPC-A and EAN-13: paste or import up to 100 codes, download them all as PNG or SVG in one ZIP, or print one sheet. Check digits validated. No upload.">
+<meta name="twitter:description" content="Free bulk barcode generator for Code 128, UPC-A and EAN-13: paste or import up to 1,000 codes and download them as PNG/SVG in one ZIP or a ready-to-print PDF sheet. No upload, no signup.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/tools/barcode-batch.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -111,13 +111,11 @@ SKU-0042&#9;Blue mug (tab-separated name → used as the file name)"></textarea>
         <button class="btn btn-outline" id="downloadZipBtn" style="display:none;">Download all as ZIP</button>
       </div>
       <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
-      <p style="margin-top:14px; font-size:0.85rem; color:#5a6472;">Up to 100 codes per batch — this keeps rendering fast and the tab responsive. Codes that don't fit the selected format are skipped and listed below the results with the reason (wrong length, non-numeric, or a check digit that doesn't match). If your EAN list has 12 digits (or your UPC list 11) because the check digit was never added, choose <strong>Missing — calculate it</strong>. Numbers that look damaged by a spreadsheet (a dropped leading zero, <code>4.00638E+12</code>) are called out by name. For printing, pick <strong>SVG</strong> or <strong>PNG — large</strong>, or use the print sheet under the results.</p>
+      <p style="margin-top:14px; font-size:0.85rem; color:#5a6472;">Up to 1,000 codes per batch (the first 200 are previewed; every one goes into the ZIP and the PDF sheet). Codes that don't fit the selected format are skipped and listed below the results with the reason (wrong length, non-numeric, or a check digit that doesn't match). If your EAN list has 12 digits (or your UPC list 11) because the check digit was never added, choose <strong>Missing — calculate it</strong>. Numbers that look damaged by a spreadsheet (a dropped leading zero, <code>4.00638E+12</code>) are called out by name. For printing, pick <strong>SVG</strong> or <strong>PNG — large</strong>, or use the print sheet under the results.</p>
     </div>
 
     <div class="panel" id="resultsPanel" style="margin-top:24px; display:none;">
       <h3>Results</h3>
-      <div id="barcodeGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px;"></div>
-      <div id="errorList" style="margin-top:16px; font-size:0.85rem;"></div>
       <div class="toolbar" id="printBar" style="display:none; align-items:flex-end;">
         <div style="min-width:150px;">
           <label for="perRow">Barcodes per row</label>
@@ -128,9 +126,21 @@ SKU-0042&#9;Blue mug (tab-separated name → used as the file name)"></textarea>
             <option value="5">5</option>
           </select>
         </div>
-        <button class="btn btn-outline" id="printBtn">Print sheet / Save as PDF</button>
+        <div style="min-width:150px;">
+          <label for="pageSize">Page size</label>
+          <select id="pageSize">
+            <option value="a4" selected>A4</option>
+            <option value="letter">US Letter</option>
+          </select>
+        </div>
+        <button class="btn btn-amber" id="pdfBtn">Download PDF sheet</button>
+        <button class="btn btn-outline" id="printBtn">Print sheet</button>
       </div>
-      <p id="printNote" style="display:none; margin-top:10px; font-size:0.8rem; color:#5a6472;">Opens every barcode above on one page, drawn as vector graphics whatever output you chose, ready to print or to save as a single PDF from the print dialog.</p>
+      <p id="printNote" style="display:none; margin-top:10px; font-size:0.8rem; color:#5a6472;"><strong>Download PDF sheet</strong> lays every barcode out on A4 or Letter pages (as many pages as needed) with dashed cutting guides, drawn as vector bars so every bar has its exact width at any printer resolution. UPC-A and EAN-13 are placed at their standard 100% size. <strong>Print sheet</strong> opens the same layout as a web page for your printer. Print either one at 100% scale.</p>
+      <p id="pdfStatus" style="display:none; margin-top:6px; font-size:0.85rem; color:#2c3540;"></p>
+      <div id="errorList" style="margin-top:16px; font-size:0.85rem;"></div>
+      <div id="barcodeGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px; margin-top:16px;"></div>
+
     </div>
   </div>
 </section>
@@ -143,7 +153,7 @@ SKU-0042&#9;Blue mug (tab-separated name → used as the file name)"></textarea>
     <p>Each barcode is rendered locally (via the open-source JsBarcode library) — to a canvas for PNG output, or as SVG vector markup — the same fundamental technique any barcode generator uses, just running entirely on your device instead of a server. You can confirm nothing is uploaded by checking your browser's Network tab while a batch runs. See <a href="/blog/bulk-barcode-use-cases.html">this post</a> for when generating dozens or hundreds at once actually comes up in practice, beyond one-off product labels.</p>
 
     <h2>Limits</h2>
-    <p>Up to 100 codes per batch. EAN-13 and UPC-A require the correct digit count and a valid checksum digit at the end — codes that don't validate are skipped and listed separately, each with the reason, rather than silently producing a broken barcode, since a barcode that fails to scan at checkout is a worse outcome than an obvious error message. Spaces and hyphens inside EAN/UPC numbers (<code>0 36000 29145 2</code>, <code>036000-291452</code>) are stripped before checking.</p>
+    <p>Up to 1,000 codes per batch. EAN-13 and UPC-A require the correct digit count and a valid checksum digit at the end — codes that don't validate are skipped and listed separately, each with the reason, rather than silently producing a broken barcode, since a barcode that fails to scan at checkout is a worse outcome than an obvious error message. Spaces and hyphens inside EAN/UPC numbers (<code>0 36000 29145 2</code>, <code>036000-291452</code>) are stripped before checking.</p>
 
     <h2>FAQ</h2>
     <h3>Can I generate a barcode for a product I'm about to sell on Amazon or another marketplace?</h3>
@@ -167,7 +177,7 @@ SKU-0042&#9;Blue mug (tab-separated name → used as the file name)"></textarea>
     </ul>
     <p>Characters outside a chosen set (lower case in A, a tab in B, letters in C) are skipped and listed, and so is anything outside ASCII (accented letters, curly quotes, non-Latin scripts), which Code 128 can't encode at all.</p>
     <h3>Can I print them all on one sheet, or save them as one PDF?</h3>
-    <p>Yes. After generating, use <strong>Print sheet / Save as PDF</strong> under the results and choose how many barcodes go in each row. Every barcode is re-drawn as vector graphics for the sheet, so it prints sharp even when you picked the small PNG output. In the print dialog, choose your printer or <em>Save as PDF</em> to get a single file. Keep scaling at 100% ("Actual size"). The dashed borders are cutting guides. UPC-A and EAN-13 are placed at their standard 100% size (about 31 mm of bars, 23 mm bar height), whatever the row count, as long as they fit. At 4 per row they fit on A4 and Letter. At 5 per row the cells are too narrow, so they shrink to about three-quarters of that size, below GS1's 80% minimum for retail checkout, and the sheet warns you. Code 128 fills the cell width, so long values get thin bars at 4–5 per row, and 2 or 3 per row is safer for those. This is a plain grid, not a template for a specific label stock such as Avery sheets.</p>
+    <p>Yes. After generating, choose how many barcodes per row and a page size, then click <strong>Download PDF sheet</strong>. You get a PDF with every barcode drawn as vector bars (exact widths, sharp on any printer), its name underneath and dashed cutting guides, over as many pages as needed. <strong>Print sheet</strong> opens the same layout as a web page instead. Keep scaling at 100% ("Actual size") either way. UPC-A and EAN-13 are placed at their standard 100% size (about 31 mm of bars, 23 mm bar height) whenever they fit. At 4 per row they fit on A4 and Letter. At 5 per row the cells are too narrow, so they shrink to about three-quarters of that, below GS1's 80% minimum for retail checkout, and the tool tells you. Code 128 fills the cell width, so long values get thin bars at 4–5 per row, and 2 or 3 per row is safer for those. This is a plain grid, not a template for a specific label stock such as Avery sheets.</p>
     <h3>Does it work offline?</h3>
     <p>Once the page has loaded, yes. Everything runs in your browser, so you can disconnect and keep generating, downloading and printing. The only network requests happen when the page first loads, to fetch the open-source barcode and ZIP libraries it is built on.</p>
     <h3>Which output should I pick for printed labels?</h3>
