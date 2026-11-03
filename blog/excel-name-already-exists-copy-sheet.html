@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Name Already Exists When Copying a Sheet: Why and the Fix — FreeToolDev</title>
+<meta name="description" content="Copying a sheet triggers the name already exists prompt again and again. What defined names are, why hidden, #REF! and other-workbook names pile up, Yes vs No, and how to remove them for good.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://freetooldev.com/blog/excel-name-already-exists-copy-sheet.html">
+<meta property="og:title" content="Excel Name Already Exists When Copying a Sheet: Why and the Fix — FreeToolDev">
+<meta property="og:description" content="Copying a sheet triggers the name already exists prompt again and again. What defined names are, why hidden, #REF! and other-workbook names pile up, Yes vs No, and how to remove them for good.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Excel Name Already Exists When Copying a Sheet: Why and the Fix — FreeToolDev">
+<meta name="twitter:description" content="Copying a sheet triggers the name already exists prompt again and again. What defined names are, why hidden, #REF! and other-workbook names pile up, Yes vs No, and how to remove them for good.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/blog/excel-name-already-exists-copy-sheet.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<article class="article">
+  <div class="post-meta">Guide · Nov 3, 2026</div>
+  <h1>Why Excel Keeps Saying "The Name Already Exists" When You Copy a Sheet</h1>
+  <p>You right-click a sheet, choose Move or Copy, pick another workbook, and Excel interrupts:</p>
+  <p><em>"A formula or sheet you want to move or copy contains the name '__1__123Graph_ACHART_12', which already exists on the destination worksheet. Do you want to use this version of the name? To use the name as defined in the destination sheet, click Yes. To rename the range referred to in the formula or worksheet, click No, and enter a new name in the Name Conflict dialog box."</em></p>
+  <p>You click Yes, and the same message comes back with a different name. Then again, sometimes dozens or hundreds of times, for names you've never seen. Here's what those names are, why Excel asks about each one, and how to get rid of them for good.</p>
+
+  <h2 id="names">The names behind the message</h2>
+  <p>Excel lets you give a cell, a range or a formula a <strong>defined name</strong>, such as <code>TaxRate</code> for <code>Inputs!$B$2</code>, and then use <code>=Price*TaxRate</code> instead of cell addresses. Each name lives in a list inside the workbook. It is scoped either to the whole workbook or to one sheet.</p>
+  <p>When you copy a sheet into another workbook, Excel brings along the names that sheet depends on, so its formulas keep working. If the destination already has a name with the same spelling, Excel can't keep both, so it asks you which definition wins, <em>once per name</em>. That question is the message above.</p>
+
+  <h2 id="where">Why there are so many you never created</h2>
+  <p>A workbook that has been in use for a few years usually holds far more names than anyone made on purpose:</p>
+  <ul>
+    <li><strong>Names that point at nothing.</strong> Delete a sheet, and every name that referred to it becomes <code>#REF!</code>. Excel doesn't remove them. They stay in the list and travel with every copy.</li>
+    <li><strong>Hidden names.</strong> Add-ins, financial data plug-ins and older file conversions create names marked hidden. The <code>__123Graph_…</code> names in the message above are leftovers from Lotus 1-2-3 charts, for instance. Hidden names don't appear in Name Manager at all, which is why the message seems to come from nowhere.</li>
+    <li><strong>Names that point at other workbooks.</strong> Copying a sheet from <code>Q1.xlsx</code> into <code>Q2.xlsx</code> can leave names that refer to <code>[Q1.xlsx]</code>, or to a file on a drive that no longer exists. These also cause the "This workbook contains links to external sources" prompt.</li>
+    <li><strong>Copies of copies.</strong> Each time a sheet is copied between two cluttered workbooks, both workbooks' leftovers merge. Deleting the copied sheet afterwards doesn't remove the names it brought. Over years, one template can collect thousands.</li>
+  </ul>
+  <p>None of these show up as a problem until you copy a sheet. Then every one of them that exists in both files turns into a separate question.</p>
+
+  <h2 id="yes-or-no">Yes or No?</h2>
+  <p>For a one-off copy, <strong>Yes</strong> is usually right: the copied sheet uses the destination's definition of the name. Newer versions of Excel also offer a "Yes to All" button, which does that for every remaining name. Be aware of what Yes means, though. If the two workbooks define the same name differently (<code>Revenue</code> is <code>A1</code> in one file and <code>B2</code> in the other), the copied formulas now calculate from the destination's cells, without any warning. <strong>No</strong> lets you type a new name for the copied version instead, which keeps both definitions apart but is impractical for more than a handful.</p>
+  <p>Either way, clicking through only gets you past this copy. The names are still there, and the next copy asks again. The fix is to remove the junk names.</p>
+
+  <h2 id="fix">Getting rid of them</h2>
+  <ol>
+    <li><strong>Delete the broken ones in Name Manager.</strong> Press <code>Ctrl+F3</code>, open <em>Filter</em>, choose <em>Names with Errors</em>, select everything, then click <em>Delete</em>. They point at <code>#REF!</code>, so no working formula depends on them. This alone often removes most of the prompts.</li>
+    <li><strong>Make hidden names visible, then review them.</strong> Name Manager can't show hidden names, so the usual way is a short macro (Alt+F11, Insert → Module, run it):
+      <pre><code>Sub UnhideAllNames()
+    Dim n As Name
+    For Each n In ActiveWorkbook.Names
+        n.Visible = True
+    Next n
+End Sub</code></pre>
+      After that they appear in Name Manager, where you can delete the ones you recognise as leftovers.</li>
+    <li><strong>Check names that refer to other files.</strong> In Name Manager, sort by <em>Refers To</em> and look for <code>[</code> or a file path. Delete them if you don't need those links. Any formula that used one will show <code>#NAME?</code>, which tells you exactly where it was used.</li>
+  </ol>
+  <p>Many company computers block macros, Excel for the web doesn't run VBA, and workbooks with tens of thousands of names can make Name Manager too slow to open. For those cases, the <a href="/tools/excel-name-conflict-fixer.html">Excel name conflict fixer</a> reads the name list straight from the .xlsx file in your browser. It shows every name, hidden ones included, flags the broken, hidden and other-workbook ones, and removes the categories you choose without touching anything else in the file. If you add both workbooks, it also lists exactly which names exist in both, so you can see in advance which prompts a copy would trigger.</p>
+
+  <h2 id="avoid">Avoiding it next time</h2>
+  <ul>
+    <li>If you only need the numbers, copy the cells and use <em>Paste Special → Values</em> into a new sheet instead of copying the whole sheet. No formulas means no names come along.</li>
+    <li>Clean the source workbook (broken and hidden names) before you use it as a template that gets copied around.</li>
+    <li>Keep names you create at workbook scope with distinct, specific names (<code>Q3_TaxRate</code>, not <code>Rate</code>), so they don't collide with someone else's <code>Rate</code>.</li>
+  </ul>
+  <p>Spreadsheet files cause other quiet surprises too. If long numbers in a CSV come back rounded or in scientific notation, see <a href="/blog/excel-csv-number-mangling.html">why Excel mangles your CSV numbers</a>.</p>
+</article>
+
+
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/excel-name-conflict-fixer.html">Excel Name Conflict Fixer</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/svg-id-collision-checker.html">Bulk SVG ID Collision Checker</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/merge-pdf-forms.html">Merge Filled PDF Forms</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/package-json-version-checker.html">Bulk package.json Version Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+          <a href="/tools/code-128-bulk-generator.html">Bulk Code 128 Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,6 +1,8 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-11-02 (**주간 데이터 세션 — 바코드 엔진 보강(1,000개 + 벡터 PDF 시트), 신규 페이지 0.** **Bing 클릭 66→85, 노출 3015→4739.** 바코드 툴 3907노출/47클릭/8.4위 — `bulk barcode generator 128` **1456노출/9.2위/CTR 0.41%** 여전히 1페이지 하단. 10/26 신규 Code 128 전용 페이지는 Bing 리포트에 아직 없음(1주, 38항). 쿼리에서 `bulk barcode generator 128 unlimited`, `free bulk barcode generator & pdf sheet creator`(6노출) 확인 → **한도 100→1,000 + "Download PDF sheet"(pdf-lib로 바를 벡터 사각형으로 그림, 1,000개 893KB/32쪽)** 추가. Google 클릭 10(보합·하락세), **발견됨-미색인 13→16**(10/19·10/21 신규 3개가 "발견됨"으로 등장, 해제 0). GA4 **chatgpt 유입 5명(8세션) — 46항의 "월 5건" 재검토선 도달.** 전체 93파일 = sitemap 93 = llms.txt 93.)
+마지막 업데이트: 2026-11-03 (**신규 제작 세션 — 툴 1 + 글 1, "Excel/스프레드시트" 클러스터 신설.** 후보: EXIF 다중 카메라 시간 맞추기(photodatechanger 등 포화), PDF 병합 시 파일별 북마크(pdf.imagestool·pdfq·coolutils·deftpdf 포화), **Excel "name already exists" 반복 팝업 = 숨은/#REF!/외부 정의 이름** → **공백**(해결은 VBA·Name Manager·데스크톱 애드인·"이메일로 요청" 툴뿐, 브라우저 툴 0, exceltool.io 클리너는 "defined names는 그대로 둔다"고 명시). MS Q&A 동일 메시지 질문(답변 도움됨 20+), MrExcel·ExcelForum 스레드 다수 = 43항. 신규 `tools/excel-name-conflict-fixer.html` + `blog/excel-name-already-exists-copy-sheet.html`. 전체 95파일 = sitemap 95 = llms.txt 95, 툴 33개.)
+
+[이전] 2026-11-02 (**주간 데이터 세션 — 바코드 엔진 보강(1,000개 + 벡터 PDF 시트), 신규 페이지 0.** **Bing 클릭 66→85, 노출 3015→4739.** 바코드 툴 3907노출/47클릭/8.4위 — `bulk barcode generator 128` **1456노출/9.2위/CTR 0.41%** 여전히 1페이지 하단. 10/26 신규 Code 128 전용 페이지는 Bing 리포트에 아직 없음(1주, 38항). 쿼리에서 `bulk barcode generator 128 unlimited`, `free bulk barcode generator & pdf sheet creator`(6노출) 확인 → **한도 100→1,000 + "Download PDF sheet"(pdf-lib로 바를 벡터 사각형으로 그림, 1,000개 893KB/32쪽)** 추가. Google 클릭 10(보합·하락세), **발견됨-미색인 13→16**(10/19·10/21 신규 3개가 "발견됨"으로 등장, 해제 0). GA4 **chatgpt 유입 5명(8세션) — 46항의 "월 5건" 재검토선 도달.** 전체 93파일 = sitemap 93 = llms.txt 93.)
 
 [이전] 2026-10-29 (**신규 제작 세션 — 툴 1 + 글 1 + 기존 툴 기능 수정, PDF 클러스터에 "폼" 하위 클러스터 신설.** 후보 리서치: DMARC 리포트 뷰어(10개 이상), Merchant Center GTIN 검증(nventory·merchantutil 등), RSS 피드 URL 패턴(wprssaggregator 등)은 전부 포화. **공백: 같은 PDF 양식의 작성본 여러 개를 합치면 모든 사본이 첫 사람 답으로 바뀌는 문제**(같은 이름 필드 = 한 필드). Adobe 커뮤니티 2014~2026 스레드 다수(대표 스레드 6,219뷰, 채택 답변이 "먼저 flatten") = 43항, 해결 툴은 업로드형 Sejda뿐 = 44항, 파일을 함께 봐야만 충돌이 보임 = 39항. 신규 `tools/merge-pdf-forms.html` + `blog/combine-filled-pdf-forms.html`. **발견: 우리 `pdf-merge-compress`도 copyPages만 써서 폼 필드를 버리고 있었음 → 공유 모듈 `assets/js/pdf-forms.js`로 수정.** 전체 93파일 = sitemap 93 = llms.txt 93, 툴 32개.)
 
@@ -99,7 +101,7 @@
 
 ---
 
-## 5. 툴 32개 현황 (2026-10-29 기준)
+## 5. 툴 33개 현황 (2026-11-03 기준)
 
 | 툴 | 파일 | 상태 | 비고 |
 |---|---|---|---|
@@ -114,6 +116,7 @@
 | **(신규, 2026-10-21) Bulk SVG ID Collision Checker & Prefixer** | `tools/svg-id-collision-checker.html` | 검증완료 — Playwright 실브라우저로 5개 픽스처(SVGO식 `a`, Figma식 `clip0`, `<style>` 선택자+`#abc` 색상, `xlink:href` 그라디언트 상속, `aria-labelledby`, 파일 내 중복 id, 스프라이트 미정의 참조, 깨진 XML, 숫자로 시작하는 파일명) 검사 + 수정 전/후 인라인 렌더 스크린샷으로 충돌 해소 확인 | 외부 라이브러리는 JSZip만. DOMParser로 id 수집(정확), 재작성은 문자열 치환(원본 포맷 보존): `id`, `url(#…)`(속성·style·`<style>`), `href`/`xlink:href="#…"`, `aria-labelledby/describedby`, `<style>`의 **선택자 영역에서만** `#id`(선언부 색상 오인 방지). 모드: 전체 id / 충돌 id만, 접두: 파일명 slug(숫자 시작이면 `svg-`) / 사용자 텍스트+번호, 접두 중복 시 `-2`. 300파일·5MB/파일. SMIL `begin`·외부 CSS/JS 참조는 미처리(FAQ 명시) |
 | **(신규, 2026-10-26) Bulk Code 128 Barcode Generator** | `tools/code-128-bulk-generator.html` | 검증완료 — Playwright(실제 JsBarcode/JSZip 주입)로 서브셋 거부·탭 라벨·인쇄 시트 4/5열 mm 측정·CSV 가져오기(헤더 skip, 따옴표 안 콤마·`""`)·xlsx 안내 확인 | **barcode-batch와 같은 엔진**(`assets/js/barcode-batch.js` 공유 — 2026-10-26 인라인 스크립트에서 분리). 차이는 head/H1/본문(Code 128 용도·A/B/C·폭 계산 11n+35 모듈+양쪽 10X 정숙영역·Excel 가져오기·FNSKU·GS1-128 FAQ)과 Format 옵션 순서(Code 128 4종 먼저). 문장 중복률 약 11%(UI 라벨). **엔진 수정 시 두 페이지 모두 영향** |
 | **(신규, 2026-10-29) Merge Filled PDF Forms** | `tools/merge-pdf-forms.html` | 검증완료 — Node(pdf-lib + pdf.js `getFieldObjects`)로 3모드 결과 구조 확인 + Playwright 실브라우저 업로드→공유 필드명 표→3모드 병합→다운로드 파일을 pdf-lib로 재검사, 375px 확인 | pdf-lib(cdnjs 1.17.1) + 공유 모듈 `assets/js/pdf-forms.js`. 모드: **separate**(기본 — 각 파일 최상위 필드 `T`에 파일명 slug 접두 `w9-alice_applicant.name`, 편집 가능 유지, 편집 시 다른 사본 영향 없음 확인) / **flatten**(`form.flatten()`) / **shared**(이름 유지 → pdf.js가 같은 이름을 한 필드로 묶음 = 버그 재현용, 의도적으로 원할 때만). 병합 후 페이지 위젯의 `/Parent` 체인을 따라 루트 필드를 모아 `/AcroForm`(Fields·DR 폰트 병합·DA)을 재구성 — **pdf-lib `copyPages`는 위젯만 옮기고 AcroForm을 안 옮기기 때문.** 파일별 리포트: 페이지 수·필드 수·서명 필드(병합 후 서명 검증 불가 경고)·XFA(전용이면 "인쇄 후 병합" 안내)·암호화. 50파일·50MB/파일 |
+| **(신규, 2026-11-03) Excel Name Conflict Fixer** | `tools/excel-name-conflict-fixer.html` | 검증완료 — openpyxl로 픽스처 2개(Revenue 정의가 서로 다름, TaxRate·#REF!·숨김 `__123Graph_ACHART_12`·외부 경로·`_xlnm.Print_Area`·미사용·시트 범위 이름) + 가짜 .xls 생성 → Playwright로 업로드·리포트·파일 간 충돌표·3가지 옵션 조합 정리·다운로드 → **openpyxl 재로드 + LibreOffice headless CSV 변환으로 수식 계산값(=Revenue*2 → 20) 확인**, `unzip -t` 무결성, 375px | JSZip만 사용. `.xlsx`(ZIP)에서 `xl/workbook.xml`의 `<definedNames>`만 DOMParser로 편집 후 재압축 — 시트·수식·서식·차트·매크로(vbaProject)는 원본 그대로. 분류: `_xlnm.*`(인쇄영역·필터)·`_xl*`(`_xlfn.` 등) = **항상 보존**, `#REF!` = broken, `[n]`/경로/`[File.xlsx]` = 외부, `hidden="1"`, "미사용"은 다른 XML 파트(시트 수식·차트·유효성·조건부서식)와 다른 이름 정의에서의 토큰 검색 휴리스틱(VBA만 쓰는 이름은 오판 가능 — UI 명시). 옵션: #REF! 제거(기본 ON)/외부 제거/숨김 제거/남은 숨김 공개/미사용 제거. **2개 이상 파일 → 워크북 범위 동일 이름 = "already exists" 유발 목록 + 정의가 다른 것 강조.** .xls는 저장 변환 안내. 100MB·20파일 |
 | RSS Generator | `tools/rss-generator.html` | 검증완료 | "계정불필요/스크래핑아님" 차별점 보강. **GSC 신호 있는 페이지 (아래 8번 참고)** |
 | Sitemap Generator | `tools/sitemap-generator.html` | 검증완료 | |
 | **(신규) Bulk Sitemap Validator** | `tools/sitemap-validator.html` | 검증완료(jsdom으로 7개 케이스 테스트: 정상/상대경로/우선순위범위초과/changefreq오류/loc누락/중복URL/XML파싱오류/sitemapindex) | 여러 sitemap.xml을 `-----` 구분선으로 붙여넣어 한번에 검증. DOMParser(브라우저 내장)로 XML 파싱, 외부 라이브러리 없음. Sitemap Protocol 스펙 기준 검사(well-formed XML/절대경로/priority 0.0-1.0/changefreq 7개값/lastmod 날짜형식/중복URL/50000개 한도/sitemapindex 구조). **경쟁사는 전부 "URL 1개 입력→서버fetch" 방식인데 우리는 여러 개 붙여넣기 배치 검증으로 차별화, CORS 문제 자체가 없음(URL fetch 안 하니까)** |
@@ -267,6 +270,20 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-11-03 세션(신규 제작) — 키워드 리서치 및 제작 내역**:
+
+- **후보와 경쟁 판정**:
+  | 후보 | 판정 | 근거 |
+  |---|---|---|
+  | 여러 카메라·폰 사진 시간 어긋남(EXIF 일괄 시프트) | 포화 | photodatechanger("camera clock wrong" 전용 페이지), exifcut, fix42, imagen-ai, timestampcamera 등 브라우저 툴 다수 |
+  | PDF 병합 시 파일명 북마크/기존 북마크 유지 | 포화 | pdf.imagestool(전용 2종), pdfq, coolutils, deftpdf, fixmypdf 가이드 |
+  | **Excel 시트 복사 시 "name … already exists" 반복** | **공백** | 정확한 메시지 MS Q&A(도움됨 20+), MrExcel 5개 이상·ExcelForum 스레드, exceldemy 가이드. 해법은 VBA(회사 PC·웹 Excel에서 막힘)·Name Manager(숨김 이름 안 보임, 3만 개 이상이면 안 열림 — epsillion)·데스크톱 애드인(mintytools)·"이메일로 받는" 툴(epsillion XL Integrity). **브라우저에서 파일을 직접 고치는 툴 없음**, exceltool.io 클리너는 "defined names는 건드리지 않음" 명시 |
+- **신규 1 — `tools/excel-name-conflict-fixer.html`**: 위 5번 표.
+- **신규 2 — `blog/excel-name-already-exists-copy-sheet.html`(970단어)**: 정확한 대화상자 문구(MS Q&A 인용, `__1__123Graph_ACHART_12` 예), 정의된 이름·범위, 시트 복사 시 이름이 따라오는 이유, 쌓이는 출처 4종(#REF!, 숨김 — Lotus 1-2-3 차트 잔재·애드인, 외부 통합문서 — 링크 업데이트 경고도 유발, 복사의 복사 — 시트를 지워도 이름은 남음), Yes/No 의미(**같은 이름이 다르게 정의돼 있으면 Yes가 경고 없이 계산 대상을 바꿈**), 해결(Ctrl+F3 → Filter → Names with Errors 삭제, 숨김 공개 VBA `n.Visible = True` 코드, 외부 이름 확인, 매크로 불가 환경엔 툴), 예방(값 붙여넣기, 템플릿 정리, 구체적 이름). 단정 회피: "Yes to All"은 "newer versions"로.
+- **CSS**: `.article pre` 스타일 신설(배경·패딩·**블록 내부 가로 스크롤**) — 기존 yaml-anchors-aliases 글의 `<pre>`도 혜택(375px 가로 스크롤 0 확인).
+- **연결**: excel-csv-number-mangling 끝에 "또 다른 Excel 팝업" 섹션(→ 글·툴, 이 글은 Google 20위대 클릭 이력 있는 페이지), tools/index(data)·홈 카드(CSV↔TSV 다음), **전 95파일 푸터**(CSV ↔ TSV 다음), blog/index 최상단, 홈 Latest posts(새 글 / 폼 / SVG), sitemap(신규 2 + excel-csv lastmod 11-03), llms.txt.
+- **새 클러스터 "Excel/스프레드시트"**: 기존 excel-csv-number-mangling(Bing 6~7위·노출 꾸준) + csv 계열 툴과 묶임. 후속 후보: 외부 링크("This workbook contains links … can't update") 찾기·끊기, 숨긴 시트/매우 숨김(veryHidden) 시트 찾기, 스타일 수천 개 누적("Too many different cell formats") 정리 — 모두 같은 "xlsx ZIP 안 XML만 고친다" 엔진으로 가능.
 
 **2026-11-02 세션 — 데이터 재확인 및 조치 사항**:
 
@@ -944,6 +961,13 @@
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-11-03 세션 기준 다음 할 일**
+
+- **A. 신규 2개(excel-name-conflict-fixer, excel-name-already-exists-copy-sheet) Bing 노출 추적**(38항). 예상 롱테일: `excel name already exists copy sheet`, `excel name conflict keeps popping up`, `remove hidden names excel without vba`, `excel delete #REF names`, `__123Graph name conflict`.
+- **B. Excel 클러스터 후속**(반응 보고 결정): "Too many different cell formats"(스타일 누적) 정리, 외부 링크 찾기/끊기, veryHidden 시트 찾기 — 같은 엔진.
+- **C. 11/02 다음 할 일 A~E 유효**(128군·Code 128 페이지 판정, 색인 요청 실행 여부 확인 — 요청군에 신규 2개 추가 권장, AI 유입 랜딩 확인).
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-11-02 세션 기준 다음 할 일**
 

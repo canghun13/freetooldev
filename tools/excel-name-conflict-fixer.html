@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Name Conflict Fixer — Remove Hidden & #REF! Names, No Macros | FreeToolDev</title>
+<meta name="description" content="Fix the endless &quot;name already exists&quot; prompt when copying Excel sheets. See every defined name, including hidden, #REF! and other-workbook ones, find clashes between files, and remove them. In your browser, no VBA.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/excel-name-conflict-fixer.html">
+<meta property="og:title" content="Excel Name Conflict Fixer — Remove Hidden &amp; #REF! Names, No Macros | FreeToolDev">
+<meta property="og:description" content="Fix the endless &quot;name already exists&quot; prompt when copying Excel sheets. See every defined name, including hidden, #REF! and other-workbook ones, find clashes between files, and remove them. In your browser, no VBA.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Excel Name Conflict Fixer — Remove Hidden &amp; #REF! Names, No Macros | FreeToolDev">
+<meta name="twitter:description" content="Fix the endless &quot;name already exists&quot; prompt when copying Excel sheets. See every defined name, including hidden, #REF! and other-workbook ones, find clashes between files, and remove them. In your browser, no VBA.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/excel-name-conflict-fixer.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Spreadsheet · Batch · No-upload</span>
+    <h1>Excel Name Conflict Fixer</h1>
+    <p>Copying a sheet keeps asking <em>"A formula or sheet you want to move or copy contains the name '…', which already exists"</em>, again and again? The cause is defined names: often hundreds of hidden, broken (<code>#REF!</code>) or other-workbook names that Name Manager doesn't even show. Drop your .xlsx or .xlsm files here. You'll see every name, including the hidden ones, and which names clash between files. Then you can remove the junk and download a clean copy. Nothing is uploaded, and no macros are needed.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>1. Add Excel files</h3>
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept=".xlsx,.xlsm,.xltx,.xltm,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple>
+        Drag .xlsx / .xlsm files here or click to browse<br>
+        <span style="font-size:0.78rem;">Add both workbooks (the one you copy from and the one you copy into) to see the clashing names · max 100 MB/file, 20 files · .xls must be saved as .xlsx first</span>
+      </div>
+      <div id="fileReport" style="margin-top:14px;"></div>
+      <div id="conflictReport" style="margin-top:14px; font-size:0.88rem; color:#2c3540;"></div>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>2. Choose what to clean</h3>
+      <div style="display:flex; flex-direction:column; gap:10px; font-size:0.92rem; color:#2c3540;">
+        <label style="display:flex; gap:10px; align-items:flex-start; font-weight:500; font-size:0.92rem; color:#2c3540;"><input type="checkbox" id="optBroken" checked style="margin-top:4px;"> <span><strong>Remove broken names</strong> (they refer to <code>#REF!</code>). They point at nothing, so removing them changes no result. This is the most common source of repeated prompts.</span></label>
+        <label style="display:flex; gap:10px; align-items:flex-start; font-weight:500; font-size:0.92rem; color:#2c3540;"><input type="checkbox" id="optExternal" style="margin-top:4px;"> <span><strong>Remove names that point to other workbooks</strong>, such as <code>[1]Sheet1!$A$1</code> or <code>'C:\…\[Old.xlsx]Data'!…</code>. These also cause "update links" prompts. Formulas that use them will show <code>#NAME?</code>.</span></label>
+        <label style="display:flex; gap:10px; align-items:flex-start; font-weight:500; font-size:0.92rem; color:#2c3540;"><input type="checkbox" id="optHidden" style="margin-top:4px;"> <span><strong>Remove hidden names</strong>, which are left behind by add-ins, old Lotus/chart conversions and data plug-ins. Excel's own built-in names (print areas, filters, <code>_xlfn.</code>) are always kept.</span></label>
+        <label style="display:flex; gap:10px; align-items:flex-start; font-weight:500; font-size:0.92rem; color:#2c3540;"><input type="checkbox" id="optUnhide" style="margin-top:4px;"> <span><strong>Make the remaining hidden names visible</strong>, so you can review them yourself in Name Manager.</span></label>
+        <label style="display:flex; gap:10px; align-items:flex-start; font-weight:500; font-size:0.92rem; color:#2c3540;"><input type="checkbox" id="optUnused" style="margin-top:4px;"> <span><strong>Remove names that look unused</strong>, meaning not found in any formula, chart, data validation, conditional format or other name in the file. This is a text search, so names used only by macros (VBA) can look unused.</span></label>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="cleanBtn">Clean &amp; download →</button>
+      </div>
+      <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
+      <p style="margin-top:12px; font-size:0.85rem; color:#5a6472;">Only the list of defined names inside the file changes. Sheets, formulas, formatting, charts and macros are copied across untouched. Keep your original as a backup anyway.</p>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>3. Result</h3>
+      <div id="resultArea"><p class="result-empty">// Cleaned files will appear here</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>Where all these names come from</h2>
+    <p>A defined name labels a cell, a range or a formula, such as <code>TaxRate</code> for <code>Inputs!$B$2</code>. Excel copies the names a sheet uses along with the sheet. When the destination workbook already has a name with that spelling, it stops and asks, once per name. Workbooks that have been passed around for years carry hundreds of names nobody created on purpose. Some are hidden by the add-in that made them. Some point at sheets that were deleted, so they now read <code>#REF!</code>. Some point at workbooks on a drive that no longer exists. Each copy between such files multiplies them, which is why the prompt turns into a loop. <a href="/blog/excel-name-already-exists-copy-sheet.html">Why Excel keeps saying the name already exists</a> walks through it step by step.</p>
+
+    <h2>Why not just use Name Manager?</h2>
+    <p>Name Manager doesn't list hidden names. The usual advice, a short VBA macro that unhides or deletes them, needs macros enabled, which many company PCs and Excel for the web don't allow. With tens of thousands of names, Name Manager can also become too slow to open at all. This tool reads the list of names straight from the file instead. It shows every one, hidden or not, and edits only that list.</p>
+
+    <h2>FAQ</h2>
+    <h3>Which option should I pick?</h3>
+    <p>Start with only <strong>broken names</strong>, which is the default. It's safe because those names already point at nothing, and it usually removes most of the prompts. If prompts remain, look at the hidden names in the report. Names like <code>__123Graph_…</code> (leftovers from Lotus 1-2-3 charts) or long lists from a data add-in you no longer use are safe to remove. Remove other-workbook names only if you don't need those links. Formulas that relied on them will show <code>#NAME?</code>, which tells you where they were used.</p>
+    <h3>What does "clashing between files" mean?</h3>
+    <p>When you add more than one workbook, the report lists the workbook-level names that exist in two or more of them. Each of these triggers one "already exists" question when you copy a sheet that uses it from one file into the other. Names that clash with a <em>different</em> definition are the dangerous ones. If you click Yes, the copied sheet silently starts using the destination's range.</p>
+    <h3>Does this work with .xls, Google Sheets or LibreOffice files?</h3>
+    <p>It reads .xlsx, .xlsm and Excel templates (.xltx, .xltm). Open an old .xls in Excel and save it as .xlsx first. Google Sheets: File → Download → Microsoft Excel (.xlsx). LibreOffice: Save As → Excel 2007-365. Macros in .xlsm files are kept as they are.</p>
+    <h3>Is my file uploaded?</h3>
+    <p>No. The file is unpacked in your browser (an .xlsx is a ZIP of XML files), the name list in <code>xl/workbook.xml</code> is edited, and the file is repacked on your device. You can confirm in your browser's Network tab that nothing is sent.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/excel-name-conflict-fixer.html">Excel Name Conflict Fixer</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/svg-id-collision-checker.html">Bulk SVG ID Collision Checker</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/merge-pdf-forms.html">Merge Filled PDF Forms</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/package-json-version-checker.html">Bulk package.json Version Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+          <a href="/tools/code-128-bulk-generator.html">Bulk Code 128 Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var MAX_SIZE = 100 * 1024 * 1024, MAX_FILES = 20, MAX_LIST = 400;
+  var dropzone = document.getElementById('dropzone');
+  var fileInput = document.getElementById('fileInput');
+  var fileReport = document.getElementById('fileReport');
+  var conflictReport = document.getElementById('conflictReport');
+  var resultArea = document.getElementById('resultArea');
+  var progressStatus = document.getElementById('progressStatus');
+  var progressText = document.getElementById('progressText');
+  var books = []; // {file, zip, doc, hadDecl, sheets, names[], error}
+
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  dropzone.addEventListener('click', function () { fileInput.click(); });
+  dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
+  dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('drag'); });
+  dropzone.addEventListener('drop', function (e) { e.preventDefault(); dropzone.classList.remove('drag'); addFiles(e.dataTransfer.files); });
+  fileInput.addEventListener('change', function () { addFiles(fileInput.files); fileInput.value = ''; });
+
+  function classify(n) {
+    var c = { builtin: false, reserved: false, broken: false, external: false, hidden: n.hidden };
+    if (/^_xlnm\./i.test(n.name)) c.builtin = true;
+    else if (/^_xl/i.test(n.name)) c.reserved = true; // _xlfn., _xlpm., _xlws. etc. are Excel's own
+    if (/#REF!/i.test(n.value)) c.broken = true;
+    if (/\[\d+\]/.test(n.value) || /'[^']*\[[^\]]+\.(xls[xmb]?|xlt[xm]?|csv)\][^']*'!/i.test(n.value) || /^\s*'?[A-Za-z]:\\/.test(n.value) || /https?:\/\//i.test(n.value)) c.external = true;
+    return c;
+  }
+  function protectedName(n) { return n.cat.builtin || n.cat.reserved; }
+
+  async function loadBook(file) {
+    if (/\.xls$/i.test(file.name)) return { file: file, error: 'is an old binary .xls file. Open it in Excel and save as .xlsx, then add it again.' };
+    var zip;
+    try { zip = await JSZip.loadAsync(await file.arrayBuffer()); } catch (e) { return { file: file, error: 'is not a readable .xlsx/.xlsm file (' + (e.message || e) + ').' }; }
+    var wbEntry = zip.file('xl/workbook.xml');
+    if (!wbEntry) return { file: file, error: 'has no xl/workbook.xml, so it isn\'t an Excel workbook (or it\'s password-encrypted).' };
+    var xml = await wbEntry.async('string');
+    var doc = new DOMParser().parseFromString(xml, 'application/xml');
+    if (doc.getElementsByTagName('parsererror').length) return { file: file, error: 'has a workbook.xml that couldn\'t be parsed.' };
+    var sheets = Array.prototype.map.call(doc.getElementsByTagNameNS('*', 'sheet'), function (s) { return s.getAttribute('name'); });
+    var els = Array.prototype.slice.call(doc.getElementsByTagNameNS('*', 'definedName'));
+    var names = els.map(function (el) {
+      var lid = el.getAttribute('localSheetId');
+      var n = { el: el, name: el.getAttribute('name') || '', value: el.textContent || '', hidden: el.getAttribute('hidden') === '1' || el.getAttribute('hidden') === 'true',
+        scope: lid !== null && lid !== '' ? (sheets[parseInt(lid, 10)] || ('sheet #' + lid)) : '' };
+      n.cat = classify(n);
+      return n;
+    });
+    // Usage heuristic: look for the name as a token in every other XML part (formulas, charts, validation, conditional formats) and in other names.
+    var hay = '';
+    var parts = Object.keys(zip.files).filter(function (p) { return /^xl\/.*\.xml$/i.test(p) && p !== 'xl/workbook.xml' && !/^xl\/(styles|theme\/|media\/|printerSettings\/)/i.test(p) && !/sharedStrings\.xml$/i.test(p); });
+    for (var i = 0; i < parts.length; i++) hay += '\n' + await zip.file(parts[i]).async('string');
+    names.forEach(function (n) { hay += '\n' + n.value; });
+    var lowerHay = hay.toLowerCase();
+    names.forEach(function (n) {
+      if (protectedName(n)) { n.used = true; return; }
+      var nm = n.name.toLowerCase(), idx = -1, used = false;
+      var isWord = function (ch) { return ch && /[a-z0-9_.\\?]/i.test(ch); };
+      while ((idx = lowerHay.indexOf(nm, idx + 1)) !== -1) {
+        if (!isWord(lowerHay[idx - 1]) && !isWord(lowerHay[idx + nm.length])) {
+          // ignore the name's own definition text (only counts as used if it appears elsewhere)
+          used = true; break;
+        }
+      }
+      n.used = used;
+    });
+    return { file: file, zip: zip, doc: doc, hadDecl: /^\s*<\?xml/.test(xml), sheets: sheets, names: names };
+  }
+
+  async function addFiles(list) {
+    var arr = Array.from(list);
+    for (var i = 0; i < arr.length; i++) {
+      var f = arr[i];
+      if (books.length >= MAX_FILES) { alert('Up to ' + MAX_FILES + ' files at a time.'); break; }
+      if (f.size > MAX_SIZE) { books.push({ file: f, error: 'is larger than 100 MB.' }); continue; }
+      progressStatus.classList.add('active'); progressText.textContent = 'Reading ' + f.name + '…';
+      books.push(await loadBook(f));
+      render();
+    }
+    progressStatus.classList.remove('active'); progressText.textContent = '';
+    render();
+  }
+
+  function counts(b) {
+    var c = { total: b.names.length, hidden: 0, broken: 0, external: 0, builtin: 0, unused: 0 };
+    b.names.forEach(function (n) {
+      if (protectedName(n)) { c.builtin++; return; }
+      if (n.cat.hidden) c.hidden++;
+      if (n.cat.broken) c.broken++;
+      if (n.cat.external) c.external++;
+      if (!n.used) c.unused++;
+    });
+    return c;
+  }
+
+  function tag(text, color) { return '<span style="display:inline-block; font-size:0.72rem; padding:1px 6px; margin-right:4px; border:1px solid ' + color + '; color:' + color + '; border-radius:3px;">' + text + '</span>'; }
+
+  function render() {
+    fileReport.innerHTML = books.map(function (b, bi) {
+      if (b.error) return '<div class="file-row" style="flex-wrap:wrap;"><span class="fname">' + esc(b.file.name) + '</span><span style="flex-basis:100%; font-size:0.82rem; color:#b5451b;">This file ' + esc(b.error) + '</span></div>';
+      var c = counts(b);
+      var rows = b.names.slice(0, MAX_LIST).map(function (n) {
+        var tags = '';
+        if (protectedName(n)) tags += tag('built-in, kept', '#1f6b41');
+        if (n.cat.broken) tags += tag('#REF!', '#b5451b');
+        if (n.cat.external) tags += tag('other workbook', '#8a5a00');
+        if (n.cat.hidden) tags += tag('hidden', '#5a6472');
+        if (!protectedName(n) && !n.used) tags += tag('looks unused', '#5a6472');
+        return '<tr><td style="padding:4px 6px; border-bottom:1px solid var(--paper-dim); word-break:break-all;"><code>' + esc(n.name) + '</code>' + (n.scope ? '<div style="font-size:0.72rem; color:#5a6472;">sheet: ' + esc(n.scope) + '</div>' : '') + '</td>' +
+          '<td style="padding:4px 6px; border-bottom:1px solid var(--paper-dim); word-break:break-all; font-size:0.78rem;">' + esc(n.value.length > 120 ? n.value.slice(0, 120) + '…' : n.value) + '</td>' +
+          '<td style="padding:4px 6px; border-bottom:1px solid var(--paper-dim);">' + tags + '</td></tr>';
+      }).join('');
+      return '<div class="file-row" style="flex-direction:column; align-items:stretch; gap:6px;">' +
+        '<div style="display:flex; gap:10px; align-items:center;"><span class="fname" style="flex:1;"><strong>' + esc(b.file.name) + '</strong></span>' +
+        '<button type="button" class="btn btn-outline" data-remove="' + bi + '" style="padding:4px 9px; font-size:0.7rem;" aria-label="Remove">&times;</button></div>' +
+        '<div style="font-size:0.84rem; color:#2c3540;">' + c.total + ' defined name' + (c.total === 1 ? '' : 's') + ': ' +
+          '<strong style="color:#b5451b;">' + c.broken + ' broken (#REF!)</strong> · ' + c.external + ' point to other workbooks · ' + c.hidden + ' hidden · ' + c.unused + ' look unused · ' + c.builtin + ' Excel built-in</div>' +
+        (b.names.length ? '<details><summary style="cursor:pointer; font-size:0.84rem;">Show all names' + (b.names.length > MAX_LIST ? ' (first ' + MAX_LIST + ')' : '') + '</summary><div style="overflow-x:auto; margin-top:6px;"><table style="width:100%; border-collapse:collapse; font-size:0.8rem;"><thead><tr><th style="text-align:left; padding:4px 6px;">Name</th><th style="text-align:left; padding:4px 6px;">Refers to</th><th style="text-align:left; padding:4px 6px;">Flags</th></tr></thead><tbody>' + rows + '</tbody></table></div></details>' : '') +
+        '</div>';
+    }).join('');
+    renderConflicts();
+  }
+
+  function renderConflicts() {
+    var ok = books.filter(function (b) { return !b.error; });
+    if (ok.length < 2) { conflictReport.innerHTML = ''; return; }
+    var map = {};
+    ok.forEach(function (b, i) {
+      b.names.forEach(function (n) {
+        if (n.scope || protectedName(n)) return;
+        var k = n.name.toLowerCase();
+        (map[k] = map[k] || []).push({ book: b.file.name, value: n.value, name: n.name });
+      });
+    });
+    var clash = Object.keys(map).filter(function (k) {
+      var files = {}; map[k].forEach(function (e) { files[e.book] = true; });
+      return Object.keys(files).length > 1;
+    });
+    if (!clash.length) { conflictReport.innerHTML = 'No workbook-level name exists in more than one of these files, so copying sheets between them shouldn\'t raise "already exists" prompts from defined names.'; return; }
+    var diff = clash.filter(function (k) { var v = {}; map[k].forEach(function (e) { v[e.value.replace(/^'?[^'!]*'?!/, '')] = true; }); return Object.keys(v).length > 1; });
+    conflictReport.innerHTML = '<strong style="color:#b5451b;">' + clash.length + ' name' + (clash.length === 1 ? '' : 's') + ' exist in more than one file</strong>. Each one triggers an "already exists" prompt when a sheet that uses it is copied between these workbooks. ' +
+      (diff.length ? '<strong>' + diff.length + (diff.length === 1 ? ' of them is' : ' of them are') + ' defined differently</strong>: clicking Yes makes the copied sheet use the destination\'s definition.' : 'They all point at the same cells in each file.') +
+      '<div style="overflow-x:auto; margin-top:8px;"><table style="width:100%; border-collapse:collapse; font-size:0.8rem;"><tbody>' +
+      clash.slice(0, 60).map(function (k) {
+        return '<tr><td style="padding:4px 6px; border-bottom:1px solid var(--paper-dim); vertical-align:top;"><code>' + esc(map[k][0].name) + '</code></td><td style="padding:4px 6px; border-bottom:1px solid var(--paper-dim); word-break:break-all;">' +
+          map[k].map(function (e) { return esc(e.book) + ': <code>' + esc(e.value.length > 80 ? e.value.slice(0, 80) + '…' : e.value) + '</code>'; }).join('<br>') + '</td></tr>';
+      }).join('') + '</tbody></table></div>' + (clash.length > 60 ? '<div style="font-size:0.8rem;">…and ' + (clash.length - 60) + ' more.</div>' : '');
+  }
+
+  fileReport.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-remove]');
+    if (!b) return;
+    books.splice(parseInt(b.getAttribute('data-remove'), 10), 1);
+    render();
+  });
+
+  document.getElementById('cleanBtn').addEventListener('click', async function () {
+    var ok = books.filter(function (b) { return !b.error; });
+    if (!ok.length) { alert('Add at least one .xlsx or .xlsm file.'); return; }
+    var o = { broken: document.getElementById('optBroken').checked, external: document.getElementById('optExternal').checked,
+      hidden: document.getElementById('optHidden').checked, unhide: document.getElementById('optUnhide').checked, unused: document.getElementById('optUnused').checked };
+    if (!o.broken && !o.external && !o.hidden && !o.unhide && !o.unused) { alert('Tick at least one option.'); return; }
+    var btn = this; btn.disabled = true; progressStatus.classList.add('active');
+    var outputs = [], lines = [];
+    try {
+      for (var i = 0; i < ok.length; i++) {
+        var b = ok[i];
+        progressText.textContent = 'Cleaning ' + b.file.name + '…';
+        // Work on a fresh copy of the XML so the report stays accurate if the user cleans twice with different options.
+        var xml = await b.zip.file('xl/workbook.xml').async('string');
+        var doc = new DOMParser().parseFromString(xml, 'application/xml');
+        var els = Array.prototype.slice.call(doc.getElementsByTagNameNS('*', 'definedName'));
+        var removed = 0, unhidden = 0;
+        els.forEach(function (el, idx) {
+          var n = b.names[idx];
+          if (!n || n.name !== el.getAttribute('name')) n = { name: el.getAttribute('name'), value: el.textContent, hidden: el.getAttribute('hidden') === '1', used: true };
+          if (!n.cat) n.cat = classify(n);
+          if (protectedName(n)) return;
+          var kill = (o.broken && n.cat.broken) || (o.external && n.cat.external) || (o.hidden && n.cat.hidden) || (o.unused && !n.used);
+          if (kill) { el.parentNode.removeChild(el); removed++; return; }
+          if (o.unhide && n.cat.hidden) { el.removeAttribute('hidden'); unhidden++; }
+        });
+        var dn = doc.getElementsByTagNameNS('*', 'definedNames')[0];
+        if (dn && !dn.getElementsByTagNameNS('*', 'definedName').length) dn.parentNode.removeChild(dn);
+        var outXml = new XMLSerializer().serializeToString(doc);
+        if (b.hadDecl && !/^<\?xml/.test(outXml)) outXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n' + outXml;
+        var zip2 = await JSZip.loadAsync(await b.file.arrayBuffer());
+        zip2.file('xl/workbook.xml', outXml);
+        var mime = /\.xlsm$/i.test(b.file.name) ? 'application/vnd.ms-excel.sheet.macroEnabled.12' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        var blob = await zip2.generateAsync({ type: 'blob', compression: 'DEFLATE', mimeType: mime });
+        var outName = b.file.name.replace(/(\.[^.]+)$/, '-cleaned$1');
+        outputs.push({ name: outName, blob: blob });
+        lines.push('<div class="file-row ready" style="flex-wrap:wrap;"><span class="fname">' + esc(outName) + '</span>' +
+          '<a class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" href="' + URL.createObjectURL(blob) + '" download="' + esc(outName) + '">Download</a>' +
+          '<span style="flex-basis:100%; font-size:0.84rem; color:#2c3540;">' + removed + ' name' + (removed === 1 ? '' : 's') + ' removed' + (unhidden ? ', ' + unhidden + ' made visible' : '') + ' (' + (els.length - removed) + ' left).</span></div>');
+      }
+      var html = lines.join('');
+      if (outputs.length > 1) {
+        var all = new JSZip(); outputs.forEach(function (x) { all.file(x.name, x.blob); });
+        var allBlob = await all.generateAsync({ type: 'blob' });
+        html += '<div class="toolbar"><a class="btn btn-outline" href="' + URL.createObjectURL(allBlob) + '" download="cleaned-workbooks.zip">Download all as ZIP</a></div>';
+      }
+      html += '<p style="font-size:0.84rem; color:#5a6472; margin-top:8px;">Open the cleaned file and check Formulas → Name Manager. If a formula now shows <code>#NAME?</code>, it used a name you removed; the original file still has it.</p>';
+      resultArea.innerHTML = html;
+      progressText.textContent = 'Done.';
+    } catch (e) {
+      resultArea.innerHTML = '<p class="result-empty">Something went wrong: ' + esc(e && e.message ? e.message : String(e)) + '</p>';
+      progressText.textContent = 'Failed.';
+    } finally { progressStatus.classList.remove('active'); btn.disabled = false; }
+  });
+});
+</script>
+
+</body>
+</html>

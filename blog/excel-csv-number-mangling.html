@@ -99,6 +99,8 @@
 
   <h2>Convert without the risk</h2>
   <p>FreeToolDev's <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV converter</a> and <a href="/tools/csv-to-json.html">CSV to JSON converter</a> both treat every value as plain text by default rather than guessing at numeric types — the mangling described here is specifically an Excel behavior on open, not something that happens during conversion itself.</p>
+  <h2 id="other-excel-surprises">Another Excel prompt that won't go away</h2>
+  <p>If copying a sheet between workbooks makes Excel ask "The name already exists" over and over, that's defined names: hidden, broken or other-workbook names piling up in the file, not your data. <a href="/blog/excel-name-already-exists-copy-sheet.html">Why Excel keeps saying the name already exists</a> explains it, and the <a href="/tools/excel-name-conflict-fixer.html">name conflict fixer</a> clears them without macros.</p>
 </article>
 
   <footer class="site-footer">
@@ -111,6 +113,7 @@
           <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
           <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
           <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/excel-name-conflict-fixer.html">Excel Name Conflict Fixer</a>
           <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
           <a href="/tools/image-batch.html">Bulk Image Tool</a>
           <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
