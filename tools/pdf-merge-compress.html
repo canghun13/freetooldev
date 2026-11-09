@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bulk PDF Merge & Compress — Free Tool | FreeToolDev</title>
-<meta name="description" content="Combine multiple PDFs into one file and shrink the size, in one pass. Runs entirely in your browser — nothing is uploaded anywhere. Free.">
+<meta name="description" content="Combine multiple PDFs into one file, make every page the same size (A4, Letter or the most common size) and shrink the result. Runs in your browser, no upload.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://freetooldev.com/tools/pdf-merge-compress.html">
 <meta property="og:title" content="Bulk PDF Merge &amp; Compress — Free Tool | FreeToolDev">
-<meta property="og:description" content="Combine multiple PDFs into one file and shrink the size, in one pass. Runs entirely in your browser — nothing is uploaded anywhere. Free.">
+<meta property="og:description" content="Combine multiple PDFs into one file, make every page the same size (A4, Letter or the most common size) and shrink the result. Runs in your browser, no upload.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Bulk PDF Merge &amp; Compress — Free Tool | FreeToolDev">
-<meta name="twitter:description" content="Combine multiple PDFs into one file and shrink the size, in one pass. Runs entirely in your browser — nothing is uploaded anywhere. Free.">
+<meta name="twitter:description" content="Combine multiple PDFs into one file, make every page the same size (A4, Letter or the most common size) and shrink the result. Runs in your browser, no upload.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/tools/pdf-merge-compress.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -53,7 +53,7 @@
   <div class="wrap">
     <span class="eyebrow">PDF · Batch</span>
     <h1>Bulk PDF Merge &amp; Compress</h1>
-    <p>Upload multiple PDFs, put them in order, and combine them into one file — with an optional compression pass to bring the size down. Nothing leaves your browser.</p>
+    <p>Upload multiple PDFs, put them in order, and combine them into one file. Optionally scale every page to one size, so a scanned page doesn't come out four times bigger than the rest, and compress the result. Nothing leaves your browser.</p>
   </div>
 </section>
 
@@ -70,8 +70,18 @@
     </div>
 
     <div class="panel" style="margin-top:24px;">
-      <h3>2. Compression</h3>
+      <h3>2. Options</h3>
       <div class="opt-row opt-row-wide">
+        <div>
+          <label for="pageSize">Page size</label>
+          <select id="pageSize">
+            <option value="keep" selected>Keep each page's own size</option>
+            <option value="common">Match the most common size</option>
+            <option value="first">Match the first page</option>
+            <option value="a4">A4 (210 × 297 mm)</option>
+            <option value="letter">US Letter (8.5 × 11 in)</option>
+          </select>
+        </div>
         <div>
           <label>Compression mode</label>
           <select id="compressMode">
@@ -100,6 +110,7 @@
           </select>
         </div>
       </div>
+      <p class="result-empty" id="pageSizeNote" style="display:none;">Pages that don't match are scaled to fit and centred, keeping their proportions, so a page with a different shape gets white margins. Landscape pages stay landscape. Outside Aggressive mode, text stays selectable and the file doesn't grow, because the page content is scaled rather than re-rendered.</p>
       <p class="result-empty" id="aggressiveWarning" style="display:none;">Aggressive mode redraws every page as a flattened image. Text stops being selectable, searchable, or copyable, and fine lines/small text can look softer. It's built for scanned documents and image-heavy PDFs — not text reports you still need to search or copy from.</p>
       <div class="toolbar">
         <button class="btn btn-amber" id="processBtn">Merge &amp; process →</button>
@@ -117,7 +128,7 @@
 <section class="section-navy">
   <div class="wrap prose" style="max-width:720px;">
     <h2>How it works</h2>
-    <p>Merging uses <a href="https://pdf-lib.js.org/" target="_blank" rel="noopener">pdf-lib</a> to copy every page from each uploaded file, in the order you set, into one new PDF — this step is always lossless regardless of compression mode. "Safe" compression re-saves that merged file with optimized internal structure (object streams, stripped metadata), which typically saves a modest amount with zero visual change. "Aggressive" compression goes further: each page is rendered to a canvas via <a href="https://mozilla.github.io/pdf.js/" target="_blank" rel="noopener">PDF.js</a> and re-encoded as a JPEG at the quality and resolution you choose, then rebuilt into a new PDF one image per page. All three modes run locally — you can confirm that by checking the Network tab in dev tools while a batch runs.</p>
+    <p>Merging uses <a href="https://pdf-lib.js.org/" target="_blank" rel="noopener">pdf-lib</a> to copy every page from each uploaded file, in the order you set, into one new PDF — this step is always lossless regardless of compression mode. If you pick a page size, pages that don't match it are scaled to fit and centred on that size, which is also lossless outside Aggressive mode. "Safe" compression re-saves that merged file with optimized internal structure (object streams, stripped metadata), which typically saves a modest amount with zero visual change. "Aggressive" compression goes further: each page is rendered to a canvas via <a href="https://mozilla.github.io/pdf.js/" target="_blank" rel="noopener">PDF.js</a> and re-encoded as a JPEG at the quality and resolution you choose, then rebuilt into a new PDF one image per page. All three modes run locally — you can confirm that by checking the Network tab in dev tools while a batch runs.</p>
 
     <h2>Limits</h2>
     <p>Each file is capped at 50 MB and each batch at 20 files, enforced up front. Aggressive mode additionally caps out at 200 total pages across the batch, since rendering every page to a canvas is meaningfully more work than copying it — for bigger jobs, use "Safe" mode (page count isn't limited there) or split into multiple aggressive-mode runs.</p>
@@ -137,8 +148,10 @@
     <p>No. Password-protected or encrypted PDFs generally can't be read without the password, so they'll fail to load here the same way they'd fail to load in most PDF tools — decrypt the file first if you need to include it.</p>
     <h3>Why is my merged file bigger than the sum of the originals?</h3>
     <p>This can happen in "None" or "Safe" mode when the source files share a similar structure — pdf-lib doesn't deduplicate identical embedded fonts or images across separate source documents, so a font embedded in three input files gets carried over three times. If the size difference matters, "Aggressive" mode sidesteps this entirely since it rebuilds every page from scratch as a single image.</p>
-    <h3>After merging, one page looks much bigger or smaller than the others. Is the tool resizing pages?</h3>
-    <p>No — the opposite. Every page is copied at exactly the physical size it had in its source file, which is what you'd want in almost every case, since silently rescaling pages would change documents in ways you didn't ask for. A page that looks huge or tiny next to the rest was already that size before merging, most often because it started life as an image that was converted to PDF at an assumed 72 pixels per inch, making it several times larger than intended. Aggressive mode keeps page dimensions too. The fix is to correct that page at its source and merge again; <a href="/blog/why-merged-pdf-is-bigger.html">this post</a> covers how to confirm which page is off and the options for fixing it.</p>
+    <h3>After merging, one page looks much bigger or smaller than the others. How do I make them the same size?</h3>
+    <p>By default every page is copied at exactly the physical size it had in its source file, so a page that looks huge or tiny was already that size before merging, most often because it started as an image converted to PDF at an assumed 72 pixels per inch. The result panel tells you when the merged file has mixed sizes and which pages are the odd ones. To fix it, set <em>Page size</em> to <em>Match the most common size</em>, <em>Match the first page</em>, A4 or US Letter and merge again. Pages that don't match are scaled to fit that size and centred, keeping their proportions; landscape pages stay landscape. <a href="/blog/why-merged-pdf-is-bigger.html">This post</a> explains where the odd sizes come from.</p>
+    <h3>Does resizing pages make them blurry or the file bigger?</h3>
+    <p>No. In None and Safe mode the page content is scaled with a transformation, not re-rendered, so text stays sharp, selectable and searchable, links and form fields move with the page, and the file stays about the same size. That's the difference from the usual workaround of printing the merged file to a PDF printer with a fit-to-page option, which rebuilds the whole file and can double its size or flatten forms. In Aggressive mode the pages are images anyway, and each one is placed on the chosen page size.</p>
     <h3>I merged several filled-in copies of the same form and they all show the same answers. Why?</h3>
     <p>In a PDF, a form field is identified by its name, and a field with one name has one value. Most combine tools join same-named fields, so ten copies of one form end up as one field showing one answer everywhere. This tool keeps fillable fields but renames them per file (for example <code>w9-alice_name</code> and <code>w9-bob_name</code>), so each copy keeps its own answers, or flattens them if you choose. For a batch of filled forms, the <a href="/tools/merge-pdf-forms.html">PDF form merger</a> also lists the field names your files share before you merge. <a href="/blog/combine-filled-pdf-forms.html">Why combining filled forms changes the answers</a> explains the mechanism.</p>
     <h3>Can I compress a single PDF without merging anything?</h3>
@@ -289,6 +302,36 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   compressModeSelect.addEventListener('change', updateModeUI);
   updateModeUI();
+  var pageSizeSelect = document.getElementById('pageSize');
+  function updateSizeUI() { document.getElementById('pageSizeNote').style.display = pageSizeSelect.value === 'keep' ? 'none' : ''; }
+  pageSizeSelect.addEventListener('change', updateSizeUI);
+  updateSizeUI();
+
+  function pageRef(p) { return escapeHtml(p.file) + ' p.' + p.page; }
+  function sizeReport(sz) {
+    if (!sz || !sz.total) return '';
+    var MAXLIST = 8, html = '';
+    if (!sz.base) {
+      if (sz.groups.length < 2) return '';
+      var parts = sz.groups.map(function (g) {
+        var t = g.count + ' × ' + escapeHtml(g.label);
+        return g === sz.groups[0] ? t : t + ' (' + g.pages.slice(0, 4).map(pageRef).join(', ') + (g.pages.length > 4 ? ', …' : '') + ')';
+      });
+      html = '<strong>Mixed page sizes in this file:</strong> ' + parts.join(' · ') +
+        '. That is why some pages look bigger or smaller than others. To make them match, set <em>Page size</em> to <em>Match the most common size</em> (or A4 / Letter) and merge again.';
+      return '<p style="font-size:0.85rem; color:#8a5a00; margin-top:10px;">' + html + '</p>';
+    }
+    var tl = escapeHtml(sizeLabel(sz.base[0], sz.base[1]));
+    if (!sz.resized.length) {
+      html = 'Page size: all ' + sz.total + ' page(s) already match ' + tl + ', so nothing was resized.';
+    } else {
+      html = 'Page size: <strong>' + sz.resized.length + ' of ' + sz.total + ' page(s) resized to ' + tl + '</strong> (orientation kept). ' +
+        sz.resized.slice(0, MAXLIST).map(function (r) {
+          return pageRef(r) + ': ' + escapeHtml(mmText(r.w, r.h)) + ', scaled to ' + Math.round(r.s * 100) + '%';
+        }).join('; ') + (sz.resized.length > MAXLIST ? '; and ' + (sz.resized.length - MAXLIST) + ' more' : '') + '.';
+    }
+    return '<p style="font-size:0.85rem; color:#2c3540; margin-top:10px;">' + html + '</p>';
+  }
 
   var workerConfigured = false;
   function ensureWorker() {
@@ -298,23 +341,116 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  // ---- Page size: detect mixed sizes, optionally scale pages to one size ----
+  var PT_PER_MM = 72 / 25.4;
+  var PAPER = { a4: [595.28, 841.89], letter: [612, 792] };
+  var NAMED_SIZES = [['A4', 595.28, 841.89], ['US Letter', 612, 792], ['US Legal', 612, 1008], ['A3', 841.89, 1190.55], ['A5', 419.53, 595.28], ['Tabloid', 792, 1224]];
+  function mmText(w, h) { return Math.round(w / PT_PER_MM) + ' \u00d7 ' + Math.round(h / PT_PER_MM) + ' mm'; }
+  function sizeLabel(w, h) {
+    var a = Math.min(w, h), b = Math.max(w, h);
+    for (var i = 0; i < NAMED_SIZES.length; i++) {
+      if (Math.abs(a - NAMED_SIZES[i][1]) < 3 && Math.abs(b - NAMED_SIZES[i][2]) < 3) return NAMED_SIZES[i][0] + (w > h + 1 ? ' landscape' : '');
+    }
+    return mmText(w, h);
+  }
+  function sizeKey(w, h) { // orientation-agnostic, ~3 mm buckets
+    return Math.round(Math.min(w, h) / PT_PER_MM / 3) + 'x' + Math.round(Math.max(w, h) / PT_PER_MM / 3);
+  }
+  function groupSizes(infos) {
+    var groups = {}, order = [];
+    infos.forEach(function (p) {
+      var k = sizeKey(p.w, p.h);
+      if (!groups[k]) { groups[k] = { key: k, w: p.w, h: p.h, pages: [] }; order.push(k); }
+      groups[k].pages.push(p);
+    });
+    return order.map(function (k) { return groups[k]; }).sort(function (x, y) { return y.pages.length - x.pages.length; });
+  }
+  // Returns [short, long] side of the target paper, or null to keep sizes.
+  function targetBase(choice, infos) {
+    if (choice === 'keep' || !infos.length) return null;
+    if (PAPER[choice]) return PAPER[choice].slice();
+    var ref = choice === 'first' ? infos[0] : groupSizes(infos)[0].pages[0];
+    return [Math.min(ref.w, ref.h), Math.max(ref.w, ref.h)];
+  }
+  function targetFor(base, w, h) { return w > h + 1 ? [base[1], base[0]] : [base[0], base[1]]; }
+  function needsResize(t, w, h) { return Math.abs(t[0] - w) > 3 || Math.abs(t[1] - h) > 3; }
+  function displayedSize(pg) {
+    var cb = pg.getCropBox();
+    var rot = ((pg.getRotation().angle % 360) + 360) % 360;
+    return (rot === 90 || rot === 270) ? { w: cb.height, h: cb.width } : { w: cb.width, h: cb.height };
+  }
+  function transformRect(arr, s, e, f, ctx) {
+    var n = [];
+    for (var i = 0; i < arr.size(); i++) {
+      var v = arr.lookup(i);
+      if (!(v instanceof PDFLib.PDFNumber)) return null;
+      n.push(v.asNumber());
+    }
+    return ctx.obj(n.map(function (v, i) { return i % 2 === 0 ? v * s + e : v * s + f; }));
+  }
+  // Scale a pdf-lib page's content (vector, not re-rendered) to fit tw x th as displayed, centred.
+  function fitPage(pg, tw, th) {
+    var L = PDFLib, ctx = pg.doc.context;
+    var rot = ((pg.getRotation().angle % 360) + 360) % 360;
+    var sideways = rot === 90 || rot === 270;
+    var cb = pg.getCropBox();
+    var uw = sideways ? th : tw, uh = sideways ? tw : th;
+    var s = Math.min(uw / cb.width, uh / cb.height);
+    var e = (uw - cb.width * s) / 2 - cb.x * s, f = (uh - cb.height * s) / 2 - cb.y * s;
+    pg.node.normalize();
+    var start = pg.createContentStream(L.pushGraphicsState(), L.concatTransformationMatrix(s, 0, 0, s, e, f),
+      L.rectangle(cb.x, cb.y, cb.width, cb.height), L.clip(), L.endPath());
+    var end = pg.createContentStream(L.popGraphicsState());
+    pg.node.wrapContentStreams(ctx.register(start), ctx.register(end));
+    pg.setMediaBox(0, 0, uw, uh);
+    pg.setCropBox(0, 0, uw, uh);
+    ['BleedBox', 'TrimBox', 'ArtBox'].forEach(function (k) { pg.node.delete(L.PDFName.of(k)); });
+    var annots = pg.node.Annots();
+    if (annots) {
+      for (var i = 0; i < annots.size(); i++) {
+        var a = annots.lookup(i);
+        if (!(a instanceof L.PDFDict)) continue;
+        ['Rect', 'QuadPoints'].forEach(function (k) {
+          var arr = a.lookup(L.PDFName.of(k));
+          if (arr instanceof L.PDFArray) { var t = transformRect(arr, s, e, f, ctx); if (t) a.set(L.PDFName.of(k), t); }
+        });
+      }
+    }
+    return s;
+  }
+
   async function mergeAndProcess(fileArray, mode, quality, dpi, onProgress) {
     var outDoc = await PDFLib.PDFDocument.create();
     var totalPages = 0;
     var formMode = document.getElementById('formMode').value;
+    var sizeChoice = document.getElementById('pageSize').value;
     var formState = PdfForms.newState(), usedPrefixes = {};
+    var infos = [], resized = [], base = null;
 
     if (mode === 'aggressive') {
       ensureWorker();
       var scale = dpi / 72;
+      var jsDocs = [];
+      for (var fa = 0; fa < fileArray.length; fa++) {
+        onProgress(fa, 'reading\u2026');
+        var bufA = await fileArray[fa].arrayBuffer();
+        var docA = await pdfjsLib.getDocument({ data: bufA }).promise;
+        jsDocs.push(docA);
+        totalPages += docA.numPages;
+        if (totalPages > MAX_PAGES_AGGRESSIVE) {
+          throw new Error('Aggressive mode is limited to ' + MAX_PAGES_AGGRESSIVE + ' total pages across the batch. Use "Safe" mode for larger jobs, or split this into smaller batches.');
+        }
+        for (var pa = 1; pa <= docA.numPages; pa++) {
+          var vpA = (await docA.getPage(pa)).getViewport({ scale: 1 });
+          infos.push({ file: fileArray[fa].name, page: pa, w: vpA.width, h: vpA.height });
+        }
+      }
+      base = targetBase(sizeChoice, infos);
+      var infoIdx = 0;
       for (var fi = 0; fi < fileArray.length; fi++) {
-        var buf = await fileArray[fi].arrayBuffer();
-        var pdfDoc = await pdfjsLib.getDocument({ data: buf }).promise;
+        var pdfDoc = jsDocs[fi];
         for (var p = 1; p <= pdfDoc.numPages; p++) {
-          totalPages++;
-          if (totalPages > MAX_PAGES_AGGRESSIVE) {
-            throw new Error('Aggressive mode is limited to ' + MAX_PAGES_AGGRESSIVE + ' total pages across the batch. Use "Safe" mode for larger jobs, or split this into smaller batches.');
-          }
+          var info = infos[infoIdx++];
           onProgress(fi, 'rendering page ' + p + ' of ' + pdfDoc.numPages + '\u2026');
           var page = await pdfDoc.getPage(p);
           var baseViewport = page.getViewport({ scale: 1 });
@@ -334,8 +470,18 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 'image/jpeg', quality);
           });
           var jpgImage = await outDoc.embedJpg(jpgBytes);
-          var outPage = outDoc.addPage([baseViewport.width, baseViewport.height]);
-          outPage.drawImage(jpgImage, { x: 0, y: 0, width: baseViewport.width, height: baseViewport.height });
+          var pw = baseViewport.width, ph = baseViewport.height, ix = 0, iy = 0, iw = pw, ih = ph;
+          if (base) {
+            var tA = targetFor(base, pw, ph);
+            if (needsResize(tA, pw, ph)) {
+              var sA = Math.min(tA[0] / pw, tA[1] / ph);
+              iw = pw * sA; ih = ph * sA; ix = (tA[0] - iw) / 2; iy = (tA[1] - ih) / 2;
+              resized.push({ file: info.file, page: info.page, w: pw, h: ph, s: sA });
+              pw = tA[0]; ph = tA[1];
+            }
+          }
+          var outPage = outDoc.addPage([pw, ph]);
+          outPage.drawImage(jpgImage, { x: ix, y: iy, width: iw, height: ih });
           canvas.width = 0; canvas.height = 0; // release memory promptly
         }
         if (pdfDoc.destroy) pdfDoc.destroy();
@@ -350,10 +496,31 @@ document.addEventListener('DOMContentLoaded', function () {
         var pageIndices = srcDoc.getPageIndices();
         totalPages += pageIndices.length;
         var copiedPages = await outDoc.copyPages(srcDoc, pageIndices);
-        copiedPages.forEach(function (pg) { outDoc.addPage(pg); });
+        copiedPages.forEach(function (pg, pi) {
+          outDoc.addPage(pg);
+          var d = displayedSize(pg);
+          infos.push({ file: fileArray[fj].name, page: pi + 1, w: d.w, h: d.h, pg: pg });
+        });
       }
       try { PdfForms.finalize(outDoc, formState); } catch (finErr) { formState.warnings.push('The merged form could not be rebuilt (' + finErr.message + ').'); }
+      base = targetBase(sizeChoice, infos);
+      if (base) {
+        infos.forEach(function (inf) {
+          var t = targetFor(base, inf.w, inf.h);
+          if (!needsResize(t, inf.w, inf.h)) return;
+          try {
+            var sF = fitPage(inf.pg, t[0], t[1]);
+            resized.push({ file: inf.file, page: inf.page, w: inf.w, h: inf.h, s: sF });
+          } catch (fitErr) {
+            formState.warnings.push(inf.file + ' page ' + inf.page + ': could not be resized (' + fitErr.message + ').');
+          }
+        });
+      }
     }
+    var sizes = {
+      choice: sizeChoice, base: base, resized: resized, total: infos.length,
+      groups: groupSizes(infos).map(function (g) { return { label: sizeLabel(g.w, g.h), count: g.pages.length, pages: g.pages.map(function (p) { return { file: p.file, page: p.page }; }) }; })
+    };
 
     var saveOptions = mode === 'none' ? {} : { useObjectStreams: true };
     if (mode !== 'none') {
@@ -366,7 +533,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } catch (metaErr) { /* non-fatal — some malformed source docs reject metadata edits */ }
     }
     var outBytes = await outDoc.save(saveOptions);
-    return { bytes: outBytes, pages: totalPages, forms: formState, formMode: formMode };
+    return { bytes: outBytes, pages: totalPages, forms: formState, formMode: formMode, sizes: sizes };
   }
 
   document.getElementById('processBtn').addEventListener('click', async function () {
@@ -398,10 +565,11 @@ document.addEventListener('DOMContentLoaded', function () {
       var pct = totalInputSize > 0 ? Math.round((1 - outBlob.size / totalInputSize) * 100) : 0;
       var sizeLine = (outBlob.size / (1024 * 1024)).toFixed(2) + ' MB \u00b7 ' + result.pages + ' page(s)';
       if (pct > 0) sizeLine += ' \u2014 ' + pct + '% smaller than the combined originals (' + (totalInputSize / (1024 * 1024)).toFixed(2) + ' MB)';
-      else if (pct < 0) sizeLine += ' \u2014 larger than the combined originals; try "Aggressive" mode for real size reduction';
+      else if (pct < 0) sizeLine += mode === 'aggressive' ? ' \u2014 larger than the combined originals; try a lower resolution or quality' : ' \u2014 larger than the combined originals; try "Aggressive" mode for real size reduction';
 
       resultArea.innerHTML = '<div class="file-row ready"><span class="fname">merged.pdf</span><span class="fsize">' + sizeLine + '</span>' +
         '<a class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" href="' + url + '" download="merged.pdf">Download</a></div>';
+      resultArea.innerHTML += sizeReport(result.sizes);
       if (result.forms && result.forms.fieldsSeen) {
         var fm = result.formMode === 'flatten'
           ? result.forms.flattened + ' form field(s) flattened: the answers are now part of the page and can\'t be edited.'

@@ -1,6 +1,8 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-11-03 (**신규 제작 세션 — 툴 1 + 글 1, "Excel/스프레드시트" 클러스터 신설.** 후보: EXIF 다중 카메라 시간 맞추기(photodatechanger 등 포화), PDF 병합 시 파일별 북마크(pdf.imagestool·pdfq·coolutils·deftpdf 포화), **Excel "name already exists" 반복 팝업 = 숨은/#REF!/외부 정의 이름** → **공백**(해결은 VBA·Name Manager·데스크톱 애드인·"이메일로 요청" 툴뿐, 브라우저 툴 0, exceltool.io 클리너는 "defined names는 그대로 둔다"고 명시). MS Q&A 동일 메시지 질문(답변 도움됨 20+), MrExcel·ExcelForum 스레드 다수 = 43항. 신규 `tools/excel-name-conflict-fixer.html` + `blog/excel-name-already-exists-copy-sheet.html`. 전체 95파일 = sitemap 95 = llms.txt 95, 툴 33개.)
+마지막 업데이트: 2026-11-09 (**주간 데이터 세션 — ⚠️ Google 노출 4주째 사실상 0(10/12부터, 일평균 약 50 → 0~4) 발견, 보강 1건(PDF 병합 "Page size" 옵션), 신규 페이지 0.** 10/26·11/02 세션은 3개월 합계(5000대)만 보고 "보합"으로 기록해 이 붕괴를 놓쳤다(52항). GA4 google/organic도 10/12~11/08 **0명**. 온사이트 원인 없음(robots·noindex·canonical·CNAME 변경 없음, 10/12 커밋은 바코드·RSS 보강뿐) → **사용자 GSC 확인 필요(직접 조치·URL 검사·site: 검색·크롤링 통계)**. 9/24~10/08 Google 9월 스팸 업데이트 종료 직후와 시점이 겹침. GA4에 `boostdomainrating.com`(유료 dofollow 백링크 판매) 리퍼러가 10/05~10/11 사이 처음 등장 — 사용자에게 확인. **Bing 클릭 85→100, 노출 4739→5572.** 바코드 4541/53/8.44위(128군 1674노출/9.19위/CTR 0.36% 보합), RSS 432/30/5.37위, PDF 글 223/7/4.32위. **10/19 이후 신규 8개 페이지 중 Bing 리포트 등장 0.** 조치: PDF 글에 "병합 후 한 페이지만 크다 → 어떻게 고치나" 해결 의도 쿼리가 계속 늘어 `pdf-merge-compress`에 **Page size 옵션(유지/가장 흔한 크기/첫 페이지/A4/Letter, 내용을 벡터 변환으로 축소·확대해 텍스트 선택 유지·파일 크기 불변) + 혼합 크기 진단** 추가, 블로그 "To fix it"을 3가지 방법 목록으로 재작성. 전체 95파일 = sitemap 95 = llms.txt 95.)
+
+[이전] 2026-11-03 (**신규 제작 세션 — 툴 1 + 글 1, "Excel/스프레드시트" 클러스터 신설.** 후보: EXIF 다중 카메라 시간 맞추기(photodatechanger 등 포화), PDF 병합 시 파일별 북마크(pdf.imagestool·pdfq·coolutils·deftpdf 포화), **Excel "name already exists" 반복 팝업 = 숨은/#REF!/외부 정의 이름** → **공백**(해결은 VBA·Name Manager·데스크톱 애드인·"이메일로 요청" 툴뿐, 브라우저 툴 0, exceltool.io 클리너는 "defined names는 그대로 둔다"고 명시). MS Q&A 동일 메시지 질문(답변 도움됨 20+), MrExcel·ExcelForum 스레드 다수 = 43항. 신규 `tools/excel-name-conflict-fixer.html` + `blog/excel-name-already-exists-copy-sheet.html`. 전체 95파일 = sitemap 95 = llms.txt 95, 툴 33개.)
 
 [이전] 2026-11-02 (**주간 데이터 세션 — 바코드 엔진 보강(1,000개 + 벡터 PDF 시트), 신규 페이지 0.** **Bing 클릭 66→85, 노출 3015→4739.** 바코드 툴 3907노출/47클릭/8.4위 — `bulk barcode generator 128` **1456노출/9.2위/CTR 0.41%** 여전히 1페이지 하단. 10/26 신규 Code 128 전용 페이지는 Bing 리포트에 아직 없음(1주, 38항). 쿼리에서 `bulk barcode generator 128 unlimited`, `free bulk barcode generator & pdf sheet creator`(6노출) 확인 → **한도 100→1,000 + "Download PDF sheet"(pdf-lib로 바를 벡터 사각형으로 그림, 1,000개 893KB/32쪽)** 추가. Google 클릭 10(보합·하락세), **발견됨-미색인 13→16**(10/19·10/21 신규 3개가 "발견됨"으로 등장, 해제 0). GA4 **chatgpt 유입 5명(8세션) — 46항의 "월 5건" 재검토선 도달.** 전체 93파일 = sitemap 93 = llms.txt 93.)
 
@@ -101,7 +103,7 @@
 
 ---
 
-## 5. 툴 33개 현황 (2026-11-03 기준)
+## 5. 툴 33개 현황 (2026-11-09 기준)
 
 | 툴 | 파일 | 상태 | 비고 |
 |---|---|---|---|
@@ -112,7 +114,7 @@
 | **(신규) CSV ↔ TSV Converter** | `tools/csv-tsv-converter.html` | 검증완료(node로 라운드트립 테스트까지 확인) | 외부 라이브러리 없이 자체 구현한 quote-aware 파서/시리얼라이저 (따옴표 안 콤마/탭/개행, `""` 이스케이프 전부 처리) |
 | Bulk Image Resize/Convert/Compress | `tools/image-batch.html` | 검증완료 | Canvas API, 20MB/장·60장 제한, 순차처리+진행률. Crop to exact size(center-crop) 모드 포함. **(2026-07-27 2차, 사용자 피드백 반영) 저장된 프리셋 기능 추가** — resizeMode/targetSize/targetHeight/format/quality 5개 값을 이름 붙여 localStorage에 저장, 드롭다운으로 재적용, 삭제 가능. jsdom으로 저장/덮어쓰기/불러오기/삭제/빈이름거부 5개 시나리오 검증완료. 사이트 최초의 localStorage 사용 사례(서버 전송 없음 유지) |
 | **(신규) Bulk SVG Optimizer** | `tools/svg-optimizer.html` | 검증완료(node로 실제 최적화 결과까지 확인, 644B→175B 72.8% 축소 케이스 테스트) | 외부 라이브러리 없이 자체 구현 — 주석/DOCTYPE/XML선언/에디터 네임스페이스(inkscape·sodipodi)/metadata 블록 제거, d·points 속성 좌표 소수점 반올림, 빈 g·defs 제거. title/desc/aria는 기본 보존(체크박스로 해제 가능) |
-| **(신규, 2026-07-31 3차) Bulk PDF Merge & Compress** | `tools/pdf-merge-compress.html` | 검증완료 — jsdom+node-canvas로 none/safe/aggressive 3개 모드 전부 실제 실행 후 pdf-lib로 round-trip 재검증(페이지 수 일치 확인) | 외부 사용자 피드백(launch 플랫폼 댓글, "PDF 합치기+압축을 한번에 처리하고 싶다")에서 출발. `pdf-lib`(cdnjs, v1.17.1)로 페이지 복사 병합(항상 무손실) + `pdfjs-dist`(jsDelivr, legacy 빌드 v3.11.174 — **cdnjs는 pdf.js가 2.6.347에서 멈춰있어서 이 라이브러리만 예외적으로 jsDelivr 사용**)로 "Aggressive" 모드에서 페이지를 캔버스에 렌더 후 JPG로 재인코딩. 3단계 모드: None(순수 병합)/Safe(무손실, useObjectStreams+메타데이터 제거, 효과는 미미)/Aggressive(페이지를 이미지화 — 텍스트 선택/검색 불가가 되는 트레이드오프를 UI 경고문구로 명시, 기본값 아님). 파일당 50MB·배치당 20개, Aggressive 모드는 총 200페이지 캡. 신규 카테고리 "Documents"(`data-cat="doc"`) 신설. 신규 블로그 `blog/why-merged-pdf-is-bigger.html` 페어링 |
+| **(신규, 2026-07-31 3차) Bulk PDF Merge & Compress** | `tools/pdf-merge-compress.html` | 검증완료 — jsdom+node-canvas로 none/safe/aggressive 3개 모드 전부 실제 실행 후 pdf-lib로 round-trip 재검증(페이지 수 일치 확인) | 외부 사용자 피드백(launch 플랫폼 댓글, "PDF 합치기+압축을 한번에 처리하고 싶다")에서 출발. `pdf-lib`(cdnjs, v1.17.1)로 페이지 복사 병합(항상 무손실) + `pdfjs-dist`(jsDelivr, legacy 빌드 v3.11.174 — **cdnjs는 pdf.js가 2.6.347에서 멈춰있어서 이 라이브러리만 예외적으로 jsDelivr 사용**)로 "Aggressive" 모드에서 페이지를 캔버스에 렌더 후 JPG로 재인코딩. 3단계 모드: None(순수 병합)/Safe(무손실, useObjectStreams+메타데이터 제거, 효과는 미미)/Aggressive(페이지를 이미지화 — 텍스트 선택/검색 불가가 되는 트레이드오프를 UI 경고문구로 명시, 기본값 아님). 파일당 50MB·배치당 20개, Aggressive 모드는 총 200페이지 캡. 신규 카테고리 "Documents"(`data-cat="doc"`) 신설. 신규 블로그 `blog/why-merged-pdf-is-bigger.html` 페어링 **(11/09 보강) Page size 옵션**(유지/가장 흔한 크기/첫 페이지/A4/Letter — 벡터 변환, 회전·CropBox 오프셋·주석 Rect 처리) + 혼합 크기 진단. |
 | **(신규, 2026-10-21) Bulk SVG ID Collision Checker & Prefixer** | `tools/svg-id-collision-checker.html` | 검증완료 — Playwright 실브라우저로 5개 픽스처(SVGO식 `a`, Figma식 `clip0`, `<style>` 선택자+`#abc` 색상, `xlink:href` 그라디언트 상속, `aria-labelledby`, 파일 내 중복 id, 스프라이트 미정의 참조, 깨진 XML, 숫자로 시작하는 파일명) 검사 + 수정 전/후 인라인 렌더 스크린샷으로 충돌 해소 확인 | 외부 라이브러리는 JSZip만. DOMParser로 id 수집(정확), 재작성은 문자열 치환(원본 포맷 보존): `id`, `url(#…)`(속성·style·`<style>`), `href`/`xlink:href="#…"`, `aria-labelledby/describedby`, `<style>`의 **선택자 영역에서만** `#id`(선언부 색상 오인 방지). 모드: 전체 id / 충돌 id만, 접두: 파일명 slug(숫자 시작이면 `svg-`) / 사용자 텍스트+번호, 접두 중복 시 `-2`. 300파일·5MB/파일. SMIL `begin`·외부 CSS/JS 참조는 미처리(FAQ 명시) |
 | **(신규, 2026-10-26) Bulk Code 128 Barcode Generator** | `tools/code-128-bulk-generator.html` | 검증완료 — Playwright(실제 JsBarcode/JSZip 주입)로 서브셋 거부·탭 라벨·인쇄 시트 4/5열 mm 측정·CSV 가져오기(헤더 skip, 따옴표 안 콤마·`""`)·xlsx 안내 확인 | **barcode-batch와 같은 엔진**(`assets/js/barcode-batch.js` 공유 — 2026-10-26 인라인 스크립트에서 분리). 차이는 head/H1/본문(Code 128 용도·A/B/C·폭 계산 11n+35 모듈+양쪽 10X 정숙영역·Excel 가져오기·FNSKU·GS1-128 FAQ)과 Format 옵션 순서(Code 128 4종 먼저). 문장 중복률 약 11%(UI 라벨). **엔진 수정 시 두 페이지 모두 영향** |
 | **(신규, 2026-10-29) Merge Filled PDF Forms** | `tools/merge-pdf-forms.html` | 검증완료 — Node(pdf-lib + pdf.js `getFieldObjects`)로 3모드 결과 구조 확인 + Playwright 실브라우저 업로드→공유 필드명 표→3모드 병합→다운로드 파일을 pdf-lib로 재검사, 375px 확인 | pdf-lib(cdnjs 1.17.1) + 공유 모듈 `assets/js/pdf-forms.js`. 모드: **separate**(기본 — 각 파일 최상위 필드 `T`에 파일명 slug 접두 `w9-alice_applicant.name`, 편집 가능 유지, 편집 시 다른 사본 영향 없음 확인) / **flatten**(`form.flatten()`) / **shared**(이름 유지 → pdf.js가 같은 이름을 한 필드로 묶음 = 버그 재현용, 의도적으로 원할 때만). 병합 후 페이지 위젯의 `/Parent` 체인을 따라 루트 필드를 모아 `/AcroForm`(Fields·DR 폰트 병합·DA)을 재구성 — **pdf-lib `copyPages`는 위젯만 옮기고 AcroForm을 안 옮기기 때문.** 파일별 리포트: 페이지 수·필드 수·서명 필드(병합 후 서명 검증 불가 경고)·XFA(전용이면 "인쇄 후 병합" 안내)·암호화. 50파일·50MB/파일 |
@@ -270,6 +272,37 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-11-09 세션 — 데이터 재확인 및 조치 사항**:
+
+- **⚠️ Google: 10/12부터 노출이 사실상 0.** 주간(월요일 시작) 클릭/노출: 9/14 1/316 · 9/21 1/204 · 9/28 1/383 · 10/5 1/358 · **10/12 0/1 · 10/19 0/8 · 10/26 0/5 · 11/2 0/9.** 3개월 합계(클릭 10, 노출 5009, 쿼리 550)는 8~10월 초 데이터가 남아 있어 "보합"처럼 보였고, 10/26·11/02 세션이 이걸 그대로 "보합"으로 적었다 — **오판이었다(52항).** GA4도 google/organic 10/12~11/08 **0명**(직전 창 1~5명).
+  - 온사이트 점검: robots.txt `Allow: /` 그대로, `<meta name="robots">` 0개, canonical 전부 자기 도메인, CNAME 변경 없음(7/16 이후), 10/12 커밋은 barcode-batch·rss-generator 보강과 CSS뿐. **사이트 전체에 걸린 원인은 리포지토리에 없음.**
+  - 외부 요인 후보: (1) Google 9월 스팸 업데이트(9/24~10/08 롤아웃, 대상 비공개) 종료 직후, (2) GA4 첫 사용자 소스에 **`boostdomainrating.com`**(Domain-Rating.com의 "DR 올려주는 dofollow 백링크 5개 £99" 판매 서비스, 무료 DR 리더보드·신규 제품 목록도 운영)이 **9/14~10/11 창에서 처음 등장**(9/07~10/04 창엔 없음) — 사용자가 이 서비스를 썼거나 등록했는지 확인 필요. 유료 링크면 Google 링크 스팸 정책 대상. (3) 직접 조치(수동 페널티).
+  - **사용자 확인 요청 4가지**: GSC "보안 및 직접 조치 → 직접 조치", 홈 URL 검사(색인 여부·마지막 크롤링 날짜), google.com에서 `site:freetooldev.com`, 설정 → 크롤링 통계(10/12 전후 요청 수·호스트 상태). 결과 전에는 원인 단정 금지.
+  - 커버리지 파일은 차트가 **10/23에서 멈춰 있고 목록도 11/02와 완전히 동일**(발견됨-미색인 16, 크롤링됨-미색인 1). 2주째 갱신 없음.
+  - 수익 영향: Google은 원래 월 5명 이하라 즉시 손실은 작다. 다만 Google 회복이 막히면 Bing·DDG·ChatGPT만 남는다.
+- **Bing: 클릭 85→100, 노출 4739→5572.**
+  - `tools/barcode-batch.html` 3907→4541노출, 47→53클릭, 8.44위. `bulk barcode generator 128` 1456→**1674노출/9.19위/클릭 6(0.36%)** — 1,000개+PDF 시트 보강 1주차, 순위 변화 없음. `bulk barcode generator` 458/9.26, `… code 128` 244/6.36/3, `… free download` 41/4.34/5. 신규 클릭 쿼리에 **EAN-13 벌크 3종**(`bulk barcode ean 13`, `barcodez ean13 bulk`, `bulk barcodes ean 13`, 6~8위).
+  - `tools/rss-generator.html` 313→**432노출, 24→30클릭, 5.37위**(6.05→5.37 상승). `free rss feed generator` 21→42노출/4.62위/5클릭.
+  - `blog/why-merged-pdf-is-bigger.html` 164→223노출, 6→7클릭, 4.32위. 신규 쿼리가 전부 **"한 페이지만 크다 + 어떻게 고치나"**: `how to fix merged pdf and one pdf is bigger`(1위), `why does one document in my pdf … look double the size of the rest and how do i change that`, `combining pdfs but one page is bigger than the rest`, `imprted pdf page larher than the restof pdf`, `combined pdf but one file looks large why`(1위), `why does one pdf page look larger … when merged?`(1위·클릭) → 조치.
+  - **신규 페이지 Bing 등장 0/8**: code-128-scans-wrong(10/19), svg-id-collision-checker·inline-svg-wrong-gradient(10/21), code-128-bulk-generator(10/26), merge-pdf-forms·combine-filled-pdf-forms(10/29), excel 2개(11/03). 10/19 이전엔 1~2주 안에 잡히던 것과 다름(barcode-batch 9/28 보강 1주 만에 반영). 19항 때문에 IndexNow·Bing URL 제출은 **사용자 결정 사항으로만** 보고.
+- **GA4(10/12~11/08)**: 활성 386, bing/organic 59명(78세션), duckduckgo 11, **chatgpt 7명(17세션)**, google 0. 페이지뷰: 바코드 76, 홈 72, RSS 50, PDF 글 22, Code 128 페이지 18(7명 — 내부 이동), Excel 이름 글 8.
+
+**조치 (1건, 신규 0)**:
+
+1. **`tools/pdf-merge-compress.html` — "Page size" 옵션 + 혼합 크기 진단.** 근거: 50항(툴 의도 쿼리) + 49항(쿼리 원문) — PDF 글로 들어오는 쿼리가 "왜"에서 "어떻게 고치나"로 넘어갔는데 우리 툴은 "원본 크기 유지만 한다"고 FAQ에 적어둔 상태였다. 경쟁: Adobe 커뮤니티 스레드(답은 Acrobat 유료 Preflight 또는 "PDF 프린터로 인쇄" — `making combined pdf pages the same size without doubling the size of the pdf` 스레드 존재), wildandfreetools·bentopdf 단독 "fix page size" 툴. 차별: **병합 단계에 통합 + 어떤 페이지가 얼마나 다른지 표시 + 벡터 변환이라 파일 크기 그대로·텍스트 선택 유지·링크/폼 위치 같이 이동 + 업로드 없음.**
+   - 옵션: 유지(기본) / 가장 흔한 크기 / 첫 페이지 / A4 / US Letter. 방향 유지(가로 페이지는 가로 용지), 비율 유지·가운데 정렬(모양 다르면 여백).
+   - 구현: Safe/None — 페이지 Contents를 `q s 0 0 s e f cm <원래 CropBox> re W n … Q`로 감싸고 MediaBox·CropBox를 새 크기로, Bleed/Trim/ArtBox 삭제, 주석 `Rect`·`QuadPoints` 같은 변환. `/Rotate` 90·270이면 회전 전 좌표계 기준으로 가로세로 교환, CropBox 원점 오프셋 반영(오프셋 바깥 내용은 클립으로 가림 — 테스트에서 확인). Aggressive — 사전 패스로 전 페이지 크기 수집 후 이미지를 목표 크기에 맞춰 배치.
+   - 결과 패널: 유지 모드에서 크기가 섞여 있으면 "3 × A4 · 1 × 1016 × 762 mm (scan.pdf p.1) …" + 옵션 안내, 변경 모드면 "N of M pages resized to A4, scan.pdf p.1: 1016 × 762 mm, scaled to 28%".
+   - 검증: 4파일(A4 3쪽+링크, 1016×762mm, Rotate 90+CropBox 오프셋 Letter, A5 폼) × 5조합(keep/common/a4/letter safe·none, first aggressive) Playwright 실행 → pdf-lib로 크기 재측정, pdftotext 텍스트 유지, pdftoppm 렌더 확인, 폼 필드 값 유지·위젯 Rect 이동 확인, 375px 가로 스크롤 0.
+   - 부수 수정: Aggressive 모드에서 결과가 커졌을 때 "Aggressive 써보라"고 하던 문구 → "해상도·품질 낮춰보라".
+   - 텍스트: h3 "2. Compression" → "2. Options", hero·description(`Page size` 언급, 159자, 따옴표 없음), How it works 1문장, FAQ "어떻게 같은 크기로?" 재작성 + "흐려지나/커지나?" 신설.
+2. **`blog/why-merged-pdf-is-bigger.html`** "To fix it"을 3가지 방법 목록(원본 수정 / 병합 시 스케일 — 툴 링크 / PDF 프린터)으로 재작성, "모든 툴이 원본 크기 유지, 맞추려면 병합 전에" 문단 → "요청하지 않으면 유지, 모양이 다르면 여백" 으로 교체. Try it 문단에 page-size 언급.
+3. sitemap lastmod 2개 11/09, llms.txt 설명 2개 갱신.
+
+**판단 메모**:
+- 신규 페이지 0: Google은 사이트 단위로 꺼졌고, Bing은 3주째 신규 페이지를 못 집고 있어 **지금 신규를 늘려도 어느 엔진에도 안 잡힌다**. 이미 노출·클릭이 나오는 Bing 3위권 페이지(PDF 글)의 해결 의도를 받는 툴 보강이 수익 관점 1순위(38항). 공격적 확장 전략 자체는 유지 — 신규 세션에서 계속.
+- 바코드 128군은 보강 1주차라 판정 보류(1674/9.19위 보합). EAN-13 벌크 전용 랜딩도 떠올랐지만 Code 128 전용 페이지가 2주째 Bing에 없는 상태라 같은 패턴을 반복하면 판정 불가 → 보류.
 
 **2026-11-03 세션(신규 제작) — 키워드 리서치 및 제작 내역**:
 
@@ -957,10 +990,19 @@
 49. **(신규, 2026-09-22) 보강 대상을 고를 때는 순위표가 아니라 Bing 쿼리 원문을 한 줄씩 읽을 것 — "제목은 맞는데 뜻이 다른" 불일치가 가장 큰 기회다.** `why-merged-pdf-is-bigger`는 제목("Bigger (or Smaller)")이 쿼리와 단어까지 일치해서 36항 체크를 통과할 것처럼 보였지만, 쿼리 10여 개를 읽어보니 **전부 "화면에서 페이지가 크게 보임"(물리 크기)** 이었고 본문은 **전부 "파일 용량"(바이트)** 이었다. Bing이 1위에 올려주고 클릭까지 났는데도 본문은 그 질문에 한 줄도 답하지 않고 있었다. **단어 일치 ≠ 의도 일치.** 특히 bigger/smaller/size/large 같은 다의어가 제목에 있는 페이지는 쿼리를 반드시 원문으로 확인할 것. Bing 쿼리는 문장형이 많아서 의도가 GSC보다 훨씬 잘 드러난다.
 50. **(신규, 2026-09-28) 툴 페이지의 Bing 클릭 쿼리는 "사용자가 들고 오는 입력 데이터의 형태"를 드러낸다 — 글이 아니라 툴 코드를 먼저 읽을 것.** `bulk download barcodes from ean numbers`(클릭)를 보고 툴 코드를 확인하니, 벌크 사용자가 가장 흔히 가진 **체크디짓 없는 12자리 EAN 목록**이 사유 표시 없이 스킵되고 있었다. 순위·본문만 보면 페이지는 멀쩡해 보였다. **툴 페이지에 클릭/상위 쿼리가 붙으면: (a) 쿼리에 나온 입력 형태(자릿수, 구분자, 파일 형식)를 실제로 넣어보고, (b) 실패 시 이유를 알려주는지, (c) 모호한 입력을 조용히 "고치지" 않는지 확인할 것.** 모호하면(12자리 = 완성된 UPC-A일 수도, 체크디짓 빠진 EAN일 수도) 자동 추정 말고 옵션으로 사용자에게 고르게 한다.
 51. **(신규, 2026-10-05) HTML 속성값에 큰따옴표를 넣지 말 것 — 검증 스위트에 `<meta ... content="...">` 내부 따옴표 검사를 반드시 포함.** 9/14 DNS 보강 때 description에 `"DNS vs zone vs record"`를 그대로 넣어 meta/og/twitter description 3곳이 `why `에서 잘린 채 3주간 방치됐다. 기존 스위트(태그 균형·링크·JS)로는 안 잡힌다. 검사식: `re.search(r'<meta[^>]+content="[^"]*"[^\s>/]', html)`. description 안에서 인용이 필요하면 따옴표 대신 표현을 바꾸거나 `&quot;`/곡선 따옴표를 쓸 것.
+52. **(신규, 2026-11-09) Google 지표는 3개월 합계가 아니라 주간 추이로 먼저 볼 것 — 합계는 붕괴를 4주 이상 숨긴다.** 10/12부터 노출이 일 50 → 0이 됐는데 3개월 창 합계는 5867 → 5335 → 5009로 "완만한 하락"처럼 보였고, 10/26·11/02 두 세션이 "보합"으로 기록했다. `tools/g2.py` 끝에 주간(월요일 시작) 클릭/노출 출력을 추가했으니 **매주 그 줄을 첫 줄로 읽고**, 2주 연속 50% 이상 빠지면 원인 점검(직접 조치·URL 검사·크롤링 통계는 사용자 확인)부터 할 것. Bing·GA4 소스별 숫자도 같은 원칙(창 합계 말고 직전 창 대비).
 
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-11-09 세션 기준 다음 할 일**
+
+- **A. ⚠️ Google 0노출 원인 확인(최우선, 사용자 답 필요)**: 직접 조치 / 홈 URL 검사 / `site:freetooldev.com` / 크롤링 통계 결과, 그리고 `boostdomainrating.com` 사용·등록 여부. 직접 조치면 사유대로 처리 후 재검토 요청, 유료 링크면 해당 링크 목록으로 disavow 검토(사용자 결정). 직접 조치 없음 + 색인은 유지면 알고리즘(9월 스팸 업데이트) — 이 경우 온사이트 품질 점검(얇은 페이지·중복 패턴) 검토. 원인 확인 전엔 Google 대상 실험(색인 요청 등) 판정 중단.
+- **B. Bing 신규 페이지 발견 정체(0/8, 3주)**: 다음 주에도 0이면 IndexNow(키 파일 1개 + 신규 URL 제출) 또는 Bing Webmaster "URL 제출"을 **사용자 결정 사항**으로 다시 제시(19항 — 내가 임의로 도입 금지).
+- **C. PDF Page size 보강 효과(Bing)**: `why-merged-pdf-is-bigger` 클릭(7)·"fix/how to change" 쿼리 클릭, `pdf-merge-compress` Bing 노출(현재 1노출/10위) 변화.
+- **D. 11/03·11/02 다음 할 일 유효**(128군 판정 — 보강 2주차, Excel 신규 2개 추적, AI 유입 랜딩).
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-11-03 세션 기준 다음 할 일**
 
