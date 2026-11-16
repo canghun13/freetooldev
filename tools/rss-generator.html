@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RSS Feed Generator — Free Tool | FreeToolDev</title>
-<meta name="description" content="Generate a valid RSS 2.0 feed from a simple list of titles, links, and dates. No account, no scraping — free and instant.">
+<meta name="description" content="Make a valid RSS 2.0 feed for your own site from a list of titles, links and dates, or fill it from your site URL or sitemap.xml. Free, no account.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://freetooldev.com/tools/rss-generator.html">
 <meta property="og:title" content="RSS Feed Generator — Free Tool | FreeToolDev">
-<meta property="og:description" content="Generate a valid RSS 2.0 feed from a simple list of titles, links, and dates. No account, no scraping — free and instant.">
+<meta property="og:description" content="Make a valid RSS 2.0 feed for your own site from a list of titles, links and dates, or fill it from your site URL or sitemap.xml. Free, no account.">
 <meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
 <meta property="og:site_name" content="FreeToolDev">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="RSS Feed Generator — Free Tool | FreeToolDev">
-<meta name="twitter:description" content="Generate a valid RSS 2.0 feed from a simple list of titles, links, and dates. No account, no scraping — free and instant.">
+<meta name="twitter:description" content="Make a valid RSS 2.0 feed for your own site from a list of titles, links and dates, or fill it from your site URL or sitemap.xml. Free, no account.">
 <meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
 <link rel="canonical" href="https://freetooldev.com/tools/rss-generator.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -50,8 +50,8 @@
   <div class="wrap">
     <span class="eyebrow">Content</span>
     <h1>RSS Feed Generator</h1>
-    <p>Fill in your feed details and add items in bulk — one line per item — to generate a valid RSS 2.0 XML feed. No account, no scraping — this builds a feed from items you already know, for a site you already control.</p>
-    <p style="font-size:0.95rem;">Starting from a website URL instead of a list? The <a href="/tools/site-crawler.html" style="color:var(--amber); text-decoration:underline; text-underline-offset:2px;">Site Crawler</a> reads your site's pages and generates the <code>rss.xml</code> for you.</p>
+    <p>Fill in your feed details and add items in bulk — one line per item — to generate a valid RSS 2.0 XML feed. No account needed. It builds a feed file for a site you control, from a list you type or from your own site's pages.</p>
+    <p style="font-size:0.95rem;">No list yet? Enter your site's URL or load its <code>sitemap.xml</code> below, and the items are filled in for you to edit.</p>
   </div>
 </section>
 
@@ -64,6 +64,25 @@
         <div><label>Feed URL</label><input type="text" id="feedLink" value="https://example.com"></div>
         <div><label>Description</label><input type="text" id="feedDesc" value="Latest updates"></div>
       </div>
+    </div>
+
+    <div class="panel" style="margin-bottom:20px;">
+      <h3>Start from your site (optional)</h3>
+      <div class="opt-row opt-row-wide">
+        <div>
+          <label for="siteUrl">Your site or blog section URL</label>
+          <input type="text" id="siteUrl" placeholder="https://example.com/blog/">
+        </div>
+        <div>
+          <label for="sitemapFile">Or your sitemap.xml (adds dates)</label>
+          <input type="file" id="sitemapFile" accept=".xml,text/xml,application/xml">
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-outline" id="fetchBtn">Fetch page titles →</button>
+      </div>
+      <div id="importStatus" style="margin-top:10px; font-size:0.85rem; color:#2c3540;"></div>
+      <p class="result-empty" style="margin-top:10px;">Fetching reads up to 40 public pages of that site through our crawler and lists the ones under the URL you entered. A sitemap is read in your browser and fills in dates from its <code>&lt;lastmod&gt;</code>. You can also paste sitemap XML straight into the items box. Either way the result is ordinary lines below that you can edit before generating.</p>
     </div>
 
     <div class="workspace-grid workspace-grid-2col">
@@ -100,19 +119,22 @@ Second Post | https://example.com/second | 2026-06-28"></textarea>
     <p>A hand-built static site or a small documentation set often has no build step that generates a feed automatically the way WordPress or most blogging platforms do by default. Without one, there's no way for a feed reader, or another site's "latest posts" widget, to know when you've published something new — visitors have to check back manually. A generated <code>rss.xml</code> fixes that with no server required.</p>
 
     <h2>What this tool is — and isn't</h2>
-    <p>Most "RSS generator" tools online solve a different problem: pointing them at someone else's URL and having them scrape that page to build a feed for a site that doesn't publish one. That's a legitimate use case, but it's not this one. This tool assumes you already know what you want in your feed — you're building it for your own site, from a list you type in yourself, not extracting it automatically from a page. No account, no stored feed URL on our servers, no scraping step. If you specifically want the auto-scrape-a-site behavior, the <a href="/tools/site-crawler.html">Site Crawler & Audit tool</a> can generate a feed by crawling your own site's pages directly, which is the closer equivalent for that use case. See <a href="/blog/rss-generator-no-account.html">this post</a> for a fuller breakdown of manual builders vs. auto-scrapers.</p>
+    <p>Many "RSS generator" services solve a different problem: you give them a link to someone else's page, they check it every so often, and they host a feed URL that keeps updating, usually behind an account and a free-tier limit. This tool doesn't host anything. It makes an <code>rss.xml</code> file that you upload to your own site, so it's built for site owners: a static site, a hand-made blog, a changelog or a documentation set with no feed of its own.</p>
+    <p>The <em>Start from your site</em> box saves the typing. Enter the address of your blog or news section, such as <code>https://example.com/blog/</code>, and the tool fetches the public pages under it (up to 40, through the same crawler the <a href="/tools/site-crawler.html">Site Crawler &amp; Audit tool</a> uses) and lists each page's title and URL. A shared ending such as <code>| My Site</code> is removed from the titles. Loading your <code>sitemap.xml</code> fills in a date for each URL from its <code>&lt;lastmod&gt;</code> and is read entirely in your browser. Do both and the titles and dates are merged by URL. Nothing is stored, and there's no feed URL on our servers to keep updated, so when you publish something new you run it again and replace the file. See <a href="/blog/rss-generator-no-account.html">this post</a> for a fuller comparison of file builders and hosted URL-to-feed services.</p>
 
     <h2>Generator, creator, builder, maker — picking the right kind of tool</h2>
     <p>These terms all get used for the same category of tool, but the tools behind them split into two different mechanics, and picking the wrong one wastes time:</p>
     <p><strong>URL-to-feed tools</strong> (most services that call themselves an RSS feed creator, builder, or maker) take a link to a page you don't control, scrape its content, and turn it into a feed automatically. That's the right choice if you're following a site that has no feed of its own.</p>
-    <p><strong>List-to-feed tools</strong> — this one included — take a plain list of items you already have (your own posts, releases, or updates) and turn it into a spec-valid <code>rss.xml</code> with no scraping and no account. That's the right choice if you're the one publishing the content and just need a standards-compliant feed file for your own static site, changelog, or documentation set.</p>
-    <p>If you're not sure which you need: do you own the content, or are you following someone else's? Own it → a list-based generator like this one. Following someone else's page → a URL-based scraper is the better fit.</p>
+    <p><strong>List-to-feed tools</strong> — this one included — take a plain list of items you already have (your own posts, releases, or updates, typed in or pulled from your own site) and turn it into a spec-valid <code>rss.xml</code> with no account. That's the right choice if you're the one publishing the content and just need a standards-compliant feed file for your own static site, changelog, or documentation set.</p>
+    <p>If you're not sure which you need: do you own the content, or are you following someone else's? Own it → a file-based generator like this one. Following someone else's page → a hosted URL-to-feed service is the better fit, because a feed for a site you don't run has to be checked and rebuilt somewhere every day.</p>
 
     <h2>FAQ</h2>
     <h3>Where do I put the generated rss.xml file?</h3>
     <p>At your site's root, alongside <code>index.html</code>, so it's reachable at <code>yoursite.com/rss.xml</code>. Then add a <code>&lt;link rel="alternate" type="application/rss+xml"&gt;</code> tag in your page's <code>&lt;head&gt;</code> so feed readers and browsers can auto-discover it.</p>
     <h3>Do I need to regenerate the whole feed every time I publish?</h3>
-    <p>Yes, with this tool — it's not connected to your site, so each time you add a new post, paste your full updated item list back in and regenerate. For a handful of posts a month, that's a minor step; for high-frequency publishing, a build-time script is worth setting up instead — or use the Site Crawler tool above to regenerate it from your live pages instead of retyping your list.</p>
+    <p>Yes, with this tool — it's not connected to your site, so each time you add a new post, paste your full updated item list back in and regenerate. For a handful of posts a month, that's a minor step; the <em>Start from your site</em> box saves retyping, since it can re-read your live pages and sitemap each time. For high-frequency publishing, a build-time script is worth setting up instead.</p>
+    <h3>Where do the dates come from when I use my sitemap?</h3>
+    <p>From each URL's <code>&lt;lastmod&gt;</code>, which is the date the page last changed. For most blog posts that's the publish date, but if you edited a post later, the sitemap shows the edit date and the post moves up in the feed. Correct those lines by hand before generating if the order matters. Sitemap URLs without a <code>&lt;lastmod&gt;</code> come in without a date, and the homepage is left out because it isn't a post. A sitemap index (a list of other sitemaps) can't be expanded here, so load the sitemap that lists your posts.</p>
     <h3>Why does my feed reader show the wrong publish time?</h3>
     <p>If you enter a bare date, this tool sets that item's time to midnight UTC. In a feed reader that's cosmetic — dates can appear to shift by a few hours if your reader renders times in local timezone, but the date itself is still correct. It stops being cosmetic once an automation platform is polling the feed: a trigger that decides what's new by comparing item timestamps against its last check can read a midnight-stamped item published later that day as old news and skip it entirely. Enter a full ISO timestamp in the date field to avoid that, and see <a href="/blog/rss-for-automation.html">using RSS to feed newsletters and automation tools</a> for how Zapier and n8n differ on exactly this point.</p>
     <h3>Is RSS still relevant in 2026?</h3>
@@ -181,6 +203,165 @@ document.addEventListener('DOMContentLoaded', function () {
   function esc(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
+
+  // ---- Import: fill the items box from the user's own site URL (crawler) or sitemap.xml (local) ----
+  var WORKER_URL = 'https://freetooldev-crawler.canghun13.workers.dev/crawl';
+  var itemsBox = document.getElementById('items');
+  var importStatus = document.getElementById('importStatus');
+  function setImport(html, warn) { importStatus.innerHTML = html; importStatus.style.color = warn ? '#8a5a00' : '#2c3540'; }
+  function cleanField(t) { return String(t || '').replace(/[|\t\r\n]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+  function normUrl(u) { try { var x = new URL(u); x.hash = ''; return x.href; } catch (e) { return null; } }
+  function slugTitle(u) {
+    try {
+      var segs = new URL(u).pathname.split('/').filter(Boolean);
+      var last = segs.pop() || '';
+      if (/^index\.(html?|php)$/i.test(last)) last = segs.pop() || '';
+      last = decodeURIComponent(last).replace(/\.(html?|php|aspx?)$/i, '').replace(/[-_]+/g, ' ').trim();
+      return last ? last.charAt(0).toUpperCase() + last.slice(1) : u;
+    } catch (e) { return u; }
+  }
+  // Remove a site-name ending shared by most titles ("Post | My Site").
+  function stripCommonSuffix(titles) {
+    var counts = {};
+    titles.forEach(function (t) {
+      var m = t.match(/\s+(?:\||—|–|-|·|::|»)\s+[^|—–·»]{2,60}$/);
+      if (m) counts[m[0]] = (counts[m[0]] || 0) + 1;
+    });
+    var best = null, n = 0;
+    Object.keys(counts).forEach(function (k) { if (counts[k] > n) { best = k; n = counts[k]; } });
+    if (!best || n < 2 || n < titles.length * 0.6) return titles;
+    return titles.map(function (t) { return t.slice(-best.length) === best && t.length > best.length ? t.slice(0, -best.length) : t; });
+  }
+  function readLines() {
+    var map = {}, order = [];
+    itemsBox.value.split('\n').forEach(function (line) {
+      var raw = line.trim(); if (!raw) return;
+      var parts = (raw.indexOf('|') !== -1 ? raw.split('|') : raw.split('\t')).map(function (p) { return p.trim(); });
+      var e = parts.length === 1 ? { url: parts[0], title: '', date: '' } : { title: parts[0], url: parts[1] || '', date: parts[2] || '' };
+      var key = normUrl(e.url) || ('#raw' + order.length + raw);
+      if (!normUrl(e.url)) e.raw = raw;
+      if (!map[key]) order.push(key);
+      map[key] = e;
+    });
+    return { map: map, order: order };
+  }
+  // Merge {url,title,date} entries into the box: keep what's typed, fill gaps, add new URLs, newest first.
+  function mergeEntries(entries) {
+    var cur = readLines(), added = 0, filled = 0;
+    entries.forEach(function (n) {
+      var key = normUrl(n.url); if (!key) return;
+      var e = cur.map[key];
+      if (!e) { cur.map[key] = { url: key, title: n.title || '', date: n.date || '' }; cur.order.push(key); added++; return; }
+      var changed = false;
+      var weak = !e.title || e.title === e.url || (!n.slugOnly && e.title === slugTitle(e.url));
+      if (n.title && weak && n.title !== e.title) { e.title = n.title; changed = true; }
+      if (n.date && !e.date) { e.date = n.date; changed = true; }
+      if (changed) filled++;
+    });
+    var rows = cur.order.map(function (k) { return cur.map[k]; });
+    var dated = rows.filter(function (r) { return !r.raw && r.date; }).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
+    var rest = rows.filter(function (r) { return r.raw || !r.date; });
+    itemsBox.value = dated.concat(rest).map(function (r) {
+      if (r.raw) return r.raw;
+      return [cleanField(r.title || r.url), r.url].concat(r.date ? [r.date] : []).join(' | ');
+    }).join('\n');
+    return { added: added, filled: filled, total: rows.length };
+  }
+  function siteRootOf(u) { try { var x = new URL(u); return x.origin + '/'; } catch (e) { return ''; } }
+  function maybeFillFeedInfo(u) {
+    var link = document.getElementById('feedLink');
+    if (link.value === 'https://example.com' || !link.value) link.value = siteRootOf(u).replace(/\/$/, '');
+  }
+
+  function parseSitemap(xmlText) {
+    var doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+    if (doc.getElementsByTagName('parsererror').length) return { error: 'That doesn\'t parse as XML. Check that it is the whole sitemap file.' };
+    if (doc.getElementsByTagNameNS('*', 'sitemapindex').length || doc.documentElement.localName === 'sitemapindex') {
+      var subs = Array.prototype.map.call(doc.getElementsByTagNameNS('*', 'loc'), function (l) { return l.textContent.trim(); });
+      return { error: 'This is a sitemap index, a list of other sitemaps (' + subs.length + '). Open the one that lists your posts' + (subs[0] ? ', such as ' + subs[0] : '') + ', and load that file instead.' };
+    }
+    var urls = doc.getElementsByTagNameNS('*', 'url');
+    if (!urls.length) return { error: 'No <url> entries found. Is this a sitemap.xml?' };
+    var out = [], skippedRoot = 0;
+    Array.prototype.forEach.call(urls, function (u) {
+      var loc = u.getElementsByTagNameNS('*', 'loc')[0], lm = u.getElementsByTagNameNS('*', 'lastmod')[0];
+      if (!loc) return;
+      var href = loc.textContent.trim(); var nu = normUrl(href); if (!nu) return;
+      if (new URL(nu).pathname.replace(/index\.html?$/i, '') === '/') { skippedRoot++; return; }
+      var d = lm ? lm.textContent.trim() : '';
+      if (d && !/^\d{4}-\d{2}-\d{2}/.test(d)) d = '';
+      out.push({ url: href, title: slugTitle(href), slugOnly: true, date: d });
+    });
+    return { entries: out, skippedRoot: skippedRoot };
+  }
+  function applySitemap(xmlText, source) {
+    var r = parseSitemap(xmlText);
+    if (r.error) { setImport(esc(r.error), true); return false; }
+    var res = mergeEntries(r.entries);
+    var withDate = r.entries.filter(function (e) { return e.date; }).length;
+    if (r.entries[0]) maybeFillFeedInfo(r.entries[0].url);
+    setImport('<strong>' + esc(source) + ':</strong> ' + r.entries.length + ' URL(s), ' + withDate + ' with a date' +
+      (r.skippedRoot ? ', homepage left out' : '') + '. ' + res.added + ' added, ' + res.filled + ' existing line(s) filled in. ' +
+      'Titles from a sitemap are made from the URL, so fetch page titles too, or edit them. Delete lines that aren\'t posts (about, contact, tags).', withDate < r.entries.length);
+    return true;
+  }
+  document.getElementById('sitemapFile').addEventListener('change', function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function () { applySitemap(String(reader.result), f.name); };
+    reader.readAsText(f);
+    this.value = '';
+  });
+  itemsBox.addEventListener('paste', function () {
+    setTimeout(function () {
+      var val = itemsBox.value;
+      if (!/<urlset[\s>]|<sitemapindex[\s>]/i.test(val)) return;
+      var m = val.match(/(<\?xml[^>]*>\s*)?<(urlset|sitemapindex)[\s>][\s\S]*?<\/\2>/i);
+      if (!m) { setImport('That looks like part of a sitemap. Paste the whole file, from &lt;urlset&gt; to &lt;/urlset&gt;.', true); return; }
+      itemsBox.value = (val.slice(0, m.index) + val.slice(m.index + m[0].length)).replace(/\n{3,}/g, '\n\n').trim();
+      if (!applySitemap(m[0], 'Pasted sitemap')) itemsBox.value = val;
+    }, 0);
+  });
+
+  var fetchBtn = document.getElementById('fetchBtn');
+  fetchBtn.addEventListener('click', async function () {
+    var target = document.getElementById('siteUrl').value.trim();
+    if (target && !/^https?:\/\//i.test(target)) target = 'https://' + target;
+    var start; try { start = new URL(target); } catch (e) { setImport('Enter a full address, such as https://example.com/blog/', true); return; }
+    fetchBtn.disabled = true;
+    setImport('Reading pages under ' + esc(start.href) + ', which can take 10–30 seconds…');
+    try {
+      var resp = await fetch(WORKER_URL + '?url=' + encodeURIComponent(start.href));
+      var data = await resp.json();
+      if (data.error) { setImport('Couldn\'t read that site: ' + esc(data.error), true); return; }
+      var base = start.pathname.replace(/index\.(html?|php)$/i, '');
+      if (!/\/$/.test(base)) base = base.replace(/[^/]*$/, '');
+      var startKey = normUrl(start.href);
+      var pages = (data.pages || []).filter(function (p) {
+        var nu = normUrl(p.url); if (!nu) return false;
+        var x = new URL(nu);
+        if (x.host !== start.host) return false;
+        var path = x.pathname.replace(/index\.(html?|php)$/i, '');
+        if (nu === startKey || path === base || path === '/') return false;
+        return path.indexOf(base) === 0;
+      });
+      if (!pages.length) {
+        setImport('Read ' + (data.crawled || 0) + ' page(s) but found none under <code>' + esc(base) + '</code> besides the page itself. Try the section that links to your posts, such as /blog/, or load your sitemap.xml.', true);
+        return;
+      }
+      var titles = stripCommonSuffix(pages.map(function (p) { return String(p.title || '').replace(/\s+/g, ' ').trim() || slugTitle(p.url); })).map(cleanField);
+      var res = mergeEntries(pages.map(function (p, i) { return { url: p.url, title: titles[i] }; }));
+      maybeFillFeedInfo(start.href);
+      var ft = document.getElementById('feedTitle');
+      if (ft.value === 'My Site') { var host = start.host.replace(/^www\./, ''); ft.value = host; }
+      setImport('<strong>' + pages.length + ' page(s) found</strong> under <code>' + esc(base) + '</code>' + (data.limitReached ? ' (crawl limit of 40 pages reached, so older posts may be missing; load your sitemap.xml for the rest)' : '') +
+        '. ' + res.added + ' added, ' + res.filled + ' existing line(s) updated. Pages don\'t carry a reliable date, so add YYYY-MM-DD to each line or load your sitemap.xml to fill them in.');
+    } catch (err) {
+      setImport('The request failed. The crawler may be busy or the site may block it. You can still load your sitemap.xml or paste a list.', true);
+    } finally {
+      fetchBtn.disabled = false;
+    }
+  });
 
   document.getElementById('genBtn').addEventListener('click', function () {
     var title = document.getElementById('feedTitle').value || 'My Site';

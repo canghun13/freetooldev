@@ -1,6 +1,8 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-11-09 (**주간 데이터 세션 — ⚠️ Google 노출 4주째 사실상 0(10/12부터, 일평균 약 50 → 0~4) 발견, 보강 1건(PDF 병합 "Page size" 옵션), 신규 페이지 0.** 10/26·11/02 세션은 3개월 합계(5000대)만 보고 "보합"으로 기록해 이 붕괴를 놓쳤다(52항). GA4 google/organic도 10/12~11/08 **0명**. 온사이트 원인 없음(robots·noindex·canonical·CNAME 변경 없음, 10/12 커밋은 바코드·RSS 보강뿐) → **사용자 GSC 확인 필요(직접 조치·URL 검사·site: 검색·크롤링 통계)**. 9/24~10/08 Google 9월 스팸 업데이트 종료 직후와 시점이 겹침. GA4에 `boostdomainrating.com`(유료 dofollow 백링크 판매) 리퍼러가 10/05~10/11 사이 처음 등장 — 사용자에게 확인. **Bing 클릭 85→100, 노출 4739→5572.** 바코드 4541/53/8.44위(128군 1674노출/9.19위/CTR 0.36% 보합), RSS 432/30/5.37위, PDF 글 223/7/4.32위. **10/19 이후 신규 8개 페이지 중 Bing 리포트 등장 0.** 조치: PDF 글에 "병합 후 한 페이지만 크다 → 어떻게 고치나" 해결 의도 쿼리가 계속 늘어 `pdf-merge-compress`에 **Page size 옵션(유지/가장 흔한 크기/첫 페이지/A4/Letter, 내용을 벡터 변환으로 축소·확대해 텍스트 선택 유지·파일 크기 불변) + 혼합 크기 진단** 추가, 블로그 "To fix it"을 3가지 방법 목록으로 재작성. 전체 95파일 = sitemap 95 = llms.txt 95.)
+마지막 업데이트: 2026-11-16 (**주간 데이터 세션 — 보강 1건(RSS 생성기 "Start from your site": 사이트 URL로 페이지 제목 + sitemap.xml로 날짜), 신규 0.** Google 5주째 사실상 0(11/9주 노출 4), 사용자는 11/09 확인 요청 5가지에 아직 답 없음 → 재요청. 커버리지 갱신(11/09 기준): **발견됨-미색인 16→21**(10/26~11/03 신규 5개 진입), **크롤링됨-미색인 1→3**(11/07 `debug-jwt-base64-locally`, `no-upload-image-compression` — 색인돼 있던 페이지가 빠짐). **Bing 클릭 100→121, 노출 5572→6103.** RSS 432→641노출/30→43클릭/4.81위(최대 성장), 바코드 4739/58/8.49위(`bulk barcode generator 128` 1674/9.19위 2주째 숫자 동일), PDF 글 298/10/4.31위. 신규 페이지 Bing 등장 4주째 0/9 → IndexNow 사용자 결정 요청. GA4 chatgpt 7→14명(30세션). 전체 95파일 = sitemap 95 = llms.txt 95.)
+
+[이전] 2026-11-09 (**주간 데이터 세션 — ⚠️ Google 노출 4주째 사실상 0(10/12부터, 일평균 약 50 → 0~4) 발견, 보강 1건(PDF 병합 "Page size" 옵션), 신규 페이지 0.** 10/26·11/02 세션은 3개월 합계(5000대)만 보고 "보합"으로 기록해 이 붕괴를 놓쳤다(52항). GA4 google/organic도 10/12~11/08 **0명**. 온사이트 원인 없음(robots·noindex·canonical·CNAME 변경 없음, 10/12 커밋은 바코드·RSS 보강뿐) → **사용자 GSC 확인 필요(직접 조치·URL 검사·site: 검색·크롤링 통계)**. 9/24~10/08 Google 9월 스팸 업데이트 종료 직후와 시점이 겹침. GA4에 `boostdomainrating.com`(유료 dofollow 백링크 판매) 리퍼러가 10/05~10/11 사이 처음 등장 — 사용자에게 확인. **Bing 클릭 85→100, 노출 4739→5572.** 바코드 4541/53/8.44위(128군 1674노출/9.19위/CTR 0.36% 보합), RSS 432/30/5.37위, PDF 글 223/7/4.32위. **10/19 이후 신규 8개 페이지 중 Bing 리포트 등장 0.** 조치: PDF 글에 "병합 후 한 페이지만 크다 → 어떻게 고치나" 해결 의도 쿼리가 계속 늘어 `pdf-merge-compress`에 **Page size 옵션(유지/가장 흔한 크기/첫 페이지/A4/Letter, 내용을 벡터 변환으로 축소·확대해 텍스트 선택 유지·파일 크기 불변) + 혼합 크기 진단** 추가, 블로그 "To fix it"을 3가지 방법 목록으로 재작성. 전체 95파일 = sitemap 95 = llms.txt 95.)
 
 [이전] 2026-11-03 (**신규 제작 세션 — 툴 1 + 글 1, "Excel/스프레드시트" 클러스터 신설.** 후보: EXIF 다중 카메라 시간 맞추기(photodatechanger 등 포화), PDF 병합 시 파일별 북마크(pdf.imagestool·pdfq·coolutils·deftpdf 포화), **Excel "name already exists" 반복 팝업 = 숨은/#REF!/외부 정의 이름** → **공백**(해결은 VBA·Name Manager·데스크톱 애드인·"이메일로 요청" 툴뿐, 브라우저 툴 0, exceltool.io 클리너는 "defined names는 그대로 둔다"고 명시). MS Q&A 동일 메시지 질문(답변 도움됨 20+), MrExcel·ExcelForum 스레드 다수 = 43항. 신규 `tools/excel-name-conflict-fixer.html` + `blog/excel-name-already-exists-copy-sheet.html`. 전체 95파일 = sitemap 95 = llms.txt 95, 툴 33개.)
 
@@ -103,7 +105,7 @@
 
 ---
 
-## 5. 툴 33개 현황 (2026-11-09 기준)
+## 5. 툴 33개 현황 (2026-11-16 기준)
 
 | 툴 | 파일 | 상태 | 비고 |
 |---|---|---|---|
@@ -119,7 +121,7 @@
 | **(신규, 2026-10-26) Bulk Code 128 Barcode Generator** | `tools/code-128-bulk-generator.html` | 검증완료 — Playwright(실제 JsBarcode/JSZip 주입)로 서브셋 거부·탭 라벨·인쇄 시트 4/5열 mm 측정·CSV 가져오기(헤더 skip, 따옴표 안 콤마·`""`)·xlsx 안내 확인 | **barcode-batch와 같은 엔진**(`assets/js/barcode-batch.js` 공유 — 2026-10-26 인라인 스크립트에서 분리). 차이는 head/H1/본문(Code 128 용도·A/B/C·폭 계산 11n+35 모듈+양쪽 10X 정숙영역·Excel 가져오기·FNSKU·GS1-128 FAQ)과 Format 옵션 순서(Code 128 4종 먼저). 문장 중복률 약 11%(UI 라벨). **엔진 수정 시 두 페이지 모두 영향** |
 | **(신규, 2026-10-29) Merge Filled PDF Forms** | `tools/merge-pdf-forms.html` | 검증완료 — Node(pdf-lib + pdf.js `getFieldObjects`)로 3모드 결과 구조 확인 + Playwright 실브라우저 업로드→공유 필드명 표→3모드 병합→다운로드 파일을 pdf-lib로 재검사, 375px 확인 | pdf-lib(cdnjs 1.17.1) + 공유 모듈 `assets/js/pdf-forms.js`. 모드: **separate**(기본 — 각 파일 최상위 필드 `T`에 파일명 slug 접두 `w9-alice_applicant.name`, 편집 가능 유지, 편집 시 다른 사본 영향 없음 확인) / **flatten**(`form.flatten()`) / **shared**(이름 유지 → pdf.js가 같은 이름을 한 필드로 묶음 = 버그 재현용, 의도적으로 원할 때만). 병합 후 페이지 위젯의 `/Parent` 체인을 따라 루트 필드를 모아 `/AcroForm`(Fields·DR 폰트 병합·DA)을 재구성 — **pdf-lib `copyPages`는 위젯만 옮기고 AcroForm을 안 옮기기 때문.** 파일별 리포트: 페이지 수·필드 수·서명 필드(병합 후 서명 검증 불가 경고)·XFA(전용이면 "인쇄 후 병합" 안내)·암호화. 50파일·50MB/파일 |
 | **(신규, 2026-11-03) Excel Name Conflict Fixer** | `tools/excel-name-conflict-fixer.html` | 검증완료 — openpyxl로 픽스처 2개(Revenue 정의가 서로 다름, TaxRate·#REF!·숨김 `__123Graph_ACHART_12`·외부 경로·`_xlnm.Print_Area`·미사용·시트 범위 이름) + 가짜 .xls 생성 → Playwright로 업로드·리포트·파일 간 충돌표·3가지 옵션 조합 정리·다운로드 → **openpyxl 재로드 + LibreOffice headless CSV 변환으로 수식 계산값(=Revenue*2 → 20) 확인**, `unzip -t` 무결성, 375px | JSZip만 사용. `.xlsx`(ZIP)에서 `xl/workbook.xml`의 `<definedNames>`만 DOMParser로 편집 후 재압축 — 시트·수식·서식·차트·매크로(vbaProject)는 원본 그대로. 분류: `_xlnm.*`(인쇄영역·필터)·`_xl*`(`_xlfn.` 등) = **항상 보존**, `#REF!` = broken, `[n]`/경로/`[File.xlsx]` = 외부, `hidden="1"`, "미사용"은 다른 XML 파트(시트 수식·차트·유효성·조건부서식)와 다른 이름 정의에서의 토큰 검색 휴리스틱(VBA만 쓰는 이름은 오판 가능 — UI 명시). 옵션: #REF! 제거(기본 ON)/외부 제거/숨김 제거/남은 숨김 공개/미사용 제거. **2개 이상 파일 → 워크북 범위 동일 이름 = "already exists" 유발 목록 + 정의가 다른 것 강조.** .xls는 저장 변환 안내. 100MB·20파일 |
-| RSS Generator | `tools/rss-generator.html` | 검증완료 | "계정불필요/스크래핑아님" 차별점 보강. **GSC 신호 있는 페이지 (아래 8번 참고)** |
+| RSS Generator | `tools/rss-generator.html` | 검증완료 | "계정불필요/스크래핑아님" 차별점 보강. **GSC 신호 있는 페이지 (아래 8번 참고)** **(11/16 보강) Start from your site**: 사이트/섹션 URL → 워커 `/crawl`로 페이지 제목, sitemap.xml(파일·붙여넣기) → lastmod 날짜, URL 기준 병합. 호스팅 피드 아님 명시. |
 | Sitemap Generator | `tools/sitemap-generator.html` | 검증완료 | |
 | **(신규) Bulk Sitemap Validator** | `tools/sitemap-validator.html` | 검증완료(jsdom으로 7개 케이스 테스트: 정상/상대경로/우선순위범위초과/changefreq오류/loc누락/중복URL/XML파싱오류/sitemapindex) | 여러 sitemap.xml을 `-----` 구분선으로 붙여넣어 한번에 검증. DOMParser(브라우저 내장)로 XML 파싱, 외부 라이브러리 없음. Sitemap Protocol 스펙 기준 검사(well-formed XML/절대경로/priority 0.0-1.0/changefreq 7개값/lastmod 날짜형식/중복URL/50000개 한도/sitemapindex 구조). **경쟁사는 전부 "URL 1개 입력→서버fetch" 방식인데 우리는 여러 개 붙여넣기 배치 검증으로 차별화, CORS 문제 자체가 없음(URL fetch 안 하니까)** |
 | robots.txt Generator | `tools/robots-txt-generator.html` | 검증완료 | Disallow/Allow/Sitemap 라인 + GPTBot/ClaudeBot/Google-Extended 등 AI 크롤러 개별 차단 체크박스 |
@@ -272,6 +274,33 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-11-16 세션 — 데이터 재확인 및 조치 사항**:
+
+- **Google**: 주간 클릭/노출 10/12 0/1 · 10/19 0/8 · 10/26 0/5 · 11/2 0/10 · **11/9 0/4** — 5주째 사실상 0. 3개월 합계 클릭 10, 노출 4463, 쿼리 515. **사용자가 11/09 요청(직접 조치·URL 검사·site: 검색·크롤링 통계·boostdomainrating 여부)에 아직 답하지 않음 → 이번 보고에서 재요청.**
+  - **커버리지가 이번에 갱신됨(차트 11/09까지).** 발견됨-미색인 16→**21**(10/24 이미 21 — 지난주 파일이 지연본이었음): 추가 5개 = `code-128-bulk-generator`, `merge-pdf-forms`, `combine-filled-pdf-forms`, `excel-name-conflict-fixer`, `excel-name-already-exists-copy-sheet`. 즉 Google은 신규 URL을 sitemap으로 계속 발견은 하고 있다. **크롤링됨-미색인 1→3(11/07)**: `blog/debug-jwt-base64-locally.html`, `blog/no-upload-image-compression.html` — 기존에 색인돼 있던 페이지가 색인에서 빠진 첫 사례. 노출 0과 함께 "사이트 단위 품질 판정" 쪽 가설에 무게가 실림(단정 금지, 직접 조치 확인 전).
+  - 10/26 색인 요청 실험: 요청군 중 해제 0(실행 여부 자체 미확인). 판정 중단 유지.
+- **Bing: 클릭 100→121, 노출 5572→6103.**
+  - `tools/rss-generator.html` 432→**641노출, 30→43클릭, 5.37→4.81위** — 이번 주 최대 성장. `free rss feed generator` 42→71/3.14위/6, `rss feed generator` 22→46/6.35/3, `rss feed maker` 7/4.29/2, `rss feed creator` 3/3.33/2. **URL에서 출발하는 의도 쿼리가 계속 늘어남**: `rss feed generator from url`, `create rss feed from url`, `create an rss feed from any webpage for free`, `free rss builder to build feed from etsy shop link`(클릭), `free website create rss feed for : https://www.scal.com.sg/`(클릭), `make rss feed for website`, `rss feed generator free no signup`, `completely free rss feed generator no trial` → 조치.
+  - `tools/barcode-batch.html` 4541→4739노출(+198, 지난주 +634에서 둔화), 53→58클릭, 8.49위. **`bulk barcode generator 128` 1674/6/9.19 — 11/09 리포트와 소수점까지 동일**(그 쿼리 행이 갱신되지 않았거나 해당 기간 노출 0). `bulk barcode generator code 128` 244→269/6.39, `free download` 41→69/4.99/6.
+  - `blog/why-merged-pdf-is-bigger.html` 223→**298노출, 7→10클릭**, 4.31위. 11/09 해결 섹션 개편 1주차 — 신규 클릭 쿼리: `why does a page of my merge pdf is smaller than the rest pager and how can i fix it`(1위), `when merging two pdf why scanned file looks bigger`(1위), `changed jpeg to pdf - shows as huge in a merged pdf`(1위), `why does pdf combine files have 2nd document enlarged size?`(1위). `pdf-merge-compress` 자체는 여전히 1노출/10위.
+  - **신규 페이지 Bing 등장 0/9, 4주째**(10/19 이후 전부). 11/09에 "다음 주도 0이면 IndexNow를 사용자 결정 사항으로 제시"라고 걸어둔 조건 충족 → 보고에서 제시(19항: 내가 임의 도입 금지).
+  - `blog/csv-encoding-gibberish.html`이 페이지 리포트에서 빠짐(2노출이던 페이지, 의미 없음).
+- **GA4(10/19~11/15)**: 활성 477, bing/organic 58명(78세션), **chatgpt.com 7→14명(17→30세션)**, duckduckgo 14, google 0. 페이지뷰: 홈 86, 바코드 71, RSS 70(49명, 이탈 0.44), **Code 128 페이지 32(14명)**, PDF 글 25, PDF 툴 20, Excel 이름 글 13. Singapore 130명은 봇.
+
+**조치 (1건, 신규 0)**:
+
+1. **`tools/rss-generator.html` — "Start from your site (optional)" 패널.** 근거: 50항 — RSS 클릭 쿼리에 "URL에서 시작"이 계속 늘어나는데 툴은 첫 화면에서 Site Crawler로 내보내고 있었다(이탈 경로). 경쟁 회피: URL-to-feed 시장(rss.app·fetchrss·politepol 등)은 **호스팅되는 자동 갱신 피드 + 계정/무료 한도**라 정면 경쟁하지 않고, 우리는 **"내 사이트용 rss.xml 파일"** 포지션을 유지한 채 입력만 자동화 — 남의 사이트 피드를 호스팅해 준다고 오해하지 않도록 본문에 명시.
+   - **사이트/섹션 URL → 페이지 제목**: 기존 워커 `GET /crawl?url=`(최대 40페이지)를 그대로 호출(워커 변경 없음). 입력 URL 경로 아래 페이지만 남김(입력 페이지 자신·홈·다른 호스트 제외), 제목의 공통 꼬리(` | My Site` 등, 60% 이상 공통일 때) 제거, 제목 안 `|`·탭은 공백으로. 40페이지 한도 도달 시 안내.
+   - **sitemap.xml 파일 선택 또는 항목 칸에 XML 붙여넣기 → 날짜**: 브라우저에서 DOMParser로 읽고 `<lastmod>`를 날짜로, 홈 제외, 제목은 URL 슬러그에서 생성. sitemap index는 하위 sitemap을 쓰라고 안내. 붙여넣기는 XML 부분만 떼어내고 기존 줄은 보존.
+   - **병합 규칙**: URL(해시 제거) 기준으로 기존 줄 유지 — 사용자가 입력한 제목은 덮지 않고, 빈 제목·URL 제목·슬러그 제목만 크롤 제목으로 교체, 빈 날짜만 채움. 날짜 있는 줄 최신순 → 날짜 없는 줄. Feed URL/제목이 기본값이면 사이트 주소로 채움.
+   - 검증: 워커를 Playwright route로 모킹(정상·error·네트워크 실패·해당 경로 없음) + sitemap 파일·sitemap index·붙여넣기, sitemap→크롤 / 크롤→붙여넣기 양방향 병합, 생성 XML DOMParser 파싱(항목 4개), 375px 가로 스크롤 0. **실제 워커는 이 컨테이너에서 접근 불가(프록시 403)라 응답 형태는 site-crawler.html이 쓰는 `pages[].url/title`, `crawled`, `limitReached`, `error`에 맞춤** — 실서비스에서 한 번 눌러 확인 필요.
+   - 문구: hero 2문장, description(따옴표 없음, 147자), "What this tool is — and isn't" 재작성(호스팅 안 함·파일 업로드·재생성 필요 명시), URL-to-feed vs 파일 생성기 구분 문단 수정, FAQ "regenerate" 수정 + **"sitemap 날짜는 어디서 오나"(lastmod = 수정일 주의, index 미지원)** 신설.
+2. `blog/rss-generator-no-account.html` 툴 소개 문단 갱신, llms.txt RSS 설명, sitemap lastmod 2개 11/16.
+
+**판단 메모**:
+- 신규 0: Bing 신규 페이지 발견 정체(4주 0/9)와 Google 0노출이 그대로라 신규 페이지는 어느 엔진에도 안 잡힘. Bing에서 클릭이 가장 빨리 느는 RSS(주 +13클릭)의 이탈 경로를 막는 게 수익 1순위. 공격적 확장 전략은 유지.
+- 바코드 128군: 헤드 쿼리 행이 2주째 동일해 판정 불가. 페이지 전체 성장 둔화(+634 → +198)는 다음 주 재확인.
 
 **2026-11-09 세션 — 데이터 재확인 및 조치 사항**:
 
@@ -995,6 +1024,15 @@
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-11-16 세션 기준 다음 할 일**
+
+- **A. ⚠️ Google 원인 확인(사용자 답 대기, 2주째)**: 11/09 A항 그대로. 추가로 크롤링됨-미색인으로 빠진 2개(`debug-jwt-base64-locally`, `no-upload-image-compression`)의 URL 검사 결과도 요청할 것.
+- **B. IndexNow / Bing URL 제출 — 사용자 결정 대기.** 하기로 하면: 루트에 키 파일(`<key>.txt`) 1개 추가 + 신규 9개 URL을 `api.indexnow.org`로 제출(브라우저/사용자 측에서 1회 POST — 이 컨테이너는 외부 접근 불가라 사용자 실행 또는 Bing Webmaster "URL 제출" UI). 결정 전엔 하지 않음(19항).
+- **C. RSS "Start from your site" 효과**: rss-generator 클릭(43)·이탈률(0.44)·`from url`류 쿼리 클릭. **실서비스에서 Fetch 버튼이 워커 응답을 제대로 받는지 사용자 확인 1회 필요**(모킹으로만 검증).
+- **D. PDF 글·툴(11/09 page size)**: PDF 글 클릭 10 → 추이, pdf-merge-compress Bing 노출.
+- **E. 바코드 128 헤드 쿼리 행 갱신 여부 / 바코드 페이지 성장 둔화 확인.**
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-11-09 세션 기준 다음 할 일**
 
