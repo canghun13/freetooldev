@@ -1,6 +1,8 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-11-16 (**주간 데이터 세션 — 보강 1건(RSS 생성기 "Start from your site": 사이트 URL로 페이지 제목 + sitemap.xml로 날짜), 신규 0.** Google 5주째 사실상 0(11/9주 노출 4), 사용자는 11/09 확인 요청 5가지에 아직 답 없음 → 재요청. 커버리지 갱신(11/09 기준): **발견됨-미색인 16→21**(10/26~11/03 신규 5개 진입), **크롤링됨-미색인 1→3**(11/07 `debug-jwt-base64-locally`, `no-upload-image-compression` — 색인돼 있던 페이지가 빠짐). **Bing 클릭 100→121, 노출 5572→6103.** RSS 432→641노출/30→43클릭/4.81위(최대 성장), 바코드 4739/58/8.49위(`bulk barcode generator 128` 1674/9.19위 2주째 숫자 동일), PDF 글 298/10/4.31위. 신규 페이지 Bing 등장 4주째 0/9 → IndexNow 사용자 결정 요청. GA4 chatgpt 7→14명(30세션). 전체 95파일 = sitemap 95 = llms.txt 95.)
+마지막 업데이트: 2026-11-18 (**신규 제작 세션 — 툴 2개, "Office 파일(PowerPoint)" 클러스터 신설 + Excel 클러스터 확장.** 후보 9개 조사(아래 8번 표): GS1 Digital Link QR 벌크·Google Takeout 메타데이터·Notion export 정리·ZIP 파일명 인코딩은 **포화**(브라우저 툴 이미 존재), PDF 폼 데이터→CSV는 데스크톱/유료 위주라 **후보 보류**, **PowerPoint 용량 분석**(NXPowerLite·Slidewise 유료, 브라우저 툴 0)과 **Excel "Too many different cell formats"/미사용 스타일 정리**(XLStyles=Windows 스토어 앱, Macabacus 유료 애드인, Inquire=Windows 일부 에디션, Aspose=개발자 라이브러리, Sheetize=업로드형 "스타일 전부 지우기") → **공백**. 신규: `tools/powerpoint-size-analyzer.html`(pptx/docx/xlsx 읽기 전용 분석), `tools/excel-style-cleaner.html`(미사용 named style·cellXfs 제거 + 셀 참조 재번호). 전체 97파일 = sitemap 97 = llms.txt 97, 툴 35개.)
+
+[이전] 2026-11-16 (**주간 데이터 세션 — 보강 1건(RSS 생성기 "Start from your site": 사이트 URL로 페이지 제목 + sitemap.xml로 날짜), 신규 0.** Google 5주째 사실상 0(11/9주 노출 4), 사용자는 11/09 확인 요청 5가지에 아직 답 없음 → 재요청. 커버리지 갱신(11/09 기준): **발견됨-미색인 16→21**(10/26~11/03 신규 5개 진입), **크롤링됨-미색인 1→3**(11/07 `debug-jwt-base64-locally`, `no-upload-image-compression` — 색인돼 있던 페이지가 빠짐). **Bing 클릭 100→121, 노출 5572→6103.** RSS 432→641노출/30→43클릭/4.81위(최대 성장), 바코드 4739/58/8.49위(`bulk barcode generator 128` 1674/9.19위 2주째 숫자 동일), PDF 글 298/10/4.31위. 신규 페이지 Bing 등장 4주째 0/9 → IndexNow 사용자 결정 요청. GA4 chatgpt 7→14명(30세션). 전체 95파일 = sitemap 95 = llms.txt 95.)
 
 [이전] 2026-11-09 (**주간 데이터 세션 — ⚠️ Google 노출 4주째 사실상 0(10/12부터, 일평균 약 50 → 0~4) 발견, 보강 1건(PDF 병합 "Page size" 옵션), 신규 페이지 0.** 10/26·11/02 세션은 3개월 합계(5000대)만 보고 "보합"으로 기록해 이 붕괴를 놓쳤다(52항). GA4 google/organic도 10/12~11/08 **0명**. 온사이트 원인 없음(robots·noindex·canonical·CNAME 변경 없음, 10/12 커밋은 바코드·RSS 보강뿐) → **사용자 GSC 확인 필요(직접 조치·URL 검사·site: 검색·크롤링 통계)**. 9/24~10/08 Google 9월 스팸 업데이트 종료 직후와 시점이 겹침. GA4에 `boostdomainrating.com`(유료 dofollow 백링크 판매) 리퍼러가 10/05~10/11 사이 처음 등장 — 사용자에게 확인. **Bing 클릭 85→100, 노출 4739→5572.** 바코드 4541/53/8.44위(128군 1674노출/9.19위/CTR 0.36% 보합), RSS 432/30/5.37위, PDF 글 223/7/4.32위. **10/19 이후 신규 8개 페이지 중 Bing 리포트 등장 0.** 조치: PDF 글에 "병합 후 한 페이지만 크다 → 어떻게 고치나" 해결 의도 쿼리가 계속 늘어 `pdf-merge-compress`에 **Page size 옵션(유지/가장 흔한 크기/첫 페이지/A4/Letter, 내용을 벡터 변환으로 축소·확대해 텍스트 선택 유지·파일 크기 불변) + 혼합 크기 진단** 추가, 블로그 "To fix it"을 3가지 방법 목록으로 재작성. 전체 95파일 = sitemap 95 = llms.txt 95.)
 
@@ -105,7 +107,7 @@
 
 ---
 
-## 5. 툴 33개 현황 (2026-11-16 기준)
+## 5. 툴 35개 현황 (2026-11-18 기준)
 
 | 툴 | 파일 | 상태 | 비고 |
 |---|---|---|---|
@@ -120,6 +122,8 @@
 | **(신규, 2026-10-21) Bulk SVG ID Collision Checker & Prefixer** | `tools/svg-id-collision-checker.html` | 검증완료 — Playwright 실브라우저로 5개 픽스처(SVGO식 `a`, Figma식 `clip0`, `<style>` 선택자+`#abc` 색상, `xlink:href` 그라디언트 상속, `aria-labelledby`, 파일 내 중복 id, 스프라이트 미정의 참조, 깨진 XML, 숫자로 시작하는 파일명) 검사 + 수정 전/후 인라인 렌더 스크린샷으로 충돌 해소 확인 | 외부 라이브러리는 JSZip만. DOMParser로 id 수집(정확), 재작성은 문자열 치환(원본 포맷 보존): `id`, `url(#…)`(속성·style·`<style>`), `href`/`xlink:href="#…"`, `aria-labelledby/describedby`, `<style>`의 **선택자 영역에서만** `#id`(선언부 색상 오인 방지). 모드: 전체 id / 충돌 id만, 접두: 파일명 slug(숫자 시작이면 `svg-`) / 사용자 텍스트+번호, 접두 중복 시 `-2`. 300파일·5MB/파일. SMIL `begin`·외부 CSS/JS 참조는 미처리(FAQ 명시) |
 | **(신규, 2026-10-26) Bulk Code 128 Barcode Generator** | `tools/code-128-bulk-generator.html` | 검증완료 — Playwright(실제 JsBarcode/JSZip 주입)로 서브셋 거부·탭 라벨·인쇄 시트 4/5열 mm 측정·CSV 가져오기(헤더 skip, 따옴표 안 콤마·`""`)·xlsx 안내 확인 | **barcode-batch와 같은 엔진**(`assets/js/barcode-batch.js` 공유 — 2026-10-26 인라인 스크립트에서 분리). 차이는 head/H1/본문(Code 128 용도·A/B/C·폭 계산 11n+35 모듈+양쪽 10X 정숙영역·Excel 가져오기·FNSKU·GS1-128 FAQ)과 Format 옵션 순서(Code 128 4종 먼저). 문장 중복률 약 11%(UI 라벨). **엔진 수정 시 두 페이지 모두 영향** |
 | **(신규, 2026-10-29) Merge Filled PDF Forms** | `tools/merge-pdf-forms.html` | 검증완료 — Node(pdf-lib + pdf.js `getFieldObjects`)로 3모드 결과 구조 확인 + Playwright 실브라우저 업로드→공유 필드명 표→3모드 병합→다운로드 파일을 pdf-lib로 재검사, 375px 확인 | pdf-lib(cdnjs 1.17.1) + 공유 모듈 `assets/js/pdf-forms.js`. 모드: **separate**(기본 — 각 파일 최상위 필드 `T`에 파일명 slug 접두 `w9-alice_applicant.name`, 편집 가능 유지, 편집 시 다른 사본 영향 없음 확인) / **flatten**(`form.flatten()`) / **shared**(이름 유지 → pdf.js가 같은 이름을 한 필드로 묶음 = 버그 재현용, 의도적으로 원할 때만). 병합 후 페이지 위젯의 `/Parent` 체인을 따라 루트 필드를 모아 `/AcroForm`(Fields·DR 폰트 병합·DA)을 재구성 — **pdf-lib `copyPages`는 위젯만 옮기고 AcroForm을 안 옮기기 때문.** 파일별 리포트: 페이지 수·필드 수·서명 필드(병합 후 서명 검증 불가 경고)·XFA(전용이면 "인쇄 후 병합" 안내)·암호화. 50파일·50MB/파일 |
+| **(신규, 2026-11-18) PowerPoint File Size Analyzer** | `tools/powerpoint-size-analyzer.html` | 검증완료 — 문제 덱·docx·xlsx·LO 왕복본 Playwright, 375px | JSZip 읽기 전용. rels 그래프로 사용처 추적, ppi·크롭·중복·무거운 형식·미사용 레이아웃·폰트·비디오·임베디드·썸네일·피벗·used range·스타일 수. 10파일 비교, CSV. 새 "Office 파일" 클러스터 |
+| **(신규, 2026-11-18) Excel Style Cleaner** | `tools/excel-style-cleaner.html` | 검증완료 — openpyxl 전 셀 서식 diff 0, LO 열기 | styles.xml 문자열 수술: 미사용 named style/cellXfs/built-in 제거 + 시트 s= 재번호, 테이블 참조 스타일 유지. 20파일 ZIP |
 | **(신규, 2026-11-03) Excel Name Conflict Fixer** | `tools/excel-name-conflict-fixer.html` | 검증완료 — openpyxl로 픽스처 2개(Revenue 정의가 서로 다름, TaxRate·#REF!·숨김 `__123Graph_ACHART_12`·외부 경로·`_xlnm.Print_Area`·미사용·시트 범위 이름) + 가짜 .xls 생성 → Playwright로 업로드·리포트·파일 간 충돌표·3가지 옵션 조합 정리·다운로드 → **openpyxl 재로드 + LibreOffice headless CSV 변환으로 수식 계산값(=Revenue*2 → 20) 확인**, `unzip -t` 무결성, 375px | JSZip만 사용. `.xlsx`(ZIP)에서 `xl/workbook.xml`의 `<definedNames>`만 DOMParser로 편집 후 재압축 — 시트·수식·서식·차트·매크로(vbaProject)는 원본 그대로. 분류: `_xlnm.*`(인쇄영역·필터)·`_xl*`(`_xlfn.` 등) = **항상 보존**, `#REF!` = broken, `[n]`/경로/`[File.xlsx]` = 외부, `hidden="1"`, "미사용"은 다른 XML 파트(시트 수식·차트·유효성·조건부서식)와 다른 이름 정의에서의 토큰 검색 휴리스틱(VBA만 쓰는 이름은 오판 가능 — UI 명시). 옵션: #REF! 제거(기본 ON)/외부 제거/숨김 제거/남은 숨김 공개/미사용 제거. **2개 이상 파일 → 워크북 범위 동일 이름 = "already exists" 유발 목록 + 정의가 다른 것 강조.** .xls는 저장 변환 안내. 100MB·20파일 |
 | RSS Generator | `tools/rss-generator.html` | 검증완료 | "계정불필요/스크래핑아님" 차별점 보강. **GSC 신호 있는 페이지 (아래 8번 참고)** **(11/16 보강) Start from your site**: 사이트/섹션 URL → 워커 `/crawl`로 페이지 제목, sitemap.xml(파일·붙여넣기) → lastmod 날짜, URL 기준 병합. 호스팅 피드 아님 명시. |
 | Sitemap Generator | `tools/sitemap-generator.html` | 검증완료 | |
@@ -274,6 +278,25 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-11-18 세션(신규 제작) — 키워드 리서치 및 제작 내역**:
+
+- **후보와 경쟁 판정**(구글·레딧·포럼·MS 커뮤니티·한국어 검색):
+  | 후보 | 판정 | 근거 |
+  |---|---|---|
+  | **PowerPoint "왜 이렇게 크지" — 슬라이드·그림별 용량 분석** | **공백 → 채택** | 상위는 원인 설명 글(neuxpower, pptfaq, brightcarbon, wps)과 유료 도구(NXPowerLite Desktop "size audit", Slidewise 애드인). 무료는 BetterZip Quick Look(Mac)·"zip으로 풀어보라"(techoverflow)뿐. 브라우저 분석기 0. `How to check the file size of each slide in PowerPoint`류 글 존재 = 쿼리 존재 |
+  | **Excel "Too many different cell formats" / 미사용 스타일(Normal 2…) 정리** | **공백 → 채택** | MS KB 213904·techcommunity·excelforum·mrexcel 스레드 + 수정 가이드 글 다수(=관심 큼). 도구는 XLStyles(Windows 스토어), Macabacus Style Scrubber(유료), Inquire(Windows, 일부 에디션), Aspose(개발자 API), Sheetize(서버 업로드, "스타일 지우기"는 전체 제거) → **Mac·웹 Excel·매크로 차단 PC용 무업로드 툴 없음** |
+  | Excel 외부 링크 "Break Links 안 됨" 찾기 | 보류(다음 후보) | ablebits·Kutools 유료 애드인, wps·thebricks 가이드. 브라우저 툴 없음 — 같은 xlsx 엔진으로 가능, 다음 Excel 후속 1순위 |
+  | PDF 폼 여러 장 → CSV/Excel 추출 | 보류 | A-PDF·Nitro·Wondershare·docparser(유료/데스크톱), Adobe "Merge data files"(유료). 공백이지만 이번엔 Office 클러스터 우선. `assets/js/pdf-forms.js` 재사용 가능 |
+  | GS1 Digital Link QR 벌크 | 포화 | qrcodechimp·QR TIGER·hovercode·scanova·qrstuff·gearchain 무료 생성기·7sku |
+  | Google Takeout 사진 JSON→EXIF 날짜 복원 | 포화 | takeoutfix.pages.dev(브라우저, 무료) 다수 페이지, GPTH Neo, metadatafixer(유료) |
+  | Notion export 파일명 ID 제거 | 포화 | npm/pypi 스크립트 다수 + Obsidian 공식 Importer |
+  | ZIP 파일명 깨짐(인코딩) | 포화 | zipkirei, bakezip(웹), ZIFU, mac2win-zip — 일본어권 중심 |
+  | 한국어 "엑셀 셀 서식이 너무 많습니다" | 신호 약함 | 국내 검색 결과에 해당 오류 전용 글 거의 없음 — 영어 페이지로만 진행 |
+- **신규 1 — `tools/powerpoint-size-analyzer.html`**(새 클러스터 "Office 파일", tools/index `doc` 카테고리): JSZip으로 ZIP 항목 크기(`_data.uncompressedSize`), `.rels` 그래프로 각 파트가 어느 슬라이드/레이아웃/마스터/노트/시트에서 쓰이는지 추적(레이아웃·마스터·slide 하이퍼링크 엣지는 STOP). 발견 항목(바이트 큰 순): 330 ppi 초과 그림(그림 px ÷ 배치 크기 EMU, srcRect 반영, 220 ppi 기준 절감 추정), 잘린 영역 저장(srcRect 면적 25%↑), 같은 바이트 중복 미디어(crc32+크기), 무거운 형식(TIFF/BMP/WDP, 2MB↑ PNG, 1MB↑ EMF/WMF), 비디오·오디오, 임베디드 글꼴(presentation.xml embeddedFontLst / word fontTable), 임베디드 개체·차트 워크북, 미사용 레이아웃 속 그림, 큰 썸네일, 참조 없는 미디어. Excel: 시트별 크기·used range가 10만 행/1000열↑ + 1MB↑, 피벗 캐시 512KB↑, 스타일 500/서식 4000↑(→ 스타일 클리너 링크), 외부 링크. 표 3종(종류별/슬라이드·시트별 own vs shared/최대 항목 20) + CSV. 읽기 전용. 검증: python-pptx로 만든 문제 덱(11MB 4000px 사진 3in 배치, 60% 크롭, TIFF, 중복 PNG, 7MB 비디오, 미사용 레이아웃 사진, 3MB CJK 폰트) + docx(본문·헤더 그림) + xlsx(601 스타일, A1:B150000) + LibreOffice 왕복 pptx/docx — 의도한 항목 전부 검출, 375px 가로 스크롤 0(5열 표만 내부 스크롤, min-width 680px). **Office UI 문구 사실 확인: PowerPoint 기본 해상도는 High fidelity(=축소 안 함, MS 지원 문서)** — 그래서 "저장 시 자동 압축"이라고 쓰지 않음.
+- **신규 2 — `tools/excel-style-cleaner.html`**(Excel 클러스터, `data` 카테고리): styles.xml을 **DOM이 아닌 문자열 수술**로 처리 — `cellXfs`/`cellStyleXfs`/`cellStyles` 섹션만 잘라 재구성(접두사 `x:` 허용, count 갱신). 사용 판정: 모든 `xl/worksheets|macrosheets|dialogsheets` 의 `<c s>`, `<row s>`, `<col style>` + 0번. 옵션: 미사용 custom named style(기본 on), 미사용 cellXfs(기본 on, 시트 전체 s= 재번호), 미사용 built-in(기본 off, Normal 항상 유지). **테이블 `*CellStyle="이름"` 참조 스타일은 유지**, 미사용 xf의 부모가 지워지면 xfId=0. .xlsm은 매크로가 스타일 이름을 쓰면 실패할 수 있다고 경고. 검증: openpyxl로 800 named style + 2000 미사용 xf 주입 파일, LibreOffice 왕복 파일 → 3가지 옵션 조합 출력, **openpyxl로 전 셀 값·폰트·채우기·숫자서식·테두리·정렬 비교 diff 0**(LO 파일에서 openpyxl이 named style 이름을 잘못 읽는 건 cellStyles 순서≠cellStyleXfs 순서 때문 — XML 직접 추적으로 출력이 맞음 확인), 전 XML well-formed, LibreOffice csv 변환 정상, ZIP 내 같은 파일명 중복 시 `-clean-2` 처리.
+- **연결**: 두 툴 tools/index·홈 카드, **전 97파일 푸터**(Excel Name Conflict Fixer 다음 / Merge Filled PDF Forms 다음), excel-name-conflict-fixer FAQ 1개 + excel-name-already-exists 글 1문단 → 스타일 클리너, 분석기 스타일 경고 → 스타일 클리너, 스타일 클리너 FAQ → 분석기·이름 픽서. sitemap(신규 2 + 수정 2 lastmod 11/18), llms.txt 2줄.
+- **판단 메모**: Bing이 신규 페이지를 4주째 못 집는 상태라 노출은 IndexNow 결정(11/16 B항)에 달려 있음. 신규 세션이라 공격적 확장 유지. 블로그 글은 이번엔 만들지 않음 — PowerPoint 용량 "왜" 글은 상위가 이미 촘촘해서, 툴 페이지 본문(원인 5가지·Compress Pictures가 안 듣는 이유·FAQ 7개)으로 대신함.
 
 **2026-11-16 세션 — 데이터 재확인 및 조치 사항**:
 
@@ -1024,6 +1047,14 @@
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-11-18 세션 기준 다음 할 일**
+
+- **A. 신규 2개 Bing/GA4 추적**(IndexNow 결정 여부와 같이). 예상 롱테일: `why is my powerpoint so big`, `powerpoint file size per slide`, `find large images in powerpoint`, `pptx size analyzer`, `excel too many different cell formats mac`, `remove unused cell styles excel online`, `excel normal 2 normal 3 styles delete`.
+- **B. Excel 클러스터 후속 1순위: 외부 링크 찾기/끊기**(이름·데이터 유효성·조건부 서식·차트·피벗에 숨은 `[1]` 참조) — 같은 문자열 수술 엔진.
+- **C. Office 클러스터 후속 후보**: PowerPoint 미사용 레이아웃/마스터 일괄 삭제(쓰기 작업, 검증 부담 큼), Word 문서 이미지 일괄 압축은 포화 여부 확인 필요. PDF 폼→CSV(보류 후보).
+- **D. 11/16 다음 할 일 A~E 유효**(Google 원인 확인, IndexNow 결정, RSS Fetch 실서비스 확인 등).
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-11-16 세션 기준 다음 할 일**
 

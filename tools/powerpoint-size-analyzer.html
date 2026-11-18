@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Is My PowerPoint So Big? Free PPTX File Size Analyzer | FreeToolDev</title>
+<meta name="description" content="See what makes a PowerPoint, Word or Excel file huge: size per slide, oversized and cropped pictures, duplicates, unused layouts, video and fonts, with the fix for each. No upload.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/powerpoint-size-analyzer.html">
+<meta property="og:title" content="Why Is My PowerPoint So Big? Free PPTX File Size Analyzer | FreeToolDev">
+<meta property="og:description" content="See what makes a PowerPoint, Word or Excel file huge: size per slide, oversized and cropped pictures, duplicates, unused layouts, video and fonts, with the fix for each. No upload.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Why Is My PowerPoint So Big? Free PPTX File Size Analyzer | FreeToolDev">
+<meta name="twitter:description" content="See what makes a PowerPoint, Word or Excel file huge: size per slide, oversized and cropped pictures, duplicates, unused layouts, video and fonts, with the fix for each. No upload.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/powerpoint-size-analyzer.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Office files · Batch · No-upload</span>
+    <h1>Why Is My PowerPoint So Big? File Size Analyzer</h1>
+    <p>Drop in a .pptx and see exactly what takes the space: which slides, which pictures, videos, fonts and embedded files, and why. It flags pictures stored at far more detail than they're shown, cropped-off parts still saved, the same picture saved twice, layouts no slide uses and heavy fonts, with the PowerPoint setting that fixes each one. It reads Word (.docx) and Excel (.xlsx) files too. Nothing is uploaded and your file isn't changed.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>Add files</h3>
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept=".pptx,.pptm,.potx,.ppsx,.docx,.docm,.dotx,.xlsx,.xlsm,.xltx" multiple>
+        Drag .pptx, .docx or .xlsx files here or click to browse<br>
+        <span style="font-size:0.78rem;">Up to 10 files at once to compare · up to 500 MB each · read in your browser, nothing uploaded</span>
+      </div>
+      <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
+    </div>
+    <div id="reportArea"><p class="result-empty" style="margin-top:20px;">// The size report for each file appears here</p></div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>How it works</h2>
+    <p>A .pptx, .docx or .xlsx file is a ZIP archive: each slide, picture, video, font and chart is a separate file inside it. The analyzer opens that archive in your browser with <a href="https://stuk.github.io/jszip/" target="_blank" rel="noopener">JSZip</a>, measures every piece, and follows the file's internal links to work out where each piece is used: which slide shows a picture, which layout carries a background photo, which chart drags along a whole Excel workbook. It also reads each picture's pixel size and compares it with the size it's placed at, to tell you when a picture holds far more detail than anyone will see.</p>
+
+    <h2>The usual reasons a deck is huge</h2>
+    <p><strong>Photos straight from a camera or phone.</strong> A 4000 × 3000 photo placed three inches wide is stored at over 1,300 pixels per inch. Projectors and screens show about 100 to 150. PowerPoint's default resolution is <em>High fidelity</em>, which keeps every picture at its full size, so nothing gets smaller until you run Compress Pictures or change the default under File → Options → Advanced → Image Size and Quality.</p>
+    <p><strong>Cropping that doesn't delete anything.</strong> Cropping hides part of a picture and keeps all of it in the file, so you can undo the crop later. A photo cropped to a small detail still carries the whole frame until you run Compress Pictures with <em>Delete cropped areas of pictures</em> ticked.</p>
+    <p><strong>Slides pasted from other decks.</strong> Pasting with the source formatting brings the source deck's whole slide master along, including layouts with full-screen photos that none of your slides use. After a few rounds a deck can carry several masters and dozens of layouts, and the same logo or photo saved several times under different names.</p>
+    <p><strong>Video, audio and fonts.</strong> One embedded screen recording can outweigh everything else. WAV audio is uncompressed. An embedded font for Chinese, Japanese or Korean text can be 10 MB or more on its own unless only the characters used are embedded.</p>
+    <p><strong>Charts and pasted tables.</strong> A chart made in Office stores a copy of the workbook behind it, and an Excel range pasted as an embedded object can carry the entire source file, every sheet included.</p>
+
+    <h2>Why didn't Compress Pictures help?</h2>
+    <p>Because the space is somewhere else. Compress Pictures only touches pictures, and only when <em>Apply only to this picture</em> is unticked does it touch all of them. It can't shrink video, fonts, embedded workbooks or unused layouts, and vector pictures (EMF, WMF, SVG) aren't resampled at all. Check the <em>Where the space goes</em> table first. If pictures are a small share, compressing them won't change much, and the report lists what to deal with instead.</p>
+
+    <h2>FAQ</h2>
+    <h3>Is my presentation uploaded anywhere?</h3>
+    <p>No. The file is opened and measured by JavaScript in this tab, and nothing is sent to a server, so confidential decks are fine. You can check in your browser's developer tools (Network tab) while a file is analyzed.</p>
+    <h3>Does it change or compress my file?</h3>
+    <p>No. It only reads the file and reports. The fixes it suggests are made in PowerPoint, Word or Excel, so you stay in control of quality, and the report says which setting does what. You can download the full list of items as a CSV to keep or share.</p>
+    <h3>What resolution should pictures be?</h3>
+    <p>For a deck shown on a screen or projector, 150 pixels per inch at the picture's size on the slide is plenty, and 220 ppi is safe for printing handouts. The report flags pictures over 330 ppi, the HD option in Compress Pictures, so anything it flags holds more detail than even PowerPoint's highest compression setting would keep. The ppi figure is estimated from the picture's size on the page, so treat it as a guide for pictures inside groups or with unusual scaling.</p>
+    <h3>My deck has only a few slides but is 30 MB. Why?</h3>
+    <p>Look at the <em>Layouts, masters &amp; themes</em> and <em>Embedded fonts</em> rows. Templates often carry photo backgrounds on layouts nobody uses, and font embedding can add tens of megabytes with no visible change. The <em>Slides by size</em> table shows whether any single slide is responsible.</p>
+    <h3>Does it work for Word and Excel files?</h3>
+    <p>Yes. For Word it shows which pictures sit in the body or in headers and footers, their resolution, embedded fonts and objects. For Excel it lists sheets by size and flags sheets whose used range reaches far beyond the data, pivot tables that store a copy of their source data, workbooks with thousands of cell styles, and links to other workbooks. Old .ppt, .doc and .xls files aren't ZIP archives, so save them in the newer format first.</p>
+    <h3>It says my file is password protected or can't be read.</h3>
+    <p>A password to open encrypts the whole file, so its contents can't be measured until the password is removed (File → Info → Protect Presentation → Encrypt with Password, and clear it). A password to modify doesn't get in the way.</p>
+    <h3>Can I compare several versions?</h3>
+    <p>Yes. Add up to ten files at once and a comparison table at the top shows their sizes and the biggest kind of content in each, which is a quick way to find the version where the size jumped.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/excel-name-conflict-fixer.html">Excel Name Conflict Fixer</a>
+          <a href="/tools/excel-style-cleaner.html">Excel Style Cleaner</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/svg-id-collision-checker.html">Bulk SVG ID Collision Checker</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/merge-pdf-forms.html">Merge Filled PDF Forms</a>
+          <a href="/tools/powerpoint-size-analyzer.html">PowerPoint File Size Analyzer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/package-json-version-checker.html">Bulk package.json Version Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+          <a href="/tools/code-128-bulk-generator.html">Bulk Code 128 Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var MAX_FILE = 500 * 1024 * 1024, MAX_FILES = 10;
+  var EMU_PER_IN = 914400;
+  var dropzone = document.getElementById('dropzone'), fileInput = document.getElementById('fileInput');
+  var reportArea = document.getElementById('reportArea'), progress = document.getElementById('progressStatus'), progressText = document.getElementById('progressText');
+  var allRows = [];
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function fmt(b) {
+    if (b >= 1048576) return (b / 1048576).toFixed(b >= 104857600 ? 0 : 1) + ' MB';
+    if (b >= 1024) return Math.round(b / 1024) + ' KB';
+    return b + ' B';
+  }
+  function pct(a, t) { return t ? Math.round(a / t * 1000) / 10 + '%' : '0%'; }
+  function ext(p) { var m = /\.([a-z0-9]+)$/i.exec(p); return m ? m[1].toLowerCase() : ''; }
+  function base(p) { return p.split('/').pop(); }
+  function dirOf(p) { var i = p.lastIndexOf('/'); return i < 0 ? '' : p.slice(0, i); }
+  function resolve(fromPart, target) {
+    if (/^[a-z]+:/i.test(target)) return null; // external (http:, file:)
+    if (target.charAt(0) === '/') return target.slice(1);
+    var parts = (dirOf(fromPart) ? dirOf(fromPart).split('/') : []);
+    target.split('/').forEach(function (seg) { if (seg === '..') parts.pop(); else if (seg && seg !== '.') parts.push(seg); });
+    return parts.join('/');
+  }
+  function relsPathFor(part) { return (dirOf(part) ? dirOf(part) + '/' : '') + '_rels/' + base(part) + '.rels'; }
+  function partOfRels(relsPath) { var d = dirOf(dirOf(relsPath)); return (d ? d + '/' : '') + base(relsPath).replace(/\.rels$/, ''); }
+  function parseXml(text) { return new DOMParser().parseFromString(text, 'application/xml'); }
+  function byLocal(node, name) { return Array.prototype.slice.call(node.getElementsByTagNameNS('*', name)); }
+  function attrR(el, name) {
+    for (var i = 0; i < el.attributes.length; i++) { var a = el.attributes[i]; if (a.localName === name && /relationships/.test(a.namespaceURI || '')) return a.value; }
+    return el.getAttribute('r:' + name);
+  }
+
+  var IMG = { png: 1, jpg: 1, jpeg: 1, gif: 1, bmp: 1, tif: 1, tiff: 1, emf: 1, wmf: 1, svg: 1, wdp: 1, jxr: 1, webp: 1, heic: 1, ico: 1, emz: 1, wmz: 1 };
+  var VIDEO = { mp4: 1, m4v: 1, mov: 1, wmv: 1, avi: 1, mpg: 1, mpeg: 1, mkv: 1, webm: 1, asf: 1 };
+  var AUDIO = { mp3: 1, m4a: 1, wav: 1, wma: 1, aac: 1, aif: 1, aiff: 1, mid: 1, ogg: 1 };
+  function category(path) {
+    var e = ext(path), p = path.toLowerCase();
+    if (/(^|\/)(fonts)\//.test(p) || e === 'fntdata' || e === 'odttf' || e === 'ttf' || e === 'otf') return 'Embedded fonts';
+    if (p.indexOf('docprops/thumbnail') === 0) return 'Thumbnail preview';
+    if (VIDEO[e]) return 'Video';
+    if (AUDIO[e]) return 'Audio';
+    if (IMG[e]) return 'Images';
+    if (/\/embeddings\//.test(p) || e === 'bin' && /oleobject/.test(p)) return 'Embedded files & objects';
+    if (/pivotcacherecords/.test(p)) return 'Pivot cache data';
+    if (/\/worksheets\/sheet/.test(p)) return 'Sheet data';
+    if (/sharedstrings\.xml$/.test(p)) return 'Text (shared strings)';
+    if (/^xl\/styles\.xml$/.test(p)) return 'Cell styles';
+    if (/\/slides\/slide\d+\.xml$/.test(p)) return 'Slide content';
+    if (/slidelayouts|slidemasters|notesmaster|handoutmaster|\/theme\//.test(p)) return 'Layouts, masters & themes';
+    if (/\/charts\/|\/diagrams\//.test(p)) return 'Charts & SmartArt';
+    if (/^word\/(document|header|footer|footnotes|endnotes|comments)/.test(p)) return 'Document text';
+    if (/customxml\/|\/vbaproject|\/printersettings|\/activex/.test(p)) return 'Macros, custom XML & printer settings';
+    return 'Other structure';
+  }
+
+  function imageSize(u8) {
+    try {
+      if (u8[0] === 0x89 && u8[1] === 0x50) return { w: (u8[16] << 24 | u8[17] << 16 | u8[18] << 8 | u8[19]) >>> 0, h: (u8[20] << 24 | u8[21] << 16 | u8[22] << 8 | u8[23]) >>> 0 };
+      if (u8[0] === 0x47 && u8[1] === 0x49) return { w: u8[6] | u8[7] << 8, h: u8[8] | u8[9] << 8 };
+      if (u8[0] === 0x42 && u8[1] === 0x4d) return { w: u8[18] | u8[19] << 8 | u8[20] << 16, h: Math.abs((u8[22] | u8[23] << 8 | u8[24] << 16 | u8[25] << 24) >> 0) };
+      if (u8[0] === 0xff && u8[1] === 0xd8) {
+        var i = 2;
+        while (i + 9 < u8.length) {
+          if (u8[i] !== 0xff) { i++; continue; }
+          var m = u8[i + 1], len = u8[i + 2] << 8 | u8[i + 3];
+          if (m >= 0xc0 && m <= 0xcf && m !== 0xc4 && m !== 0xc8 && m !== 0xcc) return { h: u8[i + 5] << 8 | u8[i + 6], w: u8[i + 7] << 8 | u8[i + 8] };
+          if (m === 0xd8 || m === 0x01 || (m >= 0xd0 && m <= 0xd7)) { i += 2; continue; }
+          i += 2 + len;
+        }
+      }
+    } catch (e) { /* unknown header */ }
+    return null;
+  }
+
+  async function analyze(file) {
+    var zip = await JSZip.loadAsync(file);
+    var parts = {}, total = 0, totalPacked = 0;
+    zip.forEach(function (path, f) {
+      if (f.dir) return;
+      var d = f._data || {};
+      parts[path] = { path: path, size: d.uncompressedSize || 0, packed: d.compressedSize || 0, crc: d.crc32, cat: category(path), owners: [], notes: [] };
+    });
+    for (var k in parts) {
+      if (!parts[k].size) { try { parts[k].size = (await zip.file(k).async('uint8array')).length; } catch (e) { } }
+      total += parts[k].size; totalPacked += parts[k].packed || parts[k].size;
+    }
+    var kind = parts['ppt/presentation.xml'] ? 'pptx' : parts['word/document.xml'] ? 'docx' : parts['xl/workbook.xml'] ? 'xlsx' : 'zip';
+    if (kind === 'zip') throw new Error('This doesn\'t look like a PowerPoint, Word or Excel file (no presentation, document or workbook part inside). Old .ppt/.doc/.xls files need to be saved in the newer format first.');
+
+    // relationship graph
+    var rels = {};
+    for (var rp in parts) {
+      if (!/\.rels$/.test(rp)) continue;
+      var owner = partOfRels(rp);
+      var doc = parseXml(await zip.file(rp).async('string'));
+      rels[owner] = byLocal(doc, 'Relationship').map(function (r) {
+        var mode = r.getAttribute('TargetMode');
+        return { id: r.getAttribute('Id'), type: (r.getAttribute('Type') || '').split('/').pop(), target: mode === 'External' ? null : resolve(owner, r.getAttribute('Target') || ''), external: mode === 'External' ? r.getAttribute('Target') : null };
+      });
+    }
+    function relTarget(owner, id) { var list = rels[owner] || []; for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i].target; return null; }
+    var STOP = { slideLayout: 1, slideMaster: 1, notesMaster: 1, handoutMaster: 1, slide: 1, theme: 1, presProps: 1, viewProps: 1, tableStyles: 1, commentAuthors: 1, styles: 1, settings: 1, webSettings: 1, fontTable: 1, numbering: 1, glossaryDocument: 1, header: 1, footer: 1, footnotes: 1, endnotes: 1, comments: 1 };
+    function reach(start, label, map) {
+      var seen = {}, stack = [start];
+      while (stack.length) {
+        var cur = stack.pop(); if (seen[cur]) continue; seen[cur] = 1;
+        if (parts[cur] && parts[cur].owners.indexOf(label) < 0) parts[cur].owners.push(label);
+        if (map) map[cur] = 1;
+        (rels[cur] || []).forEach(function (r) { if (r.target && !STOP[r.type] && parts[r.target]) stack.push(r.target); });
+      }
+      return seen;
+    }
+
+    var res = { name: file.name, kind: kind, total: total, packed: totalPacked, fileSize: file.size, parts: parts, findings: [], units: [], extra: {} };
+    var visuals = []; // {owner part, label}
+
+    if (kind === 'pptx') {
+      var pres = parseXml(await zip.file('ppt/presentation.xml').async('string'));
+      var sldIds = byLocal(pres, 'sldId');
+      var usedLayouts = {};
+      sldIds.forEach(function (el, i) {
+        var part = relTarget('ppt/presentation.xml', attrR(el, 'id')); if (!part) return;
+        var label = 'Slide ' + (i + 1), own = {};
+        reach(part, label, own);
+        (rels[part] || []).forEach(function (r) { if (r.type === 'slideLayout' && r.target) { (usedLayouts[r.target] = usedLayouts[r.target] || []).push(i + 1); } });
+        res.units.push({ label: label, part: part, members: own });
+        visuals.push({ part: part, label: label });
+        (rels[part] || []).forEach(function (r) { if (r.type === 'notesSlide' && r.target) visuals.push({ part: r.target, label: label + ' notes' }); });
+      });
+      var layoutParts = Object.keys(parts).filter(function (p) { return /^ppt\/slideLayouts\/slideLayout\d+\.xml$/.test(p); });
+      var unusedLayoutBytes = 0, unusedLayouts = [];
+      for (var li = 0; li < layoutParts.length; li++) {
+        var lp = layoutParts[li], lname = '';
+        try { var lx = parseXml(await zip.file(lp).async('string')); var cs = byLocal(lx, 'cSld')[0]; lname = cs ? cs.getAttribute('name') || '' : ''; } catch (e) { }
+        var used = usedLayouts[lp];
+        var llabel = 'Layout "' + (lname || base(lp)) + '"' + (used ? '' : ' (no slide uses it)');
+        var lown = {};
+        reach(lp, llabel, lown);
+        visuals.push({ part: lp, label: llabel });
+        if (!used) {
+          var lb = 0; Object.keys(lown).forEach(function (m) { if (parts[m] && parts[m].owners.every(function (o) { return /no slide uses it/.test(o) || /^Master/.test(o); })) lb += parts[m].size; });
+          unusedLayoutBytes += lb; unusedLayouts.push({ name: lname || base(lp), bytes: lb });
+        }
+      }
+      Object.keys(parts).filter(function (p) { return /^ppt\/slideMasters\/slideMaster\d+\.xml$/.test(p); }).forEach(function (mp) {
+        var mlabel = 'Master ' + /(\d+)\.xml$/.exec(mp)[1];
+        reach(mp, mlabel); visuals.push({ part: mp, label: mlabel });
+      });
+      Object.keys(parts).filter(function (p) { return /^ppt\/(notesMasters|handoutMasters)\//.test(p) && /\.xml$/.test(p) && !/_rels/.test(p); }).forEach(function (mp) { reach(mp, /notes/i.test(mp) ? 'Notes master' : 'Handout master'); });
+      // embedded fonts
+      byLocal(pres, 'embeddedFont').forEach(function (ef) {
+        var face = byLocal(ef, 'font')[0]; var name = face ? face.getAttribute('typeface') : '?';
+        ['regular', 'bold', 'italic', 'boldItalic'].forEach(function (style) {
+          byLocal(ef, style).forEach(function (s) { var t = relTarget('ppt/presentation.xml', attrR(s, 'id')); if (t && parts[t]) parts[t].owners.push('Font: ' + name + (style === 'regular' ? '' : ' ' + style)); });
+        });
+      });
+      if (unusedLayouts.length && unusedLayoutBytes > 200 * 1024) {
+        unusedLayouts.sort(function (a, b) { return b.bytes - a.bytes; });
+        var heavyL = unusedLayouts.filter(function (l) { return l.bytes > 50 * 1024; });
+        res.findings.push({ bytes: unusedLayoutBytes, html: '<strong>' + unusedLayouts.length + ' slide layout(s) no slide uses still carry ' + fmt(unusedLayoutBytes) + '</strong>, mostly in ' + heavyL.length + ' of them (' + heavyL.slice(0, 6).map(function (l) { return esc(l.name) + (l.bytes ? ' ' + fmt(l.bytes) : ''); }).join(', ') + (heavyL.length > 6 ? ', …' : '') + '). Usually from a template or slides pasted from other decks. Fix: View → Slide Master, right-click each layout with no slides and choose Delete Layout (PowerPoint won\'t let you delete one that\'s in use).' });
+      }
+      res.extra.slides = sldIds.length; res.extra.layouts = layoutParts.length;
+    } else if (kind === 'docx') {
+      var mainParts = Object.keys(parts).filter(function (p) { return /^word\/(document|header\d*|footer\d*|footnotes|endnotes|comments)\.xml$/.test(p); });
+      mainParts.forEach(function (p) {
+        var m = /word\/([a-z]+)(\d*)\.xml/.exec(p); var label = m[1] === 'document' ? 'Document body' : m[1].charAt(0).toUpperCase() + m[1].slice(1) + (m[2] ? ' ' + m[2] : '');
+        reach(p, label); visuals.push({ part: p, label: label });
+      });
+      try {
+        var ft = parseXml(await zip.file('word/fontTable.xml').async('string'));
+        byLocal(ft, 'font').forEach(function (f) {
+          var name = f.getAttribute('w:name') || '?';
+          ['embedRegular', 'embedBold', 'embedItalic', 'embedBoldItalic'].forEach(function (k) {
+            byLocal(f, k).forEach(function (e) { var t = relTarget('word/fontTable.xml', attrR(e, 'id')); if (t && parts[t]) parts[t].owners.push('Font: ' + name); });
+          });
+        });
+      } catch (e) { }
+    } else if (kind === 'xlsx') {
+      var wb = parseXml(await zip.file('xl/workbook.xml').async('string'));
+      var sheets = byLocal(wb, 'sheet');
+      for (var si = 0; si < sheets.length; si++) {
+        var sh = sheets[si], sp = relTarget('xl/workbook.xml', attrR(sh, 'id')); if (!sp || !parts[sp]) continue;
+        var slabel = 'Sheet "' + sh.getAttribute('name') + '"' + (sh.getAttribute('state') && sh.getAttribute('state') !== 'visible' ? ' (' + sh.getAttribute('state') + ')' : '');
+        var sown = {}; reach(sp, slabel, sown);
+        res.units.push({ label: slabel, part: sp, members: sown });
+        (rels[sp] || []).forEach(function (r) { if (r.type === 'drawing' && r.target) visuals.push({ part: r.target, label: slabel }); });
+        // used range vs. file size
+        try {
+          var head = (await zip.file(sp).async('string')).slice(0, 4000);
+          var dm = /<dimension ref="([^"]+)"/.exec(head);
+          if (dm) {
+            parts[sp].notes.push('used range ' + dm[1]);
+            var last = dm[1].split(':').pop(), rowM = /(\d+)$/.exec(last), colM = /^([A-Z]+)/.exec(last);
+            var rowsN = rowM ? +rowM[1] : 0, colN = 0; if (colM) colM[1].split('').forEach(function (c) { colN = colN * 26 + c.charCodeAt(0) - 64; });
+            if ((rowsN >= 100000 || colN >= 1000) && parts[sp].size > 1048576) {
+              res.findings.push({ bytes: parts[sp].size, html: '<strong>' + esc(slabel) + '</strong> says its used range is <code>' + esc(dm[1]) + '</code> and its data takes ' + fmt(parts[sp].size) + '. Formatting or stray content reaching that far out makes Excel store and scan every row. Fix: select the empty rows below your data (and columns to the right), Delete them (not just Clear), save, and check Ctrl+End lands on your last real cell.' });
+            }
+          }
+        } catch (e) { }
+      }
+      Object.keys(parts).forEach(function (p) {
+        if (/pivotCacheRecords\d*\.xml$/.test(p) && parts[p].size > 512 * 1024) {
+          res.findings.push({ bytes: parts[p].size, html: '<strong>A pivot table cache (' + esc(base(p)) + ') stores ' + fmt(parts[p].size) + '</strong> of copied source data. Fix: PivotTable Options → Data → untick <em>Save source data with file</em> (the pivot refreshes on open), or delete pivots you no longer use.' });
+        }
+      });
+      if (parts['xl/styles.xml']) {
+        try {
+          var st = await zip.file('xl/styles.xml').async('string');
+          var xfm = /<cellXfs[^>]*count="(\d+)"/.exec(st), csm = /<cellStyles[^>]*count="(\d+)"/.exec(st);
+          var nXf = xfm ? +xfm[1] : 0, nSt = csm ? +csm[1] : 0;
+          parts['xl/styles.xml'].notes.push(nXf + ' cell formats, ' + nSt + ' named styles');
+          if (nSt > 500 || nXf > 4000) res.findings.push({ bytes: parts['xl/styles.xml'].size, html: '<strong>' + nSt.toLocaleString() + ' named cell styles and ' + nXf.toLocaleString() + ' cell formats.</strong> Styles pile up when sheets are copied between workbooks, and past about 64,000 formats Excel shows "Too many different cell formats". Fix: the <a href="/tools/excel-style-cleaner.html">Excel style cleaner</a> removes the styles and formats no cell uses.' });
+        } catch (e) { }
+      }
+      var extl = Object.keys(parts).filter(function (p) { return /^xl\/externalLinks\/externalLink\d+\.xml$/.test(p); });
+      if (extl.length) res.findings.push({ bytes: extl.reduce(function (s, p) { return s + parts[p].size; }, 0), html: '<strong>' + extl.length + ' link(s) to other workbooks</strong> are stored, with a cached copy of the values they pull in. If Break Links can\'t remove them, they usually sit in defined names, data validation, conditional formatting or charts. See the <a href="/tools/excel-name-conflict-fixer.html">Excel name conflict fixer</a> for links hiding in names.' });
+    }
+
+    // Image resolution and cropping, from every picture placement we can see
+    var imgUse = {};
+    for (var vi = 0; vi < visuals.length; vi++) {
+      var v = visuals[vi]; if (!parts[v.part]) continue;
+      var xml; try { xml = parseXml(await zip.file(v.part).async('string')); } catch (e) { continue; }
+      byLocal(xml, 'blip').forEach(function (blip) {
+        var target = relTarget(v.part, attrR(blip, 'embed')); if (!target || !parts[target]) return;
+        var pic = blip; while (pic && pic.localName !== 'pic' && pic.localName !== 'bg' && pic.localName !== 'sp') pic = pic.parentNode;
+        var info = { label: v.label, cx: 0, cy: 0, crop: 0, l: 0, r: 0, t: 0, b: 0 };
+        if (pic && pic.localName !== 'bg') {
+          var xfrm = byLocal(pic, 'xfrm')[0], e2 = xfrm ? byLocal(xfrm, 'ext')[0] : null;
+          if (e2) { info.cx = +e2.getAttribute('cx') || 0; info.cy = +e2.getAttribute('cy') || 0; }
+          if (!info.cx) { var anc = pic.parentNode; while (anc && !info.cx) { var ex = Array.prototype.filter.call(anc.childNodes || [], function (n) { return n.localName === 'extent'; })[0]; if (ex) { info.cx = +ex.getAttribute('cx') || 0; info.cy = +ex.getAttribute('cy') || 0; } anc = anc.parentNode; } }
+          var src = byLocal(pic, 'srcRect')[0];
+          if (src) { ['l', 'r', 't', 'b'].forEach(function (k) { info[k] = Math.max(0, (+src.getAttribute(k) || 0) / 100000); }); info.crop = 1 - Math.max(0, 1 - info.l - info.r) * Math.max(0, 1 - info.t - info.b); }
+        }
+        (imgUse[target] = imgUse[target] || []).push(info);
+      });
+    }
+    var hiRes = [], cropped = [], heavyFormat = [];
+    for (var ip in imgUse) {
+      var P = parts[ip];
+      if (IMG[ext(ip)] && ['emf', 'wmf', 'svg', 'emz', 'wmz'].indexOf(ext(ip)) < 0) {
+        var dims = null; try { dims = imageSize(await zip.file(ip).async('uint8array')); } catch (e) { }
+        if (dims) {
+          P.notes.push(dims.w + '×' + dims.h + ' px');
+          var maxPpi = 0, where = '';
+          imgUse[ip].forEach(function (u) {
+            if (!u.cx) return;
+            var shownPx = dims.w * Math.max(0.01, 1 - u.l - u.r), ppi = shownPx / (u.cx / EMU_PER_IN);
+            if (ppi > maxPpi) { maxPpi = ppi; where = u.label; }
+          });
+          if (maxPpi) P.notes.push('≈' + Math.round(maxPpi) + ' ppi as placed');
+          if (maxPpi > 330 && P.size > 300 * 1024) hiRes.push({ path: ip, ppi: maxPpi, size: P.size, where: where, est: Math.round(P.size * (1 - Math.min(1, Math.pow(220 / maxPpi, 2)))) });
+        }
+      }
+      var maxCrop = 0, cw = ''; imgUse[ip].forEach(function (u) { if (u.crop > maxCrop) { maxCrop = u.crop; cw = u.label; } });
+      var minCrop = Math.min.apply(null, imgUse[ip].map(function (u) { return u.crop; }));
+      if (minCrop > 0.25 && P.size > 200 * 1024) { cropped.push({ path: ip, crop: minCrop, size: P.size, where: cw }); P.notes.push(Math.round(minCrop * 100) + '% cropped away but still stored'); }
+    }
+    Object.keys(parts).forEach(function (p) {
+      var e = ext(p), P = parts[p];
+      if ((e === 'tif' || e === 'tiff' || e === 'bmp' || e === 'wdp' || e === 'jxr') && P.size > 300 * 1024) heavyFormat.push(P);
+      if ((e === 'emf' || e === 'wmf') && P.size > 1024 * 1024) heavyFormat.push(P);
+      if (e === 'png' && P.size > 2 * 1024 * 1024) heavyFormat.push(P);
+    });
+    if (hiRes.length) {
+      hiRes.sort(function (a, b) { return b.size - a.size; });
+      var save = hiRes.reduce(function (s, h) { return s + h.est; }, 0);
+      res.findings.push({ bytes: save, html: '<strong>' + hiRes.length + ' picture(s) are stored at far more detail than they\'re shown with</strong> (over 330 pixels per inch at their size on the page; roughly ' + fmt(save) + ' could go at 220 ppi): ' + hiRes.slice(0, 5).map(function (h) { return esc(base(h.path)) + ' ' + fmt(h.size) + ' at ≈' + Math.round(h.ppi) + ' ppi on ' + esc(h.where); }).join('; ') + (hiRes.length > 5 ? '; …' : '') + '. Fix: select a picture → Picture Format → Compress Pictures, untick <em>Apply only to this picture</em>, choose 220 ppi (print) or 150 ppi (screen/email). The ppi figure is an estimate from the picture\'s size on the page.' });
+    }
+    if (cropped.length) {
+      var cb = cropped.reduce(function (s, c) { return s + Math.round(c.size * c.crop); }, 0);
+      res.findings.push({ bytes: cb, html: '<strong>' + cropped.length + ' cropped picture(s) still keep the parts you cropped off</strong> (about ' + fmt(cb) + '): ' + cropped.slice(0, 5).map(function (c) { return esc(base(c.path)) + ' ' + Math.round(c.crop * 100) + '% hidden, on ' + esc(c.where); }).join('; ') + '. Cropping only hides pixels. Fix: Compress Pictures with <em>Delete cropped areas of pictures</em> ticked.' });
+    }
+    if (heavyFormat.length) {
+      heavyFormat.sort(function (a, b) { return b.size - a.size; });
+      res.findings.push({ bytes: heavyFormat.reduce(function (s, p) { return s + p.size; }, 0) * 0.5, html: '<strong>' + heavyFormat.length + ' picture(s) in a heavy format</strong>: ' + heavyFormat.slice(0, 5).map(function (p) { return esc(base(p.path)) + ' ' + fmt(p.size); }).join(', ') + '. TIFF, BMP and HD Photo (.wdp) pictures, very large PNG photos and big EMF/WMF pictures (often pasted from Excel or Visio) are much larger than a JPEG of the same thing. Fix: for photos, save a JPEG copy and use Change Picture; for charts pasted as pictures, paste them as PNG instead.' });
+    }
+    // duplicates (same bytes saved under different names)
+    var dup = {};
+    Object.keys(parts).forEach(function (p) { var P = parts[p]; if ((IMG[ext(p)] || VIDEO[ext(p)] || AUDIO[ext(p)]) && P.size > 20 * 1024 && P.crc != null) { var key = P.crc + ':' + P.size; (dup[key] = dup[key] || []).push(P); } });
+    var dupGroups = Object.keys(dup).map(function (k) { return dup[k]; }).filter(function (g) { return g.length > 1; });
+    if (dupGroups.length) {
+      var wasted = dupGroups.reduce(function (s, g) { return s + g[0].size * (g.length - 1); }, 0);
+      dupGroups.forEach(function (g) { g.forEach(function (P) { P.notes.push('identical to ' + g.filter(function (x) { return x !== P; }).map(function (x) { return base(x.path); }).join(', ')); }); });
+      if (wasted > 100 * 1024) res.findings.push({ bytes: wasted, html: '<strong>The same picture or media is saved more than once under different names</strong> (' + dupGroups.length + ' group(s), ' + fmt(wasted) + ' repeated): ' + dupGroups.slice(0, 4).map(function (g) { return g.map(function (P) { return esc(base(P.path)); }).join(' = '); }).join('; ') + '. It happens when slides or pictures are pasted in from other files. Fix: delete the repeats and re-insert one copy, or copy-paste the picture within this file (PowerPoint reuses it).' });
+    }
+    // video / audio / fonts / embeddings / thumbnail
+    function catSum(c) { var s = 0, n = 0; for (var p in parts) if (parts[p].cat === c) { s += parts[p].size; n++; } return { s: s, n: n }; }
+    var vid = catSum('Video'), aud = catSum('Audio'), fnt = catSum('Embedded fonts'), emb = catSum('Embedded files & objects'), th = catSum('Thumbnail preview');
+    if (vid.s > 5 * 1048576) res.findings.push({ bytes: vid.s * 0.5, html: '<strong>' + vid.n + ' video file(s) take ' + fmt(vid.s) + '.</strong> ' + (kind === 'pptx' ? 'Fix: File → Info → Compress Media (Full HD or HD), or link to the video instead of embedding it.' : 'Fix: link to the video instead of embedding it.') });
+    if (aud.s > 5 * 1048576) res.findings.push({ bytes: aud.s * 0.4, html: '<strong>' + aud.n + ' audio file(s) take ' + fmt(aud.s) + '.</strong> WAV and AIFF are uncompressed. Fix: convert to M4A/MP3 and re-insert, or use Compress Media.' });
+    if (fnt.s > 1048576) {
+      var fontList = Object.keys(parts).filter(function (p) { return parts[p].cat === 'Embedded fonts'; }).map(function (p) { return parts[p]; }).sort(function (a, b) { return b.size - a.size; });
+      res.findings.push({ bytes: fnt.s * 0.6, html: '<strong>Embedded fonts take ' + fmt(fnt.s) + '</strong> (' + fontList.slice(0, 5).map(function (P) { return esc((P.owners.filter(function (o) { return /^Font:/.test(o); })[0] || base(P.path)).replace(/^Font: /, '')) + ' ' + fmt(P.size); }).join(', ') + '). Fonts with Asian character sets are often 5–20 MB each. Fix: File → Options → Save, tick <em>Embed only the characters used in the presentation</em>, or untick embedding if everyone who opens it has the fonts.' });
+    }
+    if (emb.s > 2 * 1048576) {
+      var embList = Object.keys(parts).filter(function (p) { return parts[p].cat === 'Embedded files & objects'; }).map(function (p) { return parts[p]; }).sort(function (a, b) { return b.size - a.size; });
+      res.findings.push({ bytes: emb.s * 0.7, html: '<strong>Embedded files and objects take ' + fmt(emb.s) + '</strong>: ' + embList.slice(0, 5).map(function (P) { return esc(base(P.path)) + ' ' + fmt(P.size) + (P.owners.length ? ' (' + esc(P.owners.slice(0, 2).join(', ')) + ')' : ''); }).join('; ') + '. A chart made in Office carries a copy of its whole source workbook, and a pasted Excel range can bring the entire file. Fix: paste charts and tables as pictures when they no longer need editing, or trim the source workbook to the data the chart uses.' });
+    }
+    if (th.s > 512 * 1024) res.findings.push({ bytes: th.s, html: '<strong>The file\'s preview thumbnail is ' + fmt(th.s) + '.</strong> Fix: File → Info → Properties → Advanced Properties, untick <em>Save preview picture</em>.' });
+    var unref = Object.keys(parts).filter(function (p) { var P = parts[p]; return (P.cat === 'Images' || P.cat === 'Video' || P.cat === 'Audio') && !P.owners.length && !/\.rels$/.test(p); });
+    if (unref.length) {
+      var ub = unref.reduce(function (s, p) { return s + parts[p].size; }, 0);
+      unref.forEach(function (p) { parts[p].notes.push('not used anywhere we can see'); });
+      if (ub > 100 * 1024) res.findings.push({ bytes: ub, html: '<strong>' + unref.length + ' media file(s) (' + fmt(ub) + ') aren\'t referenced by any slide, page, layout or sheet.</strong> Files saved by other apps or converters sometimes leave them behind. Fix: open the file in Office and Save As a new file, which normally drops unreferenced media.' });
+    }
+    res.findings.sort(function (a, b) { return b.bytes - a.bytes; });
+    return res;
+  }
+
+  function cats(res) {
+    var c = {}; for (var p in res.parts) { var P = res.parts[p]; if (/\.rels$|\[Content_Types\]/.test(p)) P.cat = 'Other structure'; var k = P.cat; c[k] = c[k] || { s: 0, n: 0 }; c[k].s += P.size; c[k].n++; }
+    return Object.keys(c).map(function (k) { return { name: k, s: c[k].s, n: c[k].n }; }).sort(function (a, b) { return b.s - a.s; });
+  }
+  var TH = 'style="text-align:left; padding:5px 8px; border-bottom:1px solid #d9d4c7; white-space:nowrap;"';
+  var TD = 'style="padding:5px 8px; border-bottom:1px solid #ebe6da; vertical-align:top;"';
+  var TDR = 'style="padding:5px 8px; border-bottom:1px solid #ebe6da; vertical-align:top; text-align:right; white-space:nowrap;"';
+  function table(head, rows) {
+    var mw = head.length >= 5 ? 'min-width:680px; ' : '';
+    return '<div style="overflow-x:auto; margin-top:8px;"><table style="' + mw + 'width:100%; border-collapse:collapse; font-size:0.82rem;"><thead><tr>' + head.map(function (h) { return '<th ' + TH + '>' + h + '</th>'; }).join('') + '</tr></thead><tbody>' + rows.join('') + '</tbody></table></div>';
+  }
+
+  function render(res) {
+    var kindName = { pptx: 'PowerPoint', docx: 'Word', xlsx: 'Excel' }[res.kind];
+    var c = cats(res);
+    var html = '<div class="panel" style="margin-top:20px;"><h3 style="word-break:break-all;">' + esc(res.name) + '</h3>' +
+      '<p style="font-size:0.9rem; color:#2c3540;">' + kindName + ' file · <strong>' + fmt(res.fileSize) + ' on disk</strong>, ' + fmt(res.total) + ' once unpacked' +
+      (res.kind === 'pptx' ? ' · ' + res.extra.slides + ' slide(s), ' + res.extra.layouts + ' layout(s)' : '') + '. ' +
+      'An Office file is a ZIP archive, so these are the sizes of the pieces inside it.</p>';
+    html += '<h4 style="margin-top:16px;">What to fix first</h4>';
+    if (res.findings.length) html += '<ol style="font-size:0.88rem; color:#2c3540; padding-left:20px;">' + res.findings.map(function (f) { return '<li style="margin-bottom:8px;">' + f.html + '</li>'; }).join('') + '</ol>';
+    else html += '<p style="font-size:0.88rem; color:#2c3540;">Nothing stands out: no oversized, cropped, duplicated or heavy-format pictures, unused layouts with pictures, large fonts, media or embedded files. The size is mostly the content itself.</p>';
+    html += '<h4 style="margin-top:16px;">Where the space goes</h4>' + table(['Kind of content', 'Items', 'Size', 'Share'], c.map(function (x) {
+      return '<tr><td ' + TD + '>' + esc(x.name) + '</td><td ' + TDR + '>' + x.n + '</td><td ' + TDR + '>' + fmt(x.s) + '</td><td ' + TDR + '>' + pct(x.s, res.total) + '</td></tr>';
+    }));
+    if (res.units.length) {
+      var unitLabel = res.kind === 'pptx' ? 'Slide' : 'Sheet';
+      var shared = {}; res.units.forEach(function (u) { Object.keys(u.members).forEach(function (m) { shared[m] = (shared[m] || 0) + 1; }); });
+      var us = res.units.map(function (u) {
+        var own = 0, sh = 0, top = null;
+        Object.keys(u.members).forEach(function (m) { var P = res.parts[m]; if (!P) return; if (shared[m] > 1) sh += P.size; else { own += P.size; if (!top || P.size > top.size) top = P; } });
+        return { label: u.label, own: own, sh: sh, top: top };
+      }).sort(function (a, b) { return b.own - a.own; });
+      html += '<h4 style="margin-top:16px;">' + unitLabel + 's by size</h4><p style="font-size:0.82rem; color:#5a6472;">Own size counts what only that ' + unitLabel.toLowerCase() + ' uses. Pictures used on several ' + unitLabel.toLowerCase() + 's are stored once and listed as shared.</p>' +
+        table([unitLabel, 'Own size', 'Shared', 'Biggest item'], us.slice(0, 15).map(function (u) {
+          return '<tr><td ' + TD + '>' + esc(u.label) + '</td><td ' + TDR + '>' + fmt(u.own) + '</td><td ' + TDR + '>' + (u.sh ? fmt(u.sh) : '–') + '</td><td ' + TD + '>' + (u.top ? esc(base(u.top.path)) + ' (' + fmt(u.top.size) + ')' : '–') + '</td></tr>';
+        })) + (us.length > 15 ? '<p style="font-size:0.8rem;">…and ' + (us.length - 15) + ' more in the CSV.</p>' : '');
+    }
+    var items = Object.keys(res.parts).map(function (p) { return res.parts[p]; }).sort(function (a, b) { return b.size - a.size; });
+    html += '<h4 style="margin-top:16px;">Largest items</h4>' + table(['Item inside the file', 'Kind', 'Size', 'Used on', 'Notes'], items.slice(0, 20).map(function (P) {
+      return '<tr><td ' + TD + ' title="' + esc(P.path) + '">' + esc(base(P.path)) + '</td><td ' + TD + '>' + esc(P.cat) + '</td><td ' + TDR + '>' + fmt(P.size) + '</td><td ' + TD + '>' + esc(P.owners.slice(0, 4).join(', ') + (P.owners.length > 4 ? ' +' + (P.owners.length - 4) : '')) + '</td><td ' + TD + '>' + esc(P.notes.join('; ')) + '</td></tr>';
+    }));
+    html += '<div class="toolbar"><button class="btn btn-outline" data-csv="' + allRows.length + '">Download full list (CSV)</button></div></div>';
+    allRows.push(res);
+    return html;
+  }
+
+  function csvFor(res) {
+    var q = function (s) { s = String(s == null ? '' : s); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    var lines = ['path,kind,bytes,used_on,notes'];
+    Object.keys(res.parts).map(function (p) { return res.parts[p]; }).sort(function (a, b) { return b.size - a.size; }).forEach(function (P) {
+      lines.push([P.path, P.cat, P.size, P.owners.join('; '), P.notes.join('; ')].map(q).join(','));
+    });
+    return lines.join('\n');
+  }
+  reportArea.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-csv]'); if (!b) return;
+    var res = allRows[+b.getAttribute('data-csv')]; if (!res) return;
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csvFor(res)], { type: 'text/csv' }));
+    a.download = res.name.replace(/\.[^.]+$/, '') + '-size-report.csv'; a.click();
+  });
+
+  async function handle(list) {
+    var files = Array.prototype.slice.call(list).filter(function (f) { return /\.(pptx|pptm|potx|ppsx|docx|docm|dotx|xlsx|xlsm|xltx)$/i.test(f.name); });
+    var skipped = Array.prototype.slice.call(list).length - files.length;
+    if (!files.length) { reportArea.innerHTML = '<p class="result-empty">Add a .pptx, .docx or .xlsx file. Old .ppt, .doc and .xls files need to be saved in the newer format first.</p>'; return; }
+    files = files.slice(0, MAX_FILES);
+    allRows = []; reportArea.innerHTML = ''; progress.classList.add('active');
+    var summary = [];
+    for (var i = 0; i < files.length; i++) {
+      var f = files[i];
+      progressText.textContent = 'Reading ' + f.name + ' (' + (i + 1) + ' of ' + files.length + ')…';
+      if (f.size > MAX_FILE) { reportArea.insertAdjacentHTML('beforeend', '<p class="result-empty">' + esc(f.name) + ': over 500 MB, too big to open in a browser tab.</p>'); continue; }
+      try {
+        var res = await analyze(f);
+        var top = cats(res)[0];
+        summary.push({ name: f.name, size: f.size, top: top, fix: res.findings[0] });
+        reportArea.insertAdjacentHTML('beforeend', render(res));
+      } catch (err) {
+        reportArea.insertAdjacentHTML('beforeend', '<p class="result-empty">' + esc(f.name) + ': ' + esc(err && err.message ? err.message : String(err)) + (/encrypt|password|corrupt|End of data|signature/i.test(String(err && err.message)) ? ' Password-protected files are encrypted as a whole and can\'t be inspected until the password is removed.' : '') + '</p>');
+      }
+    }
+    if (summary.length > 1) {
+      reportArea.insertAdjacentHTML('afterbegin', '<div class="panel" style="margin-top:20px;"><h3>Files compared</h3>' + table(['File', 'Size', 'Biggest kind of content'], summary.sort(function (a, b) { return b.size - a.size; }).map(function (s) {
+        return '<tr><td style="padding:5px 8px; border-bottom:1px solid #ebe6da; overflow-wrap:anywhere;">' + esc(s.name) + '</td><td ' + TDR + '>' + fmt(s.size) + '</td><td ' + TD + '>' + esc(s.top ? s.top.name + ' (' + fmt(s.top.s) + ')' : '') + '</td></tr>';
+      })) + '</div>');
+    }
+    if (skipped) reportArea.insertAdjacentHTML('beforeend', '<p class="result-empty">' + skipped + ' file(s) skipped: not a .pptx, .docx or .xlsx.</p>');
+    progressText.textContent = 'Done.';
+    progress.classList.remove('active');
+  }
+
+  dropzone.addEventListener('click', function () { fileInput.click(); });
+  dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
+  dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('drag'); });
+  dropzone.addEventListener('drop', function (e) { e.preventDefault(); dropzone.classList.remove('drag'); handle(e.dataTransfer.files); });
+  fileInput.addEventListener('change', function () { handle(fileInput.files); fileInput.value = ''; });
+});
+</script>
+
+</body>
+</html>

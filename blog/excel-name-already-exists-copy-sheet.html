@@ -92,6 +92,7 @@ End Sub</code></pre>
     <li>Clean the source workbook (broken and hidden names) before you use it as a template that gets copied around.</li>
     <li>Keep names you create at workbook scope with distinct, specific names (<code>Q3_TaxRate</code>, not <code>Rate</code>), so they don't collide with someone else's <code>Rate</code>.</li>
   </ul>
+  <p>Names aren't the only thing a copied sheet brings along. Its cell styles come too, which is why a long-lived workbook can end up with <em>Normal 2</em>, <em>Normal 3</em> and hundreds of styles nobody made, and eventually the <em>Too many different cell formats</em> error. The <a href="/tools/excel-style-cleaner.html">Excel style cleaner</a> removes the ones no cell uses.</p>
   <p>Spreadsheet files cause other quiet surprises too. If long numbers in a CSV come back rounded or in scientific notation, see <a href="/blog/excel-csv-number-mangling.html">why Excel mangles your CSV numbers</a>.</p>
 </article>
 
@@ -108,12 +109,14 @@ End Sub</code></pre>
           <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
           <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
           <a href="/tools/excel-name-conflict-fixer.html">Excel Name Conflict Fixer</a>
+          <a href="/tools/excel-style-cleaner.html">Excel Style Cleaner</a>
           <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
           <a href="/tools/image-batch.html">Bulk Image Tool</a>
           <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
           <a href="/tools/svg-id-collision-checker.html">Bulk SVG ID Collision Checker</a>
           <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
           <a href="/tools/merge-pdf-forms.html">Merge Filled PDF Forms</a>
+          <a href="/tools/powerpoint-size-analyzer.html">PowerPoint File Size Analyzer</a>
           <a href="/tools/rss-generator.html">RSS Generator</a>
           <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
           <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>

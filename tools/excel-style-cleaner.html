@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Too Many Different Cell Formats Fix: Remove Unused Styles, No Macros | FreeToolDev</title>
+<meta name="description" content="Fix Too many different cell formats in Excel: remove unused cell styles (Normal 2, Comma 3) and unused formats from .xlsx files in your browser. No add-in, no macros, no upload.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freetooldev.com/tools/excel-style-cleaner.html">
+<meta property="og:title" content="Excel Too Many Different Cell Formats Fix: Remove Unused Styles, No Macros | FreeToolDev">
+<meta property="og:description" content="Fix Too many different cell formats in Excel: remove unused cell styles (Normal 2, Comma 3) and unused formats from .xlsx files in your browser. No add-in, no macros, no upload.">
+<meta property="og:image" content="https://freetooldev.com/assets/img/og-image.png">
+<meta property="og:site_name" content="FreeToolDev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Excel Too Many Different Cell Formats Fix: Remove Unused Styles, No Macros | FreeToolDev">
+<meta name="twitter:description" content="Fix Too many different cell formats in Excel: remove unused cell styles (Normal 2, Comma 3) and unused formats from .xlsx files in your browser. No add-in, no macros, no upload.">
+<meta name="twitter:image" content="https://freetooldev.com/assets/img/og-image.png">
+<link rel="canonical" href="https://freetooldev.com/tools/excel-style-cleaner.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script defer src="/assets/js/nav-behavior.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV8P7CQ31"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PV8P7CQ31');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="/index.html">FreeTool<span class="dot">Dev</span></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/tools/index.html">Tools</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/about.html">About</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">MENU</button>
+    </div>
+  </header>
+
+<section class="tool-page-head blueprint-bg">
+  <div class="wrap">
+    <span class="eyebrow">Spreadsheet · Batch · No-upload</span>
+    <h1>Excel Style Cleaner: Fix Too Many Different Cell Formats</h1>
+    <p>Excel says <em>Too many different cell formats</em>, the Cell Styles gallery is full of <em>Normal 2</em>, <em>Normal 3</em> and styles you never made, or the workbook got slow and heavy after sheets were copied in from other files? Drop your .xlsx or .xlsm files here to see how many cell formats and styles they carry and how many no cell uses, then download a cleaned copy with only those removed. No add-in, no macros, works for files from Excel on Mac and the web too, and nothing is uploaded.</p>
+  </div>
+</section>
+
+<section class="workspace section-paper">
+  <div class="wrap">
+    <div class="panel">
+      <h3>1. Add Excel files</h3>
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept=".xlsx,.xlsm,.xltx,.xltm,.xls" multiple>
+        Drag .xlsx / .xlsm files here or click to browse<br>
+        <span style="font-size:0.78rem;">Up to 20 workbooks, 200 MB each · .xls must be saved as .xlsx first · read in your browser, nothing uploaded</span>
+      </div>
+      <div class="progress-status" id="progressStatus"><span class="spinner"></span><span id="progressText"></span></div>
+      <div id="fileReport" style="margin-top:6px;"></div>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>2. Choose what to remove</h3>
+      <div style="display:flex; flex-direction:column; gap:10px; font-size:0.92rem; color:#2c3540;">
+        <label style="display:flex; gap:10px; align-items:flex-start; font-weight:500; font-size:0.92rem; color:#2c3540;"><input type="checkbox" id="optNamed" checked style="margin-top:4px;"> <span><strong>Custom cell styles that no cell uses</strong>, such as <em>Normal 2</em>, <em>Comma 3</em>, <em>Style 1</em> or styles copied in from other workbooks. This empties the Cell Styles gallery of clutter and stops the styles travelling to the next file you copy a sheet into.</span></label>
+        <label style="display:flex; gap:10px; align-items:flex-start; font-weight:500; font-size:0.92rem; color:#2c3540;"><input type="checkbox" id="optFormats" checked style="margin-top:4px;"> <span><strong>Cell formats that no cell, row or column uses.</strong> This is the count behind <em>Too many different cell formats</em>. The remaining formats are renumbered and every cell is updated to match, so nothing changes on screen.</span></label>
+        <label style="display:flex; gap:10px; align-items:flex-start; font-weight:500; font-size:0.92rem; color:#2c3540;"><input type="checkbox" id="optBuiltin" style="margin-top:4px;"> <span><strong>Also unused built-in styles</strong> (Good, Bad, Heading 1 and so on). Excel adds them back to the gallery when needed. <em>Normal</em> is always kept.</span></label>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-amber" id="cleanBtn">Clean &amp; download →</button>
+        <button class="btn btn-outline" id="clearBtn">Clear files</button>
+      </div>
+      <p style="margin-top:12px; font-size:0.85rem; color:#5a6472;">Only the style list inside the file and the format numbers on cells change. Values, formulas, charts, conditional formatting, tables and macros are copied across untouched, and styles that tables refer to by name are kept. Keep your original as a backup anyway.</p>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <h3>3. Result</h3>
+      <div id="resultArea"><p class="result-empty">// Cleaned files will appear here</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-navy">
+  <div class="wrap prose" style="max-width:720px;">
+    <h2>Where all these styles come from</h2>
+    <p>Every combination of font, fill, border, number format and alignment that a cell uses is stored once in the workbook as a <em>cell format</em>, and named styles from the Cell Styles gallery are stored the same way. Excel for Windows and Mac allows about 64,000 cell formats in one workbook (older versions allowed 4,000). Past that you get <em>Too many different cell formats</em>, and new formatting stops working.</p>
+    <p>Hardly anyone reaches that by formatting cells by hand. The usual cause is copying sheets between workbooks: Excel brings the source file's custom styles along with it, and over many rounds near-duplicates pile up as numbered copies such as <em>Normal 2</em>, <em>Comma 3</em> or <em>Currency 2 2</em>. Templates that have been copied around for years, reports exported by accounting or ERP systems and workbooks assembled from many files can carry tens of thousands of styles that no cell uses. They make the file larger and slower to open, and they go wherever the next copied sheet goes.</p>
+
+    <h2>Why not just delete them in Excel?</h2>
+    <p>You can right-click a style in the Cell Styles gallery and choose Delete, one at a time, which isn't realistic for thousands. The common alternatives each have a catch: the macros posted on forums often stop partway on large lists and can't run in Excel for the web or where macros are blocked, the Inquire add-in's <em>Clean Excess Cell Formatting</em> is Windows-only and only in some Office editions, and style-removal apps for Windows don't help on a Mac. This page reads the workbook's own style list directly, works the same on any computer, and removes only what no cell uses.</p>
+
+    <h2>FAQ</h2>
+    <h3>Will my formatting change?</h3>
+    <p>No. A cell format is only removed when no cell, row or column refers to it, and a named style only when no remaining format is based on it. The formats that stay are renumbered and every cell reference is updated in the same pass, so each cell points at the same font, fill, border and number format as before. Conditional formatting uses a separate list and isn't touched.</p>
+    <h3>I still get the error after cleaning.</h3>
+    <p>Then the workbook really uses that many different formats, which usually means formatting applied cell by cell to large areas: slightly different shades, borders or fonts on every row. The report shows how many formats cells actually use. Clearing formats from ranges that don't need them (Home → Clear → Clear Formats) and applying one style to whole columns brings the number down.</p>
+    <h3>What about workbooks with macros?</h3>
+    <p>.xlsm files are cleaned and the macros kept. A macro that applies a style by name, such as <code>Range("A1").Style = "Highlight 2"</code>, will fail if that style was removed because no cell used it, so check your code if it does that.</p>
+    <h3>Can it clean several workbooks at once?</h3>
+    <p>Yes. Add up to 20 and they're cleaned in one go, with a single ZIP download. Cleaning the source workbooks before you copy sheets between them stops the styles multiplying again.</p>
+    <h3>Is my file uploaded?</h3>
+    <p>No. The workbook is opened and rewritten by JavaScript in this tab using <a href="https://stuk.github.io/jszip/" target="_blank" rel="noopener">JSZip</a>, and nothing is sent to a server. If the file is also large for other reasons, the <a href="/tools/powerpoint-size-analyzer.html">Office file size analyzer</a> shows which sheets, pictures and pivot caches take the space, and the <a href="/tools/excel-name-conflict-fixer.html">Excel name conflict fixer</a> deals with the other thing that copied sheets bring along: hidden and broken defined names.</p>
+  </div>
+</section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="col">
+          <h4>Tools</h4>
+          <a href="/tools/base64.html">Base64 Encode/Decode</a>
+          <a href="/tools/url-encoder.html">Bulk URL Encoder/Decoder</a>
+          <a href="/tools/csv-to-json.html">CSV to JSON (Batch)</a>
+          <a href="/tools/json-yaml-converter.html">JSON ↔ YAML Converter</a>
+          <a href="/tools/csv-tsv-converter.html">CSV ↔ TSV Converter</a>
+          <a href="/tools/excel-name-conflict-fixer.html">Excel Name Conflict Fixer</a>
+          <a href="/tools/excel-style-cleaner.html">Excel Style Cleaner</a>
+          <a href="/tools/json-validator.html">Bulk JSON Validator &amp; Formatter</a>
+          <a href="/tools/image-batch.html">Bulk Image Tool</a>
+          <a href="/tools/svg-optimizer.html">Bulk SVG Optimizer</a>
+          <a href="/tools/svg-id-collision-checker.html">Bulk SVG ID Collision Checker</a>
+          <a href="/tools/pdf-merge-compress.html">Bulk PDF Merge &amp; Compress</a>
+          <a href="/tools/merge-pdf-forms.html">Merge Filled PDF Forms</a>
+          <a href="/tools/powerpoint-size-analyzer.html">PowerPoint File Size Analyzer</a>
+          <a href="/tools/rss-generator.html">RSS Generator</a>
+          <a href="/tools/sitemap-generator.html">Sitemap Generator</a>
+          <a href="/tools/sitemap-validator.html">Bulk Sitemap Validator</a>
+          <a href="/tools/robots-txt-generator.html">robots.txt Generator</a>
+          <a href="/tools/llms-txt-generator.html">llms.txt Generator</a>
+          <a href="/tools/humans-txt-generator.html">Humans.txt Generator</a>
+          <a href="/tools/meta-length-checker.html">Bulk Meta Length Checker</a>
+          <a href="/tools/text-diff-checker.html">Bulk Text Diff Checker</a>
+          <a href="/tools/json-schema-validator.html">Bulk JSON Schema Validator</a>
+          <a href="/tools/og-card-checker.html">Bulk OG &amp; Twitter Card Checker</a>
+          <a href="/tools/og-image-generator.html">Bulk OG Image Generator</a>
+          <a href="/tools/heading-structure-checker.html">Bulk Heading Structure Checker</a>
+          <a href="/tools/frontmatter-checker.html">Bulk Markdown Front Matter Checker</a>
+          <a href="/tools/json-field-consistency.html">Bulk JSON Field Consistency Checker</a>
+          <a href="/tools/package-json-version-checker.html">Bulk package.json Version Checker</a>
+          <a href="/tools/ip-dns-ssl.html">IP / DNS / SSL Lookup</a>
+          <a href="/tools/site-crawler.html">Site Crawler &amp; Audit</a>
+          <a href="/tools/jwt-decoder.html">JWT Decoder (Batch)</a>
+          <a href="/tools/qr-batch.html">Bulk QR Code Generator</a>
+          <a href="/tools/barcode-batch.html">Bulk Barcode Generator</a>
+          <a href="/tools/code-128-bulk-generator.html">Bulk Code 128 Generator</a>
+        </div>
+        <div class="col">
+          <h4>Site</h4>
+          <a href="/tools/index.html">All Tools</a>
+          <a href="/blog/index.html">Blog</a>
+          <a href="/about.html">About</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+        <div class="col">
+          <h4>Freetooldev</h4>
+          <p style="max-width:240px;">Free bulk/batch utilities for developers &amp; designers. Nothing leaves your browser.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; <span id="year"></span> FreeToolDev &mdash; All tools run locally in your browser.</div>
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var MAX_FILE = 200 * 1024 * 1024, MAX_FILES = 20;
+  var dropzone = document.getElementById('dropzone'), fileInput = document.getElementById('fileInput');
+  var fileReport = document.getElementById('fileReport'), resultArea = document.getElementById('resultArea');
+  var progress = document.getElementById('progressStatus'), progressText = document.getElementById('progressText');
+  var books = [];
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function n(x) { return Number(x).toLocaleString('en-US'); }
+  function unxml(s) { return String(s).replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'); }
+  function attr(tag, name) { var m = new RegExp('\\s' + name + '="([^"]*)"').exec(tag); return m ? unxml(m[1]) : null; }
+  function setAttr(tag, name, val) {
+    var re = new RegExp('(\\s' + name + '=")[^"]*(")');
+    if (re.test(tag)) return tag.replace(re, '$1' + val + '$2');
+    return tag.replace(/^(<[\w:]+)/, '$1 ' + name + '="' + val + '"');
+  }
+  // A list section of styles.xml: <cellXfs count="n"> <xf .../> ... </cellXfs>
+  function section(xml, name) {
+    var re = new RegExp('<((?:\\w+:)?' + name + ')\\b([^>]*?)(/>|>([\\s\\S]*?)</\\1>)');
+    var m = re.exec(xml); if (!m) return null;
+    var inner = m[4] || '', childName = name === 'cellStyles' ? 'cellStyle' : 'xf';
+    var items = inner.match(new RegExp('<(?:\\w+:)?' + childName + '\\b[^>]*?(?:/>|>[\\s\\S]*?</(?:\\w+:)?' + childName + '>)', 'g')) || [];
+    return { start: m.index, end: m.index + m[0].length, tagName: m[1], attrs: m[2], items: items };
+  }
+  function build(sec, items) {
+    var attrs = /\scount="/.test(sec.attrs) ? sec.attrs.replace(/(\scount=")\d*(")/, '$1' + items.length + '$2') : sec.attrs + ' count="' + items.length + '"';
+    return '<' + sec.tagName + attrs + '>' + items.join('') + '</' + sec.tagName + '>';
+  }
+  function openTag(item) { return /^<[^>]*?\/?>/.exec(item)[0]; }
+  var SHEET_RE = /^xl\/(worksheets|macrosheets|dialogsheets)\/[^/]+\.xml$/;
+  var CELL_S = /(<(?:\w+:)?c\b[^>]*?\ss=")(\d+)(")/g, ROW_S = /(<(?:\w+:)?row\b[^>]*?\ss=")(\d+)(")/g, COL_S = /(<(?:\w+:)?col\b[^>]*?\sstyle=")(\d+)(")/g;
+
+  async function load(file) {
+    var zip = await JSZip.loadAsync(file);
+    if (!zip.file('xl/styles.xml')) throw new Error('No styles part found. Is this an .xlsx or .xlsm workbook? Old .xls files need to be saved as .xlsx first.');
+    var styles = await zip.file('xl/styles.xml').async('string');
+    var sheets = Object.keys(zip.files).filter(function (p) { return SHEET_RE.test(p); });
+    var used = { 0: 1 }, sheetText = {};
+    for (var i = 0; i < sheets.length; i++) {
+      var t = await zip.file(sheets[i]).async('string'); sheetText[sheets[i]] = t;
+      [CELL_S, ROW_S, COL_S].forEach(function (re) { re.lastIndex = 0; var m; while ((m = re.exec(t))) used[+m[2]] = 1; });
+    }
+    // named styles referenced by name from tables (header/data/totals cell styles)
+    var byName = {};
+    var tables = Object.keys(zip.files).filter(function (p) { return /^xl\/tables\/[^/]+\.xml$/.test(p); });
+    for (var ti = 0; ti < tables.length; ti++) {
+      var tt = await zip.file(tables[ti]).async('string'), mm, re2 = /\s\w*CellStyle="([^"]*)"/g;
+      while ((mm = re2.exec(tt))) byName[unxml(mm[1])] = 1;
+    }
+    var cellXfs = section(styles, 'cellXfs'), cellStyleXfs = section(styles, 'cellStyleXfs'), cellStyles = section(styles, 'cellStyles');
+    if (!cellXfs) throw new Error('This workbook has no cell format list, so there is nothing to clean.');
+    var xfParent = cellXfs.items.map(function (x) { var v = attr(openTag(x), 'xfId'); return v == null ? 0 : +v; });
+    var styleList = (cellStyles ? cellStyles.items : []).map(function (x, idx) {
+      var o = openTag(x);
+      return { idx: idx, name: attr(o, 'name') || '', xfId: +(attr(o, 'xfId') || 0), builtin: attr(o, 'builtinId') != null, raw: x };
+    });
+    var usedCount = Object.keys(used).filter(function (k) { return +k < cellXfs.items.length; }).length;
+    var parentsInUse = {}; Object.keys(used).forEach(function (k) { if (+k < xfParent.length) parentsInUse[xfParent[+k]] = 1; });
+    var unusedCustom = styleList.filter(function (s) { return !s.builtin && !parentsInUse[s.xfId] && !byName[s.name]; });
+    var unusedBuiltin = styleList.filter(function (s) { return s.builtin && attr(openTag(s.raw), 'builtinId') !== '0' && !parentsInUse[s.xfId] && !byName[s.name]; });
+    var tableKept = styleList.filter(function (s) { return byName[s.name]; }).length;
+    var numbered = styleList.filter(function (s) { return /\s\d+$/.test(s.name) && !s.builtin; }).length;
+    return {
+      file: file, name: file.name, zip: zip, styles: styles, sheets: sheets, sheetText: sheetText, used: used, byName: byName,
+      cellXfs: cellXfs, cellStyleXfs: cellStyleXfs, cellStyles: cellStyles, xfParent: xfParent, styleList: styleList,
+      usedCount: usedCount, tableKept: tableKept, unusedCustom: unusedCustom, unusedBuiltin: unusedBuiltin, numbered: numbered, hasVba: !!zip.file('xl/vbaProject.bin')
+    };
+  }
+
+  function clean(b, opt) {
+    var nXf = b.cellXfs.items.length;
+    // 1. which cell formats survive
+    var keepXf = [], xfMap = {};
+    for (var i = 0; i < nXf; i++) if (!opt.formats || b.used[i] || i === 0) { xfMap[i] = keepXf.length; keepXf.push(i); }
+    // 2. which named styles survive
+    var parentsKept = {}; keepXf.forEach(function (i) { if (b.used[i] || i === 0) parentsKept[b.xfParent[i]] = 1; });
+    var removeStyle = {};
+    b.styleList.forEach(function (s) {
+      if (parentsKept[s.xfId] || b.byName[s.name]) return;
+      if (s.builtin) { if (opt.builtin && attr(openTag(s.raw), 'builtinId') !== '0') removeStyle[s.idx] = 1; }
+      else if (opt.named) removeStyle[s.idx] = 1;
+    });
+    var keptStyles = b.styleList.filter(function (s) { return !removeStyle[s.idx]; });
+    // 3. which style records (cellStyleXfs) survive: those used by a kept named style or a kept cell format
+    var nSx = b.cellStyleXfs ? b.cellStyleXfs.items.length : 0, needSx = { 0: 1 };
+    keptStyles.forEach(function (s) { needSx[s.xfId] = 1; });
+    var removedParents = {}; b.styleList.forEach(function (s) { if (removeStyle[s.idx]) removedParents[s.xfId] = 1; });
+    keepXf.forEach(function (i) { var p = b.xfParent[i]; if (!removedParents[p] || b.used[i] || i === 0) needSx[p] = 1; });
+    var sxMap = {}, keepSx = [];
+    for (var j = 0; j < nSx; j++) if (needSx[j]) { sxMap[j] = keepSx.length; keepSx.push(j); }
+    // 4. rebuild the three lists
+    var newXfs = keepXf.map(function (i) {
+      var item = b.cellXfs.items[i], o = openTag(item), p = b.xfParent[i];
+      var np = sxMap[p] != null ? sxMap[p] : 0;
+      if (np === p && attr(o, 'xfId') != null) return item;
+      if (attr(o, 'xfId') == null && np === 0) return item;
+      return setAttr(o, 'xfId', np) + item.slice(o.length);
+    });
+    var newSx = b.cellStyleXfs ? keepSx.map(function (j) { return b.cellStyleXfs.items[j]; }) : null;
+    var newStyles = keptStyles.map(function (s) {
+      var o = openTag(s.raw), np = sxMap[s.xfId] != null ? sxMap[s.xfId] : 0;
+      return np === s.xfId ? s.raw : setAttr(o, 'xfId', np) + s.raw.slice(o.length);
+    });
+    var parts = [{ sec: b.cellXfs, items: newXfs }];
+    if (b.cellStyleXfs) parts.push({ sec: b.cellStyleXfs, items: newSx });
+    if (b.cellStyles) parts.push({ sec: b.cellStyles, items: newStyles });
+    parts.sort(function (x, y) { return y.sec.start - x.sec.start; });
+    var styles = b.styles;
+    parts.forEach(function (p) { styles = styles.slice(0, p.sec.start) + build(p.sec, p.items) + styles.slice(p.sec.end); });
+    // 5. renumber cell format references in every sheet
+    var sheetOut = {}, remapped = 0;
+    if (opt.formats) {
+      b.sheets.forEach(function (sp) {
+        var t = b.sheetText[sp];
+        var fix = function (all, a, v, z) { var nv = xfMap[+v]; if (nv == null) nv = 0; if (nv !== +v) remapped++; return a + nv + z; };
+        sheetOut[sp] = t.replace(CELL_S, fix).replace(ROW_S, fix).replace(COL_S, fix);
+      });
+    }
+    return {
+      styles: styles, sheetOut: sheetOut, remapped: remapped,
+      before: { xf: nXf, st: b.styleList.length, sx: nSx }, after: { xf: newXfs.length, st: newStyles.length, sx: keepSx.length },
+      removedNames: b.styleList.filter(function (s) { return removeStyle[s.idx]; }).map(function (s) { return s.name; })
+    };
+  }
+
+  function renderBooks() {
+    if (!books.length) { fileReport.innerHTML = ''; return; }
+    fileReport.innerHTML = books.map(function (b) {
+      if (b.error) return '<div class="file-row"><span class="fname">' + esc(b.name) + '</span><span class="fstatus" style="color:#b04545;">' + esc(b.error) + '</span></div>';
+      var custom = b.styleList.filter(function (s) { return !s.builtin; }).length;
+      var warn = b.cellXfs.items.length > 50000 ? ' <span style="color:#b04545;">Close to Excel\'s limit of about 64,000.</span>' : '';
+      var sample = b.unusedCustom.slice(0, 40).map(function (s) { return esc(s.name); }).join(', ');
+      return '<div class="panel" style="margin-top:12px; padding:16px;"><div style="font-weight:600; overflow-wrap:anywhere;">' + esc(b.name) + '</div>' +
+        '<ul style="margin:8px 0 0; padding-left:20px; font-size:0.88rem; color:#2c3540;">' +
+        '<li><strong>' + n(b.cellXfs.items.length) + ' cell formats</strong>, of which ' + n(b.usedCount) + ' are used by a cell, row or column.' + warn + '</li>' +
+        '<li><strong>' + n(b.styleList.length) + ' named cell styles</strong> (' + n(custom) + ' custom, ' + n(b.styleList.length - custom) + ' built-in). <strong>' + n(b.unusedCustom.length) + ' custom styles are used by no cell.</strong>' + (b.numbered > 20 ? ' ' + n(b.numbered) + ' are numbered copies such as <em>Normal 2</em> or <em>Comma 3</em>, the usual sign of sheets copied between workbooks.' : '') + '</li>' +
+        (b.tableKept ? '<li>' + b.tableKept + ' style(s) that tables refer to by name are kept.</li>' : '') +
+        (b.hasVba ? '<li style="color:#8a5a00;">This workbook has macros. A macro that applies a style by name will fail if that style is removed, so check your macros for <code>.Style =</code> before relying on the cleaned copy.</li>' : '') +
+        '</ul>' + (sample ? '<details style="margin-top:8px;"><summary style="cursor:pointer; font-size:0.84rem;">Unused custom styles' + (b.unusedCustom.length > 40 ? ' (first 40)' : '') + '</summary><p style="font-size:0.82rem; color:#2c3540; margin-top:6px; overflow-wrap:anywhere;">' + sample + '</p></details>' : '') + '</div>';
+    }).join('');
+  }
+
+  async function addFiles(list) {
+    var arr = Array.prototype.slice.call(list);
+    progress.classList.add('active');
+    for (var i = 0; i < arr.length; i++) {
+      var f = arr[i];
+      if (books.length >= MAX_FILES) break;
+      progressText.textContent = 'Reading ' + f.name + '…';
+      if (!/\.(xlsx|xlsm|xltx|xltm)$/i.test(f.name)) { books.push({ name: f.name, error: /\.xls$/i.test(f.name) ? 'Old .xls format: open it in Excel and save as .xlsx first.' : 'Not an Excel workbook.' }); continue; }
+      if (f.size > MAX_FILE) { books.push({ name: f.name, error: 'Over 200 MB.' }); continue; }
+      try { books.push(await load(f)); }
+      catch (err) { books.push({ name: f.name, error: (err && err.message ? err.message : String(err)) + (/encrypt|End of data|signature|Corrupted/i.test(String(err && err.message)) ? ' Password-protected workbooks are encrypted and need the password removed first.' : '') }); }
+    }
+    progress.classList.remove('active'); progressText.textContent = '';
+    renderBooks();
+  }
+
+  document.getElementById('cleanBtn').addEventListener('click', async function () {
+    var ok = books.filter(function (b) { return !b.error; });
+    if (!ok.length) { alert('Add at least one .xlsx or .xlsm file first.'); return; }
+    var opt = { named: document.getElementById('optNamed').checked, formats: document.getElementById('optFormats').checked, builtin: document.getElementById('optBuiltin').checked };
+    if (!opt.named && !opt.formats && !opt.builtin) { alert('Tick at least one option.'); return; }
+    var btn = this; btn.disabled = true; progress.classList.add('active'); resultArea.innerHTML = '';
+    var outs = [];
+    for (var i = 0; i < ok.length; i++) {
+      var b = ok[i];
+      progressText.textContent = 'Cleaning ' + b.name + '…';
+      await new Promise(function (r) { setTimeout(r, 0); });
+      try {
+        var r = clean(b, opt);
+        var zip2 = await JSZip.loadAsync(b.file);
+        zip2.file('xl/styles.xml', r.styles);
+        Object.keys(r.sheetOut).forEach(function (sp) { zip2.file(sp, r.sheetOut[sp]); });
+        if (zip2.file('xl/calcChain.xml') == null) { /* nothing */ }
+        var mime = /\.xlsm$/i.test(b.name) ? 'application/vnd.ms-excel.sheet.macroEnabled.12' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        var blob = await zip2.generateAsync({ type: 'blob', compression: 'DEFLATE', mimeType: mime });
+        var outName = b.name.replace(/(\.[^.]+)$/, '-clean$1'), k = 2;
+        while (outs.some(function (o) { return o.name === outName; })) outName = b.name.replace(/(\.[^.]+)$/, '-clean-' + (k++) + '$1');
+        outs.push({ name: outName, blob: blob });
+        resultArea.insertAdjacentHTML('beforeend', '<div class="file-row ready" style="flex-wrap:wrap;"><span class="fname" style="overflow-wrap:anywhere;">' + esc(outName) + '</span><span class="fsize">' +
+          'cell formats ' + n(r.before.xf) + ' → ' + n(r.after.xf) + ' · named styles ' + n(r.before.st) + ' → ' + n(r.after.st) + ' · ' + (b.file.size / 1048576).toFixed(2) + ' → ' + (blob.size / 1048576).toFixed(2) + ' MB</span>' +
+          '<a class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" href="' + URL.createObjectURL(blob) + '" download="' + esc(outName) + '">Download</a></div>');
+      } catch (err) {
+        resultArea.insertAdjacentHTML('beforeend', '<p class="result-empty">' + esc(b.name) + ': ' + esc(err && err.message ? err.message : String(err)) + '</p>');
+      }
+    }
+    if (outs.length > 1) {
+      var all = new JSZip(); outs.forEach(function (o) { all.file(o.name, o.blob); });
+      var zb = await all.generateAsync({ type: 'blob' });
+      resultArea.insertAdjacentHTML('afterbegin', '<div class="toolbar" style="margin-bottom:10px;"><a class="btn btn-amber" href="' + URL.createObjectURL(zb) + '" download="cleaned-workbooks.zip">Download all (ZIP)</a></div>');
+    }
+    resultArea.insertAdjacentHTML('beforeend', '<p style="font-size:0.85rem; color:#2c3540; margin-top:10px;">Open the cleaned copy and check a few formatted cells. Every cell keeps its formatting; only formats and styles that no cell uses were dropped.</p>');
+    progressText.textContent = 'Done.'; progress.classList.remove('active'); btn.disabled = false;
+  });
+  document.getElementById('clearBtn').addEventListener('click', function () { books = []; renderBooks(); resultArea.innerHTML = '<p class="result-empty">// Cleaned files will appear here</p>'; });
+
+  dropzone.addEventListener('click', function () { fileInput.click(); });
+  dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
+  dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('drag'); });
+  dropzone.addEventListener('drop', function (e) { e.preventDefault(); dropzone.classList.remove('drag'); addFiles(e.dataTransfer.files); });
+  fileInput.addEventListener('change', function () { addFiles(fileInput.files); fileInput.value = ''; });
+});
+</script>
+
+</body>
+</html>
