@@ -1,6 +1,8 @@
 # FreeToolDev — 프로젝트 인수인계 문서
 
-마지막 업데이트: 2026-11-18 (**신규 제작 세션 — 툴 2개, "Office 파일(PowerPoint)" 클러스터 신설 + Excel 클러스터 확장.** 후보 9개 조사(아래 8번 표): GS1 Digital Link QR 벌크·Google Takeout 메타데이터·Notion export 정리·ZIP 파일명 인코딩은 **포화**(브라우저 툴 이미 존재), PDF 폼 데이터→CSV는 데스크톱/유료 위주라 **후보 보류**, **PowerPoint 용량 분석**(NXPowerLite·Slidewise 유료, 브라우저 툴 0)과 **Excel "Too many different cell formats"/미사용 스타일 정리**(XLStyles=Windows 스토어 앱, Macabacus 유료 애드인, Inquire=Windows 일부 에디션, Aspose=개발자 라이브러리, Sheetize=업로드형 "스타일 전부 지우기") → **공백**. 신규: `tools/powerpoint-size-analyzer.html`(pptx/docx/xlsx 읽기 전용 분석), `tools/excel-style-cleaner.html`(미사용 named style·cellXfs 제거 + 셀 참조 재번호). 전체 97파일 = sitemap 97 = llms.txt 97, 툴 35개.)
+마지막 업데이트: 2026-11-23 (**주간 데이터 세션 — 보강 1건(RSS 제목·H1 "Free RSS Feed Generator & Maker — No Signup" + 남의 사이트 피드 찾는 FAQ), 신규 0.** Google 6주째 사실상 0(11/16주 노출 4). **크롤링됨-미색인 3→5: `tools/barcode-batch.html`(Bing 최대 페이지)과 `blog/rss-for-automation.html`도 Google 색인에서 빠짐**, 발견됨-미색인 21 그대로(11/18 신규 2개는 아직 목록 밖). **Bing 클릭 121→140, 노출 6103→6556**: RSS 641→933/43→53/4.38위, PDF 글 298→365/10→15, 바코드 4820/63(정체). 신규 페이지 Bing 등장 5주째 0/11. **GA4 chatgpt.com 14→23명, 30→59세션**(bing 72세션에 근접). 사용자 답변 대기 3건(Google 확인 5가지·IndexNow·RSS Fetch 실동작). 전체 97파일.)
+
+[이전] 2026-11-18 (**신규 제작 세션 — 툴 2개, "Office 파일(PowerPoint)" 클러스터 신설 + Excel 클러스터 확장.** 후보 9개 조사(아래 8번 표): GS1 Digital Link QR 벌크·Google Takeout 메타데이터·Notion export 정리·ZIP 파일명 인코딩은 **포화**(브라우저 툴 이미 존재), PDF 폼 데이터→CSV는 데스크톱/유료 위주라 **후보 보류**, **PowerPoint 용량 분석**(NXPowerLite·Slidewise 유료, 브라우저 툴 0)과 **Excel "Too many different cell formats"/미사용 스타일 정리**(XLStyles=Windows 스토어 앱, Macabacus 유료 애드인, Inquire=Windows 일부 에디션, Aspose=개발자 라이브러리, Sheetize=업로드형 "스타일 전부 지우기") → **공백**. 신규: `tools/powerpoint-size-analyzer.html`(pptx/docx/xlsx 읽기 전용 분석), `tools/excel-style-cleaner.html`(미사용 named style·cellXfs 제거 + 셀 참조 재번호). 전체 97파일 = sitemap 97 = llms.txt 97, 툴 35개.)
 
 [이전] 2026-11-16 (**주간 데이터 세션 — 보강 1건(RSS 생성기 "Start from your site": 사이트 URL로 페이지 제목 + sitemap.xml로 날짜), 신규 0.** Google 5주째 사실상 0(11/9주 노출 4), 사용자는 11/09 확인 요청 5가지에 아직 답 없음 → 재요청. 커버리지 갱신(11/09 기준): **발견됨-미색인 16→21**(10/26~11/03 신규 5개 진입), **크롤링됨-미색인 1→3**(11/07 `debug-jwt-base64-locally`, `no-upload-image-compression` — 색인돼 있던 페이지가 빠짐). **Bing 클릭 100→121, 노출 5572→6103.** RSS 432→641노출/30→43클릭/4.81위(최대 성장), 바코드 4739/58/8.49위(`bulk barcode generator 128` 1674/9.19위 2주째 숫자 동일), PDF 글 298/10/4.31위. 신규 페이지 Bing 등장 4주째 0/9 → IndexNow 사용자 결정 요청. GA4 chatgpt 7→14명(30세션). 전체 95파일 = sitemap 95 = llms.txt 95.)
 
@@ -278,6 +280,24 @@
 | 2026-07-18 | 4 (+1) | 1149 (+32%) | 22개 |
 | 2026-07-20 | 4 (변화없음) | 1111 (-3%, GSC 처리지연 감안 시 사실상 flat) | 22개 |
 | 2026-07-27 | 5 (+1) | 1649 (+48%) | 35개 |
+
+**2026-11-23 세션 — 데이터 재확인 및 조치 사항**:
+
+- **Google**: 주간 클릭/노출 11/2 0/10 · 11/9 0/5 · **11/16 0/4**. 3개월 합계 클릭 8, 노출 3643. 커버리지(11/16 기준): **크롤링됨-미색인 3→5** — 추가 `tools/barcode-batch.html`, `blog/rss-for-automation.html`(둘 다 기존 색인 페이지). 11/07 이후 색인 이탈 4개. 발견됨-미색인 21(목록 동일). 11/18 신규 2개는 어느 목록에도 아직 없음. 사용자 확인(직접 조치 등) 여전히 미회신.
+- **Bing: 클릭 121→140, 노출 6103→6556.**
+  - `tools/rss-generator.html` 641→**933노출, 43→53클릭, 4.38위**(4주 연속 최대 성장). `free rss feed generator` 115/2.73위/7, `rss feed generator` 46→110/5.06/4. **문제: `rss feed maker free` 15노출/1.6위/클릭 0, `rss creator free` 11노출/2.09위/클릭 0** — 1~2위인데 클릭 0 = 제목에 maker/creator가 없어 결과가 다른 걸로 보임(45항: Bing은 제목 일치에 즉각 반응) → 조치. `no signup`/`no registration`/`ohne anmeldung`/`no subscription`/`free forever` 변형도 계속 클릭. 남의 사이트 피드 의도도 지속: `url to rss feed converter`(클릭), `site to rss free`(클릭), `website to rss free`, `generate rss feed from http://x.com/…`(클릭), `where can i create free rss feed and keep it`.
+  - `blog/why-merged-pdf-is-bigger.html` 298→**365노출, 10→15클릭**, 4.29위. `merged two pdf's but one page is very large since it was merged in, how do i fix`(1위·클릭), `when merging scan documents why some docs are bigger`(클릭 2) — 11/09 해결 섹션 개편 후 "fix" 의도 클릭 계속.
+  - `tools/barcode-batch.html` 4739→4820(+81)/58→63/8.54위 — 성장 정체 3주째. `bulk barcode generator 128` 행 3주째 1674/6/9.19 동일.
+  - 신규 페이지 Bing 등장 5주째 0/11(11/18 2개 포함).
+- **GA4(10/26~11/22)**: 활성 542, bing 54명(72세션), **chatgpt.com/ai-assistant 23명(59세션)** + chatgpt.com/referral 6세션, duckduckgo 14. 페이지뷰: 홈 82, RSS 77(55명), **Code 128 페이지 61(24명)** > barcode-batch 55, PDF 글 28, Excel 이름 글 18, 11/18 신규 두 툴 각 1. 브라우저 번역 제목(포르투갈어·러시아어·태국어)으로 잡힌 뷰 소수 — 다국어 페이지 금지 원칙이라 조치 없음. 20일차(11/15) 신규 85명 급증 = 봇 추정.
+
+**조치 (1건, 신규 0)**:
+
+1. **`tools/rss-generator.html` 제목·H1·description**: `RSS Feed Generator — Free Tool` → **`Free RSS Feed Generator & Maker — No Signup`**(og/twitter 동일, H1 `Free RSS Feed Generator & Maker`), description에 `maker and creator, no signup` + URL/sitemap 채우기. 기존 1~3위 쿼리(`free rss feed generator`, `rss feed generator`)의 핵심어는 그대로 유지하고 maker/no signup만 추가 — 10/12 바코드 "Code 128" 제목 변경과 같은 방식. **되돌림 기준: 다음 주 `free rss feed generator` 순위가 2.73위에서 5위 밖으로 밀리면 원래 제목 복원.**
+2. 같은 페이지 FAQ **"Can I get a feed for a site I don't run?"** 신설: 이미 있는 피드 주소(WordPress `/feed/`, Blogger `/feeds/posts/default`, Substack `/feed`, Tumblr `/rss`, Medium `medium.com/feed/@user`, 서브레딧·Mastodon 프로필 `.rss`, GitHub `/releases.atom`, YouTube `feeds/videos.xml?channel_id=`) + 소스에서 `application/rss+xml` 찾기, X·Instagram·쇼핑몰은 피드 없음 → 호스팅 서비스 필요(계정·한도)라고 정직하게. 남의 사이트 의도 클릭자의 이탈 방지용(근거: Zapier "how to find RSS feed URL" 확인, 나머지 패턴은 각 플랫폼 공지된 형식).
+3. sitemap lastmod 11/23. 검증 스위트 통과, 375px 헤더 확인.
+
+**판단 메모**: 신규 0 — Bing이 5주째 신규 페이지를 하나도 안 집고 Google은 기존 페이지까지 빠지는 중이라, 새 페이지는 지금 어디에도 안 잡힘. 이미 1~3위인 RSS 쿼리의 CTR이 가장 빠른 클릭 증가 수단. 공격적 확장 전략은 유지(신규 세션에서 계속).
 
 **2026-11-18 세션(신규 제작) — 키워드 리서치 및 제작 내역**:
 
@@ -1047,6 +1067,15 @@
 ---
 
 ## 12. 다음에 할 일 (우선순위 순)
+
+**★ 2026-11-23 세션 기준 다음 할 일**
+
+- **A. RSS 제목 변경 판정**: `rss feed maker free`·`rss creator free` 클릭 발생 여부, `free rss feed generator` 순위 유지(5위 밖이면 원복).
+- **B. ⚠️ Google 색인 이탈 진행 중(barcode-batch 포함 4개)** — 사용자 확인 5가지 재요청 + 이탈 페이지 URL 검사 결과 요청.
+- **C. IndexNow 결정 재요청** — 5주째 신규 0/11. 이대로면 11/18 신규 2개도 노출 불가.
+- **D. chatgpt 유입 59세션(Bing에 근접)** — 다음 세션에 GA4 "세션 소스/매체 × 방문 페이지" 보고서를 받으면 ChatGPT가 어느 페이지로 보내는지 확인 → 그 페이지 첫 문단·llms.txt 설명 강화 검토(46항 재검토).
+- **E. 11/18 다음 할 일 A~D 유효**(신규 2개 추적, Excel 외부 링크 후속 등).
+- **(수익화 항목은 9-1-1의 트래픽 조건을 실측으로 충족하기 전까지 이 목록에 올리지 말 것.)**
 
 **★ 2026-11-18 세션 기준 다음 할 일**
 
